@@ -1,39 +1,41 @@
 // src/features/user/store/userSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { createUser, getUsers } from "../services/userApi";
+import api from "../../../services/api";
 
-// Async thunk để thêm user
-export const addUser = createAsyncThunk(
-  "user/addUser",
-  async (userData, { rejectWithValue }) => {
-    try {
-      const response = await createUser(userData);
-      return response; // data từ API
-    } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
-    }
-  }
-);
+// Lấy danh sách user
+export const fetchUsers = createAsyncThunk("user/fetchUsers", async () => {
+  const response = await api.get("/api/user/get-all");
+  return response.data;
+});
 
-export const fetchUsers = createAsyncThunk(
-  "user/fetchUsers",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await getUsers();
-      console.log("Fetched users:", res);
-      return res.data; // backend trả về danh sách user
-    } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
-    }
+// Thêm user
+export const addUser = createAsyncThunk("user/addUser", async (userData) => {
+  const response = await api.post("/api/user/create", userData);
+  return response.data;
+});
+
+// Cập nhật user
+export const updateUser = createAsyncThunk("user/updateUser", async ({id, data}) => {
+  const response = await api.put(`/api/user/${id}`, data);
+  return response.data;
+});
+
+// Lấy danh sách department
+export const fetchDepartments = createAsyncThunk(
+  "user/fetchDepartments",
+  async () => {
+    const response = await api.get("/api/department/get-all");
+    return response.data;
   }
 );
 
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    list: [],       // danh sách user
+    list: [],
     loading: false,
     error: null,
+    departments: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -64,7 +66,11 @@ const userSlice = createSlice({
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+
+      // Departments
+      .addCase(fetchDepartments.fulfilled, (state, action) => { state.departments = action.payload; })
+      .addCase(fetchDepartments.rejected, (state, action) => { state.error = action.error.message; });
   },
 });
 

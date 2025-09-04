@@ -1,5 +1,4 @@
-// src/features/user/components/UserTable.jsx
-const UserTable = ({ users }) => {
+const UserTable = ({ users, onEdit }) => {
   return (
     <table className="w-full border-collapse border border-gray-300">
       <thead>
@@ -9,6 +8,7 @@ const UserTable = ({ users }) => {
           <th className="border border-gray-300 p-2">Email</th>
           <th className="border border-gray-300 p-2">Type</th>
           <th className="border border-gray-300 p-2">Department</th>
+          <th className="border border-gray-300 p-2">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -20,11 +20,19 @@ const UserTable = ({ users }) => {
               <td className="border border-gray-300 p-2">{u.email}</td>
               <td className="border border-gray-300 p-2">{u.type}</td>
               <td className="border border-gray-300 p-2">{u.department?.name || "-"}</td>
+              <td className="border border-gray-300 p-2">
+                <button
+                  onClick={() => onEdit(u)}
+                  className="px-3 py-1 bg-orange-500 text-white rounded hover:bg-yellow-600"
+                >
+                  Edit
+                </button>
+              </td>
             </tr>
           ))
         ) : (
           <tr>
-            <td colSpan="5" className="text-center p-4 text-gray-500">
+            <td colSpan="6" className="text-center p-4 text-gray-500">
               No users found
             </td>
           </tr>
@@ -33,6 +41,5 @@ const UserTable = ({ users }) => {
     </table>
   );
 };
-
 
 export default UserTable;
