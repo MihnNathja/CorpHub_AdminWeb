@@ -1,40 +1,62 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchDepartmentTickets, setStatusFilter, setPage, fetchUsersDepartment, assign } from "../store/ticketSlice";
+import {
+  fetchDepartmentTickets,
+  fetchDepartmentTicketsSent,
+  fetchUsersDepartment,
+  setStatusFilter,
+  setPage,
+  assign,
+  confirmSend
+} from "../store/ticketSlice";
 
-export const useTickets = () => {
+export const useTickets = (mode) => {
   const dispatch = useDispatch();
-  const { users, items, loading, error, statusFilter, page, pageSize } = useSelector(
-    state => state.tickets
-  );
+  const {
+    users, items, loading, error,
+    statusFilter, page, pageSize
+  } = useSelector(state => state.tickets);
 
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [editingId, setEditingId] = useState(null);
 
+  // Assign cho mode = received
   const handleAssign = async (ticketId, userId) => {
     try {
-      dispatch(assign({ ticketId, userId }));
+      await dispatch(assign({ ticketId, userId }));
       setEditingId(null);
     } catch (err) {
       console.error("Assign failed:", err);
     }
   };
 
-  // Dispatch fetchDepartmentTickets khi hook mount
-  useEffect(() => {
-    if(!Array.isArray(items) || items.length === 0) {
-      dispatch(fetchDepartmentTickets());
+  // Confirm gửi cho mode = sent
+  const handleConfirmSend = async (ticketId) => {
+    try {
+      await dispatch(confirmSend({ ticketId }));
+    } catch (err) {
+      console.error("Confirm send failed:", err);
     }
-  }, [dispatch]);
- 
+  };
+
+  // Fetch tickets theo mode
   useEffect(() => {
-    if(!Array.isArray(users) || users.length === 0)
-    {
+  if (mode === "sent") {
+    dispatch(fetchDepartmentTicketsSent());
+  } else {
+    dispatch(fetchDepartmentTickets());
+  }
+}, [dispatch, mode]);
+
+
+  // Fetch users trong phòng ban (dùng cho assign)
+  useEffect(() => {
+    if (!Array.isArray(users) || users.length === 0) {
       dispatch(fetchUsersDepartment());
     }
-
   }, [dispatch, users]);
 
+  // Filter + pagination
   const filteredTickets = Array.isArray(items)
     ? items.filter(ticket => statusFilter === "" || ticket.status === statusFilter)
     : [];
@@ -60,6 +82,7 @@ export const useTickets = () => {
     setSelectedTicket,
     editingId,
     setEditingId,
-    handleAssign
+    handleAssign,
+    handleConfirmSend
   };
 };
