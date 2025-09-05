@@ -1,6 +1,7 @@
 // src/components/Navbar.jsx
-import React from "react";
+import React, { use, useEffect } from "react";
 import { BellIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ user }) => {
   return (

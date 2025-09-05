@@ -21,7 +21,7 @@ export const useLoginForm = () => {
   // Khi login thành công, chuyển về trang chủ
   useEffect(() => {
     if (user) {
-      navigate("/dashboard"); 
+      navigate("/"); 
     }
   }, [user, navigate]);
 
