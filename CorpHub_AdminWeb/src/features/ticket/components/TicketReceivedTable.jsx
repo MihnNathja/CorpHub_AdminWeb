@@ -1,20 +1,18 @@
 import React from "react";
 import { useTickets } from "../hooks/useTickets";
 import TicketFilter from "./TicketFilter";
-import TicketTableBody from "./TicketTableBody";
+import TicketReceivedTableBody from "./TicketReceivedTableBody";
 import Pagination from "./Pagination";
 import TicketModal from "./TicketModal";
 
-const TicketTable = ({ mode }) => {
+const TicketReceivedTable = () => {
   const {
     tickets, loading, statusFilter, setStatusFilter,
     page, setPage, totalPages, users,
     selectedTicket, setSelectedTicket,
     editingId, setEditingId,
-    handleAssign,
-    handleConfirmSend,
-    handleRejectSend
-  } = useTickets(mode);
+    handleAssign
+  } = useTickets("received");
 
   if (loading) return <p>Loading...</p>;
 
@@ -26,27 +24,24 @@ const TicketTable = ({ mode }) => {
         <table className="min-w-full border border-gray-300 text-sm">
           <thead className="bg-gray-200">
             <tr>
-              <th className="border px-4 py-2">ID</th>
+              <th className="border px-4 py-2">Requester</th>
               <th className="border px-4 py-2">Title</th>
+              <th className="border px-4 py-2">Description</th>
+              <th className="border px-4 py-2">Category</th>
               <th className="border px-4 py-2">Status</th>
               <th className="border px-4 py-2">Priority</th>
-              <th className="border px-4 py-2">
-                {mode === "received" ? "Assignee" : "Requester"}
-              </th>
+              <th className="border px-4 py-2">Assignee</th>
               <th className="border px-4 py-2">Created At</th>
               <th className="border px-4 py-2">Action</th>
             </tr>
           </thead>
-          <TicketTableBody
+          <TicketReceivedTableBody
             tickets={tickets}
             users={users}
             editingId={editingId}
             setEditingId={setEditingId}
             handleAssign={handleAssign}
-            handleConfirmSend={handleConfirmSend}
-            handleRejectSend={handleRejectSend}
             setSelectedTicket={setSelectedTicket}
-            mode={mode}
           />
         </table>
       </div>
@@ -63,4 +58,4 @@ const TicketTable = ({ mode }) => {
   );
 };
 
-export default TicketTable;
+export default TicketReceivedTable;

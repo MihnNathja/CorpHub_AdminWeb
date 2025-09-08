@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import TicketTable from "../components/TicketTable";
+import TicketSentTable from "../components/TicketSentTable";
+import TicketReceivedTable from "../components/TicketReceivedTable";
 
 const TicketsPage = () => {
   const [activeTab, setActiveTab] = useState("sent"); // "sent" | "received"
@@ -18,7 +19,7 @@ const TicketsPage = () => {
               : "text-gray-500"
           }`}
         >
-          My Tickets's Department 
+          My Tickets's Department
         </button>
         <button
           onClick={() => setActiveTab("received")}
@@ -33,8 +34,8 @@ const TicketsPage = () => {
       </div>
 
       {/* Nội dung */}
-      {activeTab === "sent" && <TicketTable mode="sent" />}
-      {activeTab === "received" && <TicketTable mode="received" />}
+      {activeTab === "sent" && <TicketSentTable />}
+      {activeTab === "received" && <TicketReceivedTable />}
     </div>
   );
 };

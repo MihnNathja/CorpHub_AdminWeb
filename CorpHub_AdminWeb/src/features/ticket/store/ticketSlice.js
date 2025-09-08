@@ -8,6 +8,7 @@ export const fetchDepartmentTickets = createAsyncThunk(
   async (thunkAPI) => {
     try {
       const res = await getDepartmentTickets();
+      console.log(res.data);
       return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -32,6 +33,7 @@ export const fetchDepartmentTicketsSent = createAsyncThunk(
   async (thunkAPI) => {
     try {
       const res = await getDepartmentTicketsSent();
+      console.log(res.data);
       return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
