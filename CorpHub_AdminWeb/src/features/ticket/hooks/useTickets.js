@@ -7,7 +7,8 @@ import {
   setStatusFilter,
   setPage,
   assign,
-  confirmSend
+  confirmSend,
+  rejectSend
 } from "../store/ticketSlice";
 
 export const useTickets = (mode) => {
@@ -36,6 +37,14 @@ export const useTickets = (mode) => {
       await dispatch(confirmSend({ ticketId }));
     } catch (err) {
       console.error("Confirm send failed:", err);
+    }
+  };
+
+  const handleRejectSend = async (ticketId) => {
+    try {
+      await dispatch(rejectSend({ ticketId }));
+    } catch (err) {
+      console.error("Reject send failed:", err);
     }
   };
 
@@ -83,6 +92,7 @@ export const useTickets = (mode) => {
     editingId,
     setEditingId,
     handleAssign,
-    handleConfirmSend
+    handleConfirmSend,
+    handleRejectSend
   };
 };

@@ -12,7 +12,8 @@ const TicketTable = ({ mode }) => {
     selectedTicket, setSelectedTicket,
     editingId, setEditingId,
     handleAssign,
-    handleConfirmSend
+    handleConfirmSend,
+    handleRejectSend
   } = useTickets(mode);
 
   if (loading) return <p>Loading...</p>;
@@ -43,6 +44,7 @@ const TicketTable = ({ mode }) => {
             setEditingId={setEditingId}
             handleAssign={handleAssign}
             handleConfirmSend={handleConfirmSend}
+            handleRejectSend={handleRejectSend}
             setSelectedTicket={setSelectedTicket}
             mode={mode}
           />

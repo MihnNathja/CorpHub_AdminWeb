@@ -10,9 +10,14 @@ const TicketFilter = ({ statusFilter, setStatusFilter }) => {
         className="border rounded p-1"
       >
         <option value="">All</option>
-        <option value="open">Open</option>
-        <option value="in_progress">In Progress</option>
-        <option value="closed">Closed</option>
+        <option value="OPEN">Open</option>
+        <option value="IN_PROGRESS">In Progress</option>
+        <option value="CLOSED">Closed</option>
+        <option value="WAITING">Waiting</option>
+        <option value="ACCEPTED">Accepted</option>
+        <option value="REJECTED">Rejected</option>
+        <option value="IN_PROGRESS">In Progress</option>
+        <option value="DONE">Done</option>
       </select>
     </div>
   );

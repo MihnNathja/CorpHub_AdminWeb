@@ -7,6 +7,8 @@ const TicketTableBody = ({
   editingId,
   setEditingId,
   handleAssign,
+  handleConfirmSend,
+  handleRejectSend,
   setSelectedTicket,
   mode
 }) => {
@@ -20,8 +22,10 @@ const TicketTableBody = ({
           editingId={editingId}
           setEditingId={setEditingId}
           handleAssign={handleAssign}
+          handleConfirmSend={handleConfirmSend}
+          handleRejectSend={handleRejectSend}
           setSelectedTicket={setSelectedTicket}
-          mode ={mode}
+          mode={mode}
         />
       ))}
     </tbody>

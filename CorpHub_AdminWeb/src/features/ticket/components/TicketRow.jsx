@@ -7,12 +7,13 @@ const TicketRow = ({
   setEditingId,
   handleAssign,
   handleConfirmSend,
+  handleRejectSend,
   setSelectedTicket,
   mode
 }) => {
   return (
     <tr key={ticket.id} className="hover:bg-gray-100">
-      <td className="border px-4 py-2">{ticket.id.slice(0, 8)}...</td>
+      <td className="border px-4 py-2">{ticket.id}...</td>
       <td className="border px-4 py-2">{ticket.title}</td>
       <td className="border px-4 py-2">{ticket.status}</td>
       <td className="border px-4 py-2">{ticket.priority}</td>
@@ -53,19 +54,40 @@ const TicketRow = ({
         {new Date(ticket.createdAt).toLocaleString()}
       </td>
 
-      <td className="border px-4 py-2 flex gap-2">
-        {/* Action khác nhau theo mode */}
+      <td className="border px-4 py-2 flex justify-center gap-2">
         {mode === "sent" ? (
-          <button
-            onClick={() => handleConfirmSend(ticket.id)}
-            className="px-2 py-1 bg-green-500 text-white rounded"
-          >
-            Confirm
-          </button>
+          ticket.status === "open" ? (
+            <>
+              <button
+                onClick={() => handleConfirmSend(ticket.id)}
+                className="min-w-[80px] h-9 px-3 py-1 rounded-lg bg-green-500 text-white font-medium 
+                          hover:bg-green-600 shadow-sm transition"
+              >
+                Confirm
+              </button>
+
+              <button
+                onClick={() => handleRejectSend(ticket.id)}
+                className="min-w-[80px] h-9 px-3 py-1 rounded-lg bg-red-500 text-white font-medium 
+                          hover:bg-red-600 shadow-sm transition"
+              >
+                Reject
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setSelectedTicket(ticket)}
+              className="min-w-[80px] h-9 px-3 py-1 rounded-lg bg-blue-500 text-white font-medium 
+                        hover:bg-blue-600 shadow-sm transition"
+            >
+              View
+            </button>
+          )
         ) : (
           <button
             onClick={() => setSelectedTicket(ticket)}
-            className="px-2 py-1 bg-blue-500 text-white rounded"
+            className="min-w-[80px] h-9 px-3 py-1 rounded-lg bg-blue-500 text-white font-medium 
+                      hover:bg-blue-600 shadow-sm transition"
           >
             View
           </button>
