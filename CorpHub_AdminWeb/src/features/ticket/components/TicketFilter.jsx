@@ -2,12 +2,12 @@ import React from "react";
 
 const TicketFilter = ({ statusFilter, setStatusFilter }) => {
   return (
-    <div className="mb-4 flex items-center gap-2">
+    <div className="mb-4 flex items-center gap-2 text-gray-900 dark:text-gray-100">
       <label>Status: </label>
       <select
         value={statusFilter}
         onChange={(e) => setStatusFilter(e.target.value)}
-        className="border rounded p-1"
+        className="border rounded p-1 dark:bg-gray-900 dark:border-gray-700 transition-colors"
       >
         <option value="">All</option>
         <option value="OPEN">Open</option>
@@ -16,7 +16,6 @@ const TicketFilter = ({ statusFilter, setStatusFilter }) => {
         <option value="WAITING">Waiting</option>
         <option value="ACCEPTED">Accepted</option>
         <option value="REJECTED">Rejected</option>
-        <option value="IN_PROGRESS">In Progress</option>
         <option value="DONE">Done</option>
       </select>
     </div>

@@ -1,36 +1,48 @@
 // src/components/Navbar.jsx
-import React, { use, useEffect } from "react";
-import { BellIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import SearchBar from "./SearchBar";
+import Notifications from "./Notifications";
+import UserProfile from "./UserProfile";
+import { SunIcon, MoonIcon } from "@heroicons/react/24/outline"; // cần cài heroicons
 
 const Navbar = ({ user }) => {
-  return (
-    <header className="flex justify-between items-center bg-white shadow px-6 py-4">
-      {/* Search */}
-      <div className="relative w-1/3">
-        <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-        />
-      </div>
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "light"
+  );
 
-      {/* Right info */}
+  // Cập nhật class dark vào html
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
+  return (
+    <header className="h-20 flex justify-between items-center  bg-gray-50 dark:bg-gray-800  shadow px-6 py-4 transition-colors duration-200">
+      <SearchBar />
+
       <div className="flex items-center gap-6">
-        <button className="relative">
-          <BellIcon className="h-6 w-6 text-gray-600" />
-          <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+        {/* Nút toggle theme */}
+        <button
+          onClick={toggleTheme}
+          className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+        >
+          {theme === "light" ? (
+            <MoonIcon className="h-5 w-5 text-gray-800 dark:text-gray-200" />
+          ) : (
+            <SunIcon className="h-5 w-5 text-yellow-400" />
+          )}
         </button>
 
-        <div className="flex items-center gap-2">
-          <img
-            src={user?.avatar || "./assets/defaultAvatar.jpg"}
-            alt="User Avatar"
-            className="h-8 w-8 rounded-full object-cover"
-          />
-          <span className="font-medium text-gray-800">{user?.name || "User"}</span>
-        </div>
+        <Notifications />
+        <UserProfile user={user} />
       </div>
     </header>
   );

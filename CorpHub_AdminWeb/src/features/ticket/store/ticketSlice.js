@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { assignTicket, confirmSendTicket, getDepartmentTickets, getDepartmentTicketsSent, getUsersDepartment, rejectSendTicket } from "../services/ticketApi";
+import { assignTicket, confirmSendTicket, getReceivedTickets, getSentTickets, getUsersDepartment, rejectSendTicket } from "../services/ticketApi";
 
 
 // Async thunk để fetch ticket từ API
@@ -7,7 +7,7 @@ export const fetchDepartmentTickets = createAsyncThunk(
   "tickets/fetchDepartmentTickets",
   async (thunkAPI) => {
     try {
-      const res = await getDepartmentTickets();
+      const res = await getReceivedTickets();
       console.log(res.data);
       return res.data;
     } catch (err) {
@@ -32,7 +32,7 @@ export const fetchDepartmentTicketsSent = createAsyncThunk(
   "tickets/fetchDepartmentTicketsSent",
   async (thunkAPI) => {
     try {
-      const res = await getDepartmentTicketsSent();
+      const res = await getSentTickets();
       console.log(res.data);
       return res.data;
     } catch (err) {
