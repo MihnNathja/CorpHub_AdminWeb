@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchDepartmentTickets,
-  fetchDepartmentTicketsSent,
+  fetchReceivedTickets,
+  fetchSentTickets,
   fetchUsersDepartment,
   setStatusFilter,
+  setPriorityFilter,
   setPage,
   assign,
   confirmSend,
@@ -15,7 +16,7 @@ export const useTickets = (mode) => {
   const dispatch = useDispatch();
   const {
     users, items, loading, error,
-    statusFilter, page, pageSize
+    statusFilter, priorityFilter, page, pageSize
   } = useSelector(state => state.tickets);
 
   const [selectedTicket, setSelectedTicket] = useState(null);
@@ -26,15 +27,23 @@ export const useTickets = (mode) => {
     try {
       await dispatch(assign({ ticketId, userId }));
       setEditingId(null);
+
+      dispatch(fetchReceivedTickets());
     } catch (err) {
       console.error("Assign failed:", err);
     }
   };
 
-  // Confirm gửi cho mode = sent
+
   const handleConfirmSend = async (ticketId) => {
     try {
       await dispatch(confirmSend({ ticketId }));
+      // Load lại tickets sau khi confirm
+      if (mode === "sent") {
+        dispatch(fetchSentTickets());
+      } else {
+        dispatch(fetchReceivedTickets());
+      }
     } catch (err) {
       console.error("Confirm send failed:", err);
     }
@@ -43,19 +52,26 @@ export const useTickets = (mode) => {
   const handleRejectSend = async (ticketId) => {
     try {
       await dispatch(rejectSend({ ticketId }));
+      // Load lại tickets sau khi reject
+      if (mode === "sent") {
+        dispatch(fetchSentTickets());
+      } else {
+        dispatch(fetchReceivedTickets());
+      }
     } catch (err) {
       console.error("Reject send failed:", err);
     }
   };
 
+
   // Fetch tickets theo mode
   useEffect(() => {
-  if (mode === "sent") {
-    dispatch(fetchDepartmentTicketsSent());
-  } else {
-    dispatch(fetchDepartmentTickets());
-  }
-}, [dispatch, mode]);
+    if (mode === "sent") {
+      dispatch(fetchSentTickets());
+    } else {
+      dispatch(fetchReceivedTickets());
+    }
+  }, [dispatch, mode]);
 
 
   // Fetch users trong phòng ban (dùng cho assign)
@@ -67,8 +83,13 @@ export const useTickets = (mode) => {
 
   // Filter + pagination
   const filteredTickets = Array.isArray(items)
-    ? items.filter(ticket => statusFilter === "" || ticket.status === statusFilter)
+    ? items.filter(ticket => {
+      const statusMatch = !statusFilter || ticket.status === statusFilter;
+      const priorityMatch = !priorityFilter || ticket.priority === priorityFilter;
+      return statusMatch && priorityMatch;
+    })
     : [];
+
 
   const paginatedTickets = filteredTickets.slice(
     (page - 1) * pageSize,
@@ -83,6 +104,8 @@ export const useTickets = (mode) => {
     loading,
     error,
     statusFilter,
+    priorityFilter,
+    setPriorityFilter: val => dispatch(setPriorityFilter(val)),
     setStatusFilter: val => dispatch(setStatusFilter(val)),
     page,
     setPage: val => dispatch(setPage(val)),

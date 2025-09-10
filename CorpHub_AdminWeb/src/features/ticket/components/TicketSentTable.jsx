@@ -1,20 +1,36 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useTickets } from "../hooks/useTickets";
 import TicketFilter from "./TicketFilter";
 import TicketSentTableBody from "./TicketSentTableBody";
 import Pagination from "./Pagination";
 import TicketModal from "./TicketModal";
+import { statusColors } from "../../global/const/statusColors";
+import { priorityColors } from "../../global/const/priorityColors";
 
 const TicketSentTable = () => {
   const {
-    tickets, loading, statusFilter, setStatusFilter,
+    tickets, loading, statusFilter, priorityFilter, setStatusFilter, setPriorityFilter,
     page, setPage, totalPages, users,
     selectedTicket, setSelectedTicket,
     handleConfirmSend,
     handleRejectSend
   } = useTickets("sent");
 
-  if (loading) return <p>Loading...</p>;
+  const statusCounts = useMemo(() => {
+    return tickets.reduce((acc, t) => {
+      acc[t.status] = (acc[t.status] || 0) + 1;
+      return acc;
+    }, {});
+  }, [tickets]);
+
+  const priorityCounts = useMemo(() => {
+    return tickets.reduce((acc, t) => {
+      acc[t.priority] = (acc[t.priority] || 0) + 1;
+      return acc;
+    }, {});
+  }, [tickets]);
+
+  loading & <p>Loading...</p>;
 
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md transition-colors">
@@ -22,7 +38,21 @@ const TicketSentTable = () => {
         Sent Tickets
       </h3>
 
-      <TicketFilter statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
+      <div className="flex gap-4 mb-4">
+        <TicketFilter
+          filter={statusFilter}
+          counts={statusCounts}
+          setFilter={setStatusFilter}
+          colors={statusColors}
+        />
+        <TicketFilter
+          filter={priorityFilter}
+          counts={priorityCounts}
+          setFilter={setPriorityFilter}
+          colors={priorityColors}
+        />
+      </div>
+
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">

@@ -33,10 +33,8 @@ const TicketsPage = () => {
       </div>
 
       {/* Nội dung */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 transition-colors">
-        {activeTab === "sent" && <TicketSentTable />}
-        {activeTab === "received" && <TicketReceivedTable />}
-      </div>
+      {activeTab === "sent" && <TicketSentTable />}
+      {activeTab === "received" && <TicketReceivedTable />}
     </div>
   );
 };

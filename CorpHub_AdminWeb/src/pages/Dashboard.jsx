@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 
 const Dashboard = () => {
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+    <div className="flex h-screen bg-gray-200 dark:bg-gray-900 transition-colors">
       {/* Sidebar */}
       <Sidebar />
 

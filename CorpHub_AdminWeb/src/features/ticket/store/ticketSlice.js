@@ -3,8 +3,8 @@ import { assignTicket, confirmSendTicket, getReceivedTickets, getSentTickets, ge
 
 
 // Async thunk để fetch ticket từ API
-export const fetchDepartmentTickets = createAsyncThunk(
-  "tickets/fetchDepartmentTickets",
+export const fetchReceivedTickets = createAsyncThunk(
+  "tickets/fetchReceivedTickets",
   async (thunkAPI) => {
     try {
       const res = await getReceivedTickets();
@@ -28,8 +28,8 @@ export const fetchUsersDepartment = createAsyncThunk(
   }
 );
 
-export const fetchDepartmentTicketsSent = createAsyncThunk(
-  "tickets/fetchDepartmentTicketsSent",
+export const fetchSentTickets = createAsyncThunk(
+  "tickets/fetchSentTickets",
   async (thunkAPI) => {
     try {
       const res = await getSentTickets();
@@ -67,7 +67,7 @@ export const rejectSend = createAsyncThunk(
 
 export const assign = createAsyncThunk(
   "tickets/assignTicket",
-  async ({ ticketId, userId }, { dispatch }) => {
+  async ({ ticketId, userId }, { thunkAPI }) => {
     try {
       const res = await assignTicket(ticketId, userId);
       return res.data;
@@ -86,6 +86,7 @@ const ticketSlice = createSlice({
     actionLoading: false,
     error: null,
     statusFilter: "", // "" nghĩa là tất cả
+    priorityFilter: "",
     page: 1,
     pageSize: 10, // số ticket mỗi trang
   },
@@ -94,21 +95,25 @@ const ticketSlice = createSlice({
       state.statusFilter = action.payload;
       state.page = 1; // reset page khi filter thay đổi
     },
+    setPriorityFilter(state, action) {
+      state.priorityFilter = action.payload;
+      state.page = 1; // reset page khi filter thay đổi
+    },
     setPage(state, action) {
       state.page = action.payload;
     }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchDepartmentTickets.pending, (state) => {
+      .addCase(fetchReceivedTickets.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchDepartmentTickets.fulfilled, (state, action) => {
+      .addCase(fetchReceivedTickets.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload;
       })
-      .addCase(fetchDepartmentTickets.rejected, (state, action) => {
+      .addCase(fetchReceivedTickets.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -130,25 +135,36 @@ const ticketSlice = createSlice({
       })
       .addCase(assign.fulfilled, (state, action) => {
         state.actionLoading = false;
-        const updated = action.payload; // ticket đã update từ API
+        const updated = action.payload;
+
+        // Check chắc chắn updated tồn tại và có id
+        if (!updated || !updated.id) {
+          console.warn("Assign fulfilled but payload is invalid", updated);
+          return;
+        }
+
         const index = state.items.findIndex(t => t.id === updated.id);
         if (index !== -1) {
           state.items[index] = { ...state.items[index], ...updated };
+        } else {
+          // Nếu chưa có trong items, push vào hoặc bỏ qua
+          console.warn("Assigned ticket not found in items", updated);
         }
       })
+
       .addCase(assign.rejected, (state, action) => {
         state.actionLoading = false;
         state.error = action.payload;
       })
-      .addCase(fetchDepartmentTicketsSent.pending, (state) => {
+      .addCase(fetchSentTickets.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchDepartmentTicketsSent.fulfilled, (state, action) => {
+      .addCase(fetchSentTickets.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload;
       })
-      .addCase(fetchDepartmentTicketsSent.rejected, (state, action) => {
+      .addCase(fetchSentTickets.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -187,5 +203,5 @@ const ticketSlice = createSlice({
   }
 });
 
-export const { setStatusFilter, setPage } = ticketSlice.actions;
+export const { setStatusFilter, setPriorityFilter, setPage } = ticketSlice.actions;
 export default ticketSlice.reducer;

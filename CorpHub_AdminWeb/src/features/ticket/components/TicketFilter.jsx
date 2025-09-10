@@ -1,23 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
+import StatCard from "../../global/components/StatCard";
 
-const TicketFilter = ({ statusFilter, setStatusFilter }) => {
+const TicketFilter = ({ filter, counts, setFilter, colors }) => {
+  const [open, setOpen] = useState(false);
+
+  const values = Object.keys(colors);
+
   return (
-    <div className="mb-4 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-      <label>Status: </label>
-      <select
-        value={statusFilter}
-        onChange={(e) => setStatusFilter(e.target.value)}
-        className="border rounded p-1 dark:bg-gray-900 dark:border-gray-700 transition-colors"
+    <div className="mb-4 relative">
+      <label className="block mb-2 text-gray-900 dark:text-gray-100">Status:</label>
+
+      {/* Nút bấm để mở dropdown */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-48 flex justify-between items-center border rounded p-1 dark:bg-gray-900 dark:border-gray-700"
       >
-        <option value="">All</option>
-        <option value="OPEN">Open</option>
-        <option value="IN_PROGRESS">In Progress</option>
-        <option value="CLOSED">Closed</option>
-        <option value="WAITING">Waiting</option>
-        <option value="ACCEPTED">Accepted</option>
-        <option value="REJECTED">Rejected</option>
-        <option value="DONE">Done</option>
-      </select>
+        {filter ? (
+          <StatCard label={filter} count={counts[filter] || 0} colors={colors} />
+        ) : (
+          <span className="text-gray-500 dark:text-gray-400">All</span>
+        )}
+        <span className="ml-2">▾</span>
+      </button>
+
+      {/* Dropdown list */}
+      {open && (
+        <div className="absolute mt-1 w-48 bg-white dark:bg-gray-900 border dark:border-gray-700 rounded shadow-lg z-10">
+          <div
+            onClick={() => {
+              setFilter("");
+              setOpen(false);
+            }}
+            className="cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            All
+          </div>
+          {values.map((value) => (
+            <div
+              key={value}
+              onClick={() => {
+                setFilter(value);
+                setOpen(false);
+              }}
+              className="cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <StatCard label={value} count={counts[value] || 0} colors={colors} />
+            </div>
+          ))}
+
+        </div>
+      )}
     </div>
   );
 };

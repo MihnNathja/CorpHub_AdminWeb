@@ -2,7 +2,7 @@ import api from "../../../services/api";
 
 export const createUser = (data) => api.post("/users", data);
 
-export const getUsers = () => api.get("/api/user/get-all");
+export const getUsers = () => api.get("/api/user/employee");
 
 // export const getUserById = (id) => api.get(`/users/${id}`);
 
