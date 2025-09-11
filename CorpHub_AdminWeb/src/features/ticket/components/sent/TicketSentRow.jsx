@@ -1,44 +1,40 @@
 import React from "react";
+import StatCard from "../../../global/components/StatCard";
+import { statusColors } from "../../../global/const/statusColors";
+import { priorityColors } from "../../../global/const/priorityColors";
+import ButtonOutline from "../../../global/components/ButtonOutline";
 
 const TicketSentRow = ({ ticket, handleConfirmSend, handleRejectSend, setSelectedTicket }) => {
   return (
-    <tr className="hover:bg-gray-100">
-      <td className="border px-4 py-2">{ticket.department.description}</td>
-      <td className="border px-4 py-2">{ticket.title}</td>
-      <td className="border px-4 py-2">{ticket.description}</td>
-      <td className="border px-4 py-2">{ticket.category.categoryName}</td>
-      <td className="border px-4 py-2">{ticket.status}</td>
-      <td className="border px-4 py-2">{ticket.priority}</td>
-      <td className="border px-4 py-2">{ticket.requester?.fullName || "Ẩn danh"}</td>
-      <td className="border px-4 py-2">{new Date(ticket.createdAt).toLocaleString()}</td>
-      <td className="border px-4 py-2 flex justify-center gap-2">
+    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+      <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{ticket.department.description}</td>
+      <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{ticket.title}</td>
+      <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{ticket.description}</td>
+      <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{ticket.category.categoryName}</td>
+      <td className="px-4 py-2">
+        <StatCard label={ticket.status} colors={statusColors} className="w-24 h-8 text-sm" />
+      </td>
+      <td className="px-4 py-2">
+        <StatCard label={ticket.priority} colors={priorityColors} className="w-24 h-8 text-sm" />
+      </td>
+      <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{ticket.requester?.fullName || "Ẩn danh"}</td>
+      <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{new Date(ticket.createdAt).toLocaleString()}</td>
+      <td className="px-4 py-2 flex justify-center gap-2">
         {ticket.status === "OPEN" ? (
           <>
-            <button
-              onClick={() => handleConfirmSend(ticket.id)}
-              className="min-w-[80px] h-9 px-3 py-1 rounded-lg bg-green-500 text-white font-medium 
-                        hover:bg-green-600 shadow-sm transition"
-            >
+            <ButtonOutline onClick={() => handleConfirmSend(ticket.id)} color="green">
               Confirm
-            </button>
-            <button
-              onClick={() => handleRejectSend(ticket.id)}
-              className="min-w-[80px] h-9 px-3 py-1 rounded-lg bg-red-500 text-white font-medium 
-                        hover:bg-red-600 shadow-sm transition"
-            >
+            </ButtonOutline>
+            <ButtonOutline onClick={() => handleRejectSend(ticket.id)} color="red">
               Reject
-            </button>
+            </ButtonOutline>
           </>
-        ) : (
-          <button
-            onClick={() => setSelectedTicket(ticket)}
-            className="min-w-[80px] h-9 px-3 py-1 rounded-lg bg-blue-500 text-white font-medium 
-                      hover:bg-blue-600 shadow-sm transition"
-          >
+        ) : null}
+            <ButtonOutline onClick={() => setSelectedTicket(ticket)} color="blue">
             View
-          </button>
-        )}
+          </ButtonOutline>
       </td>
+
     </tr>
   );
 };

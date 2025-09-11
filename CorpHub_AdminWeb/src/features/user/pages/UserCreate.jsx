@@ -11,10 +11,10 @@ const UserCreate = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10">
-      <h1 className="text-2xl font-bold mb-4">Create New User</h1>
-      {loading && <p className="text-blue-500">Creating user...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+    <div className="max-w-lg mx-auto mt-10 text-gray-900 dark:text-gray-100 transition-colors">
+      <h1 className="text-2xl font-bold mb-4 dark:text-gray-100">Create New User</h1>
+      {loading && <p className="text-blue-500 dark:text-blue-400">Creating user...</p>}
+      {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
       <UserForm onSubmit={handleCreate} />
     </div>
   );
