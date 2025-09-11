@@ -13,7 +13,7 @@ import {
   Info,
 } from "lucide-react";
 
-const TicketModal = ({ ticket, users, onClose, handleAssign }) => {
+const TicketModal = ({ ticket, users, onClose, handleAssign, mode }) => {
   if (!ticket) return null;
 
   return (
@@ -79,7 +79,12 @@ const TicketModal = ({ ticket, users, onClose, handleAssign }) => {
               <select
                 value={ticket.assignee?.id || ""}
                 onChange={(e) => handleAssign(ticket.id, e.target.value)}
-                className="w-full border rounded-lg p-2 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 transition-colors"
+                disabled={!(mode === "received" && ticket.status === "OPEN")}
+                className={`w-full border rounded-lg p-2 transition-colors
+                  dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100
+                  focus:ring-2 focus:ring-blue-500
+                  ${!(mode === "received" && ticket.status === "OPEN") ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed" : ""}
+                `}
               >
                 <option value="">Chưa phân công</option>
                 {users.map((user) => (
@@ -89,6 +94,7 @@ const TicketModal = ({ ticket, users, onClose, handleAssign }) => {
                 ))}
               </select>
             </div>
+
           </div>
 
           {/* Cột phải */}

@@ -86,6 +86,7 @@ const TicketSentTable = () => {
         ticket={selectedTicket}
         users={users}
         onClose={() => setSelectedTicket(null)}
+        mode="sent"
       />
     </div>
   );

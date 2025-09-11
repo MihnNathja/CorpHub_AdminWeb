@@ -90,6 +90,7 @@ const TicketReceivedTable = () => {
         users={users}
         handleAssign={handleAssign}
         onClose={() => setSelectedTicket(null)}
+        mode="received"
       />
     </div>
   );
