@@ -12,7 +12,7 @@ const TicketSentRow = ({ ticket, handleConfirmSend, handleRejectSend, setSelecte
       <td className="border px-4 py-2">{ticket.requester?.fullName || "Ẩn danh"}</td>
       <td className="border px-4 py-2">{new Date(ticket.createdAt).toLocaleString()}</td>
       <td className="border px-4 py-2 flex justify-center gap-2">
-        {ticket.status === "open" ? (
+        {ticket.status === "OPEN" ? (
           <>
             <button
               onClick={() => handleConfirmSend(ticket.id)}

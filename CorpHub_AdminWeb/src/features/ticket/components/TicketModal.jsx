@@ -11,7 +11,7 @@ const TicketModal = ({ ticket, users, onClose, handleAssign }) => {
           <p><b>ID:</b> {ticket.id}</p>
           <p><b>Title:</b> {ticket.title}</p>
           <p><b>Description:</b> {ticket.description}</p>
-          <p><b>Category:</b> {ticket.category?.name || "N/A"}</p>
+          <p><b>Category:</b> {ticket.category?.categoryName || "N/A"}</p>
           <p><b>Requester:</b> {ticket.requester?.fullName || "Ẩn danh"}</p>
           
           <div className="mt-2">

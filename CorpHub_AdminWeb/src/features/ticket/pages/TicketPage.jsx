@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import TicketSentTable from "../components/TicketSentTable";
-import TicketReceivedTable from "../components/TicketReceivedTable";
+import TicketSentTable from "../components/sent/TicketSentTable";
+import TicketReceivedTable from "../components/received/TicketReceivedTable";
 
 const TicketsPage = () => {
   const [activeTab, setActiveTab] = useState("sent"); // "sent" | "received"

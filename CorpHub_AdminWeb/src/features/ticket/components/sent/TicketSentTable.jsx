@@ -1,9 +1,9 @@
 import React from "react";
-import { useTickets } from "../hooks/useTickets";
-import TicketFilter from "./TicketFilter";
+import { useTickets } from "../../hooks/useTickets";
+import TicketFilter from "../TicketFilter";
 import TicketSentTableBody from "./TicketSentTableBody";
-import Pagination from "./Pagination";
-import TicketModal from "./TicketModal";
+import Pagination from "../Pagination";
+import TicketModal from "../TicketModal";
 
 const TicketSentTable = () => {
   const {
