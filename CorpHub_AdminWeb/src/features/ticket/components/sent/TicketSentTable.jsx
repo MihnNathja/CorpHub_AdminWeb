@@ -33,7 +33,7 @@ const TicketSentTable = () => {
   loading & <p>Loading...</p>;
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md transition-colors">
+    <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl transition-colors">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
         Sent Tickets
       </h3>
