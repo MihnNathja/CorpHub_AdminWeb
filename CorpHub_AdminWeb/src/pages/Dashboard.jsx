@@ -1,6 +1,6 @@
 // src/features/dashboard/Dashboard.jsx
 import React from "react";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/SideBar";
 import Navbar from "../components/NavBar";
 import { Outlet } from "react-router-dom";
 
