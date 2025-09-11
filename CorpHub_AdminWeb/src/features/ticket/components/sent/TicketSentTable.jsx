@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
-import { useTickets } from "../hooks/useTickets";
-import TicketFilter from "./TicketFilter";
+import { useTickets } from "../../hooks/useTickets";
+import TicketFilter from "../TicketFilter";
 import TicketSentTableBody from "./TicketSentTableBody";
-import Pagination from "./Pagination";
-import TicketModal from "./TicketModal";
-import { statusColors } from "../../global/const/statusColors";
-import { priorityColors } from "../../global/const/priorityColors";
+import Pagination from "../Pagination";
+import TicketModal from "../TicketModal";
+import { statusColors } from "../../../global/const/statusColors";
+import { priorityColors } from "../../../global/const/priorityColors";
 
 const TicketSentTable = () => {
   const {
@@ -33,19 +33,21 @@ const TicketSentTable = () => {
   loading & <p>Loading...</p>;
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md transition-colors">
+    <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl transition-colors">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
         Sent Tickets
       </h3>
 
       <div className="flex gap-4 mb-4">
         <TicketFilter
+          name = "Status"
           filter={statusFilter}
           counts={statusCounts}
           setFilter={setStatusFilter}
           colors={statusColors}
         />
         <TicketFilter
+          name = "Priority"
           filter={priorityFilter}
           counts={priorityCounts}
           setFilter={setPriorityFilter}
@@ -84,6 +86,7 @@ const TicketSentTable = () => {
         ticket={selectedTicket}
         users={users}
         onClose={() => setSelectedTicket(null)}
+        mode="sent"
       />
     </div>
   );

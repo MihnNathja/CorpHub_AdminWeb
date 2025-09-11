@@ -1,9 +1,9 @@
 import React from "react";
-import StatCard from "../../global/components/StatCard";
-import { statusColors } from "../../global/const/statusColors";
-import { priorityColors } from "../../global/const/priorityColors";
-import ButtonOutline from "../../global/components/ButtonOutline";
-import AssigneeSelect from "../../global/components/AssigneeSelect";
+import StatCard from "../../../global/components/StatCard";
+import { statusColors } from "../../../global/const/statusColors";
+import { priorityColors } from "../../../global/const/priorityColors";
+import ButtonOutline from "../../../global/components/ButtonOutline";
+import AssigneeSelect from "../../../global/components/AssigneeSelect";
 
 const TicketReceivedRow = ({
   ticket,

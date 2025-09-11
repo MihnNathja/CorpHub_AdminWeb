@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import StatCard from "../../global/components/StatCard";
 
-const TicketFilter = ({ filter, counts, setFilter, colors }) => {
+const TicketFilter = ({name, filter, counts, setFilter, colors }) => {
   const [open, setOpen] = useState(false);
 
   const values = Object.keys(colors);
 
   return (
     <div className="mb-4 relative">
-      <label className="block mb-2 text-gray-900 dark:text-gray-100">Status:</label>
+      <label className="block mb-2 text-gray-900 dark:text-gray-100">{name}</label>
 
       {/* Nút bấm để mở dropdown */}
       <button

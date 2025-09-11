@@ -1,8 +1,8 @@
 import React from "react";
-import StatCard from "../../global/components/StatCard";
-import { statusColors } from "../../global/const/statusColors";
-import { priorityColors } from "../../global/const/priorityColors";
-import ButtonOutline from "../../global/components/ButtonOutline";
+import StatCard from "../../../global/components/StatCard";
+import { statusColors } from "../../../global/const/statusColors";
+import { priorityColors } from "../../../global/const/priorityColors";
+import ButtonOutline from "../../../global/components/ButtonOutline";
 
 const TicketSentRow = ({ ticket, handleConfirmSend, handleRejectSend, setSelectedTicket }) => {
   return (
@@ -29,11 +29,10 @@ const TicketSentRow = ({ ticket, handleConfirmSend, handleRejectSend, setSelecte
               Reject
             </ButtonOutline>
           </>
-        ) : (
-          <ButtonOutline onClick={() => setSelectedTicket(ticket)} color="blue">
+        ) : null}
+            <ButtonOutline onClick={() => setSelectedTicket(ticket)} color="blue">
             View
           </ButtonOutline>
-        )}
       </td>
 
     </tr>
