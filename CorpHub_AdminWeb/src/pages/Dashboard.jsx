@@ -1,7 +1,7 @@
 // src/features/dashboard/Dashboard.jsx
 import React from "react";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
+import Sidebar from "../components/SideBar";
+import Navbar from "../components/NavBar";
 import { Outlet } from "react-router-dom";
 
 const Dashboard = () => {

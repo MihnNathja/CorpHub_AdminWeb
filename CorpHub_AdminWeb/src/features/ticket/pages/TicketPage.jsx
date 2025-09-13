@@ -1,40 +1,41 @@
 import React, { useState } from "react";
-import TicketSentTable from "../components/TicketSentTable";
-import TicketReceivedTable from "../components/TicketReceivedTable";
+import TicketSentTable from "../components/sent/TicketSentTable";
+import TicketReceivedTable from "../components/received/TicketReceivedTable";
 
 const TicketsPage = () => {
-  const [activeTab, setActiveTab] = useState("sent"); // "sent" | "received"
+  const [activeTab, setActiveTab] = useState("sent");
+
+  const tabs = [
+    { key: "sent", label: "My Tickets's Department" },
+    { key: "received", label: "My Tickets's Department Received" },
+  ];
 
   return (
     <div className="text-gray-900 dark:text-gray-700">
-      {/* Title */}
       <h2 className="text-xl dark:text-gray-100 font-bold mb-4">Tickets Management</h2>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-gray-200 dark:border-gray-700 mb-4">
-        <button
-          onClick={() => setActiveTab("sent")}
-          className={`px-4 py-2 transition-colors ${activeTab === "sent"
-            ? "border-b-2 border-blue-500 font-semibold text-blue-600 dark:text-blue-400"
-            : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+      <div className="flex border-b border-gray-200 dark:border-gray-700">
+        {tabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`px-4 py-2 -mb-px font-medium rounded-t-lg transition-colors ${
+              activeTab === tab.key
+                ? "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 border-b-0 text-gray-900 dark:text-gray-100"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             }`}
-        >
-          My Tickets's Department
-        </button>
-        <button
-          onClick={() => setActiveTab("received")}
-          className={`px-4 py-2 transition-colors ${activeTab === "received"
-            ? "border-b-2 border-blue-500 font-semibold text-blue-600 dark:text-blue-400"
-            : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-            }`}
-        >
-          My Tickets's Department Received
-        </button>
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      {/* Nội dung */}
-      {activeTab === "sent" && <TicketSentTable />}
-      {activeTab === "received" && <TicketReceivedTable />}
+      {/* Content */}
+      <div className="border border-gray-200 dark:border-gray-700 rounded-b-lg p-4 -mt-px bg-white dark:bg-gray-800">
+        {activeTab === "sent" && <TicketSentTable />}
+        {activeTab === "received" && <TicketReceivedTable />}
+      </div>
     </div>
   );
 };

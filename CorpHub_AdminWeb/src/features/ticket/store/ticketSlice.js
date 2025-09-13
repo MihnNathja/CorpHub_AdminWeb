@@ -177,7 +177,7 @@ const ticketSlice = createSlice({
         const ticketId = action.meta.arg.ticketId;
         const ticket = state.items.find(t => t.id === ticketId);
         if (ticket) {
-          ticket.status = "confirmed"; // hoặc action.payload.status nếu API trả về
+          ticket.status = "WAITING"; // hoặc action.payload.status nếu API trả về
         }
       })
       .addCase(confirmSend.rejected, (state, action) => {
@@ -193,7 +193,7 @@ const ticketSlice = createSlice({
         const ticketId = action.meta.arg.ticketId;
         const ticket = state.items.find(t => t.id === ticketId);
         if (ticket) {
-          ticket.status = "rejected"; // hoặc action.payload.status nếu API trả về
+          ticket.status = "REJECTED"; // hoặc action.payload.status nếu API trả về
         }
       })
       .addCase(rejectSend.rejected, (state, action) => {
