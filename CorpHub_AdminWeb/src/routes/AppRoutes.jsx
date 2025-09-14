@@ -5,6 +5,7 @@ import Dashboard from "../pages/Dashboard";
 import TicketsPage from "../features/ticket/pages/TicketPage";
 import UserList from "../features/user/pages/UserList";
 import PrivateRoute from "../routes/PrivateRoute";
+import CalendarPage from "../features/calendar/pages/CalendarPage";
 
 const AppRoutes = () => {
   return (
@@ -16,14 +17,15 @@ const AppRoutes = () => {
       <Route
         path="/"
         element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
+          //<PrivateRoute>
+          <Dashboard />
+          // </PrivateRoute>
         }
       >
         <Route index element={<HomePage />} />
         <Route path="tickets" element={<TicketsPage />} />
         <Route path="users" element={<UserList />} />
+        <Route path="calendar" element={<CalendarPage />} />
       </Route>
     </Routes>
   );

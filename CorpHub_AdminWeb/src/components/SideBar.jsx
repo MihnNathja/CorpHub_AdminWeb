@@ -5,6 +5,9 @@ import {
   HomeIcon,
   TicketIcon,
   UsersIcon,
+  BuildingOfficeIcon,
+  ClipboardDocumentListIcon,
+  CalendarIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 
@@ -12,6 +15,9 @@ const menu = [
   { name: "Dashboard", path: "", icon: HomeIcon },
   { name: "Tickets", path: "tickets", icon: TicketIcon },
   { name: "Users", path: "users", icon: UsersIcon },
+  { name: "Departments", path: "departments", icon: BuildingOfficeIcon },
+  { name: "Projects", path: "projects", icon: ClipboardDocumentListIcon },
+  { name: "Calendar", path: "calendar", icon: CalendarIcon },
   { name: "Settings", path: "settings", icon: Cog6ToothIcon },
 ];
 
