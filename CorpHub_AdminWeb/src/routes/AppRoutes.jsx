@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "../features/auth/pages/LoginPage";
 import HomePage from "../pages/HomePage";
-import Dashboard from "../pages/Dashboard";
+import Dashboard from "../pages/DashBoard";
 import TicketsPage from "../features/ticket/pages/TicketPage";
 import UserList from "../features/user/pages/UserList";
 import PrivateRoute from "../routes/PrivateRoute";
@@ -17,9 +17,9 @@ const AppRoutes = () => {
       <Route
         path="/"
         element={
-          //<PrivateRoute>
-          <Dashboard />
-          // </PrivateRoute>
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
         }
       >
         <Route index element={<HomePage />} />
