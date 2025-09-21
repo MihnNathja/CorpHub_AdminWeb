@@ -1,46 +1,53 @@
-// store/calendarSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchFakeEvents } from "../services/calendarService";
+import { getMeetings } from "../services/calendarService";
 
-export const loadEvents = createAsyncThunk("calendar/loadEvents", async () => {
-    const events = await fetchFakeEvents();
-    return events;
-});
+export const fetchMeetings = createAsyncThunk(
+    "meetings/fetchMeetings",
+    async (thunkAPI) => {
+        try {
+            const res = await getMeetings();
+            return res.data;
+        } catch (err) {
+            return thunkAPI.rejectWithValue(err.response?.data || err.message);
+        }
+    }
+);
 
-const calendarSlice = createSlice({
-    name: "calendar",
+const eventSlice = createSlice({
+    name: "events",
     initialState: {
-        events: [],
+        meetings: [],
         loading: false,
+        error: null,
     },
     reducers: {
         addEvent: (state, action) => {
-            state.events.push(action.payload);
+            state.meetings.push(action.payload);
         },
         updateEvent: (state, action) => {
-            const index = state.events.findIndex((e) => e.id === action.payload.id);
-            if (index !== -1) {
-                state.events[index] = action.payload;
-            }
+            const idx = state.meetings.findIndex(e => e.id === action.payload.id);
+            if (idx !== -1) state.meetings[idx] = action.payload;
         },
-        deleteEvent: (state, action) => {
-            state.events = state.events.filter((e) => e.id !== action.payload);
-        },
+        removeEvent: (state, action) => {
+            state.meetings = state.meetings.filter(e => e.id !== action.payload);
+        }
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadEvents.pending, (state) => {
+            .addCase(fetchMeetings.pending, (state) => {
                 state.loading = true;
+                state.error = null;
             })
-            .addCase(loadEvents.fulfilled, (state, action) => {
+            .addCase(fetchMeetings.fulfilled, (state, action) => {
                 state.loading = false;
-                state.events = action.payload;
+                state.meetings = action.payload;
             })
-            .addCase(loadEvents.rejected, (state) => {
+            .addCase(fetchMeetings.rejected, (state, action) => {
                 state.loading = false;
-            });
-    },
+                state.error = action.payload;
+            })
+    }
 });
 
-export const { addEvent, updateEvent, deleteEvent } = calendarSlice.actions;
-export default calendarSlice.reducer;
+export const { addEvent, updateEvent, removeEvent } = eventSlice.actions;
+export default eventSlice.reducer;
