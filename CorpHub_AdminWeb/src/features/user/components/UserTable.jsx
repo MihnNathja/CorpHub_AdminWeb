@@ -1,5 +1,14 @@
-const UserTable = ({ users, onEdit }) => {
+import { useEffect, useState } from "react";
+import UserDetailModal from "./UserDetailModal";
+
+const UserTable = ({ users, onSelectUser  }) => {
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  useEffect(() => {
+  console.log("selectedUserId updated:", selectedUserId);
+}, [selectedUserId]);
   return (
+    <>
+    
     <table className="w-full border-collapse border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 transition-colors">
       <thead>
         <tr className="bg-gray-100 dark:bg-gray-700">
@@ -21,12 +30,12 @@ const UserTable = ({ users, onEdit }) => {
               <td className="border border-gray-300 dark:border-gray-700 p-2">{u.type}</td>
               <td className="border border-gray-300 dark:border-gray-700 p-2">{u.department?.name || "-"}</td>
               <td className="border border-gray-300 dark:border-gray-700 p-2">
-                <button
-                  onClick={() => onEdit(u)}
-                  className="px-3 py-1 bg-orange-500 dark:bg-orange-400 text-white rounded hover:bg-yellow-600 dark:hover:bg-orange-500 transition-colors"
-                >
-                  Edit
-                </button>
+              <button
+                onClick={() => onSelectUser(u.id)}
+                className="bg-green-500 text-white px-3 py-2 rounded-lg"
+              >
+                Xem chi tiết
+              </button>
               </td>
             </tr>
           ))
@@ -39,6 +48,8 @@ const UserTable = ({ users, onEdit }) => {
         )}
       </tbody>
     </table>
+
+    </>
   );
 };
 

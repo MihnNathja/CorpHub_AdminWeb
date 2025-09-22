@@ -16,7 +16,7 @@ export const useUserForm = (isOpen, user, onSubmit) => {
     departmentId: "",
   });
 
-  const roles = ["Admin", "Manager", "Employee"]; // Hoặc fetch từ backend nếu cần
+  const roles = ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR", "ROLE_USER"]; // Hoặc fetch từ backend nếu cần
 
   // Load departments và set form khi modal mở
   useEffect(() => {
