@@ -41,7 +41,7 @@ const EventPopup = ({ event, position, onClose, onEdit }) => {
                     className="text-green-600 text-sm font-medium hover:underline"
                     onClick={() => {
                         onEdit(event);
-                        onClose();
+                        setTimeout(onClose, 50);
                     }}
                 >
                     ✏️ Edit

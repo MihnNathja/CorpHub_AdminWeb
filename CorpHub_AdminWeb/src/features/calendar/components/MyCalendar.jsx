@@ -61,8 +61,14 @@ export default function MyCalendar({ events, onSelectSlot, onEventDrop, onDouble
                     position={popup.position}
                     onClose={() => setPopup(null)}
                     onEdit={(event) => {
-                        onEditEvent?.(event);
                         setPopup(null);
+                        setTimeout(() => {
+                            onEditEvent?.({
+                                ...event,
+                                start: new Date(event.start),
+                                end: new Date(event.end),
+                            });
+                        }, 0);
                     }}
                 />
 
