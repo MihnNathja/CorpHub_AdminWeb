@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMeetings, updateEvent, createNewMeeting } from "../store/calendarSlice";
+import { fetchMeetings, updateEvent, createOrUpdateMeeting, removeMeeting } from "../store/calendarSlice";
 import MyCalendar from "../components/MyCalendar";
 import ButtonOutline from "../../global/components/ButtonOutline";
 import EventFormModal from "../components/EventFormModal";
@@ -33,8 +33,8 @@ const CalendarPage = () => {
             end: (eventData.end).toISOString(),
         };
 
-        const action = await dispatch(createNewMeeting(payload));
-        if (createNewMeeting.fulfilled.match(action)) {
+        const action = await dispatch(createOrUpdateMeeting(payload));
+        if (createOrUpdateMeeting.fulfilled.match(action)) {
             dispatch(updateEvent(action.payload));
             setIsModalOpen(false);
             setSlotInfo(null);
@@ -50,6 +50,16 @@ const CalendarPage = () => {
             end: toLocal(event.end),
         });
         setIsModalOpen(true);
+    };
+
+    const handleDeleteEvent = async (id) => {
+        const action = await dispatch(removeMeeting(id));
+        if (removeMeeting.fulfilled.match(action)) {
+            // Redux state sẽ tự cập nhật meetings
+            console.log("Deleted successfully", id);
+        } else {
+            console.error("Delete failed", action.payload || action.error);
+        }
     };
 
 
@@ -88,6 +98,7 @@ const CalendarPage = () => {
                     setIsModalOpen(true);
                 }}
                 onEditEvent={handleEditEvent}
+                onDelete={(id) => handleDeleteEvent(id)}
                 theme={isDark ? "dark" : "light"}
             />
 
@@ -97,6 +108,7 @@ const CalendarPage = () => {
                     slotInfo={slotInfo}
                     onClose={() => setIsModalOpen(false)}
                     onSubmit={handleAddUpdateEvent}
+
                 />
             )}
 

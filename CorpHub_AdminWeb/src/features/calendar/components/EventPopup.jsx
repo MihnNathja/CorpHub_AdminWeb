@@ -1,7 +1,7 @@
 import React from "react";
 import { format } from "date-fns";
 
-const EventPopup = ({ event, position, onClose, onEdit }) => {
+const EventPopup = ({ event, position, onClose, onEdit, onDelete }) => {
     if (!event || !position) return null;
 
     return (
@@ -46,8 +46,21 @@ const EventPopup = ({ event, position, onClose, onEdit }) => {
                 >
                     ✏️ Edit
                 </button>
+
                 <button
-                    className="text-red-500 text-sm hover:underline"
+                    className="text-red-600 text-sm font-medium hover:underline"
+                    onClick={() => {
+                        if (window.confirm("Are you sure you want to delete this meeting?")) {
+                            onDelete?.(event.id); // gọi callback từ CalendarPage
+                            setTimeout(onClose, 50);
+                        }
+                    }}
+                >
+                    🗑 Delete
+                </button>
+
+                <button
+                    className="text-gray-500 text-sm hover:underline"
                     onClick={onClose}
                 >
                     Close

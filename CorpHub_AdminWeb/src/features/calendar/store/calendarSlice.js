@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { createMeeting, getMeetings } from "../services/calendarApi";
+import { deleteMeeting, getMeetings, saveMeeting } from "../services/calendarApi";
 
 export const fetchMeetings = createAsyncThunk(
     "meetings/fetchMeetings",
@@ -13,11 +13,24 @@ export const fetchMeetings = createAsyncThunk(
     }
 );
 
-export const createNewMeeting = createAsyncThunk(
-    "meetings/createMeeting",
+export const createOrUpdateMeeting = createAsyncThunk(
+    "meetings/createOrUpdateMeeting",
     async (meeting, { rejectWithValue }) => {
         try {
-            const res = await createMeeting(meeting);
+            const res = await saveMeeting(meeting);
+            return res?.data;
+        }
+        catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+)
+
+export const removeMeeting = createAsyncThunk(
+    "meetings/deleteMeeting",
+    async (id, { rejectWithValue }) => {
+        try {
+            const res = await deleteMeeting(id);
             return res?.data;
         }
         catch (err) {
@@ -64,12 +77,12 @@ const eventSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // CREATE
-            .addCase(createNewMeeting.pending, (state) => {
+            // CREATE OR UPDATE
+            .addCase(createOrUpdateMeeting.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(createNewMeeting.fulfilled, (state, action) => {
+            .addCase(createOrUpdateMeeting.fulfilled, (state, action) => {
                 state.loading = false;
                 const created = action.payload;
                 if (!created?.id) return;
@@ -77,7 +90,23 @@ const eventSlice = createSlice({
                 if (idx === -1) state.meetings.push(created);
                 else state.meetings[idx] = created;
             })
-            .addCase(createNewMeeting.rejected, (state, action) => {
+            .addCase(createOrUpdateMeeting.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error?.message;
+            })
+
+            // DELETE
+            .addCase(removeMeeting.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(removeMeeting.fulfilled, (state, action) => {
+                state.loading = false;
+                const deletedId = action.meta.arg; // vì ta truyền id khi gọi removeMeeting(id)
+                state.meetings = state.meetings.filter((m) => m.id !== deletedId);
+            })
+
+            .addCase(removeMeeting.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error?.message;
             });

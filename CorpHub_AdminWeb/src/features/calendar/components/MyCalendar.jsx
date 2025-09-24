@@ -17,7 +17,7 @@ const locales = { "en-US": enUS };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
 const DnDCalendar = withDragAndDrop(Calendar);
 
-export default function MyCalendar({ events, onSelectSlot, onEventDrop, onDoubleClickEvent, onEditEvent, theme }) {
+export default function MyCalendar({ events, onSelectSlot, onEventDrop, onDoubleClickEvent, onEditEvent, onDelete, theme }) {
     const [popup, setPopup] = useState(null);
 
     const handleSelectEvent = (event, e) => {
@@ -69,6 +69,11 @@ export default function MyCalendar({ events, onSelectSlot, onEventDrop, onDouble
                                 end: new Date(event.end),
                             });
                         }, 0);
+                    }
+                    }
+                    onDelete={(id) => {
+                        onDelete?.(id);
+                        setPopup(null);
                     }}
                 />
 
