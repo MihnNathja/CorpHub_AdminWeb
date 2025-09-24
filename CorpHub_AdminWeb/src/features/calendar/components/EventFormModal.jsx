@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    fetchUsersBySearch,
+    clearSearchResults,
+} from "../../user/store/userSlice";
+import RecipientInput from "./RecipientInput";
+import UserSuggestions from "./UserSuggestions";
 
 export default function EventFormModal({ isOpen, onClose, onSubmit, slotInfo }) {
     const [form, setForm] = useState({
-        to: "",
         subject: "",
         title: "",
         description: "",
@@ -11,8 +17,19 @@ export default function EventFormModal({ isOpen, onClose, onSubmit, slotInfo }) 
         onlineLink: "",
         start: "",
         end: "",
-        organizer: "",
     });
+
+    const [recipients, setRecipients] = useState([]);
+    const [query, setQuery] = useState("");
+
+    const dispatch = useDispatch();
+    const suggestions = useSelector((state) => state.user.searchResults || []);
+    const loading = useSelector((state) => state.user.loading);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+    };
 
     useEffect(() => {
         if (isOpen) {
@@ -28,53 +45,78 @@ export default function EventFormModal({ isOpen, onClose, onSubmit, slotInfo }) 
         }
     }, [isOpen, slotInfo]);
 
-    if (!isOpen || typeof document === "undefined") return null;
+    useEffect(() => {
+        const debounce = setTimeout(() => {
+            if (query.trim()) {
+                dispatch(fetchUsersBySearch(query));
+            } else {
+                dispatch(clearSearchResults());
+            }
+        }, 300);
+        return () => clearTimeout(debounce);
+    }, [query, dispatch]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+    const handleAddRecipient = (user) => {
+        if (!recipients.some((r) => r.email === user.email)) {
+            setRecipients((prev) => [
+                ...prev,
+                { email: user.email, name: user.fullName },
+            ]);
+        }
+        setQuery("");
+        dispatch(clearSearchResults());
+    };
+
+    const handleRemoveRecipient = (email) => {
+        setRecipients((prev) => prev.filter((r) => r.email !== email));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const data = {
+        onSubmit({
             ...form,
-            to: form.to.split(",").map((email) => email.trim()).filter(Boolean),
+            to: recipients.map((r) => r.email),
             start: new Date(form.start),
             end: new Date(form.end),
-        };
-        onSubmit(data);
+        });
     };
+
+    const handleClose = () => {
+        dispatch(clearSearchResults());
+        onClose();
+    };
+
+    if (!isOpen || typeof document === "undefined") return null;
 
     return createPortal(
         <div className="fixed inset-0 z-[10000]">
-            <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-            <div
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-                   w-full max-w-2xl rounded-xl shadow-2xl
-                   bg-white dark:bg-gray-800 p-6"
-            >
+            <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl rounded-xl shadow-2xl bg-white dark:bg-gray-800 p-6">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                     Create Meeting
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <input
-                        type="text"
-                        name="to"
-                        placeholder="Recipients (comma separated emails)"
-                        value={form.to}
-                        onChange={handleChange}
-                        className="w-full rounded-md p-2 bg-white dark:bg-gray-700 
-                       text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                    {/* Ô nhập + chip */}
+                    <RecipientInput
+                        recipients={recipients}
+                        onRemove={(email) => setRecipients(prev => prev.filter(r => r.email !== email))}
+                        inputValue={query}
+                        onInputChange={setQuery}
+                        onBackspaceRemove={() => {
+                            setRecipients(prev => prev.slice(0, -1));
+                        }}
                     />
+                    <UserSuggestions suggestions={suggestions} onSelect={handleAddRecipient} />
+
+                    {/* Các field khác */}
                     <input
                         type="text"
                         name="subject"
                         placeholder="Email subject"
                         value={form.subject}
                         onChange={handleChange}
-                        className="w-full rounded-md p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border"
+                        className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                     <input
                         type="text"
@@ -82,7 +124,7 @@ export default function EventFormModal({ isOpen, onClose, onSubmit, slotInfo }) 
                         placeholder="Event title"
                         value={form.title}
                         onChange={handleChange}
-                        className="w-full rounded-md p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border"
+                        className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                     <textarea
                         name="description"
@@ -90,7 +132,7 @@ export default function EventFormModal({ isOpen, onClose, onSubmit, slotInfo }) 
                         value={form.description}
                         onChange={handleChange}
                         rows={3}
-                        className="w-full rounded-md p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border"
+                        className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                     <input
                         type="text"
@@ -98,7 +140,7 @@ export default function EventFormModal({ isOpen, onClose, onSubmit, slotInfo }) 
                         placeholder="Location"
                         value={form.location}
                         onChange={handleChange}
-                        className="w-full rounded-md p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border"
+                        className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                     <input
                         type="text"
@@ -106,43 +148,40 @@ export default function EventFormModal({ isOpen, onClose, onSubmit, slotInfo }) 
                         placeholder="Online meeting link"
                         value={form.onlineLink}
                         onChange={handleChange}
-                        className="w-full rounded-md p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border"
+                        className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
+
                     <div className="flex gap-4">
                         <div className="flex-1">
-                            <label className="block text-sm font-medium mb-1">Start</label>
+                            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+                                Start
+                            </label>
                             <input
                                 type="datetime-local"
                                 name="start"
                                 value={form.start}
                                 onChange={handleChange}
-                                className="w-full rounded-md p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border"
+                                className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             />
                         </div>
                         <div className="flex-1">
-                            <label className="block text-sm font-medium mb-1">End</label>
+                            <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+                                End
+                            </label>
                             <input
                                 type="datetime-local"
                                 name="end"
                                 value={form.end}
                                 onChange={handleChange}
-                                className="w-full rounded-md p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border"
+                                className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             />
                         </div>
                     </div>
-                    <input
-                        type="email"
-                        name="organizer"
-                        placeholder="Organizer email"
-                        value={form.organizer}
-                        onChange={handleChange}
-                        className="w-full rounded-md p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border"
-                    />
 
                     <div className="flex justify-end gap-2">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100"
                         >
                             Cancel

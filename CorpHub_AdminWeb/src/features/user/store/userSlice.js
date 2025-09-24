@@ -1,6 +1,6 @@
 // src/features/user/store/userSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getUsers } from "../services/userApi";
+import { getUsers, getUsersBySearch } from "../services/userApi";
 import { getAllDepartments } from "../../department/services/departmentApi";
 
 // Lấy danh sách user
@@ -30,15 +30,29 @@ export const fetchDepartments = createAsyncThunk(
   }
 );
 
+export const fetchUsersBySearch = createAsyncThunk(
+  "user/fetchUsersBySearch",
+  async (query) => {
+    const response = await getUsersBySearch(query);
+    return response.data;
+  }
+)
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
     list: [],
+    searchResults: [],
     loading: false,
     error: null,
     departments: [],
   },
-  reducers: {},
+  reducers: {
+    clearSearchResults: (state) => {
+      state.searchResults = [];
+    },
+  },
+
   extraReducers: (builder) => {
     builder
       // Khi gửi request
@@ -66,13 +80,29 @@ const userSlice = createSlice({
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error?.message || "Search failed";
       })
 
       // Departments
       .addCase(fetchDepartments.fulfilled, (state, action) => { state.departments = action.payload; })
-      .addCase(fetchDepartments.rejected, (state, action) => { state.error = action.error.message; });
+      .addCase(fetchDepartments.rejected, (state, action) => { state.error = action.error?.message || "Search failed"; })
+
+
+      // Fetch users by search
+      .addCase(fetchUsersBySearch.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsersBySearch.fulfilled, (state, action) => {
+        state.loading = false;
+        state.searchResults = action.payload;
+      })
+      .addCase(fetchUsersBySearch.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error?.message || "Search failed";
+      });
   },
 });
 
+export const { clearSearchResults } = userSlice.actions;
 export default userSlice.reducer;
