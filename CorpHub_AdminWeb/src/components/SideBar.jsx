@@ -1,5 +1,5 @@
 // src/components/Sidebar.jsx
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   HomeIcon,
@@ -9,6 +9,8 @@ import {
   ClipboardDocumentListIcon,
   CalendarIcon,
   Cog6ToothIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
 } from "@heroicons/react/24/outline";
 
 const menu = [
@@ -22,40 +24,60 @@ const menu = [
 ];
 
 const Sidebar = () => {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <aside className="w-64 bg-white dark:bg-gray-800 shadow-md dark:shadow-lg flex flex-col">
+    <aside
+      className={`${collapsed ? "w-20" : "w-64"
+        } bg-white dark:bg-gray-800 shadow-md dark:shadow-lg flex flex-col transition-all duration-300`}
+    >
       {/* Header */}
-      <div className="h-20 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-xl font-bold text-blue-600 dark:text-blue-400">
-          Admin Panel
-        </h2>
+      <div className="h-20 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700">
+        {!collapsed && (
+          <h2 className="text-xl font-bold text-blue-600 dark:text-blue-400">
+            Admin Panel
+          </h2>
+        )}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        >
+          {collapsed ? (
+            <ChevronDoubleRightIcon className="h-7 w-7 text-gray-600 dark:text-gray-300" />
+          ) : (
+            <ChevronDoubleLeftIcon className="h-7 w-7 text-gray-600 dark:text-gray-300" />
+          )}
+        </button>
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 flex flex-col gap-1 px-4 py-6">
+      <nav className="flex-1 flex flex-col gap-1 px-2 py-6">
         {menu.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             end
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2 rounded-lg transition-all 
+              `flex items-center ${collapsed ? "justify-center" : "gap-3"
+              } px-4 py-2 rounded-lg transition-all 
               ${isActive
                 ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
                 : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               }`
             }
           >
-            <item.icon className="h-5 w-5" />
-            <span>{item.name}</span>
+            <item.icon className="h-6 w-6" />
+            {!collapsed && <span className="text-base">{item.name}</span>}
           </NavLink>
         ))}
       </nav>
 
       {/* Footer */}
-      <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400 dark:text-gray-500">
-        © 2025 Admin Panel
-      </div>
+      {!collapsed && (
+        <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400 dark:text-gray-500">
+          © 2025 Admin Panel
+        </div>
+      )}
     </aside>
   );
 };

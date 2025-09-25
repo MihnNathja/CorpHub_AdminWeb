@@ -1,46 +1,117 @@
-// store/calendarSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchFakeEvents } from "../services/calendarService";
+import { deleteMeeting, getMeetings, saveMeeting } from "../services/calendarApi";
 
-export const loadEvents = createAsyncThunk("calendar/loadEvents", async () => {
-    const events = await fetchFakeEvents();
-    return events;
-});
+export const fetchMeetings = createAsyncThunk(
+    "meetings/fetchMeetings",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await getMeetings();
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+);
 
-const calendarSlice = createSlice({
-    name: "calendar",
+export const createOrUpdateMeeting = createAsyncThunk(
+    "meetings/createOrUpdateMeeting",
+    async (meeting, { rejectWithValue }) => {
+        try {
+            const res = await saveMeeting(meeting);
+            return res?.data;
+        }
+        catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+)
+
+export const removeMeeting = createAsyncThunk(
+    "meetings/deleteMeeting",
+    async (id, { rejectWithValue }) => {
+        try {
+            const res = await deleteMeeting(id);
+            return res?.data;
+        }
+        catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+)
+
+const eventSlice = createSlice({
+    name: "events",
     initialState: {
-        events: [],
+        meetings: [],
         loading: false,
+        error: null,
     },
     reducers: {
         addEvent: (state, action) => {
-            state.events.push(action.payload);
+            state.meetings.push(action.payload);
         },
         updateEvent: (state, action) => {
-            const index = state.events.findIndex((e) => e.id === action.payload.id);
-            if (index !== -1) {
-                state.events[index] = action.payload;
+            const idx = state.meetings.findIndex((e) => e.id === action.payload.id);
+            if (idx !== -1) {
+                state.meetings[idx] = { ...state.meetings[idx], ...action.payload };
             }
         },
-        deleteEvent: (state, action) => {
-            state.events = state.events.filter((e) => e.id !== action.payload);
-        },
+
+        removeEvent: (state, action) => {
+            state.meetings = state.meetings.filter(e => e.id !== action.payload);
+        }
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadEvents.pending, (state) => {
+            // FETCH
+            .addCase(fetchMeetings.pending, (state) => {
                 state.loading = true;
+                state.error = null;
             })
-            .addCase(loadEvents.fulfilled, (state, action) => {
+            .addCase(fetchMeetings.fulfilled, (state, action) => {
                 state.loading = false;
-                state.events = action.payload;
+                state.meetings = action.payload;
             })
-            .addCase(loadEvents.rejected, (state) => {
+            .addCase(fetchMeetings.rejected, (state, action) => {
                 state.loading = false;
+                state.error = action.payload;
+            })
+
+            // CREATE OR UPDATE
+            .addCase(createOrUpdateMeeting.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(createOrUpdateMeeting.fulfilled, (state, action) => {
+                state.loading = false;
+                const created = action.payload;
+                if (!created?.id) return;
+                const idx = state.meetings.findIndex((m) => m.id === created.id);
+                if (idx === -1) state.meetings.push(created);
+                else state.meetings[idx] = created;
+            })
+            .addCase(createOrUpdateMeeting.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error?.message;
+            })
+
+            // DELETE
+            .addCase(removeMeeting.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(removeMeeting.fulfilled, (state, action) => {
+                state.loading = false;
+                const deletedId = action.meta.arg; // vì ta truyền id khi gọi removeMeeting(id)
+                state.meetings = state.meetings.filter((m) => m.id !== deletedId);
+            })
+
+            .addCase(removeMeeting.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error?.message;
             });
-    },
+    }
 });
 
-export const { addEvent, updateEvent, deleteEvent } = calendarSlice.actions;
-export default calendarSlice.reducer;
+export const { addEvent, updateEvent, removeEvent } = eventSlice.actions;
+export default eventSlice.reducer;
