@@ -2,8 +2,8 @@ import React from "react";
 import StatCard from "../../../global/components/StatCard";
 import { statusColors } from "../../../global/const/statusColors";
 import { priorityColors } from "../../../global/const/priorityColors";
-import ButtonOutline from "../../../global/components/ButtonOutline";
 import AssigneeSelect from "../../../global/components/AssigneeSelect";
+import { EyeIcon } from "lucide-react";
 
 const TicketReceivedRow = ({
   ticket,
@@ -11,6 +11,7 @@ const TicketReceivedRow = ({
   editingId,
   setEditingId,
   handleAssign,
+  setIsModalOpen,
   setSelectedTicket,
 }) => {
   return (
@@ -37,10 +38,18 @@ const TicketReceivedRow = ({
       <td className="px-4 py-2 text-gray-800 dark:text-gray-100">
         {new Date(ticket.createdAt).toLocaleString()}
       </td>
-      <td className="px-4 py-2 flex justify-center gap-2">
-        <ButtonOutline onClick={() => setSelectedTicket(ticket)} color="blue">
-          View
-        </ButtonOutline>
+      <td className="px-4 py-2">
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedTicket(ticket);
+            setIsModalOpen(true);
+          }}
+          className={`flex items-center gap-1 px-3 py-1 text-sm font-medium rounded-md
+      bg-transparent text-blue-600 border border-blue-600 hover:bg-blue-50 transition`}
+        >
+          <EyeIcon className="h-4 w-4" />
+        </button>
       </td>
     </tr>
   );

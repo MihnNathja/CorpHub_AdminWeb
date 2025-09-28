@@ -1,7 +1,7 @@
 import React from "react";
 import TicketReceivedRow from "./TicketReceivedRow";
 
-const TicketReceivedTableBody = ({ tickets, users, editingId, setEditingId, handleAssign, setSelectedTicket }) => {
+const TicketReceivedTableBody = ({ tickets, users, editingId, setEditingId, handleAssign, setIsModalOpen, setSelectedTicket }) => {
   return (
     <tbody>
       {tickets.map((ticket) => (
@@ -12,6 +12,7 @@ const TicketReceivedTableBody = ({ tickets, users, editingId, setEditingId, hand
           editingId={editingId}
           setEditingId={setEditingId}
           handleAssign={handleAssign}
+          setIsModalOpen={setIsModalOpen}
           setSelectedTicket={setSelectedTicket}
         />
       ))}

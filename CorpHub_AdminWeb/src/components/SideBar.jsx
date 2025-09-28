@@ -1,6 +1,7 @@
 // src/components/Sidebar.jsx
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   HomeIcon,
   TicketIcon,
@@ -13,18 +14,24 @@ import {
   ChevronDoubleRightIcon,
 } from "@heroicons/react/24/outline";
 
+// Thêm roles cho từng item (có thể mở rộng sau này)
 const menu = [
-  { name: "Dashboard", path: "", icon: HomeIcon },
-  { name: "Tickets", path: "tickets", icon: TicketIcon },
-  { name: "Users", path: "users", icon: UsersIcon },
-  { name: "Departments", path: "departments", icon: BuildingOfficeIcon },
-  { name: "Projects", path: "projects", icon: ClipboardDocumentListIcon },
-  { name: "Calendar", path: "calendar", icon: CalendarIcon },
-  { name: "Settings", path: "settings", icon: Cog6ToothIcon },
+  { name: "Dashboard", path: "", icon: HomeIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER"] },
+  { name: "Tickets", path: "tickets", icon: TicketIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER"] },
+  { name: "Tickets", path: "my-tickets", icon: TicketIcon, roles: ["ROLE_USER"] },
+  { name: "Users", path: "users", icon: UsersIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER"] },
+  { name: "Departments", path: "departments", icon: BuildingOfficeIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER"] },
+  { name: "Projects", path: "projects", icon: ClipboardDocumentListIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER"] },
+  { name: "Calendar", path: "calendar", icon: CalendarIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER"] },
+  { name: "Settings", path: "settings", icon: Cog6ToothIcon, roles: ["ROLE_ADMIN"] },
 ];
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+
+  // Nếu chưa login, không render sidebar
+  if (!user) return null;
 
   return (
     <aside
@@ -52,24 +59,26 @@ const Sidebar = () => {
 
       {/* Menu */}
       <nav className="flex-1 flex flex-col gap-1 px-2 py-6">
-        {menu.map((item) => (
-          <NavLink
-            key={item.name}
-            to={item.path}
-            end
-            className={({ isActive }) =>
-              `flex items-center ${collapsed ? "justify-center" : "gap-3"
-              } px-4 py-2 rounded-lg transition-all 
-              ${isActive
-                ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
-                : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-              }`
-            }
-          >
-            <item.icon className="h-6 w-6" />
-            {!collapsed && <span className="text-base">{item.name}</span>}
-          </NavLink>
-        ))}
+        {menu
+          .filter((item) => item.roles.includes(user.role)) // lọc theo role
+          .map((item) => (
+            <NavLink
+              key={item.name}
+              to={item.path}
+              end
+              className={({ isActive }) =>
+                `flex items-center ${collapsed ? "justify-center" : "gap-3"}
+                 px-4 py-2 rounded-lg transition-all 
+                 ${isActive
+                  ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                }`
+              }
+            >
+              <item.icon className="h-6 w-6" />
+              {!collapsed && <span className="text-base">{item.name}</span>}
+            </NavLink>
+          ))}
       </nav>
 
       {/* Footer */}

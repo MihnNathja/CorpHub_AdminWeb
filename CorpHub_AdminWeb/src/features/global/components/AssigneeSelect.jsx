@@ -2,7 +2,7 @@ import React from "react";
 
 const AssigneeSelect = ({ ticket, users, editingId, setEditingId, handleAssign }) => {
     // Nếu ticket đang IN_PROGRESS thì chỉ hiển thị tên, không cho chỉnh
-    if (ticket.status === "IN_PROGRESS" || ticket.status === "DONE") {
+    if (ticket.status === "IN_PROGRESS" || ticket.status === "DONE" || ticket.status == "REJECTED") {
         return (
             <div className="text-gray-500 dark:text-gray-400">
                 {ticket.assignee?.fullName || "Chưa phân công"}
