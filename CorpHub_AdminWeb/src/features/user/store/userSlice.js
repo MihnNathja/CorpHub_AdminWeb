@@ -1,6 +1,6 @@
 // src/features/user/store/userSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getUsers, getUsersBySearch } from "../services/userApi";
+import { getUsersBySearch } from "../services/userApi";
 import { createUserApi, getUserByIdApi, getUsersApi } from "../services/userApi";
 import { getAllDepartments } from "../../department/services/departmentApi";
 import { showError } from "../../../utils/toastUtils"

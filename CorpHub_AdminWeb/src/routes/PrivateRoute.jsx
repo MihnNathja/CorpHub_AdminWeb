@@ -1,28 +1,30 @@
-import { Navigate } from "react-router-dom";
+// src/routes/PrivateRoute.jsx
+import { Navigate, Outlet } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-import { logout } from "../features/auth/store/authSlice"; // import action logout nếu có
+import { logout } from "../features/auth/store/authSlice";
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = () => {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
 
   const isTokenExpired = (token) => {
     try {
       const decoded = jwtDecode(token);
-      // exp trong JWT là đơn vị giây, Date.now() là ms
+      // exp trong JWT là giây, Date.now() là ms
       return decoded.exp * 1000 < Date.now();
     } catch (err) {
-      return true; // token không hợp lệ => coi như hết hạn
+      return true; // token lỗi → coi như hết hạn
     }
   };
 
   if (!token || isTokenExpired(token)) {
-    dispatch(logout()); // xoá token trong redux + localStorage
+    dispatch(logout()); // clear redux + localStorage
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  // ✅ Cho phép render các route con
+  return <Outlet />;
 };
 
 export default PrivateRoute;
