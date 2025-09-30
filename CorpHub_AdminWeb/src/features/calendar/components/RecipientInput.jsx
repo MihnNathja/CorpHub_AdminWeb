@@ -41,9 +41,9 @@ export default function RecipientInput({
     tokens.forEach((t) => {
       const parsed = parseToken(t);
       if (parsed && EMAIL_REGEX.test(parsed.email)) {
-        const email = parsed.email.toLowerCase();
+        const email = parsed.email;
         // tránh trùng chip
-        if (!recipients.some((r) => r.email.toLowerCase() === email)) {
+        if (!recipients.some((r) => r.email === email)) {
           onAddRecipient?.({ email, name: parsed.name || "" });
           added = true;
         }

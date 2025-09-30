@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { deleteMeeting, getMeetings, saveMeeting } from "../services/calendarApi";
+import { deleteMeeting, getMeetings, saveMeeting, confirmAttend } from "../services/calendarApi";
 
 export const fetchMeetings = createAsyncThunk(
     "meetings/fetchMeetings",
-    async (_, { rejectWithValue }) => {
+    async ({ startTime, endTime, emails }, { rejectWithValue }) => {
         try {
-            const res = await getMeetings();
+            const res = await getMeetings({ startTime, endTime, emails });
+            console.log(res.data);
             return res.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
@@ -17,7 +18,9 @@ export const createOrUpdateMeeting = createAsyncThunk(
     "meetings/createOrUpdateMeeting",
     async (meeting, { rejectWithValue }) => {
         try {
+            console.log("save:", meeting);
             const res = await saveMeeting(meeting);
+            console.log("saved:", res);
             return res?.data;
         }
         catch (err) {
@@ -31,6 +34,20 @@ export const removeMeeting = createAsyncThunk(
     async (id, { rejectWithValue }) => {
         try {
             const res = await deleteMeeting(id);
+            return res?.data;
+        }
+        catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+)
+
+export const confirmAttendMeeting = createAsyncThunk(
+    "meetings/confirmAttend",
+    async ({ id, isAccepted }, { rejectWithValue }) => {
+        try {
+            const res = await confirmAttend(id, isAccepted);
+            console.log(res);
             return res?.data;
         }
         catch (err) {
@@ -109,7 +126,27 @@ const eventSlice = createSlice({
             .addCase(removeMeeting.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error?.message;
+            })
+
+            // CONFIRM ATTEND
+            .addCase(confirmAttendMeeting.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(confirmAttendMeeting.fulfilled, (state, action) => {
+                state.loading = false;
+                const updatedMeeting = action.payload;
+                if (!updatedMeeting?.id) return;
+                const idx = state.meetings.findIndex((m) => m.id === updatedMeeting.id);
+                if (idx !== -1) {
+                    state.meetings[idx] = updatedMeeting;
+                }
+            })
+            .addCase(confirmAttendMeeting.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error?.message;
             });
+
     }
 });
 

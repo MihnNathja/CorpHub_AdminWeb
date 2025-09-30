@@ -4,10 +4,16 @@ export const getReceivedTickets = () => api.get(`/api/tickets/department/receive
 
 export const getUsersDepartment = () => api.get(`/api/department/users`);
 
+export const getMyTickets = () => api.get(`/api/tickets/my-tickets`);
+
+export const saveTicket = (ticket) => api.post(`api/tickets/save`, ticket);
+
 export const assignTicket = (ticketId, userId) => api.post(`/api/tickets/assign`, { ticketId: ticketId, assigneeId: userId });
 
 export const getSentTickets = () => api.get(`/api/tickets/department/sent`);
 
 export const confirmSendTicket = (ticketId) => api.post(`/api/tickets/confirm/${ticketId}`);
 
-export const rejectSendTicket = (ticketId) => api.post(`/api/tickets/reject/${ticketId}`);
+export const rejectTicket = (ticketId, reason) => api.post(`/api/tickets/reject`, { ticketId, reason });
+
+export const acceptTicket = (ticketId) => api.post(`/api/tickets/take-over/${ticketId}`)

@@ -2,6 +2,7 @@
 import { toast } from "react-toastify";
 
 export const showSuccess = (msg) => {
+  console.log(msg);
   toast.success(msg);
 };
 

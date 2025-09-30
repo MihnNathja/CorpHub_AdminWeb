@@ -17,7 +17,7 @@ const locales = { "en-US": enUS };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
 const DnDCalendar = withDragAndDrop(Calendar);
 
-export default function MyCalendar({ events, onSelectSlot, onEventDrop, onDoubleClickEvent, onEditEvent, onDelete, theme }) {
+export default function MyCalendar({ date, onNavigate, events, eventPropGetter, onSelectSlot, onEventDrop, onDoubleClickEvent, onEditEvent, onDelete, theme }) {
     const [popup, setPopup] = useState(null);
 
     const handleSelectEvent = (event, e) => {
@@ -40,8 +40,11 @@ export default function MyCalendar({ events, onSelectSlot, onEventDrop, onDouble
         <div className={theme === "dark" ? "calendar-dark" : "calendar-light"
         }>
             <DnDCalendar
+                date={date}
+                onNavigate={onNavigate}
                 localizer={localizer}
                 events={events}
+                eventPropGetter={eventPropGetter}
                 startAccessor="start"
                 endAccessor="end"
                 selectable

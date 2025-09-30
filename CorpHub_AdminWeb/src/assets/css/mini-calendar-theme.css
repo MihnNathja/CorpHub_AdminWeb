@@ -1,0 +1,139 @@
+/* ==============================
+   Mini Calendar Custom Theme
+   ============================== */
+
+/* Container */
+.react-calendar.custom-mini-calendar {
+    width: 100%;
+    background: var(--calendar-bg) !important;
+    border: 1px solid var(--calendar-border);
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    box-shadow: var(--calendar-shadow);
+    font-family: Inter, system-ui, sans-serif;
+    line-height: 1.5;
+    padding: 0.5rem;
+}
+
+/* Header navigation */
+.react-calendar.custom-mini-calendar .react-calendar__navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.react-calendar.custom-mini-calendar .react-calendar__navigation button {
+    min-width: 2rem;
+    background: none;
+    border: none;
+    border-radius: 0.5rem;
+    color: var(--calendar-text);
+    font-size: 1rem;
+    padding: 0.25rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+/* Navigation hover */
+.react-calendar.custom-mini-calendar .react-calendar__navigation button:hover {
+    background: var(--calendar-hover);
+    color: var(--calendar-text);
+}
+
+/* Weekdays */
+.react-calendar.custom-mini-calendar .react-calendar__month-view__weekdays {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: var(--calendar-weekday);
+}
+
+/* Tiles (ngày) */
+.react-calendar.custom-mini-calendar .react-calendar__tile {
+    max-width: 100%;
+    padding: 0.5rem 0.25rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    background: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--calendar-text);
+}
+
+/* Hover cho ngày */
+.react-calendar.custom-mini-calendar .react-calendar__tile:enabled:hover {
+    background: var(--calendar-hover);
+    color: var(--calendar-text);
+}
+
+/* Hôm nay */
+.react-calendar.custom-mini-calendar .react-calendar__tile--now {
+    background: var(--calendar-today-bg);
+    color: var(--calendar-today-text);
+    font-weight: bold;
+}
+
+/* Ngày chọn */
+.react-calendar.custom-mini-calendar .react-calendar__tile--active {
+    background: var(--calendar-active-bg) !important;
+    color: var(--calendar-active-text) !important;
+}
+
+/* Disabled */
+.react-calendar.custom-mini-calendar .react-calendar__tile:disabled {
+    background: none;
+    color: var(--calendar-disabled);
+    cursor: not-allowed;
+}
+
+/* ==============================
+   LIGHT THEME
+   ============================== */
+:root {
+    --calendar-bg: #ffffff;
+    --calendar-border: #e5e7eb;
+    /* gray-200 */
+    --calendar-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    --calendar-text: #111827;
+    /* gray-900 */
+    --calendar-weekday: #6b7280;
+    /* gray-500 */
+    --calendar-hover: #f3f4f6;
+    /* gray-100 */
+    --calendar-today-bg: #ecfdf5;
+    /* green-50 */
+    --calendar-today-text: #047857;
+    /* green-700 */
+    --calendar-active-bg: #10b981;
+    /* green-500 */
+    --calendar-active-text: #ffffff;
+    --calendar-disabled: #9ca3af;
+    /* gray-400 */
+}
+
+/* ==============================
+   DARK THEME
+   ============================== */
+.react-calendar.custom-mini-calendar.dark {
+    --calendar-bg: #1f2937;
+    /* gray-800 */
+    --calendar-border: #374151;
+    /* gray-700 */
+    --calendar-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    --calendar-text: #f9fafb;
+    /* gray-50 */
+    --calendar-weekday: #9ca3af;
+    /* gray-400 */
+    --calendar-hover: rgba(16, 185, 129, 0.25);
+    /* xanh lá nhạt, đồng bộ hover */
+    --calendar-today-bg: #064e3b;
+    /* green-900 */
+    --calendar-today-text: #6ee7b7;
+    /* green-300 */
+    --calendar-active-bg: #10b981;
+    /* green-500 */
+    --calendar-active-text: #ffffff;
+    --calendar-disabled: #4b5563;
+    /* gray-600 */
+}
