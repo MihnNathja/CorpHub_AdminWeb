@@ -12,9 +12,10 @@ import {
   confirmSend,
   reject,
   createOrUpdateTicket,
-  accept
+  accept,
+  complete,
 } from "../store/ticketSlice";
-import {showError, showSuccess} from "../../../utils/toastUtils"
+import { showError, showSuccess } from "../../../utils/toastUtils";
 
 export const useTickets = (mode) => {
   const dispatch = useDispatch();
@@ -39,11 +40,7 @@ export const useTickets = (mode) => {
 
   // Mảng gốc
   const rawTickets =
-    mode === "sent"
-      ? sentItems
-      : mode === "my"
-        ? myItems
-        : receivedItems;
+    mode === "sent" ? sentItems : mode === "my" ? myItems : receivedItems;
 
   // Filter tickets nhưng KHÔNG mutate rawTickets
   const filteredTickets = useMemo(() => {
@@ -71,6 +68,7 @@ export const useTickets = (mode) => {
       setEditingId(null);
       dispatch(fetchReceivedTickets());
     } catch (err) {
+      showError("Assign failed");
       console.error("Assign failed:", err);
     }
   };
@@ -78,20 +76,24 @@ export const useTickets = (mode) => {
   const handleConfirmSend = async (ticketId) => {
     try {
       await dispatch(confirmSend({ ticketId }));
+      showSuccess("Confirm successfully");
       if (mode === "sent") dispatch(fetchSentTickets());
       else dispatch(fetchReceivedTickets());
     } catch (err) {
-      console.error("Confirm send failed:", err);
+      showError("Confirm sending failed");
+      console.error("Confirm sending failed:", err);
     }
   };
 
   const handleReject = async (ticketId, reason) => {
     try {
       await dispatch(reject({ ticketId, reason }));
+      showSuccess("Reject successfully");
       if (mode === "my") dispatch(fetchMyTickets());
       if (mode === "sent") dispatch(fetchSentTickets());
       else dispatch(fetchReceivedTickets());
     } catch (err) {
+      showError("Reject send failed");
       console.error("Reject send failed:", err);
     }
   };
@@ -120,6 +122,17 @@ export const useTickets = (mode) => {
     }
   };
 
+  const handleComplete = async (ticketId) => {
+    try {
+      await dispatch(complete(ticketId));
+      showSuccess("Ticket completed");
+      if (mode === "my") dispatch(fetchMyTickets());
+    } catch (err) {
+      showError("Complete ticket failed");
+      console.error("Complete ticket failed:", err);
+    }
+  };
+
   // Fetch tickets theo mode khi mount
   useEffect(() => {
     if (mode === "sent") dispatch(fetchSentTickets());
@@ -129,7 +142,7 @@ export const useTickets = (mode) => {
 
   // Fetch users cho assign
   useEffect(() => {
-    console.log ("Fetch users cho assign, ", users);
+    console.log("Fetch users cho assign, ", users);
     if (!Array.isArray(users) || users.length === 0) {
       dispatch(fetchUsersDepartment());
     }
@@ -162,5 +175,6 @@ export const useTickets = (mode) => {
     handleReject,
     handleCreateOrUpdate,
     handleAccept,
+    handleComplete,
   };
 };

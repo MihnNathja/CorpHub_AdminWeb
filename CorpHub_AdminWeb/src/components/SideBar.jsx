@@ -16,15 +16,61 @@ import {
 
 // Thêm roles cho từng item (có thể mở rộng sau này)
 const menu = [
-  { name: "Dashboard", path: "", icon: HomeIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER"] },
-  { name: "Tickets", path: "tickets", icon: TicketIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER"] },
-  { name: "Tickets", path: "my-tickets", icon: TicketIcon, roles: ["ROLE_USER"] },
-  { name: "Users", path: "users", icon: UsersIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER"] },
-  { name: "Departments", path: "departments", icon: BuildingOfficeIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER"] },
-  { name: "Projects", path: "projects", icon: ClipboardDocumentListIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER"] },
-  { name: "Calendar", path: "calendar", icon: CalendarIcon, roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER"] },
-  { name: "Settings", path: "settings", icon: Cog6ToothIcon, roles: ["ROLE_ADMIN"] },
+  {
+    name: "Dashboard",
+    path: "",
+    icon: HomeIcon,
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER"],
+  },
+  {
+    name: "Tickets",
+    path: "tickets",
+    icon: TicketIcon,
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+  },
+  {
+    name: "Tickets",
+    path: "my-tickets",
+    icon: TicketIcon,
+    roles: ["ROLE_USER"],
+  },
+  {
+    name: "Users",
+    path: "users",
+    icon: UsersIcon,
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+  },
+  {
+    name: "Departments",
+    path: "departments",
+    icon: BuildingOfficeIcon,
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+  },
+  {
+    name: "Projects",
+    path: "projects",
+    icon: ClipboardDocumentListIcon,
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+  },
+  {
+    name: "Calendar",
+    path: "calendar",
+    icon: CalendarIcon,
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER"],
+  },
+  {
+    name: "Settings",
+    path: "settings",
+    icon: Cog6ToothIcon,
+    roles: ["ROLE_ADMIN"],
+  },
 ];
+
+const ROLE_PANEL = {
+  ROLE_ADMIN: "Admin",
+  ROLE_MANAGER: "Manager",
+  ROLE_USER: "Employee",
+};
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -35,14 +81,15 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`${collapsed ? "w-20" : "w-64"
-        } bg-white dark:bg-gray-800 shadow-md dark:shadow-lg flex flex-col transition-all duration-300`}
+      className={`${
+        collapsed ? "w-20" : "w-64"
+      } bg-white dark:bg-gray-800 shadow-md dark:shadow-lg flex flex-col transition-all duration-300`}
     >
       {/* Header */}
       <div className="h-20 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700">
         {!collapsed && (
           <h2 className="text-xl font-bold text-blue-600 dark:text-blue-400">
-            Admin Panel
+            {ROLE_PANEL[user.role]} Workspace
           </h2>
         )}
         <button
@@ -69,10 +116,11 @@ const Sidebar = () => {
               className={({ isActive }) =>
                 `flex items-center ${collapsed ? "justify-center" : "gap-3"}
                  px-4 py-2 rounded-lg transition-all 
-                 ${isActive
-                  ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-                }`
+                 ${
+                   isActive
+                     ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
+                     : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                 }`
               }
             >
               <item.icon className="h-6 w-6" />

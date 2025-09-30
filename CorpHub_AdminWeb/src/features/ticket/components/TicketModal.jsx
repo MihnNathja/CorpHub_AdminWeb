@@ -17,6 +17,7 @@ import { useAuth } from "../../auth/hooks/useAuth";
 import TicketActionGroupEmp from "./TicketActionGroupEmp";
 import ReasonForm from "./ReasonForm";
 import RejectButton from "./button/RejectButton";
+import CompleteButton from "./button/CompleteButton";
 
 const TicketModal = ({
   ticket,
@@ -26,6 +27,7 @@ const TicketModal = ({
   handleAssign,
   handleAccept,
   handleReject,
+  handleComplete,
   isReasonFormOpen,
   setIsReasonFormOpen,
   mode,
@@ -41,12 +43,20 @@ const TicketModal = ({
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 w-3/4 max-h-[85vh] overflow-y-auto rounded-xl shadow-lg transition-colors">
         {/* Header */}
-        <div className={`flex justify-between items-center p-4 rounded-t-xl ${statusColors[ticket.status]}`}>
+        <div
+          className={`flex justify-between items-center p-4 rounded-t-xl ${
+            statusColors[ticket.status]
+          }`}
+        >
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
               <Info className="w-5 h-5" /> {ticket.title}
             </h2>
-            <StatCard label={ticket.priority} colors={priorityColors} className="px-3 py-1 text-xs" />
+            <StatCard
+              label={ticket.priority}
+              colors={priorityColors}
+              className="px-3 py-1 text-xs"
+            />
           </div>
           <button
             onClick={onClose}
@@ -60,11 +70,26 @@ const TicketModal = ({
         <div className="p-6 grid grid-cols-3 gap-6">
           {/* Cột trái */}
           <div className="space-y-4 col-span-1">
-            <p className="flex items-center gap-2"><Tag className="w-4 h-4" /><b>ID:</b> {ticket.id}</p>
-            <p className="flex items-center gap-2"><Building2 className="w-4 h-4" /><b>Department:</b> {ticket.department?.name || "N/A"}</p>
-            <p className="flex items-center gap-2"><Layers className="w-4 h-4" /><b>Category:</b> {ticket.category?.categoryName || "N/A"}</p>
-            <p className="flex items-center gap-2"><User className="w-4 h-4" /><b>Requester:</b> {ticket.requester?.fullName || "Ẩn danh"}</p>
-            <p className="flex items-center gap-2"><CalendarClock className="w-4 h-4" /><b>Created At:</b> {new Date(ticket.createdAt).toLocaleString()}</p>
+            <p className="flex items-center gap-2">
+              <Tag className="w-4 h-4" />
+              <b>ID:</b> {ticket.id}
+            </p>
+            <p className="flex items-center gap-2">
+              <Building2 className="w-4 h-4" />
+              <b>Department:</b> {ticket.department?.name || "N/A"}
+            </p>
+            <p className="flex items-center gap-2">
+              <Layers className="w-4 h-4" />
+              <b>Category:</b> {ticket.category?.categoryName || "N/A"}
+            </p>
+            <p className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              <b>Requester:</b> {ticket.requester?.fullName || "Ẩn danh"}
+            </p>
+            <p className="flex items-center gap-2">
+              <CalendarClock className="w-4 h-4" />
+              <b>Created At:</b> {new Date(ticket.createdAt).toLocaleString()}
+            </p>
 
             {/* Assignee */}
             <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
@@ -73,19 +98,20 @@ const TicketModal = ({
               </label>
               <select
                 value={ticket.assignee?.id || ""}
-                onChange={(e) => 
-                  {
-                    onClose();
-                    // sau này sẽ làm reload lại thay vì tắt hẳn
-                    handleAssign(ticket.id, e.target.value)
-                  }}
-                disabled={!(mode === "received" && (ticket.status === "WAITING"))}
+                onChange={(e) => {
+                  onClose();
+                  // sau này sẽ làm reload lại thay vì tắt hẳn
+                  handleAssign(ticket.id, e.target.value);
+                }}
+                disabled={!(mode === "received" && ticket.status === "WAITING")}
                 className={`w-full border rounded-lg p-2 transition-colors
                   dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100
                   focus:ring-2 focus:ring-blue-500
-                  ${!(mode === "received" && (ticket.status === "WAITING"))
-                    ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
-                    : ""}`}
+                  ${
+                    !(mode === "received" && ticket.status === "WAITING")
+                      ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
+                      : ""
+                  }`}
               >
                 <option value="">Chưa phân công</option>
                 {users.map((user) => (
@@ -103,7 +129,10 @@ const TicketModal = ({
               <Info className="w-4 h-4 mt-1" />
               <div className="flex-1">
                 <b>Description</b>
-                <div className="mt-2 border border-gray-300 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 whitespace-pre-line overflow-y-auto" style={{ maxHeight: "200px" }}>
+                <div
+                  className="mt-2 border border-gray-300 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 whitespace-pre-line overflow-y-auto"
+                  style={{ maxHeight: "200px" }}
+                >
                   {ticket.description}
                 </div>
               </div>
@@ -127,19 +156,22 @@ const TicketModal = ({
               </button>
             )}
 
-            {isCurrentUserAssignee ? (
+            {isCurrentUserAssignee && ticket.status === "IN_PROGRESS" ? (
+              <CompleteButton
+                onClick={() => {
+                  onClose();
+                  handleComplete(ticket.id);
+                }}
+              />
+            ) : isCurrentUserAssignee ? (
               <TicketActionGroupEmp
                 status={ticket.status}
                 onAccept={() => handleAccept(ticket.id)}
                 onReject={() => setIsReasonFormOpen(true)}
               />
-
-            ) :
-            ((user.role === "ROLE_MANAGER" || user.role === "ROLE_ADMIN") && ticket.status === "WAITING") ? 
-            (
-              <RejectButton
-                onReject={() => setIsReasonFormOpen(true)}
-              />
+            ) : (user.role === "ROLE_MANAGER" || user.role === "ROLE_ADMIN") &&
+              ticket.status === "WAITING" ? (
+              <RejectButton onClick={() => setIsReasonFormOpen(true)} />
             ) : null}
 
             <button

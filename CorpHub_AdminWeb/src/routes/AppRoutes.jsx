@@ -9,6 +9,7 @@ import PrivateRoute from "../routes/PrivateRoute";
 import UnauthorizedPage from "../pages/UnauthorizedPage";
 import EmployeeTicketPage from "../features/ticket/pages/EmployeeTicketsPage";
 import EmployeePage from "../features/employee/pages/EmployeePage";
+import FeatureComingSoonPage from "../pages/FeatureComingSoonPage";
 
 const AppRoutes = () => {
   return (
@@ -16,6 +17,8 @@ const AppRoutes = () => {
       {/* Public routes */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      {/* Trang Coming Soon cho các module chưa hoàn thiện */}
+      <Route path="/coming-soon" element={<FeatureComingSoonPage />} />
 
       {/* Private routes (Dashboard layout) */}
       <Route
@@ -27,11 +30,14 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<HomePage />} />
-        <Route path="tickets" element={
-          <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
-            <TicketsPage />
-          </PrivateRoute>
-        } />
+        <Route
+          path="tickets"
+          element={
+            <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
+              <TicketsPage />
+            </PrivateRoute>
+          }
+        />
 
         {/* Chỉ ROLE_MANAGER & ROLE_ADMIN mới được vào */}
         <Route
@@ -43,14 +49,27 @@ const AppRoutes = () => {
           }
         />
 
-        {/* Chỉ ROLE_USER mới được vào */}
-        <Route path="my-tickets" element={
-          <PrivateRoute roles={["ROLE_USER"]}>
-            <EmployeeTicketPage />
-          </PrivateRoute>
-        } />
+        <Route
+          path="departments"
+          element={
+            <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
+              <FeatureComingSoonPage />
+            </PrivateRoute>
+          }
+        />
 
+        {/* Chỉ ROLE_USER mới được vào */}
+        <Route
+          path="my-tickets"
+          element={
+            <PrivateRoute roles={["ROLE_USER"]}>
+              <EmployeeTicketPage />
+            </PrivateRoute>
+          }
+        />
+        <Route path="projects" element={<FeatureComingSoonPage />} />
         <Route path="calendar" element={<CalendarPage />} />
+        <Route path="settings" element={<FeatureComingSoonPage />} />
       </Route>
     </Routes>
   );

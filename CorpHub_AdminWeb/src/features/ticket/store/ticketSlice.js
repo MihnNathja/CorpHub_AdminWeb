@@ -9,6 +9,7 @@ import {
   getMyTickets,
   saveTicket,
   acceptTicket,
+  completeTicket,
 } from "../services/ticketApi";
 
 // === MY TICKETS ===
@@ -76,7 +77,7 @@ export const createOrUpdateTicket = createAsyncThunk(
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   }
-)
+);
 
 export const confirmSend = createAsyncThunk(
   "tickets/confirmSend",
@@ -119,6 +120,18 @@ export const accept = createAsyncThunk(
   async (ticketId, thunkAPI) => {
     try {
       const res = await acceptTicket(ticketId);
+      return { ticketId, data: res.data };
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const complete = createAsyncThunk(
+  "tickets/complete",
+  async (ticketId, thunkAPI) => {
+    try {
+      const res = await completeTicket(ticketId);
       return { ticketId, data: res.data };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -222,9 +235,14 @@ const ticketSlice = createSlice({
         if (!newTicket || !newTicket.id) return;
 
         // Nếu đã tồn tại thì update, nếu chưa thì thêm mới
-        const existingIndex = state.myItems.findIndex((t) => t.id === newTicket.id);
+        const existingIndex = state.myItems.findIndex(
+          (t) => t.id === newTicket.id
+        );
         if (existingIndex !== -1) {
-          state.myItems[existingIndex] = { ...state.myItems[existingIndex], ...newTicket };
+          state.myItems[existingIndex] = {
+            ...state.myItems[existingIndex],
+            ...newTicket,
+          };
         } else {
           state.myItems.unshift(newTicket); // thêm lên đầu danh sách
         }
@@ -305,13 +323,31 @@ const ticketSlice = createSlice({
         state.actionLoading = false;
         const ticketId = action.payload.ticketId;
         // tìm ticket trong receivedItems hoặc myItems để update
-        let ticket =
-          state.myItems.find((t) => t.id === ticketId);
+        let ticket = state.myItems.find((t) => t.id === ticketId);
         if (ticket) {
-          ticket.status = "IN_PROGRESS"; 
+          ticket.status = "IN_PROGRESS";
         }
       })
       .addCase(accept.rejected, (state, action) => {
+        state.actionLoading = false;
+        state.error = action.payload;
+      })
+
+      // === COMPLETE ===
+      .addCase(complete.pending, (state) => {
+        state.actionLoading = true;
+        state.error = null;
+      })
+      .addCase(complete.fulfilled, (state, action) => {
+        state.actionLoading = false;
+        const ticketId = action.payload.ticketId;
+        // tìm ticket trong receivedItems hoặc myItems để update
+        let ticket = state.myItems.find((t) => t.id === ticketId);
+        if (ticket) {
+          ticket.status = "COMPLETED";
+        }
+      })
+      .addCase(complete.rejected, (state, action) => {
         state.actionLoading = false;
         state.error = action.payload;
       });

@@ -3,69 +3,68 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../features/auth/store/authSlice";
+import defaultAvatar from "../assets/defaultAvatar.jpg";
 
 const UserProfile = ({ user }) => {
-    const [open, setOpen] = useState(false);
-    const dropdownRef = useRef();
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    // Click ngoài dropdown để đóng
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    const handleLogout = () => {
-        dispatch(logout());
-        navigate("/login");
+  // Click ngoài dropdown để đóng
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
     };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-    const handleEditProfile = () => {
-        navigate("/profile/edit"); // hoặc route edit profile của bạn
-    };
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
 
-    return (
-        <div className="relative" ref={dropdownRef}>
-            <button
-                onClick={() => setOpen(!open)}
-                className="flex items-center gap-2 focus:outline-none"
-            >
-                <img
-                    src={user?.avatar || "./assets/defaultAvatar.jpg"}
-                    alt="User Avatar"
-                    className="h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-600 transition-colors"
-                />
-                <span className="font-medium text-gray-800 dark:text-gray-200 transition-colors">
-                    {user?.name || "User"}
-                </span>
-            </button>
+  const handleEditProfile = () => {
+    navigate("/settings"); // hoặc route edit profile của bạn
+  };
 
-            {open && (
-                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-900/90 rounded-xl shadow-dropdown z-50 animate-fade-in transition-colors backdrop-blur-sm">
-                    <button
-                        onClick={handleEditProfile}
-                        className="w-full text-left dark:text-gray-100 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors"
-                    >
-                        Edit Profile
-                    </button>
-                    <button
-                        onClick={handleLogout}
-                        className="w-full text-left dark:text-gray-100 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors"
-                    >
-                        Logout
-                    </button>
-                </div>
-            )}
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 focus:outline-none"
+      >
+        <img
+          src={user?.avatar || defaultAvatar}
+          alt="User Avatar"
+          className="h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-600 transition-colors"
+        />
+        <span className="font-medium text-gray-800 dark:text-gray-200 transition-colors">
+          {user?.fullName || "User"}
+        </span>
+      </button>
+
+      {open && (
+        <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-900/90 rounded-xl shadow-dropdown z-50 animate-fade-in transition-colors backdrop-blur-sm">
+          <button
+            onClick={handleEditProfile}
+            className="w-full text-left dark:text-gray-100 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors"
+          >
+            Edit Profile
+          </button>
+          <button
+            onClick={handleLogout}
+            className="w-full text-left dark:text-gray-100 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors"
+          >
+            Logout
+          </button>
         </div>
-
-
-    );
+      )}
+    </div>
+  );
 };
 
 export default UserProfile;
