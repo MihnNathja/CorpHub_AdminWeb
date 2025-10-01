@@ -10,6 +10,8 @@ import {
   saveTicket,
   acceptTicket,
   completeTicket,
+  deleteTicket,
+
 } from "../services/ticketApi";
 
 // === MY TICKETS ===
@@ -133,6 +135,19 @@ export const complete = createAsyncThunk(
     try {
       const res = await completeTicket(ticketId);
       return { ticketId, data: res.data };
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+// === DELETE ===
+export const remove = createAsyncThunk(
+  "tickets/remove",
+  async (ticketId, thunkAPI) => {
+    try {
+      await deleteTicket(ticketId);
+      return ticketId; // trả về id để reducer xoá
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -350,7 +365,31 @@ const ticketSlice = createSlice({
       .addCase(complete.rejected, (state, action) => {
         state.actionLoading = false;
         state.error = action.payload;
+      })
+
+      // === DELETE ===
+      .addCase(remove.pending, (state) => {
+        state.actionLoading = true;
+        state.error = null;
+      })
+      .addCase(remove.fulfilled, (state, action) => {
+        state.actionLoading = false;
+        const ticketId = action.payload;
+
+        // Xoá trong myItems
+        state.myItems = state.myItems.filter((t) => t.id !== ticketId);
+
+        // Xoá trong receivedItems
+        state.receivedItems = state.receivedItems.filter((t) => t.id !== ticketId);
+
+        // Xoá trong sentItems
+        state.sentItems = state.sentItems.filter((t) => t.id !== ticketId);
+      })
+      .addCase(remove.rejected, (state, action) => {
+        state.actionLoading = false;
+        state.error = action.payload;
       });
+
   },
 });
 

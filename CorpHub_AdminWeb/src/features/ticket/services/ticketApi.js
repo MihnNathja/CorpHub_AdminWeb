@@ -25,3 +25,6 @@ export const acceptTicket = (ticketId) =>
 
 export const completeTicket = (ticketId) =>
   api.post(`/api/tickets/complete/${ticketId}`);
+
+export const deleteTicket = (ticketId) =>
+  api.delete(`/api/tickets/delete/${ticketId}`);

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../features/auth/store/authSlice";
 import defaultAvatar from "../assets/defaultAvatar.jpg";
+import { UserCircle } from "lucide-react";
 
 const UserProfile = ({ user }) => {
   const [open, setOpen] = useState(false);
@@ -31,17 +32,28 @@ const UserProfile = ({ user }) => {
     navigate("/settings"); // hoặc route edit profile của bạn
   };
 
+  const avatarUrl = user?.avatar
+    ? `http://localhost:8080/${user.avatar}` // hoặc `${process.env.REACT_APP_API_URL}/${comment.author.avatar}`
+    : null;
+
+  console.log("Avatar", user);
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 focus:outline-none"
       >
-        <img
-          src={user?.avatar || defaultAvatar}
-          alt="User Avatar"
-          className="h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-600 transition-colors"
-        />
+        {/* Avatar */}
+        {avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt="avatar"
+            className="w-8 h-8 rounded-full object-cover"
+          />
+        ) : (
+          <UserCircle className="w-8 h-8 text-gray-400 flex-shrink-0" />
+        )}
         <span className="font-medium text-gray-800 dark:text-gray-200 transition-colors">
           {user?.fullName || "User"}
         </span>

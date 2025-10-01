@@ -11,6 +11,7 @@ export const getUsersBySearch = async (query) => {
     return api.get(`/api/user/search?keyword=${encodeURIComponent(query.trim())}`);
 };
 
+export const getMyInfo = () => api.get(`/api/user/my-info`);
 
 // export const getUserById = (id) => api.get(`/users/${id}`);
 

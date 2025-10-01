@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { priorityColors } from "../../global/const/priorityColors";
 import { statusColors } from "../../global/const/statusColors";
 import StatCard from "../../global/components/StatCard";
@@ -18,6 +18,9 @@ import TicketActionGroupEmp from "./TicketActionGroupEmp";
 import ReasonForm from "./ReasonForm";
 import RejectButton from "./button/RejectButton";
 import CompleteButton from "./button/CompleteButton";
+import CommentSection from "./comment/CommentSection";
+import { useComment } from "../hooks/useComment";
+import ConfirmDialog from "../../global/components/ConfirmDialog";
 
 const TicketModal = ({
   ticket,
@@ -28,6 +31,7 @@ const TicketModal = ({
   handleAccept,
   handleReject,
   handleComplete,
+  handleRemove,
   isReasonFormOpen,
   setIsReasonFormOpen,
   mode,
@@ -39,14 +43,20 @@ const TicketModal = ({
   const isCurrentUserAssignee =
     ticket.assignee && user && ticket.assignee.id === user.id;
 
+  const isOwner = ticket.requester && user && ticket.requester.id === user.id;
+  const { comments, addComment } = useComment(ticket.id);
+
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 w-3/4 max-h-[85vh] overflow-y-auto rounded-xl shadow-lg transition-colors">
+      <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 
+                w-3/4 
+                rounded-xl shadow-lg transition-colors">
         {/* Header */}
         <div
-          className={`flex justify-between items-center p-4 rounded-t-xl ${
-            statusColors[ticket.status]
-          }`}
+          className={`flex justify-between items-center p-4 rounded-t-xl ${statusColors[ticket.status]
+            }`}
         >
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
@@ -107,10 +117,9 @@ const TicketModal = ({
                 className={`w-full border rounded-lg p-2 transition-colors
                   dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100
                   focus:ring-2 focus:ring-blue-500
-                  ${
-                    !(mode === "received" && ticket.status === "WAITING")
-                      ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
-                      : ""
+                  ${!(mode === "received" && ticket.status === "WAITING")
+                    ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
+                    : ""
                   }`}
               >
                 <option value="">Chưa phân công</option>
@@ -135,6 +144,17 @@ const TicketModal = ({
                 >
                   {ticket.description}
                 </div>
+
+                {/* Comment Section */}
+                <CommentSection
+                  comments={comments}
+                  onAddComment={(text) => {
+                    addComment(text)
+                  }}
+                  onReplyComment={(parentId, text) => {
+                    addComment(text, parentId)
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -174,12 +194,16 @@ const TicketModal = ({
               <RejectButton onClick={() => setIsReasonFormOpen(true)} />
             ) : null}
 
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-500 dark:bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
-            >
-              Close
-            </button>
+
+            {isOwner && (
+              <button
+                onClick={() => setIsConfirmOpen(true)}
+                className="px-4 py-2 bg-red-500 dark:bg-red-700 hover:bg-red-600 text-white rounded-lg transition-colors"
+              >
+                Delete
+              </button>
+            )}
+
           </div>
         </div>
 
@@ -205,6 +229,18 @@ const TicketModal = ({
             </div>
           </div>
         )}
+
+        <ConfirmDialog
+          open={isConfirmOpen}
+          title="Xác nhận xóa ticket"
+          message="Bạn có chắc chắn muốn xóa ticket này? Hành động này không thể hoàn tác."
+          onConfirm={() => {
+            handleRemove(ticket.id);
+            setIsConfirmOpen(false);
+            onClose();
+          }}
+          onCancel={() => setIsConfirmOpen(false)}
+        />
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import {
   createOrUpdateTicket,
   accept,
   complete,
+  remove
 } from "../store/ticketSlice";
 import { showError, showSuccess } from "../../../utils/toastUtils";
 
@@ -133,6 +134,17 @@ export const useTickets = (mode) => {
     }
   };
 
+  const handleRemove = async (ticketId) => {
+    try {
+      await dispatch(remove(ticketId));
+      showSuccess("Ticket deleted");
+      if (mode === "my") dispatch(fetchMyTickets());
+    } catch (err) {
+      showError("Delete ticket failed");
+      console.error("Delete ticket failed:", err);
+    }
+  }
+
   // Fetch tickets theo mode khi mount
   useEffect(() => {
     if (mode === "sent") dispatch(fetchSentTickets());
@@ -176,5 +188,6 @@ export const useTickets = (mode) => {
     handleCreateOrUpdate,
     handleAccept,
     handleComplete,
+    handleRemove
   };
 };
