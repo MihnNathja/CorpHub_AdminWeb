@@ -11,7 +11,6 @@ import {
   acceptTicket,
   completeTicket,
   deleteTicket,
-
 } from "../services/ticketApi";
 
 // === MY TICKETS ===
@@ -167,7 +166,7 @@ const ticketSlice = createSlice({
     statusFilter: "", // "" nghĩa là tất cả
     priorityFilter: "",
     page: 1,
-    pageSize: 10,
+    pageSize: 9,
   },
   reducers: {
     setStatusFilter(state, action) {
@@ -380,7 +379,9 @@ const ticketSlice = createSlice({
         state.myItems = state.myItems.filter((t) => t.id !== ticketId);
 
         // Xoá trong receivedItems
-        state.receivedItems = state.receivedItems.filter((t) => t.id !== ticketId);
+        state.receivedItems = state.receivedItems.filter(
+          (t) => t.id !== ticketId
+        );
 
         // Xoá trong sentItems
         state.sentItems = state.sentItems.filter((t) => t.id !== ticketId);
@@ -389,7 +390,6 @@ const ticketSlice = createSlice({
         state.actionLoading = false;
         state.error = action.payload;
       });
-
   },
 });
 

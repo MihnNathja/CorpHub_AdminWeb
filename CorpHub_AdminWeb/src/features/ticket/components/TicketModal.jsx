@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { priorityColors } from "../../global/const/priorityColors";
 import { statusColors } from "../../global/const/statusColors";
 import StatCard from "../../global/components/StatCard";
@@ -21,6 +21,8 @@ import CompleteButton from "./button/CompleteButton";
 import CommentSection from "./comment/CommentSection";
 import { useComment } from "../hooks/useComment";
 import ConfirmDialog from "../../global/components/ConfirmDialog";
+import { useAttachments } from "../hooks/useAttachment";
+import TicketAttachments from "./TicketAttachments";
 
 const TicketModal = ({
   ticket,
@@ -36,7 +38,7 @@ const TicketModal = ({
   setIsReasonFormOpen,
   mode,
 }) => {
-  console.log(users);
+  //console.log(users);
   if (!ticket) return null;
 
   const { user } = useAuth();
@@ -45,18 +47,28 @@ const TicketModal = ({
 
   const isOwner = ticket.requester && user && ticket.requester.id === user.id;
   const { comments, addComment } = useComment(ticket.id);
+  const { items: attachments, load, remove, download } = useAttachments();
+
+  useEffect(() => {
+    if (ticket?.id) {
+      load(ticket.id);
+    }
+  }, [ticket, load]);
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 
+      <div
+        className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 
                 w-3/4 
-                rounded-xl shadow-lg transition-colors">
+                rounded-xl shadow-lg transition-colors"
+      >
         {/* Header */}
         <div
-          className={`flex justify-between items-center p-4 rounded-t-xl ${statusColors[ticket.status]
-            }`}
+          className={`flex justify-between items-center p-4 rounded-t-xl ${
+            statusColors[ticket.status]
+          }`}
         >
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
@@ -117,9 +129,10 @@ const TicketModal = ({
                 className={`w-full border rounded-lg p-2 transition-colors
                   dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100
                   focus:ring-2 focus:ring-blue-500
-                  ${!(mode === "received" && ticket.status === "WAITING")
-                    ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
-                    : ""
+                  ${
+                    !(mode === "received" && ticket.status === "WAITING")
+                      ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
+                      : ""
                   }`}
               >
                 <option value="">Chưa phân công</option>
@@ -130,6 +143,12 @@ const TicketModal = ({
                 ))}
               </select>
             </div>
+            {/* Attachments */}
+            <TicketAttachments
+              attachments={attachments}
+              onDownload={download}
+              onRemove={remove}
+            />
           </div>
 
           {/* Cột phải */}
@@ -149,10 +168,10 @@ const TicketModal = ({
                 <CommentSection
                   comments={comments}
                   onAddComment={(text) => {
-                    addComment(text)
+                    addComment(text);
                   }}
                   onReplyComment={(parentId, text) => {
-                    addComment(text, parentId)
+                    addComment(text, parentId);
                   }}
                 />
               </div>
@@ -194,7 +213,6 @@ const TicketModal = ({
               <RejectButton onClick={() => setIsReasonFormOpen(true)} />
             ) : null}
 
-
             {isOwner && (
               <button
                 onClick={() => setIsConfirmOpen(true)}
@@ -203,7 +221,6 @@ const TicketModal = ({
                 Delete
               </button>
             )}
-
           </div>
         </div>
 

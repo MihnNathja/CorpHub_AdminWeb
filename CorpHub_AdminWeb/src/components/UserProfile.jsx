@@ -36,7 +36,7 @@ const UserProfile = ({ user }) => {
     ? `http://localhost:8080/${user.avatar}` // hoặc `${process.env.REACT_APP_API_URL}/${comment.author.avatar}`
     : null;
 
-  console.log("Avatar", user);
+  //console.log("Avatar", user);
 
   return (
     <div className="relative" ref={dropdownRef}>
