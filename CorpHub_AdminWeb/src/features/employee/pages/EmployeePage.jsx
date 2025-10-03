@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-//import EmployeeTable from "../components/employee/EmployeeTable";
 import EmployeeProfileForm from "../components/EmployeeProfileForm";
+import EmployeeTable from "../components/EmployeeTable";
 
 const EmployeePage = () => {
   const [activeTab, setActiveTab] = useState("list");
@@ -35,7 +35,7 @@ const EmployeePage = () => {
 
       {/* Content */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-b-lg p-4 -mt-px bg-white dark:bg-gray-800">
-        {/* {activeTab === "list" && <EmployeeTable />} */}
+        {activeTab === "list" && <EmployeeTable />}
         {activeTab === "add" && <EmployeeProfileForm />}
       </div>
     </div>

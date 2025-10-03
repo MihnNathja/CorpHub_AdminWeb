@@ -58,6 +58,16 @@ const AppRoutes = () => {
           }
         />
 
+        {/* Chỉ ROLE_HR & ROLE_MANAGER & ROLE_ADMIN mới được vào */}
+        <Route
+          path="employees"
+          element={
+            <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN", "ROLE_HR"]}>
+              <EmployeePage />
+            </PrivateRoute>
+          }
+        />
+
         {/* Chỉ ROLE_USER mới được vào */}
         <Route
           path="my-tickets"
