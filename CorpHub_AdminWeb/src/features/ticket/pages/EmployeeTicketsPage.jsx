@@ -223,6 +223,7 @@ const TicketsPage = () => {
           try {
             // 1. Gọi API tạo hoặc update ticket
             const ticketData = {
+              id: formData.id,
               title: formData.title,
               departmentId: formData.departmentId,
               priority: formData.priority,

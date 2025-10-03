@@ -145,9 +145,10 @@ const TicketModal = ({
             </div>
             {/* Attachments */}
             <TicketAttachments
+              ticket={ticket}
               attachments={attachments}
               onDownload={download}
-              onRemove={remove}
+              mode="view"
             />
           </div>
 

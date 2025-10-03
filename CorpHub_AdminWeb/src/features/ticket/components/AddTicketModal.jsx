@@ -3,8 +3,13 @@ import { X } from "lucide-react";
 import { useDepartment } from "../../department/hooks/useDepartment";
 import { priorityColors } from "../../global/const/priorityColors";
 import { useCategory } from "../hooks/useCategory";
+import { useAttachments } from "../hooks/useAttachment";
+import TicketAttachments from "./TicketAttachments";
+import ConfirmDialog from "../../global/components/ConfirmDialog";
 
 const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
+  const { items: attachments, download, remove } = useAttachments();
+
   const [formData, setFormData] = useState({
     title: "",
     departmentId: "",
@@ -21,6 +26,7 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
   } = useDepartment();
   const { categories, loading: loadingCat, error: errorCat } = useCategory();
   const priorities = Object.keys(priorityColors);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -31,7 +37,7 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
           priority: ticket.priority || "",
           categoryId: ticket.category?.id || "",
           description: ticket.description || "",
-          attachments: [], // reset file khi edit
+          attachments: attachments,
         });
       } else {
         setFormData({
@@ -53,7 +59,25 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    setFormData((prev) => ({ ...prev, attachments: files }));
+    setFormData((prev) => ({
+      ...prev,
+      attachments: [...prev.attachments, ...files], // thêm file mới
+    }));
+  };
+
+  const handleRemoveFile = (index) => {
+    const file = formData.attachments[index];
+    if (!(file instanceof File) && file.id) {
+      // mở confirm và lưu id để xoá
+      setConfirmDeleteId(file.id);
+    } else {
+      // chỉ xoá trong state
+      setFormData((prev) => {
+        const updated = [...prev.attachments];
+        updated.splice(index, 1);
+        return { ...prev, attachments: updated };
+      });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -190,25 +214,14 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
           </div>
 
           {/* Attachments */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Attachments
-            </label>
-            <input
-              type="file"
-              name="attachments"
-              multiple
-              onChange={handleFileChange}
-              className="w-full text-sm text-gray-700 dark:text-gray-200"
-            />
-            {formData.attachments.length > 0 && (
-              <ul className="mt-2 text-sm text-gray-600 dark:text-gray-300 list-disc pl-5">
-                {formData.attachments.map((file, idx) => (
-                  <li key={idx}>{file.name}</li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <TicketAttachments
+            attachments={formData.attachments}
+            onDownload={download}
+            onRemove={handleRemoveFile}
+            onUpload={handleFileChange}
+            ticket={ticket}
+            mode={ticket ? "edit" : "add"}
+          />
 
           {/* Footer */}
           <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
@@ -228,6 +241,20 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
           </div>
         </form>
       </div>
+      <ConfirmDialog
+        open={!!confirmDeleteId}
+        onConfirm={() => {
+          remove(confirmDeleteId); // gọi API xoá
+          setFormData((prev) => ({
+            ...prev,
+            attachments: prev.attachments.filter(
+              (f) => !(f instanceof File) && f.id !== confirmDeleteId
+            ),
+          }));
+          setConfirmDeleteId(null);
+        }}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   );
 };
