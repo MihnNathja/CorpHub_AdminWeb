@@ -14,7 +14,7 @@ import {
   createOrUpdateTicket,
   accept,
   complete,
-  remove
+  remove,
 } from "../store/ticketSlice";
 import { showError, showSuccess } from "../../../utils/toastUtils";
 
@@ -101,11 +101,13 @@ export const useTickets = (mode) => {
 
   const handleCreateOrUpdate = async (ticketData) => {
     try {
-      await dispatch(createOrUpdateTicket(ticketData));
+      const res = await dispatch(createOrUpdateTicket(ticketData));
+      console.log("create ticket", res.payload);
       showSuccess("Tickets list updated");
       if (mode === "my") dispatch(fetchMyTickets());
       if (mode === "sent") dispatch(fetchSentTickets());
       if (mode === "received") dispatch(fetchReceivedTickets());
+      return res.payload;
     } catch (err) {
       showError("Add ticket failed");
       console.error("Add ticket failed:", err);
@@ -143,7 +145,7 @@ export const useTickets = (mode) => {
       showError("Delete ticket failed");
       console.error("Delete ticket failed:", err);
     }
-  }
+  };
 
   // Fetch tickets theo mode khi mount
   useEffect(() => {
@@ -154,7 +156,7 @@ export const useTickets = (mode) => {
 
   // Fetch users cho assign
   useEffect(() => {
-    console.log("Fetch users cho assign, ", users);
+    //console.log("Fetch users cho assign, ", users);
     if (!Array.isArray(users) || users.length === 0) {
       dispatch(fetchUsersDepartment());
     }
@@ -188,6 +190,6 @@ export const useTickets = (mode) => {
     handleCreateOrUpdate,
     handleAccept,
     handleComplete,
-    handleRemove
+    handleRemove,
   };
 };

@@ -6,6 +6,7 @@ import ticketReducer from "../features/ticket/store/ticketSlice";
 import categoryReducer from "../features/ticket/store/categorySlice";
 import eventReducer from "../features/calendar/store/calendarSlice";
 import commentReducer from "../features/ticket/store/commentSlice";
+import attachmentReducer from "../features/ticket/store/attachmentSlice";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     tickets: ticketReducer,
     category: categoryReducer,
     events: eventReducer,
-    comments: commentReducer
+    comments: commentReducer,
+    attachments: attachmentReducer,
   },
 });
