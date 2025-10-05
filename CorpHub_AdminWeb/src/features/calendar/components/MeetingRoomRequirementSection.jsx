@@ -10,8 +10,6 @@ export default function MeetingRoomRequirementSection({
     bookingTime,
     onBookingTimeChange,
 }) {
-    console.log(assetCates);
-    console.log(selectedAssetCates);
     return (
         <div className="p-4 border rounded-md bg-gray-50 dark:bg-gray-700 space-y-4">
             <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-200">

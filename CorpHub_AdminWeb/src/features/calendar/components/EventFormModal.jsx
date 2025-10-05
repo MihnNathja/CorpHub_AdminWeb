@@ -35,10 +35,15 @@ export default function EventFormModal({
     } = useEventForm(isOpen, slotInfo);
 
     const [isEdited, setIsEdited] = useState(true);
+    const [isLocationEdited, setIsLocationEdited] = useState(true);
     console.log(form);
     useEffect(() => {
         setIsEdited(isOrganizer && !form.ready);
     }, [isOrganizer, form.ready]);
+
+    useEffect(() => {
+        setIsLocationEdited(isEdited && (!form.meetingRoom || !form.roomRequirement?.roomId))
+    })
 
     const { categories } = useAssets();
 
@@ -222,7 +227,7 @@ export default function EventFormModal({
                                             <input
                                                 type="radio"
                                                 value="MEETING_ROOM"
-                                                disabled={!isEdited}
+                                                disabled={!isLocationEdited}
                                                 checked={form.meetingRoom === true}
                                                 onChange={() => {
                                                     handleChange({ target: { name: "meetingRoom", value: true } });
@@ -235,7 +240,7 @@ export default function EventFormModal({
                                             <input
                                                 type="radio"
                                                 value="OUTSIDE"
-                                                disabled={!isEdited}
+                                                disabled={!isLocationEdited}
                                                 checked={form.meetingRoom === false}
                                                 onChange={() => {
                                                     handleChange({ target: { name: "meetingRoom", value: false } });
@@ -253,7 +258,7 @@ export default function EventFormModal({
                                         placeholder={form.meetingRoom ? "Sẽ được sắp xếp sau" : "Nhập địa chỉ"}
                                         value={form.location}
                                         onChange={handleChange}
-                                        disabled={form.meetingRoom && isOrganizer}
+                                        disabled={form.meetingRoom || !isEdited}
                                         className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 
                                            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                     />
@@ -264,7 +269,7 @@ export default function EventFormModal({
                                             assetCates={categories}
                                             selectedAssetCates={form.roomRequirement.assetCategories}
                                             onToggle={handleToggleAsset}
-                                            disabled={!isEdited}
+                                            disabled={!isLocationEdited}
                                             capacity={form.roomRequirement.capacity}
                                             onCapacityChange={handleCapacityChange}
                                             bookingTime={{
@@ -350,10 +355,12 @@ export default function EventFormModal({
                             {isOrganizer ? (
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white"
+                                    className="px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled={!isEdited || loading}
                                 >
                                     {loading ? "Saving..." : "Save"}
                                 </button>
+
                             ) : (
                                 <StatusButtonGroup
                                     value={status}

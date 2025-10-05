@@ -8,6 +8,7 @@ import TicketModal from "../components/TicketModal";
 import FloatingButton from "../../global/components/FloatingButton";
 import { PlusIcon } from "lucide-react";
 import AddTicketModal from "../components/AddTicketModal";
+import { useAttachments } from "../hooks/useAttachment";
 
 const TicketsPage = () => {
   const [activeTab, setActiveTab] = useState("assigned");
@@ -34,6 +35,8 @@ const TicketsPage = () => {
     setIsReasonFormOpen,
     handleCreateOrUpdate,
   } = useTickets("my");
+
+  const { upload } = useAttachments();
 
   // lọc theo assignee / requester
   const assignedTickets = useMemo(
@@ -106,10 +109,11 @@ const TicketsPage = () => {
               setStatusFilter("ALL");
               setPage(1);
             }}
-            className={`px-4 py-2 font-medium rounded-t-lg transition-colors ${activeTab === tab.key
-              ? "bg-gray-100 dark:bg-gray-800 border-x border-t border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-              }`}
+            className={`px-4 py-2 font-medium rounded-t-lg transition-colors ${
+              activeTab === tab.key
+                ? "bg-gray-100 dark:bg-gray-800 border-x border-t border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            }`}
           >
             {tab.label} (
             {tab.key === "assigned"
@@ -142,17 +146,19 @@ const TicketsPage = () => {
                   setStatusFilter(status);
                   setPage(1);
                 }}
-                className={`px-3 py-1 text-sm rounded-full border flex items-center gap-1 transition-colors ${active
-                  ? `${statusClass} border-transparent`
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600"
-                  }`}
+                className={`px-3 py-1 text-sm rounded-full border flex items-center gap-1 transition-colors ${
+                  active
+                    ? `${statusClass} border-transparent`
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600"
+                }`}
               >
                 <span>{status === "ALL" ? "Tất cả" : status}</span>
                 <span
-                  className={`text-xs px-2 py-0.5 rounded-full ${active
-                    ? "bg-white/30"
-                    : "bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200"
-                    }`}
+                  className={`text-xs px-2 py-0.5 rounded-full ${
+                    active
+                      ? "bg-white/30"
+                      : "bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200"
+                  }`}
                 >
                   {count}
                 </span>
@@ -213,14 +219,33 @@ const TicketsPage = () => {
           setEditingTicket(null);
         }}
         ticket={editingTicket}
-        onSubmit={(formData) => {
-          handleCreateOrUpdate(
-            editingTicket
-              ? { ...formData, id: editingTicket.id } // update nếu có id
-              : formData // create mới
-          );
-          setIsAddModalOpen(false);
-          setEditingTicket(null);
+        onSubmit={async (formData) => {
+          try {
+            // 1. Gọi API tạo hoặc update ticket
+            const ticketData = {
+              id: formData.id,
+              title: formData.title,
+              departmentId: formData.departmentId,
+              priority: formData.priority,
+              categoryId: formData.categoryId,
+              description: formData.description,
+            };
+
+            const createdTicket = await handleCreateOrUpdate(ticketData);
+            //console.log("Created ticket", createdTicket);
+
+            // 2. Upload file bằng hook useAttachments
+            if (formData.attachments && formData.attachments.length > 0) {
+              //console.log("Upload attachment id: ", createdTicket.id);
+              await upload(createdTicket.id, formData.attachments);
+              //console.log("Upload attachment");
+            }
+
+            setIsAddModalOpen(false);
+            setEditingTicket(null);
+          } catch (err) {
+            console.error("Error saving ticket:", err);
+          }
         }}
       />
     </div>

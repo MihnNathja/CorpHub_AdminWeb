@@ -6,7 +6,6 @@ import {
   updateEvent,
   createOrUpdateMeeting,
   removeMeeting,
-  confirmMeetingReady
 } from "../store/calendarSlice";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { showError, showSuccess } from "../../../utils/toastUtils";
@@ -76,7 +75,7 @@ export const useCalendar = (selectedEmails = []) => {
       );
       reloadMeetings();
     } else {
-      showError("Save meeting failed");
+      showError(action.payload || action.error);
       console.error("Save meeting failed:", action.payload || action.error);
     }
   };
