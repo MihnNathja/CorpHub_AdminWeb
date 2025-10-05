@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import TicketCard from "../components/TicketCard";
 import { useTickets } from "../hooks/useTickets";
 import { useSelector } from "react-redux";
-import Pagination from "../components/Pagination";
+import Pagination from "../../global/components/Pagination";
 import { statusColors } from "../../global/const/statusColors";
 import TicketModal from "../components/TicketModal";
 import FloatingButton from "../../global/components/FloatingButton";

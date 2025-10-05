@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTickets } from "../../hooks/useTickets";
 import TicketFilter from "../AdminTicketFilter";
 import TicketSentTableBody from "./TicketSentTableBody";
-import Pagination from "../Pagination";
+import Pagination from "../../../global/components/Pagination";
 import TicketModal from "../TicketModal";
 import { statusColors } from "../../../global/const/statusColors";
 import { priorityColors } from "../../../global/const/priorityColors";

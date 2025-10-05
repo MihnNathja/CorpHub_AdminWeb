@@ -26,7 +26,8 @@ function parseToken(token) {
 export default function RecipientInput({
   recipients = [],                 // [{email, name}]
   onRemove,                        // (email) => void
-  onAddRecipient,                  // NEW: ({email, name}) => void
+  onAddRecipient,
+  disabled,               // NEW: ({email, name}) => void
   inputValue,
   onInputChange,                   // (value) => void
   onBackspaceRemove,               // optional: () => void
@@ -77,6 +78,7 @@ export default function RecipientInput({
           </span>
           <button
             type="button"
+            disabled={disabled}
             onClick={() => onRemove?.(r.email)}
             className="ml-1 rounded-full px-1 hover:bg-red-100 hover:text-red-700
                        dark:hover:bg-red-400/20 dark:hover:text-red-300 transition-colors"
@@ -91,6 +93,7 @@ export default function RecipientInput({
       <input
         type="text"
         value={inputValue}
+        disabled={disabled}
         onChange={(e) => onInputChange?.(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Backspace" && !inputValue && recipients.length && onBackspaceRemove) {

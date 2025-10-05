@@ -8,7 +8,7 @@ import CalendarPage from "../features/calendar/pages/CalendarPage";
 import PrivateRoute from "../routes/PrivateRoute";
 import UnauthorizedPage from "../pages/UnauthorizedPage";
 import EmployeeTicketPage from "../features/ticket/pages/EmployeeTicketsPage";
-import EmployeePage from "../features/employee/pages/EmployeePage";
+import RoomPage from "../features/room/pages/RoomPage";
 import FeatureComingSoonPage from "../pages/FeatureComingSoonPage";
 
 const AppRoutes = () => {
@@ -30,11 +30,13 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<HomePage />} />
+
+        {/* Chỉ ROLE_ADMIN mới được vào */}
         <Route
-          path="tickets"
+          path="rooms"
           element={
-            <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
-              <TicketsPage />
+            <PrivateRoute roles={["ROLE_ADMIN"]}>
+              <RoomPage />
             </PrivateRoute>
           }
         />
@@ -54,6 +56,15 @@ const AppRoutes = () => {
           element={
             <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
               <FeatureComingSoonPage />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="tickets"
+          element={
+            <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
+              <TicketsPage />
             </PrivateRoute>
           }
         />

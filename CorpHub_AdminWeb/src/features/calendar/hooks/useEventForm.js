@@ -4,7 +4,7 @@ import {
   fetchUsersBySearch,
   clearSearchResults,
 } from "../../user/store/userSlice";
-import { confirmAttendMeeting } from "../store/calendarSlice";
+import { confirmAttendMeeting, confirmMeetingReady } from "../store/calendarSlice";
 import { showError, showSuccess } from "../../../utils/toastUtils";
 
 function toInputString(dateLike) {
@@ -22,10 +22,20 @@ export const useEventForm = (isOpen, slotInfo) => {
     title: "",
     description: "",
     location: "",
+    meetingRoom: false,
+    roomRequirement: {
+      id: null,
+      capacity: 0,
+      assetCategories: [],
+      start: "",
+      end: "",
+    },
     onlineLink: "",
     start: "",
     end: "",
+    ready: false,
   });
+
 
   const [recipients, setRecipients] = useState([]);
   const [query, setQuery] = useState("");
@@ -42,10 +52,20 @@ export const useEventForm = (isOpen, slotInfo) => {
         title: slotInfo?.title || "",
         description: slotInfo?.description || "",
         location: slotInfo?.location || "",
+        meetingRoom: slotInfo?.meetingRoom || false,
+        roomRequirement: slotInfo?.roomRequirement || {
+          id: null,
+          capacity: 0,
+          assetCategories: [],
+          start: "",
+          end: "",
+        },
         onlineLink: slotInfo?.onlineLink || "",
         start: slotInfo?.start ? toInputString(slotInfo.start) : "",
         end: slotInfo?.end ? toInputString(slotInfo.end) : "",
+        ready: slotInfo?.ready || false,
       });
+
 
       // Prefill attendees
       if (slotInfo?.attendees?.length) {
@@ -101,6 +121,20 @@ export const useEventForm = (isOpen, slotInfo) => {
       setConfirmLoading(false);
     }
   };
+
+  const handleConfirmMeetingReady = async (id) => {
+    setConfirmLoading(true);
+    try {
+      await dispatch(confirmMeetingReady(id)).unwrap();
+      setForm((prev) => ({ ...prev, ready: true })); // ✅ update UI ngay
+      showSuccess("Confirm ready successfully");
+    } catch (err) {
+      showError("Confirm ready Error");
+    } finally {
+      setConfirmLoading(false);
+    }
+  };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -159,6 +193,7 @@ export const useEventForm = (isOpen, slotInfo) => {
     handleChange,
     handleAddRecipient,
     handleRemoveRecipient,
+    handleConfirmMeetingReady,
     validate,
   };
 };
