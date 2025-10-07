@@ -64,8 +64,8 @@ const TicketsPage = () => {
   }, [ticketsByTab, statusFilter]);
 
   const mainTabs = [
-    { key: "assigned", label: "Được phân công" },
-    { key: "sent", label: "Đã gửi đi" },
+    { key: "assigned", label: "Assigned" },
+    { key: "sent", label: "Sent" },
   ];
 
   const statusTabs = [
@@ -91,12 +91,12 @@ const TicketsPage = () => {
       <FloatingButton
         onClick={() => setIsAddModalOpen(true)}
         icon={PlusIcon}
-        tooltip="Thêm ticket"
+        tooltip="New ticket"
         color="green"
       />
 
       <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-        Quản lý Ticket
+        Ticket Management
       </h2>
 
       {/* Tabs chính */}
@@ -109,11 +109,10 @@ const TicketsPage = () => {
               setStatusFilter("ALL");
               setPage(1);
             }}
-            className={`px-4 py-2 font-medium rounded-t-lg transition-colors ${
-              activeTab === tab.key
-                ? "bg-gray-100 dark:bg-gray-800 border-x border-t border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-            }`}
+            className={`px-4 py-2 font-medium rounded-t-lg transition-colors ${activeTab === tab.key
+              ? "bg-gray-100 dark:bg-gray-800 border-x border-t border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              }`}
           >
             {tab.label} (
             {tab.key === "assigned"
@@ -146,19 +145,17 @@ const TicketsPage = () => {
                   setStatusFilter(status);
                   setPage(1);
                 }}
-                className={`px-3 py-1 text-sm rounded-full border flex items-center gap-1 transition-colors ${
-                  active
-                    ? `${statusClass} border-transparent`
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600"
-                }`}
-              >
-                <span>{status === "ALL" ? "Tất cả" : status}</span>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full ${
-                    active
-                      ? "bg-white/30"
-                      : "bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200"
+                className={`px-3 py-1 text-sm rounded-full border flex items-center gap-1 transition-colors ${active
+                  ? `${statusClass} border-transparent`
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600"
                   }`}
+              >
+                <span>{status === "ALL" ? "ALL" : status}</span>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full ${active
+                    ? "bg-white/30"
+                    : "bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200"
+                    }`}
                 >
                   {count}
                 </span>
