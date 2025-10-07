@@ -86,8 +86,6 @@ const CalendarPage = () => {
                 color="green"
             />
 
-            {error && <p className="text-red-500">Error: {error}</p>}
-
             <div className="flex justify-between items-start gap-6 mt-4">
                 {/* Calendar chính */}
                 <div className="flex-1">

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { deleteMeeting, getMeetings, saveMeeting, confirmAttend } from "../services/calendarApi";
+import { deleteMeeting, getMeetings, saveMeeting, confirmAttend, confirmMeeting } from "../services/calendarApi";
 
 export const fetchMeetings = createAsyncThunk(
     "meetings/fetchMeetings",
@@ -18,9 +18,7 @@ export const createOrUpdateMeeting = createAsyncThunk(
     "meetings/createOrUpdateMeeting",
     async (meeting, { rejectWithValue }) => {
         try {
-            console.log("save:", meeting);
             const res = await saveMeeting(meeting);
-            console.log("saved:", res);
             return res?.data;
         }
         catch (err) {
@@ -47,6 +45,20 @@ export const confirmAttendMeeting = createAsyncThunk(
     async ({ id, isAccepted }, { rejectWithValue }) => {
         try {
             const res = await confirmAttend(id, isAccepted);
+            console.log(res);
+            return res?.data;
+        }
+        catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+)
+
+export const confirmMeetingReady = createAsyncThunk(
+    "meetings/confirmMeeting",
+    async (id, { rejectWithValue }) => {
+        try {
+            const res = await confirmMeeting(id);
             console.log(res);
             return res?.data;
         }
@@ -145,7 +157,27 @@ const eventSlice = createSlice({
             .addCase(confirmAttendMeeting.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error?.message;
+            })
+
+            // CONFIRM MEETING READY
+            .addCase(confirmMeetingReady.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(confirmMeetingReady.fulfilled, (state, action) => {
+                state.loading = false;
+                const updatedMeeting = action.payload;
+                if (!updatedMeeting?.id) return;
+                const idx = state.meetings.findIndex((m) => m.id === updatedMeeting.id);
+                if (idx !== -1) {
+                    state.meetings[idx] = updatedMeeting;
+                }
+            })
+            .addCase(confirmMeetingReady.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error?.message;
             });
+
 
     }
 });
