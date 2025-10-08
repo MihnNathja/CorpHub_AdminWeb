@@ -1,35 +1,25 @@
-import { useEffect, useState } from "react";
-import { getUsersApi } from "../services/userApi";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  fetchUsers,
+} from "../store/userSlice";
 
 export const useUser = () => {
-  const [employees, setEmployees] = useState([]);
-  const [loadingUsers, setLoadingUsers] = useState(true);
-  const [errorUsers, setErrorUsers] = useState(null);
+  const dispatch = useDispatch();
+
+  const {
+    list: employees,
+    loading,
+    error,
+  } = useSelector((state) => state.user);
 
   useEffect(() => {
-    let isMounted = true;
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
-    async function fetchEmployees() {
-      try {
-        setLoadingUsers(true);
-        const res = await getUsersApi();
-        if (isMounted) {
-          setEmployees(res.data || []);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setErrorUsers(err.response?.data || err.message);
-        }
-      } finally {
-        if (isMounted) setLoadingUsers(false);
-      }
-    }
-
-    fetchEmployees();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  return { employees, loadingUsers, errorUsers, setEmployees };
+  return {
+    employees,
+    loading,
+    error,
+  };
 };

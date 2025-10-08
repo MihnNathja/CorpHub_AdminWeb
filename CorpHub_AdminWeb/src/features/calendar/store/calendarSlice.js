@@ -99,11 +99,11 @@ const eventSlice = createSlice({
             })
             .addCase(fetchMeetings.fulfilled, (state, action) => {
                 state.loading = false;
-                state.meetings = action.payload;
+                state.meetings = action.payload.data;
             })
             .addCase(fetchMeetings.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.error = action.payload.data;
             })
 
             // CREATE OR UPDATE
@@ -113,7 +113,7 @@ const eventSlice = createSlice({
             })
             .addCase(createOrUpdateMeeting.fulfilled, (state, action) => {
                 state.loading = false;
-                const created = action.payload;
+                const created = action.payload.data;
                 if (!created?.id) return;
                 const idx = state.meetings.findIndex((m) => m.id === created.id);
                 if (idx === -1) state.meetings.push(created);
@@ -147,7 +147,7 @@ const eventSlice = createSlice({
             })
             .addCase(confirmAttendMeeting.fulfilled, (state, action) => {
                 state.loading = false;
-                const updatedMeeting = action.payload;
+                const updatedMeeting = action.payload.data;
                 if (!updatedMeeting?.id) return;
                 const idx = state.meetings.findIndex((m) => m.id === updatedMeeting.id);
                 if (idx !== -1) {
@@ -166,7 +166,7 @@ const eventSlice = createSlice({
             })
             .addCase(confirmMeetingReady.fulfilled, (state, action) => {
                 state.loading = false;
-                const updatedMeeting = action.payload;
+                const updatedMeeting = action.payload.data;
                 if (!updatedMeeting?.id) return;
                 const idx = state.meetings.findIndex((m) => m.id === updatedMeeting.id);
                 if (idx !== -1) {

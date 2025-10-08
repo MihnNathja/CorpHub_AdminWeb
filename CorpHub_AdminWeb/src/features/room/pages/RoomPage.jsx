@@ -6,11 +6,10 @@ import RoomCard from "../components/RoomCard";
 import RoomModal from "../components/RoomModal";
 import AddRoomModal from "../components/AddRoomModal";
 import { useRooms } from "../hooks/useRooms";
-
 import RoomRequestList from "../components/RoomRequestList";
 
 const RoomPage = () => {
-    const [activeTab, setActiveTab] = useState("rooms"); // ✅ tab hiện tại: "rooms" hoặc "requests"
+    const [activeTab, setActiveTab] = useState("rooms"); // "rooms" | "requests"
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingRoom, setEditingRoom] = useState(null);
 
@@ -36,17 +35,20 @@ const RoomPage = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-[300px]">
-                <p className="text-gray-500 dark:text-gray-300">Đang tải dữ liệu...</p>
+                <p className="text-gray-500 dark:text-gray-300">
+                    Đang tải dữ liệu...
+                </p>
             </div>
         );
     }
 
     return (
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6">
+        <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6 relative">
             <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">
                 Quản lý Phòng
             </h2>
-            {/* Floating Button chỉ cho tab "rooms" */}
+
+            {/* 🔹 Floating Button */}
             {activeTab === "rooms" && (
                 <FloatingButton
                     onClick={() => setIsAddModalOpen(true)}
@@ -82,28 +84,30 @@ const RoomPage = () => {
             {/* 🔹 Nội dung tab */}
             {activeTab === "rooms" && (
                 <>
-
-
-                    {/* Tabs trạng thái */}
+                    {/* Bộ lọc trạng thái */}
                     <div className="flex flex-wrap gap-2 mb-4">
                         {statusTabs.map((status) => {
                             const active = statusFilter === status;
                             const count =
-                                status === "ALL" ? rooms.length : statusCounts[status] || 0;
+                                status === "ALL"
+                                    ? rooms.length
+                                    : statusCounts?.[status] || 0;
 
                             return (
                                 <button
                                     key={status}
                                     onClick={() => {
                                         setStatusFilter(status);
-                                        setPage(1);
+                                        setPage(0); // ✅ backend page bắt đầu từ 0
                                     }}
                                     className={`px-3 py-1 text-sm rounded-full border flex items-center gap-1 transition-colors ${active
                                         ? "bg-blue-500 text-white border-transparent"
                                         : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600"
                                         }`}
                                 >
-                                    <span>{status === "ALL" ? "Tất cả" : status}</span>
+                                    <span>
+                                        {status === "ALL" ? "Tất cả" : status}
+                                    </span>
                                     <span
                                         className={`text-xs px-2 py-0.5 rounded-full ${active
                                             ? "bg-white/30"
@@ -118,7 +122,7 @@ const RoomPage = () => {
                     </div>
 
                     {/* Danh sách phòng */}
-                    {paginatedRooms.length > 0 ? (
+                    {paginatedRooms?.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {paginatedRooms.map((room) => (
                                 <RoomCard
@@ -134,9 +138,10 @@ const RoomPage = () => {
                         </p>
                     )}
 
+                    {/* Phân trang */}
                     <Pagination page={page} setPage={setPage} totalPages={totalPages} />
 
-                    {/* Modal */}
+                    {/* Modal Chi tiết */}
                     <RoomModal
                         room={selectedRoom}
                         onClose={() => setSelectedRoom(null)}
@@ -151,6 +156,7 @@ const RoomPage = () => {
                         }}
                     />
 
+                    {/* Modal Thêm/Sửa */}
                     <AddRoomModal
                         isOpen={isAddModalOpen}
                         onClose={() => {
@@ -158,8 +164,8 @@ const RoomPage = () => {
                             setEditingRoom(null);
                         }}
                         room={editingRoom}
-                        onSubmit={(formData) => {
-                            handleCreateOrUpdate(
+                        onSubmit={async (formData) => {
+                            await handleCreateOrUpdate(
                                 editingRoom ? { ...formData, id: editingRoom.id } : formData
                             );
                             setIsAddModalOpen(false);
@@ -169,9 +175,7 @@ const RoomPage = () => {
                 </>
             )}
 
-            {activeTab === "requests" && (
-                <RoomRequestList /> // Tab "Yêu cầu đặt phòng"
-            )}
+            {activeTab === "requests" && <RoomRequestList />}
         </div>
     );
 };

@@ -1,41 +1,50 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getRooms, saveRoom, deleteRoom } from "../services/roomApi";
 
-// Lấy danh sách rooms
-export const fetchRooms = createAsyncThunk("rooms/fetchRooms", async (_, { rejectWithValue }) => {
-    try {
-        const res = await getRooms();
-        return res.data; // vì bạn đang dùng ApiResponse {status, message, timestamp, data}
-    } catch (err) {
-        return rejectWithValue(err.response?.data || err.message);
+// === FETCH ROOMS (phân trang) ===
+export const fetchRooms = createAsyncThunk(
+    "rooms/fetchRooms",
+    async ({ page = 0, size = 9 } = {}, { rejectWithValue }) => {
+        try {
+            const res = await getRooms({ page, size });
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
     }
-});
+);
 
-// Tạo / cập nhật room
-export const createOrUpdateRoom = createAsyncThunk("rooms/saveRoom", async (room, { rejectWithValue }) => {
-    try {
-        const res = await saveRoom(room);
-        return res.data;
-    } catch (err) {
-        return rejectWithValue(err.response?.data || err.message);
+// === CREATE / UPDATE ROOM ===
+export const createOrUpdateRoom = createAsyncThunk(
+    "rooms/createOrUpdateRoom",
+    async (room, { rejectWithValue }) => {
+        try {
+            const res = await saveRoom(room);
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
     }
-});
+);
 
-// Xóa room
-export const removeRoom = createAsyncThunk("rooms/deleteRoom", async (id, { rejectWithValue }) => {
-    try {
-        const res = await deleteRoom(id);
-        return res.data;
-    } catch (err) {
-        return rejectWithValue(err.response?.data || err.message);
+// === DELETE ROOM ===
+export const removeRoom = createAsyncThunk(
+    "rooms/removeRoom",
+    async (id, { rejectWithValue }) => {
+        try {
+            const res = await deleteRoom(id);
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
     }
-});
+);
 
-// ==== Slice ====
 const roomSlice = createSlice({
     name: "rooms",
     initialState: {
-        rooms: [],
+        items: [], // danh sách phòng
+        meta: {}, // chứa thông tin phân trang
         loading: false,
         error: null,
         selectedRoom: null,
@@ -47,33 +56,42 @@ const roomSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // fetchRooms
+            // === FETCH ROOMS ===
             .addCase(fetchRooms.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(fetchRooms.fulfilled, (state, action) => {
                 state.loading = false;
-                state.rooms = action.payload || [];
+                // Tránh lỗi "rooms.reduce is not a function"
+                state.items = Array.isArray(action.payload.data)
+                    ? action.payload.data
+                    : [];
+                state.meta = action.payload.meta || {};
             })
             .addCase(fetchRooms.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.error = action.payload?.message || "Failed to fetch rooms";
             })
-            // saveRoom
+
+            // === CREATE / UPDATE ROOM ===
             .addCase(createOrUpdateRoom.fulfilled, (state, action) => {
-                const updated = action.payload;
-                const idx = state.rooms.findIndex((r) => r.id === updated.id);
+                const updated = action.payload.data;
+                if (!updated) return;
+
+                const idx = state.items.findIndex((r) => r.id === updated.id);
                 if (idx >= 0) {
-                    state.rooms[idx] = updated;
+                    state.items[idx] = updated;
                 } else {
-                    state.rooms.push(updated);
+                    state.items.unshift(updated);
                 }
             })
-            // deleteRoom
+
+            // === DELETE ROOM ===
             .addCase(removeRoom.fulfilled, (state, action) => {
-                const deleted = action.payload;
-                state.rooms = state.rooms.filter((r) => r.id !== deleted.id);
+                const deleted = action.payload.data;
+                if (!deleted) return;
+                state.items = state.items.filter((r) => r.id !== deleted.id);
             });
     },
 });

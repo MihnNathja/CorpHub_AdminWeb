@@ -1,6 +1,6 @@
 import api from "../../../services/api";
 
-export const getRooms = () => api.get("/api/rooms");
+export const getRooms = (params) => api.get("/api/rooms", { params });
 
 export const saveRoom = (room) => api.post("/api/rooms", room);
 

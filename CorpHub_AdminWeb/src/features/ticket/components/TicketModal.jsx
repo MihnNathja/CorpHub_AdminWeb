@@ -23,10 +23,10 @@ import { useComment } from "../hooks/useComment";
 import ConfirmDialog from "../../global/components/ConfirmDialog";
 import { useAttachments } from "../hooks/useAttachment";
 import TicketAttachments from "./TicketAttachments";
+import { useUser } from "../../user/hooks/useUser";
 
 const TicketModal = ({
   ticket,
-  users,
   onClose,
   onEdit,
   handleAssign,
@@ -38,7 +38,6 @@ const TicketModal = ({
   setIsReasonFormOpen,
   mode,
 }) => {
-  //console.log(users);
   if (!ticket) return null;
 
   const { user } = useAuth();
@@ -48,6 +47,10 @@ const TicketModal = ({
   const isOwner = ticket.requester && user && ticket.requester.id === user.id;
   const { comments, addComment } = useComment(ticket.id);
   const { items: attachments, load, remove, download } = useAttachments();
+
+  const { employees: users } = useUser();
+
+  console.log(users);
 
   useEffect(() => {
     if (ticket?.id) {
@@ -66,9 +69,8 @@ const TicketModal = ({
       >
         {/* Header */}
         <div
-          className={`flex justify-between items-center p-4 rounded-t-xl ${
-            statusColors[ticket.status]
-          }`}
+          className={`flex justify-between items-center p-4 rounded-t-xl ${statusColors[ticket.status]
+            }`}
         >
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
@@ -129,14 +131,13 @@ const TicketModal = ({
                 className={`w-full border rounded-lg p-2 transition-colors
                   dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100
                   focus:ring-2 focus:ring-blue-500
-                  ${
-                    !(mode === "received" && ticket.status === "WAITING")
-                      ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
-                      : ""
+                  ${!(mode === "received" && ticket.status === "WAITING")
+                    ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
+                    : ""
                   }`}
               >
                 <option value="">Chưa phân công</option>
-                {users.map((user) => (
+                {users?.map((user) => (
                   <option key={user.id} value={user.id}>
                     {user.fullName}
                   </option>

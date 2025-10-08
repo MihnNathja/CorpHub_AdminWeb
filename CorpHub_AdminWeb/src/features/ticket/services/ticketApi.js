@@ -1,18 +1,20 @@
 import api from "../../../services/api";
 
-export const getReceivedTickets = () =>
-  api.get(`/api/tickets/department/received`);
+export const getReceivedTickets = (params) =>
+  api.get(`/api/tickets/department/received`, { params });
+
+export const getSentTickets = (params) =>
+  api.get(`/api/tickets/department/sent`, { params });
+
+export const getMyTickets = (params) =>
+  api.get(`/api/tickets/my-tickets`, { params });
 
 export const getUsersDepartment = () => api.get(`/api/department/users`);
-
-export const getMyTickets = () => api.get(`/api/tickets/my-tickets`);
 
 export const saveTicket = (ticket) => api.post(`api/tickets/save`, ticket);
 
 export const assignTicket = (ticketId, userId) =>
   api.post(`/api/tickets/assign`, { ticketId: ticketId, assigneeId: userId });
-
-export const getSentTickets = () => api.get(`/api/tickets/department/sent`);
 
 export const confirmSendTicket = (ticketId) =>
   api.post(`/api/tickets/confirm/${ticketId}`);

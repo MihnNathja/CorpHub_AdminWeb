@@ -31,7 +31,7 @@ api.interceptors.response.use(
       return response;
     }
     // Còn lại thì trả về response.data
-    return response.data;
+    return response;
   },
   (err) => {
     let message = "Something went wrong";

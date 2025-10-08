@@ -46,11 +46,11 @@ const commentSlice = createSlice({
       })
       .addCase(fetchTicketComments.fulfilled, (state, action) => {
         state.commentLoading = false;
-        state.commentItems = action.payload; // toàn bộ list từ server
+        state.commentItems = action.payload.data; // toàn bộ list từ server
       })
       .addCase(fetchTicketComments.rejected, (state, action) => {
         state.commentLoading = false;
-        state.commentError = action.payload;
+        state.commentError = action.payload.data;
       })
 
       // === CREATE ===
@@ -61,11 +61,11 @@ const commentSlice = createSlice({
       .addCase(createTicketComment.fulfilled, (state, action) => {
         state.commentLoading = false;
         // thêm 1 comment mới vào danh sách
-        state.commentItems.push(action.payload);
+        state.commentItems.push(action.payload.data);
       })
       .addCase(createTicketComment.rejected, (state, action) => {
         state.commentLoading = false;
-        state.commentError = action.payload;
+        state.commentError = action.payload.data;
       });
   },
 });

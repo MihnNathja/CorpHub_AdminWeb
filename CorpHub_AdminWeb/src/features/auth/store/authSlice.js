@@ -6,12 +6,11 @@ export const login = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await loginAPI(credentials);
-      // Lưu token + user vào localStorage để có thể khôi phục sau reload
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data));
+      localStorage.setItem("token", response.data.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.data));
       return response.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
+      return rejectWithValue(err.response?.data?.data || err.message);
     }
   }
 );
@@ -22,7 +21,7 @@ export const fetchProfile = createAsyncThunk(
     try {
       return await getProfile();
     } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
+      return rejectWithValue(err.response?.data?.data || err.message);
     }
   }
 );
@@ -51,19 +50,19 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
-        state.token = action.payload.token;
+        state.user = action.payload.data;
+        state.token = action.payload.data.token;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload.data;
       })
       .addCase(fetchProfile.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.data;
         localStorage.setItem("user", JSON.stringify(action.payload));
       })
       .addCase(fetchProfile.rejected, (state, action) => {

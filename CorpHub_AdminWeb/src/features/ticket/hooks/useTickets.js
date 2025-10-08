@@ -1,13 +1,10 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchMyTickets,
   fetchReceivedTickets,
   fetchSentTickets,
   fetchUsersDepartment,
-  setStatusFilter,
-  setPriorityFilter,
-  setPage,
   assign,
   confirmSend,
   reject,
@@ -18,59 +15,62 @@ import {
 } from "../store/ticketSlice";
 import { showError, showSuccess } from "../../../utils/toastUtils";
 
-export const useTickets = (mode) => {
+export const useTickets = (mode = "my") => {
   const dispatch = useDispatch();
 
-  const {
-    users,
-    myItems,
-    receivedItems,
-    sentItems,
-    loading,
-    error,
-    statusFilter,
-    priorityFilter,
-    page,
-    pageSize,
-  } = useSelector((state) => state.tickets);
+  // 🔹 Lấy nhánh state tương ứng
+  const { data: tickets = [], meta = {}, loading, error } = useSelector(
+    (state) => state.tickets[mode]
+  );
+  const users = useSelector((state) => state.tickets.users);
+
+  // ====================== LOCAL FILTER STATE ======================
+  const [page, setPage] = useState(meta.page ?? 0);
+  const [size, setSize] = useState(meta.size ?? 9);
+  const [isRequester, setIsRequester] = useState(true);
+  const [status, setStatus] = useState("");
+  const [priority, setPriority] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [keyword, setKeyword] = useState("");
+
 
   const [selectedTicket, setSelectedTicket] = useState(null);
-  const [editingId, setEditingId] = useState(null);
-  const [isReasonFormOpen, setIsReasonFormOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReasonFormOpen, setIsReasonFormOpen] = useState(false);
 
-  // Mảng gốc
-  const rawTickets =
-    mode === "sent" ? sentItems : mode === "my" ? myItems : receivedItems;
+  const totalPages = meta.totalPages ?? 1;
 
-  // Filter tickets nhưng KHÔNG mutate rawTickets
-  const filteredTickets = useMemo(() => {
-    if (!Array.isArray(rawTickets)) return [];
-    return rawTickets.filter((ticket) => {
-      const statusMatch = !statusFilter || ticket.status === statusFilter;
-      const priorityMatch =
-        !priorityFilter || ticket.priority === priorityFilter;
-      return statusMatch && priorityMatch;
-    });
-  }, [rawTickets, statusFilter, priorityFilter]);
+  // ====================== FETCH FUNCTION ======================
+  const fetchTickets = useCallback(() => {
+    const params = { page, size, isRequester, status, priority, from, to, keyword };
 
-  // Pagination tách biệt
-  const paginatedTickets = useMemo(() => {
-    return filteredTickets.slice((page - 1) * pageSize, page * pageSize);
-  }, [filteredTickets, page, pageSize]);
+    if (mode === "sent") dispatch(fetchSentTickets(params));
+    else if (mode === "received") dispatch(fetchReceivedTickets(params));
+    else dispatch(fetchMyTickets(params));
+  }, [dispatch, mode, page, size, isRequester, status, priority, from, to, keyword]);
 
-  const totalPages = Math.ceil(filteredTickets.length / pageSize);
+  // Gọi mỗi khi filter hoặc phân trang thay đổi
+  useEffect(() => {
+    fetchTickets();
+  }, [fetchTickets]);
 
-  // Assign chỉ áp dụng cho received
+  // 🧩 Fetch users (cho phần Assign)
+  useEffect(() => {
+    if (!Array.isArray(users) || users.length === 0) {
+      dispatch(fetchUsersDepartment());
+    }
+  }, [dispatch]);
+
+  // ====================== ACTION HANDLERS ======================
   const handleAssign = async (ticketId, userId) => {
     try {
       await dispatch(assign({ ticketId, userId }));
       showSuccess("Assign successfully");
-      setEditingId(null);
-      dispatch(fetchReceivedTickets());
+      fetchTickets();
     } catch (err) {
       showError("Assign failed");
-      console.error("Assign failed:", err);
+      console.error(err);
     }
   };
 
@@ -78,11 +78,10 @@ export const useTickets = (mode) => {
     try {
       await dispatch(confirmSend({ ticketId }));
       showSuccess("Confirm successfully");
-      if (mode === "sent") dispatch(fetchSentTickets());
-      else dispatch(fetchReceivedTickets());
+      fetchTickets();
     } catch (err) {
-      showError("Confirm sending failed");
-      console.error("Confirm sending failed:", err);
+      showError("Confirm failed");
+      console.error(err);
     }
   };
 
@@ -90,27 +89,22 @@ export const useTickets = (mode) => {
     try {
       await dispatch(reject({ ticketId, reason }));
       showSuccess("Reject successfully");
-      if (mode === "my") dispatch(fetchMyTickets());
-      if (mode === "sent") dispatch(fetchSentTickets());
-      else dispatch(fetchReceivedTickets());
+      fetchTickets();
     } catch (err) {
-      showError("Reject send failed");
-      console.error("Reject send failed:", err);
+      showError("Reject failed");
+      console.error(err);
     }
   };
 
   const handleCreateOrUpdate = async (ticketData) => {
     try {
-      const res = await dispatch(createOrUpdateTicket(ticketData));
-      console.log("create ticket", res.payload);
-      showSuccess("Tickets list updated");
-      if (mode === "my") dispatch(fetchMyTickets());
-      if (mode === "sent") dispatch(fetchSentTickets());
-      if (mode === "received") dispatch(fetchReceivedTickets());
-      return res.payload;
+      const res = await dispatch(createOrUpdateTicket(ticketData)).unwrap();
+      showSuccess(ticketData.id ? "Ticket updated" : "Ticket created");
+      fetchTickets();
+      return res;
     } catch (err) {
-      showError("Add ticket failed");
-      console.error("Add ticket failed:", err);
+      showError(err?.message || "Create/Update failed");
+      console.error(err);
     }
   };
 
@@ -118,10 +112,10 @@ export const useTickets = (mode) => {
     try {
       await dispatch(accept(ticketId));
       showSuccess("Ticket accepted");
-      if (mode === "my") dispatch(fetchMyTickets());
+      fetchTickets();
     } catch (err) {
-      showError("Accept ticket failed");
-      console.error("Accept ticket failed:", err);
+      showError("Accept failed");
+      console.error(err);
     }
   };
 
@@ -129,10 +123,10 @@ export const useTickets = (mode) => {
     try {
       await dispatch(complete(ticketId));
       showSuccess("Ticket completed");
-      if (mode === "my") dispatch(fetchMyTickets());
+      fetchTickets();
     } catch (err) {
-      showError("Complete ticket failed");
-      console.error("Complete ticket failed:", err);
+      showError("Complete failed");
+      console.error(err);
     }
   };
 
@@ -140,50 +134,50 @@ export const useTickets = (mode) => {
     try {
       await dispatch(remove(ticketId));
       showSuccess("Ticket deleted");
-      if (mode === "my") dispatch(fetchMyTickets());
+      fetchTickets();
     } catch (err) {
-      showError("Delete ticket failed");
-      console.error("Delete ticket failed:", err);
+      showError("Delete failed");
+      console.error(err);
     }
   };
 
-  // Fetch tickets theo mode khi mount
-  useEffect(() => {
-    if (mode === "sent") dispatch(fetchSentTickets());
-    else if (mode === "my") dispatch(fetchMyTickets());
-    else dispatch(fetchReceivedTickets());
-  }, [dispatch, mode]);
-
-  // Fetch users cho assign
-  useEffect(() => {
-    //console.log("Fetch users cho assign, ", users);
-    if (!Array.isArray(users) || users.length === 0) {
-      dispatch(fetchUsersDepartment());
-    }
-  }, [dispatch, users]);
-
+  // ====================== RETURN ======================
   return {
+    tickets,
     users,
-    rawTickets,
-    filteredTickets,
-    tickets: paginatedTickets,
     loading,
     error,
-    statusFilter,
-    priorityFilter,
-    setPriorityFilter: (val) => dispatch(setPriorityFilter(val)),
-    setStatusFilter: (val) => dispatch(setStatusFilter(val)),
+
+    // Pagination
     page,
-    setPage: (val) => dispatch(setPage(val)),
+    setPage,
     totalPages,
+    size,
+    setSize,
+
+    // Filters
+    status,
+    setStatus,
+    isRequester,
+    setIsRequester,
+    priority,
+    setPriority,
+    from,
+    setFrom,
+    to,
+    setTo,
+    keyword,
+    setKeyword,
+
+    // Modal & Ticket selection ✅
     selectedTicket,
     setSelectedTicket,
-    editingId,
-    setEditingId,
-    isReasonFormOpen,
-    setIsReasonFormOpen,
     isModalOpen,
     setIsModalOpen,
+    isReasonFormOpen,
+    setIsReasonFormOpen,
+
+    // Actions
     handleAssign,
     handleConfirmSend,
     handleReject,

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import {
     fetchRooms,
     createOrUpdateRoom,
@@ -9,59 +9,79 @@ import {
 
 export const useRooms = () => {
     const dispatch = useDispatch();
-    const { rooms, loading, error, selectedRoom } = useSelector(
+
+    // Lấy dữ liệu từ Redux store
+    const { items, meta, loading, error, selectedRoom } = useSelector(
         (state) => state.rooms
     );
 
-    // local state
-    const [page, setPage] = useState(1);
+    // Local state cho phân trang và filter
+    const [page, setPage] = useState(0); // Page trong backend bắt đầu từ 0
     const [statusFilter, setStatusFilter] = useState("ALL");
-    const pageSize = 9;
+    const size = meta?.size || 9;
 
-    // fetch data khi mount
+    // Fetch khi mount hoặc đổi trang
     useEffect(() => {
-        dispatch(fetchRooms());
-    }, [dispatch]);
+        dispatch(fetchRooms({ page, size }));
+    }, [dispatch, page, size]);
 
-    // Đếm số lượng theo trạng thái
+    // Đếm số lượng theo trạng thái (an toàn)
     const statusCounts = useMemo(() => {
-        return rooms.reduce((acc, r) => {
-            const key = r.status?.toUpperCase() || "UNKNOWN";
+        if (!Array.isArray(items)) return {};
+        return items.reduce((acc, room) => {
+            const key = room.status?.toUpperCase() || "UNKNOWN";
             acc[key] = (acc[key] || 0) + 1;
             return acc;
         }, {});
-    }, [rooms]);
+    }, [items]);
 
-    // Lọc theo trạng thái
+    // Lọc theo trạng thái (client-side)
     const filteredRooms = useMemo(() => {
-        if (statusFilter === "ALL") return rooms;
-        return rooms.filter((r) => r.status?.toUpperCase() === statusFilter);
-    }, [rooms, statusFilter]);
+        if (!Array.isArray(items)) return [];
+        if (statusFilter === "ALL") return items;
+        return items.filter(
+            (r) => r.status?.toUpperCase() === statusFilter
+        );
+    }, [items, statusFilter]);
 
-    // Phân trang trên filteredRooms
-    const totalPages = Math.ceil(filteredRooms.length / pageSize) || 1;
+    // Phân trang (nếu backend chưa có meta)
+    const totalPages =
+        meta?.totalPages ||
+        Math.ceil(filteredRooms.length / size) ||
+        1;
+
     const paginatedRooms = useMemo(() => {
-        const start = (page - 1) * pageSize;
-        return filteredRooms.slice(start, start + pageSize);
-    }, [filteredRooms, page]);
+        if (meta?.totalPages) return filteredRooms; // backend đã phân trang
+        const start = page * size;
+        return filteredRooms.slice(start, start + size);
+    }, [filteredRooms, meta, page, size]);
 
-    // handlers
-    const handleCreateOrUpdate = async (roomData) => {
-        await dispatch(createOrUpdateRoom(roomData));
-        dispatch(fetchRooms());
-    };
+    // === HANDLERS ===
+    const handleCreateOrUpdate = useCallback(
+        async (roomData) => {
+            await dispatch(createOrUpdateRoom(roomData));
+            dispatch(fetchRooms({ page, size }));
+        },
+        [dispatch, page, size]
+    );
 
-    const handleRemove = async (id) => {
-        await dispatch(removeRoom(id));
-        dispatch(fetchRooms());
-    };
+    const handleRemove = useCallback(
+        async (id) => {
+            await dispatch(removeRoom(id));
+            dispatch(fetchRooms({ page, size }));
+        },
+        [dispatch, page, size]
+    );
 
-    const setSelected = (room) => {
-        dispatch(setSelectedRoom(room));
-    };
+    const setSelected = useCallback(
+        (room) => {
+            dispatch(setSelectedRoom(room));
+        },
+        [dispatch]
+    );
 
     return {
-        rooms,
+        rooms: items,
         loading,
         error,
         page,

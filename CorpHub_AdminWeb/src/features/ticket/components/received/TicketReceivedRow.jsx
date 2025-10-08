@@ -7,7 +7,6 @@ import { EyeIcon } from "lucide-react";
 
 const TicketReceivedRow = ({
   ticket,
-  users,
   editingId,
   setEditingId,
   handleAssign,
@@ -15,6 +14,7 @@ const TicketReceivedRow = ({
   setIsModalOpen,
   setSelectedTicket,
 }) => {
+  
   return (
     <tr className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
       <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{ticket.requester.fullName}</td>
@@ -30,7 +30,6 @@ const TicketReceivedRow = ({
       <td className="px-4 py-2">
         <AssigneeSelect
           ticket={ticket}
-          users={users}
           editingId={editingId}
           setEditingId={setEditingId}
           handleAssign={handleAssign}

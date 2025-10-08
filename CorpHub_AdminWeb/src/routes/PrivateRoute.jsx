@@ -38,9 +38,6 @@ const PrivateRoute = ({ children, roles }) => {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  //console.log("token:", token);
-  console.log("user:", user);
-
   return children;
 };
 
