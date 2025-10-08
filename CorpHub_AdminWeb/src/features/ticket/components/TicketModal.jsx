@@ -12,6 +12,7 @@ import {
   Layers,
   Info,
   Pencil,
+  Phone,
 } from "lucide-react";
 import { useAuth } from "../../auth/hooks/useAuth";
 import TicketActionGroupEmp from "./TicketActionGroupEmp";
@@ -108,6 +109,13 @@ const TicketModal = ({
               <User className="w-4 h-4" />
               <b>Requester:</b> {ticket.requester?.fullName || "Ẩn danh"}
             </p>
+            {ticket.requester?.phone && (
+              <p className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                <b>Contact:</b> {ticket.requester.phone}
+              </p>
+            )}
+
             <p className="flex items-center gap-2">
               <CalendarClock className="w-4 h-4" />
               <b>Created At:</b> {new Date(ticket.createdAt).toLocaleString()}
@@ -142,6 +150,11 @@ const TicketModal = ({
                   </option>
                 ))}
               </select>
+              {ticket.assignee?.phone && (
+                <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                  <Phone className="w-3 h-3" /> {ticket.assignee.phone}
+                </div>
+              )}
             </div>
             {/* Attachments */}
             <TicketAttachments
