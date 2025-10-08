@@ -103,11 +103,11 @@ const attachmentSlice = createSlice({
       })
       .addCase(fetchTicketAttachments.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        state.items = action.payload.data;
       })
       .addCase(fetchTicketAttachments.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload.data;
       })
 
       // UPLOAD

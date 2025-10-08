@@ -32,6 +32,7 @@ const RoomRequirementCard = ({
     const formattedEnd = dayjs(end).format("DD/MM/YYYY HH:mm");
 
     // Lấy tên thiết bị theo assetCateIds
+
     const assets =
         assetCategories?.map(
             (id) => allCategories.find((a) => a.id === id)?.name

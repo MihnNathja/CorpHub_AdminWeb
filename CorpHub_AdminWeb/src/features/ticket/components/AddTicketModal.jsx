@@ -16,14 +16,13 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
     priority: "",
     categoryId: "",
     description: "",
-    attachments: [], // thêm state cho file
+    attachments: [],
   });
 
-  const {
-    departments,
-    loading: loadingDept,
-    error: errorDept,
-  } = useDepartment();
+  // State chứa lỗi
+  const [formErrors, setFormErrors] = useState({});
+
+  const { departments, loading: loadingDept, error: errorDept } = useDepartment();
   const { categories, loading: loadingCat, error: errorCat } = useCategory();
   const priorities = Object.keys(priorityColors);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
@@ -49,29 +48,29 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
           attachments: [],
         });
       }
+      setFormErrors({}); // reset lỗi khi mở modal
     }
   }, [isOpen, ticket]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormErrors((prev) => ({ ...prev, [name]: "" })); // xoá lỗi khi người dùng nhập lại
   };
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setFormData((prev) => ({
       ...prev,
-      attachments: [...prev.attachments, ...files], // thêm file mới
+      attachments: [...prev.attachments, ...files],
     }));
   };
 
   const handleRemoveFile = (index) => {
     const file = formData.attachments[index];
     if (!(file instanceof File) && file.id) {
-      // mở confirm và lưu id để xoá
       setConfirmDeleteId(file.id);
     } else {
-      // chỉ xoá trong state
       setFormData((prev) => {
         const updated = [...prev.attachments];
         updated.splice(index, 1);
@@ -80,17 +79,21 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
     }
   };
 
+  // Validate form 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (
-      !formData.title ||
-      !formData.departmentId ||
-      !formData.priority ||
-      !formData.categoryId
-    ) {
-      alert("Vui lòng điền đầy đủ thông tin!");
+    const errors = {};
+
+    if (!formData.title.trim()) errors.title = "Title is required.";
+    if (!formData.departmentId) errors.departmentId = "Please select a department.";
+    if (!formData.priority) errors.priority = "Please select a priority.";
+    if (!formData.categoryId) errors.categoryId = "Please select a category.";
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
       return;
     }
+
     onSubmit({ ...formData, id: ticket?.id });
     onClose();
   };
@@ -121,12 +124,16 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
             <input
               type="text"
               name="title"
+              maxLength={100}
               value={formData.title}
               onChange={handleChange}
-              className="w-full border rounded-lg p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               placeholder="Enter ticket title"
-              required
+              className={`w-full rounded-lg p-2 dark:bg-gray-800 dark:text-gray-100 
+                border ${formErrors.title ? "border-red-500" : "border-gray-300 dark:border-gray-700"}`}
             />
+            {formErrors.title && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.title}</p>
+            )}
           </div>
 
           {/* Department */}
@@ -137,20 +144,25 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
             ) : errorDept ? (
               <p className="text-red-500 text-sm">{errorDept}</p>
             ) : (
-              <select
-                name="departmentId"
-                value={formData.departmentId}
-                onChange={handleChange}
-                className="w-full border rounded-lg p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
-                required
-              >
-                <option value="">Select department</option>
-                {departments.map((dept) => (
-                  <option key={dept.id} value={dept.id}>
-                    {dept.name}
-                  </option>
-                ))}
-              </select>
+              <>
+                <select
+                  name="departmentId"
+                  value={formData.departmentId}
+                  onChange={handleChange}
+                  className={`w-full rounded-lg p-2 dark:bg-gray-800 dark:text-gray-100 
+                    border ${formErrors.departmentId ? "border-red-500" : "border-gray-300 dark:border-gray-700"}`}
+                >
+                  <option value="">Select department</option>
+                  {departments.map((dept) => (
+                    <option key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </option>
+                  ))}
+                </select>
+                {formErrors.departmentId && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.departmentId}</p>
+                )}
+              </>
             )}
           </div>
 
@@ -161,8 +173,8 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
               name="priority"
               value={formData.priority}
               onChange={handleChange}
-              className="w-full border rounded-lg p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
-              required
+              className={`w-full rounded-lg p-2 dark:bg-gray-800 dark:text-gray-100 
+                border ${formErrors.priority ? "border-red-500" : "border-gray-300 dark:border-gray-700"}`}
             >
               <option value="">Select priority</option>
               {priorities.map((p) => (
@@ -171,6 +183,9 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
                 </option>
               ))}
             </select>
+            {formErrors.priority && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.priority}</p>
+            )}
           </div>
 
           {/* Category */}
@@ -181,35 +196,39 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
             ) : errorCat ? (
               <p className="text-red-500 text-sm">{errorCat}</p>
             ) : (
-              <select
-                name="categoryId"
-                value={formData.categoryId}
-                onChange={handleChange}
-                className="w-full border rounded-lg p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
-                required
-              >
-                <option value="">Select category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.categoryName}
-                  </option>
-                ))}
-              </select>
+              <>
+                <select
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleChange}
+                  className={`w-full rounded-lg p-2 dark:bg-gray-800 dark:text-gray-100 
+                    border ${formErrors.categoryId ? "border-red-500" : "border-gray-300 dark:border-gray-700"}`}
+                >
+                  <option value="">Select category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.categoryName}
+                    </option>
+                  ))}
+                </select>
+                {formErrors.categoryId && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.categoryId}</p>
+                )}
+              </>
             )}
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Description
-            </label>
+            <label className="block text-sm font-medium mb-1">Description</label>
             <textarea
               name="description"
               value={formData.description}
+              maxLength={1000}
               onChange={handleChange}
               rows={3}
-              className="w-full border rounded-lg p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               placeholder="Enter description"
+              className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2 dark:bg-gray-800 dark:text-gray-100"
             />
           </div>
 
@@ -241,10 +260,12 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
           </div>
         </form>
       </div>
+
+      {/* Confirm delete attachment */}
       <ConfirmDialog
         open={!!confirmDeleteId}
         onConfirm={() => {
-          remove(confirmDeleteId); // gọi API xoá
+          remove(confirmDeleteId);
           setFormData((prev) => ({
             ...prev,
             attachments: prev.attachments.filter(

@@ -1,52 +1,66 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useTickets } from "../../hooks/useTickets";
 import TicketFilter from "../AdminTicketFilter";
 import TicketReceivedTableBody from "./TicketReceivedTableBody";
 import Pagination from "../../../global/components/Pagination";
 import TicketModal from "../TicketModal";
-import { priorityColors } from "../../../global/const/priorityColors";
 import { statusColors } from "../../../global/const/statusColors";
+import { priorityColors } from "../../../global/const/priorityColors";
 import ReasonForm from "../ReasonForm";
 
 const TicketReceivedTable = () => {
   const {
-    rawTickets,
-    filteredTickets,
     tickets,
     loading,
-    statusFilter,
-    priorityFilter,
-    setStatusFilter,
-    setPriorityFilter,
+    error,
+
+    // Pagination
     page,
     setPage,
     totalPages,
-    users,
+    size,
+    setSize,
+
+    // Filters
+    status,
+    setStatus,
+    priority,
+    setPriority,
+    from,
+    setFrom,
+    to,
+    setTo,
+    keyword,
+    setKeyword,
+
+    // Ticket selection / modals
     selectedTicket,
     setSelectedTicket,
-    editingId,
-    setEditingId,
+    isReasonFormOpen,
+    setIsReasonFormOpen,
     isModalOpen,
     setIsModalOpen,
+
+    // Actions
     handleAssign,
     handleReject,
-    isReasonFormOpen,
-    setIsReasonFormOpen
   } = useTickets("received");
 
-  const statusCounts = useMemo(() => {
-    return rawTickets.reduce((acc, t) => {
-      acc[t.status] = (acc[t.status] || 0) + 1;
-      return acc;
-    }, {});
-  }, [rawTickets]);
+  if (loading) {
+    return (
+      <div className="p-6 text-center text-gray-500 dark:text-gray-300">
+        Loading received tickets...
+      </div>
+    );
+  }
 
-  const priorityCounts = useMemo(() => {
-    return rawTickets.reduce((acc, t) => {
-      acc[t.priority] = (acc[t.priority] || 0) + 1;
-      return acc;
-    }, {});
-  }, [rawTickets]);
+  if (error) {
+    return (
+      <div className="p-6 text-center text-red-500 dark:text-red-400">
+        Failed to load tickets: {error.message || error}
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl transition-colors">
@@ -54,25 +68,57 @@ const TicketReceivedTable = () => {
         Received Tickets
       </h3>
 
-      {/* Bộ lọc */}
-      <div className="flex gap-4 mb-4">
+      {/* 🎯 Bộ lọc chính */}
+      <div className="flex flex-wrap items-end gap-4 mb-6">
+        <div className="flex flex-col mb-4">
+          <label className="text-gray-900 dark:text-gray-100 mb-1">
+            Search
+          </label>
+          <input
+            type="text"
+            placeholder="Search by title, description, or requester..."
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            className="border rounded p-1 dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-200"
+          />
+        </div>
+
         <TicketFilter
           name="Status"
-          filter={statusFilter}
-          counts={statusCounts}
-          setFilter={setStatusFilter}
+          filter={status}
+          setFilter={setStatus}
           colors={statusColors}
         />
+
         <TicketFilter
           name="Priority"
-          filter={priorityFilter}
-          counts={priorityCounts}
-          setFilter={setPriorityFilter}
+          filter={priority}
+          setFilter={setPriority}
           colors={priorityColors}
         />
+
+        <div className="flex flex-col mb-4">
+          <label className="text-gray-900 dark:text-gray-100 mb-1">From</label>
+          <input
+            type="date"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="border rounded p-1 dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-200"
+          />
+        </div>
+
+        <div className="flex flex-col mb-4">
+          <label className="text-gray-900 dark:text-gray-100 mb-1">To</label>
+          <input
+            type="date"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            className="border rounded p-1 dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-200"
+          />
+        </div>
       </div>
 
-      {/* Bảng tickets */}
+      {/* Bảng ticket */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
           <thead className="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
@@ -90,9 +136,6 @@ const TicketReceivedTable = () => {
           </thead>
           <TicketReceivedTableBody
             tickets={tickets}
-            users={users}
-            editingId={editingId}
-            setEditingId={setEditingId}
             handleAssign={handleAssign}
             setIsReasonFormOpen={setIsReasonFormOpen}
             setIsModalOpen={setIsModalOpen}
@@ -101,11 +144,30 @@ const TicketReceivedTable = () => {
         </table>
       </div>
 
-      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+      {/* Pagination + Rows per page */}
+      <div className="mt-4 flex items-center justify-between">
+        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-700 dark:text-gray-300">
+            Rows:
+          </label>
+          <select
+            value={size}
+            onChange={(e) => setSize(Number(e.target.value))}
+            className="border rounded p-1 text-sm dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-200"
+          >
+            {[5, 10, 20, 50].map((v) => (
+              <option key={v} value={v}>
+                {v}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
+      {/* Modal chi tiết ticket */}
       <TicketModal
         ticket={isModalOpen ? selectedTicket : null}
-        users={users}
         handleAssign={handleAssign}
         onClose={() => {
           setSelectedTicket(null);
@@ -113,6 +175,8 @@ const TicketReceivedTable = () => {
         }}
         mode="received"
       />
+
+      {/* Form reject */}
       {isReasonFormOpen && selectedTicket && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
           <div className="w-full max-w-2xl">
@@ -133,7 +197,8 @@ const TicketReceivedTable = () => {
               onCancel={() => setIsReasonFormOpen(false)}
             />
           </div>
-        </div>)}
+        </div>
+      )}
     </div>
   );
 };

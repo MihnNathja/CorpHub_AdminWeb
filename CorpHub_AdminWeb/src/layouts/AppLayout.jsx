@@ -7,13 +7,16 @@ const AppLayout = ({ children }) => {
     const { token, user, loading } = useSelector((state) => state.auth);
 
     // Mỗi khi có token mà chưa có user -> gọi API lấy thông tin user
-    useEffect(() => {
-        if (token && !user) {
-            dispatch(fetchProfile());
-        }
-    }, [token, user, dispatch]);
+    // useEffect(() => {
+    //     if (token && !user) {
+    //         dispatch(fetchProfile());
+    //     }
+    // }, [token, user, dispatch]);
 
     // Nếu đang gọi API profile -> hiển thị loader toàn trang
+
+    console.log(token);
+    console.log(user);
     if (token && !user && loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">

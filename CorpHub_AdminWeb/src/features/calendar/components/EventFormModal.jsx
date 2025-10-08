@@ -36,7 +36,6 @@ export default function EventFormModal({
 
     const [isEdited, setIsEdited] = useState(true);
     const [isLocationEdited, setIsLocationEdited] = useState(true);
-    console.log(form);
     useEffect(() => {
         setIsEdited(isOrganizer && !form.ready);
     }, [isOrganizer, form.ready]);

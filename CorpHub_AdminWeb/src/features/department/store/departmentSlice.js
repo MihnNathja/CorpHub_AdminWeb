@@ -36,7 +36,7 @@ const departmentSlice = createSlice({
             })
             .addCase(fetchDepartments.fulfilled, (state, action) => {
                 state.loading = false;
-                state.departments = action.payload;
+                state.departments = action.payload.data;
             })
             .addCase(fetchDepartments.rejected, (state, action) => {
                 state.loading = false;

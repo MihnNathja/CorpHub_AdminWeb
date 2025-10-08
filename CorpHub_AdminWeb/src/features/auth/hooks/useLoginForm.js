@@ -10,6 +10,8 @@ export const useLoginForm = () => {
 
   const { loading, error, user } = useSelector((state) => state.auth);
 
+  console.log(user);
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -21,7 +23,7 @@ export const useLoginForm = () => {
   // Khi login thành công, chuyển về trang chủ
   useEffect(() => {
     if (user) {
-      navigate("/"); 
+      navigate("/");
     }
   }, [user, navigate]);
 

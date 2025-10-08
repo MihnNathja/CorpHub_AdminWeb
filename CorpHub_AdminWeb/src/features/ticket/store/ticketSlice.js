@@ -13,54 +13,63 @@ import {
   deleteTicket,
 } from "../services/ticketApi";
 
+// ==================== ASYNC THUNKS ====================
+
 // === MY TICKETS ===
 export const fetchMyTickets = createAsyncThunk(
   "tickets/fetchMyTickets",
-  async (_, thunkAPI) => {
+  async (
+    { page = 0, size = 10, isRequester = true, status = "", priority = "", from = "", to = "", keyword = "" },
+    thunkAPI
+  ) => {
     try {
-      const res = await getMyTickets();
-      console.log("My tickets:", res.data);
-      return res.data;
+      const res = await getMyTickets({ page, size, isRequester, status, priority, from, to, keyword });
+      return res.data; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
-// Async thunk để fetch ticket từ API
+// === RECEIVED TICKETS ===
 export const fetchReceivedTickets = createAsyncThunk(
   "tickets/fetchReceivedTickets",
-  async (_, thunkAPI) => {
+  async (
+    { page = 0, size = 10, status = "", priority = "", from = "", to = "", keyword = "" },
+    thunkAPI
+  ) => {
     try {
-      const res = await getReceivedTickets();
-      console.log("Received tickets:", res.data);
-      return res.data;
+      const res = await getReceivedTickets({ page, size, status, priority, from, to, keyword });
+      return res.data; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
+// === SENT TICKETS ===
 export const fetchSentTickets = createAsyncThunk(
   "tickets/fetchSentTickets",
-  async (_, thunkAPI) => {
+  async (
+    { page = 0, size = 10, status = "", priority = "", from = "", to = "", keyword = "" },
+    thunkAPI
+  ) => {
     try {
-      const res = await getSentTickets();
-      console.log("Sent tickets:", res.data);
-      return res.data;
+      const res = await getSentTickets({ page, size, status, priority, from, to, keyword });
+      return res.data; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
+
+// === USERS DEPARTMENT ===
 export const fetchUsersDepartment = createAsyncThunk(
   "tickets/fetchUsersDepartment",
   async (_, thunkAPI) => {
     try {
-      //console.log("fetchUsersDepartment: ");
       const res = await getUsersDepartment();
-      //console.log("Fetch User department ",res.data );
       return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -68,6 +77,7 @@ export const fetchUsersDepartment = createAsyncThunk(
   }
 );
 
+// === CREATE / UPDATE / DELETE / ACTIONS ===
 export const createOrUpdateTicket = createAsyncThunk(
   "tickets/createOrUpdateTicket",
   async (ticket, thunkAPI) => {
@@ -140,13 +150,12 @@ export const complete = createAsyncThunk(
   }
 );
 
-// === DELETE ===
 export const remove = createAsyncThunk(
   "tickets/remove",
   async (ticketId, thunkAPI) => {
     try {
       await deleteTicket(ticketId);
-      return ticketId; // trả về id để reducer xoá
+      return ticketId;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -156,244 +165,104 @@ export const remove = createAsyncThunk(
 const ticketSlice = createSlice({
   name: "tickets",
   initialState: {
-    myItems: [],
-    receivedItems: [],
-    sentItems: [],
+    my: { data: [], meta: {}, loading: false, error: null },
+    received: { data: [], meta: {}, loading: false, error: null },
+    sent: { data: [], meta: {}, loading: false, error: null },
     users: [],
-    loading: false,
     actionLoading: false,
     error: null,
-    statusFilter: "", // "" nghĩa là tất cả
-    priorityFilter: "",
-    page: 1,
-    pageSize: 9,
   },
-  reducers: {
-    setStatusFilter(state, action) {
-      state.statusFilter = action.payload;
-      state.page = 1;
-    },
-    setPriorityFilter(state, action) {
-      state.priorityFilter = action.payload;
-      state.page = 1;
-    },
-    setPage(state, action) {
-      state.page = action.payload;
-    },
-  },
+
+  reducers: {},
+
   extraReducers: (builder) => {
+    // === MY TICKETS ===
     builder
-      // === MY TICKETS ===
       .addCase(fetchMyTickets.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.my.loading = true;
+        state.my.error = null;
       })
       .addCase(fetchMyTickets.fulfilled, (state, action) => {
-        state.loading = false;
-        state.myItems = action.payload;
+        state.my.loading = false;
+        state.my.data = action.payload.data;
+        state.my.meta = action.payload.meta;
       })
       .addCase(fetchMyTickets.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      // === RECEIVED TICKETS ===
+        state.my.loading = false;
+        state.my.error = action.payload.data;
+      });
+
+    // === RECEIVED ===
+    builder
       .addCase(fetchReceivedTickets.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.received.loading = true;
+        state.received.error = null;
       })
       .addCase(fetchReceivedTickets.fulfilled, (state, action) => {
-        state.loading = false;
-        state.receivedItems = action.payload;
+        state.received.loading = false;
+        state.received.data = action.payload.data;
+        state.received.meta = action.payload.meta;
       })
       .addCase(fetchReceivedTickets.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+        state.received.loading = false;
+        state.received.error = action.payload.data;
+      });
 
-      // === SENT TICKETS ===
+    // === SENT ===
+    builder
       .addCase(fetchSentTickets.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.sent.loading = true;
+        state.sent.error = null;
       })
       .addCase(fetchSentTickets.fulfilled, (state, action) => {
-        state.loading = false;
-        state.sentItems = action.payload;
+        state.sent.loading = false;
+        state.sent.data = action.payload.data;
+        state.sent.meta = action.payload.meta;
+        console.log(action.payload.meta);
       })
       .addCase(fetchSentTickets.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+        state.sent.loading = false;
+        state.sent.error = action.payload.data;
+      });
 
-      // === USERS ===
-      .addCase(fetchUsersDepartment.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+    // === USERS ===
+    builder
       .addCase(fetchUsersDepartment.fulfilled, (state, action) => {
-        state.loading = false;
-        state.users = action.payload;
-      })
-      .addCase(fetchUsersDepartment.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+        state.users = action.payload.data;
+      });
 
-      // === CREATE OR UPDATE TICKET ===
+    // === CREATE / UPDATE ===
+    builder
       .addCase(createOrUpdateTicket.pending, (state) => {
         state.actionLoading = true;
-        state.error = null;
       })
       .addCase(createOrUpdateTicket.fulfilled, (state, action) => {
         state.actionLoading = false;
-        const newTicket = action.payload;
+        const newTicket = action.payload.data;
         if (!newTicket || !newTicket.id) return;
 
-        // Nếu đã tồn tại thì update, nếu chưa thì thêm mới
-        const existingIndex = state.myItems.findIndex(
-          (t) => t.id === newTicket.id
-        );
-        if (existingIndex !== -1) {
-          state.myItems[existingIndex] = {
-            ...state.myItems[existingIndex],
-            ...newTicket,
-          };
+        // cập nhật trong danh sách my tickets
+        const index = state.my.data.findIndex((t) => t.id === newTicket.id);
+        if (index !== -1) {
+          state.my.data[index] = { ...state.my.data[index], ...newTicket };
         } else {
-          state.myItems.unshift(newTicket); // thêm lên đầu danh sách
+          state.my.data.unshift(newTicket);
         }
       })
       .addCase(createOrUpdateTicket.rejected, (state, action) => {
         state.actionLoading = false;
-        state.error = action.payload;
-      })
+        state.error = action.payload.data;
+      });
 
-      // === ASSIGN ===
-      .addCase(assign.pending, (state) => {
-        state.actionLoading = true;
-        state.error = null;
-      })
-      .addCase(assign.fulfilled, (state, action) => {
-        state.actionLoading = false;
-        const updated = action.payload;
-        if (!updated || !updated.id) {
-          console.warn("Assign fulfilled but payload is invalid", updated);
-          return;
-        }
-        // Chỉ update trong receivedItems
-        const index = state.receivedItems.findIndex((t) => t.id === updated.id);
-        if (index !== -1) {
-          state.receivedItems[index] = {
-            ...state.receivedItems[index],
-            ...updated,
-          };
-        }
-      })
-      .addCase(assign.rejected, (state, action) => {
-        state.actionLoading = false;
-        state.error = action.payload;
-      })
-
-      // === CONFIRM SEND ===
-      .addCase(confirmSend.pending, (state) => {
-        state.actionLoading = true;
-        state.error = null;
-      })
-      .addCase(confirmSend.fulfilled, (state, action) => {
-        state.actionLoading = false;
-        const ticketId = action.payload.ticketId;
-        const ticket =
-          state.sentItems.find((t) => t.id === ticketId) ||
-          state.receivedItems.find((t) => t.id === ticketId);
-        if (ticket) ticket.status = "WAITING";
-      })
-      .addCase(confirmSend.rejected, (state, action) => {
-        state.actionLoading = false;
-        state.error = action.payload;
-      })
-
-      // === REJECT SEND ===
-      .addCase(reject.pending, (state) => {
-        state.actionLoading = true;
-        state.error = null;
-      })
-      .addCase(reject.fulfilled, (state, action) => {
-        state.actionLoading = false;
-        const ticketId = action.payload.ticketId;
-        const ticket =
-          state.sentItems.find((t) => t.id === ticketId) ||
-          state.receivedItems.find((t) => t.id === ticketId);
-        if (ticket) ticket.status = "REJECTED";
-      })
-      .addCase(reject.rejected, (state, action) => {
-        state.actionLoading = false;
-        state.error = action.payload;
-      })
-
-      // === ACCEPT ===
-      .addCase(accept.pending, (state) => {
-        state.actionLoading = true;
-        state.error = null;
-      })
-      .addCase(accept.fulfilled, (state, action) => {
-        state.actionLoading = false;
-        const ticketId = action.payload.ticketId;
-        // tìm ticket trong receivedItems hoặc myItems để update
-        let ticket = state.myItems.find((t) => t.id === ticketId);
-        if (ticket) {
-          ticket.status = "IN_PROGRESS";
-        }
-      })
-      .addCase(accept.rejected, (state, action) => {
-        state.actionLoading = false;
-        state.error = action.payload;
-      })
-
-      // === COMPLETE ===
-      .addCase(complete.pending, (state) => {
-        state.actionLoading = true;
-        state.error = null;
-      })
-      .addCase(complete.fulfilled, (state, action) => {
-        state.actionLoading = false;
-        const ticketId = action.payload.ticketId;
-        // tìm ticket trong receivedItems hoặc myItems để update
-        let ticket = state.myItems.find((t) => t.id === ticketId);
-        if (ticket) {
-          ticket.status = "COMPLETED";
-        }
-      })
-      .addCase(complete.rejected, (state, action) => {
-        state.actionLoading = false;
-        state.error = action.payload;
-      })
-
-      // === DELETE ===
-      .addCase(remove.pending, (state) => {
-        state.actionLoading = true;
-        state.error = null;
-      })
+    // === DELETE ===
+    builder
       .addCase(remove.fulfilled, (state, action) => {
-        state.actionLoading = false;
-        const ticketId = action.payload;
-
-        // Xoá trong myItems
-        state.myItems = state.myItems.filter((t) => t.id !== ticketId);
-
-        // Xoá trong receivedItems
-        state.receivedItems = state.receivedItems.filter(
-          (t) => t.id !== ticketId
-        );
-
-        // Xoá trong sentItems
-        state.sentItems = state.sentItems.filter((t) => t.id !== ticketId);
-      })
-      .addCase(remove.rejected, (state, action) => {
-        state.actionLoading = false;
-        state.error = action.payload;
+        const id = action.payload.data;
+        state.my.data = state.my.data.filter((t) => t.id !== id);
+        state.received.data = state.received.data.filter((t) => t.id !== id);
+        state.sent.data = state.sent.data.filter((t) => t.id !== id);
       });
   },
 });
-
-export const { setStatusFilter, setPriorityFilter, setPage } =
-  ticketSlice.actions;
 
 export default ticketSlice.reducer;
