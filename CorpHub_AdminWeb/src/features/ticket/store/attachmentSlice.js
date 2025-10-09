@@ -13,8 +13,8 @@ export const fetchTicketAttachments = createAsyncThunk(
     try {
       console.log(ticketId);
       const res = await fetchAttachments(ticketId);
-      console.log("Load attachments", res.data);
-      return res.data;
+      console.log("Load attachments", res);
+      return res;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -28,7 +28,7 @@ export const addTicketAttachments = createAsyncThunk(
     try {
       const res = await uploadAttachments(ticketId, files);
 
-      return res.data; // trả về list file vừa upload
+      return res; // trả về list file vừa upload
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -71,7 +71,7 @@ export const downloadTicketAttachment = createAsyncThunk(
       }
 
       // 👇 xử lý download luôn ở đây
-      const url = window.URL.createObjectURL(res.data);
+      const url = window.URL.createObjectURL(res);
       const a = document.createElement("a");
       a.href = url;
       a.download = fileName;

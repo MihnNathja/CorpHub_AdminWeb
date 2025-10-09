@@ -2,6 +2,7 @@ import React from "react";
 
 export default function MeetingRoomRequirementSection({
     assetCates = [],
+    errors,
     selectedAssetCates = [],
     onToggle,
     capacity,
@@ -30,6 +31,7 @@ export default function MeetingRoomRequirementSection({
                     className="w-32 rounded-md border border-gray-300 dark:border-gray-600 p-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
                     placeholder="VD: 20"
                 />
+                {errors["roomRequirement.capacity"] && <p className="text-sm text-red-500">{errors["roomRequirement.capacity"]}</p>}
             </div>
 
             {/* Chọn thời gian mượn phòng */}
@@ -48,6 +50,7 @@ export default function MeetingRoomRequirementSection({
                             }
                             className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
                         />
+                        {errors["roomRequirement.start"] && <p className="text-sm text-red-500">{errors["roomRequirement.start"]}</p>}
                     </div>
                     <div className="flex-1">
                         <span className="block text-xs text-gray-600 dark:text-gray-300 mb-1">Kết thúc</span>
@@ -59,6 +62,7 @@ export default function MeetingRoomRequirementSection({
                             }
                             className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
                         />
+                        {errors["roomRequirement.end"] && <p className="text-sm text-red-500">{errors["roomRequirement.end"]}</p>}
                     </div>
                 </div>
             </div>

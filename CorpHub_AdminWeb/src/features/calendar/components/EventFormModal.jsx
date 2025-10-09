@@ -26,7 +26,7 @@ export default function EventFormModal({
         query,
         setQuery,
         errors,
-        validate,
+        setErrors,
         suggestions,
         loading,
         status,
@@ -75,12 +75,11 @@ export default function EventFormModal({
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!isOrganizer) return;
-        if (!validate()) return;
 
-        onSubmit({
+        const result = await onSubmit({
             ...form,
             to: recipients.map((r) => r.email),
             start: new Date(form.start),
@@ -93,7 +92,13 @@ export default function EventFormModal({
                 }
                 : null,
         });
+
+        if (result.validationErrors) {
+            setErrors(result.validationErrors);
+        }
     };
+
+
 
     if (!isOpen || typeof document === "undefined") return null;
 
@@ -171,6 +176,7 @@ export default function EventFormModal({
                                 className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 
                                            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             />
+                            {errors.subject && <p className="text-sm text-red-500">{errors.subject}</p>}
                         </div>
 
                         <div className="space-y-1">
@@ -206,6 +212,7 @@ export default function EventFormModal({
                                 className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 
                                            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             />
+                            {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
                         </div>
                     </div>
 
@@ -266,6 +273,7 @@ export default function EventFormModal({
                                     {form.meetingRoom && isOrganizer && (
                                         <MeetingRoomRequirementSection
                                             assetCates={categories}
+                                            errors={errors}
                                             selectedAssetCates={form.roomRequirement.assetCategories}
                                             onToggle={handleToggleAsset}
                                             disabled={!isLocationEdited}
@@ -308,6 +316,7 @@ export default function EventFormModal({
                                 className="w-full rounded-md p-2 border border-gray-300 dark:border-gray-600 
                                            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             />
+                            {errors.onlineLink && <p className="text-sm text-red-500">{errors.onlineLink}</p>}
                         </div>
 
                         <div className="flex gap-4">

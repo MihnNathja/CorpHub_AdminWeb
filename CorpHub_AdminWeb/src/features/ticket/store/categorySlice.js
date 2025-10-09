@@ -9,7 +9,7 @@ export const fetchCategories = createAsyncThunk(
     try {
       const response = await getAllCategories();
       //console.log("category:", response.data);
-      return response.data;
+      return response;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }

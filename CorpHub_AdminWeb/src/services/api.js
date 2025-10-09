@@ -6,8 +6,8 @@ const api = axios.create({
   timeout: 10000,
 });
 
+// ✅ Add Authorization header (skip for login/register)
 api.interceptors.request.use((config) => {
-  // Nếu request là login hoặc register thì bỏ qua token
   if (
     config.url.includes("/auth/login") ||
     config.url.includes("/auth/register")
@@ -23,40 +23,53 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Gộp response interceptor
+// ✅ Unified response + error handler
 api.interceptors.response.use(
   (response) => {
-    // Nếu là download file (blob) thì giữ nguyên response để còn headers
+    // Nếu là download file (blob) thì giữ nguyên
     if (response.config.responseType === "blob") {
       return response;
     }
-    // Còn lại thì trả về response.data
-    return response;
+
+    // Trả response.data để code trong slice nhận đúng {status, message, data}
+    return response.data;
   },
   (err) => {
-    let message = "Something went wrong";
-
+    // 🧠 Không gói vào new Error(message) để giữ nguyên err.response
     if (err.response) {
-      // Nếu backend trả HTML thay vì JSON
+      // Nếu backend trả HTML (VD: 500 HTML page)
       if (typeof err.response.data === "string") {
-        message = "Server error: please try again later.";
+        err.response.data = {
+          status: err.response.status,
+          message: "Server error: please try again later.",
+        };
       }
-      // Nếu backend trả JSON có message
-      else if (err.response.data?.message) {
-        message = err.response.data.message;
-      }
-      // Nếu muốn handle riêng theo status code
-      else if (err.response.status === 401) {
-        message = "Unauthorized. Please login again.";
-        // 👉 Ở đây bạn có thể clear token + redirect về login
+
+      // Nếu 401 → thông báo và có thể logout
+      if (err.response.status === 401) {
+        console.warn("⚠️ Unauthorized. Please login again.");
         // localStorage.removeItem("token");
         // window.location.href = "/login";
       }
-    } else if (err.request) {
-      message = "No response from server. Please check your connection.";
+
+      // 🔥 Giữ nguyên cấu trúc err.response.data (ApiResponse)
+      console.log("From api", err.response);
+      return Promise.reject(err.response);
     }
 
-    return Promise.reject(new Error(message));
+    // ❗Không có phản hồi (network hoặc timeout)
+    if (err.request) {
+      return Promise.reject({
+        status: 0,
+        message: "No response from server. Please check your connection.",
+      });
+    }
+
+    // ❗Lỗi không xác định
+    return Promise.reject({
+      status: -1,
+      message: err.message || "Unknown error occurred",
+    });
   }
 );
 

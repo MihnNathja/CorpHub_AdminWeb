@@ -7,7 +7,7 @@ export const fetchRooms = createAsyncThunk(
     async ({ page = 0, size = 9 } = {}, { rejectWithValue }) => {
         try {
             const res = await getRooms({ page, size });
-            return res.data;
+            return res;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
         }
@@ -20,7 +20,7 @@ export const createOrUpdateRoom = createAsyncThunk(
     async (room, { rejectWithValue }) => {
         try {
             const res = await saveRoom(room);
-            return res.data;
+            return res;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
         }
@@ -33,7 +33,7 @@ export const removeRoom = createAsyncThunk(
     async (id, { rejectWithValue }) => {
         try {
             const res = await deleteRoom(id);
-            return res.data;
+            return res;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
         }

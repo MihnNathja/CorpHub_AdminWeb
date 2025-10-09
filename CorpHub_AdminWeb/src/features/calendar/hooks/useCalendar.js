@@ -36,7 +36,7 @@ export const useCalendar = (selectedEmails = []) => {
 
   const handleAddUpdateEvent = async (eventData) => {
     const payload = {
-      id: eventData.id && eventData.id !== "" ? eventData.id : null,
+      id: eventData.id || null,
       title: eventData.title,
       subject: eventData.subject,
       description: eventData.description,
@@ -46,11 +46,7 @@ export const useCalendar = (selectedEmails = []) => {
       meetingRoom: eventData.meetingRoom ?? false,
       roomRequirement: eventData.meetingRoom
         ? {
-          id:
-            eventData.roomRequirement?.id &&
-              eventData.roomRequirement.id !== ""
-              ? eventData.roomRequirement.id
-              : null,
+          id: eventData.roomRequirement?.id || null,
           capacity: eventData.roomRequirement.capacity,
           assetCategories: eventData.roomRequirement.assetCategories,
           start: eventData.roomRequirement.start
@@ -65,20 +61,30 @@ export const useCalendar = (selectedEmails = []) => {
       end: toLocal(eventData.end).toISOString(),
     };
 
-    const action = await dispatch(createOrUpdateMeeting(payload));
-    if (createOrUpdateMeeting.fulfilled.match(action)) {
-      dispatch(updateEvent(action.payload));
+    try {
+      const res = await dispatch(createOrUpdateMeeting(payload)).unwrap();
+
+      dispatch(updateEvent(res));
       setIsModalOpen(false);
       setSlotInfo(null);
       showSuccess(
         eventData.id ? "Update meeting successfully" : "Create meeting successfully"
       );
       reloadMeetings();
-    } else {
-      showError(action.payload || action.error);
-      console.error("Save meeting failed:", action.payload || action.error);
+
+      return { success: true };
+    } catch (err) {
+      console.error("Save meeting failed:", err);
+
+      if (err?.data && typeof err.data === "object") {
+        return { success: false, validationErrors: err.data };
+      }
+
+      showError(err?.message || "Save meeting failed");
+      return { success: false };
     }
   };
+
 
   const handleDeleteEvent = async (id) => {
     const action = await dispatch(removeMeeting(id));

@@ -194,6 +194,9 @@ const TicketsPage = () => {
         ticket={selectedTicket}
         users={users}
         onClose={() => setSelectedTicket(null)}
+        onEdit={() => {
+          setIsAddModalOpen(true);
+        }}
         handleAssign={handleAssign}
         handleAccept={handleAccept}
         handleReject={handleReject}

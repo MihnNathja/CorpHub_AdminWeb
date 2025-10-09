@@ -24,7 +24,7 @@ export const fetchMyTickets = createAsyncThunk(
   ) => {
     try {
       const res = await getMyTickets({ page, size, isRequester, status, priority, from, to, keyword });
-      return res.data; // { data, meta }
+      return res; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -40,7 +40,7 @@ export const fetchReceivedTickets = createAsyncThunk(
   ) => {
     try {
       const res = await getReceivedTickets({ page, size, status, priority, from, to, keyword });
-      return res.data; // { data, meta }
+      return res; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -56,7 +56,7 @@ export const fetchSentTickets = createAsyncThunk(
   ) => {
     try {
       const res = await getSentTickets({ page, size, status, priority, from, to, keyword });
-      return res.data; // { data, meta }
+      return res; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -70,7 +70,7 @@ export const fetchUsersDepartment = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await getUsersDepartment();
-      return res.data;
+      return res;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -83,7 +83,7 @@ export const createOrUpdateTicket = createAsyncThunk(
   async (ticket, thunkAPI) => {
     try {
       const res = await saveTicket(ticket);
-      return res.data;
+      return res;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -95,7 +95,7 @@ export const confirmSend = createAsyncThunk(
   async ({ ticketId }, thunkAPI) => {
     try {
       const res = await confirmSendTicket(ticketId);
-      return { ticketId, data: res.data };
+      return { ticketId, data: res };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -107,7 +107,7 @@ export const reject = createAsyncThunk(
   async ({ ticketId, reason }, thunkAPI) => {
     try {
       const res = await rejectTicket(ticketId, reason);
-      return { ticketId, data: res.data };
+      return { ticketId, data: res };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -119,7 +119,7 @@ export const assign = createAsyncThunk(
   async ({ ticketId, userId }, thunkAPI) => {
     try {
       const res = await assignTicket(ticketId, userId);
-      return res.data;
+      return res;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -131,7 +131,7 @@ export const accept = createAsyncThunk(
   async (ticketId, thunkAPI) => {
     try {
       const res = await acceptTicket(ticketId);
-      return { ticketId, data: res.data };
+      return { ticketId, data: res };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -143,7 +143,7 @@ export const complete = createAsyncThunk(
   async (ticketId, thunkAPI) => {
     try {
       const res = await completeTicket(ticketId);
-      return { ticketId, data: res.data };
+      return { ticketId, data: res };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }

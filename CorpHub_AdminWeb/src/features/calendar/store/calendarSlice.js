@@ -6,8 +6,8 @@ export const fetchMeetings = createAsyncThunk(
     async ({ startTime, endTime, emails }, { rejectWithValue }) => {
         try {
             const res = await getMeetings({ startTime, endTime, emails });
-            console.log(res.data);
-            return res.data;
+            console.log(res);
+            return res;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
         }
@@ -22,7 +22,8 @@ export const createOrUpdateMeeting = createAsyncThunk(
             return res?.data;
         }
         catch (err) {
-            return rejectWithValue(err.response?.data || err.message);
+            console.log(err.data);
+            return rejectWithValue(err.data || err.message);
         }
     }
 )
