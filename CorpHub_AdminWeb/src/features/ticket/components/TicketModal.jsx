@@ -186,7 +186,7 @@ const TicketModal = ({
             Updated At: {new Date(ticket.updatedAt).toLocaleString()}
           </p>
           <div className="flex gap-3">
-            {ticket.status === "OPEN" && isCurrentUserAssignee && (
+            {ticket.status === "OPEN" && isOwner && (
               <button
                 onClick={() => onEdit?.(ticket)}
                 className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg flex items-center gap-2 transition-colors"

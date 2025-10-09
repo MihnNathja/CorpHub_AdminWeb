@@ -36,7 +36,7 @@ const RoomPage = () => {
         return (
             <div className="flex justify-center items-center min-h-[300px]">
                 <p className="text-gray-500 dark:text-gray-300">
-                    Đang tải dữ liệu...
+                    Loading...
                 </p>
             </div>
         );
@@ -45,7 +45,7 @@ const RoomPage = () => {
     return (
         <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6 relative">
             <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-                Quản lý Phòng
+                Room Management
             </h2>
 
             {/* 🔹 Floating Button */}
@@ -53,7 +53,7 @@ const RoomPage = () => {
                 <FloatingButton
                     onClick={() => setIsAddModalOpen(true)}
                     icon={PlusIcon}
-                    tooltip="Thêm phòng"
+                    tooltip="New room"
                     color="blue"
                 />
             )}
@@ -67,7 +67,7 @@ const RoomPage = () => {
                         : "text-gray-500 hover:text-blue-500"
                         }`}
                 >
-                    Danh sách phòng
+                    Room List
                 </button>
 
                 <button
@@ -77,7 +77,7 @@ const RoomPage = () => {
                         : "text-gray-500 hover:text-blue-500"
                         }`}
                 >
-                    Yêu cầu đặt phòng
+                    Room Requests
                 </button>
             </div>
 
