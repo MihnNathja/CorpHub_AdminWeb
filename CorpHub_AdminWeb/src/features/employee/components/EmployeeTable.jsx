@@ -5,8 +5,9 @@ import { showSuccess } from "../../../utils/toastUtils";
 import { EyeIcon } from "lucide-react";
 
 const EmployeeTable = () => {
-  const { employees, setPage, totalPages, page, sendCreateUserTicket } =
+  const { data, setPage, totalPages, page, sendCreateUserTicket } =
     useEmployee();
+  const employees = data;
   const [selected, setSelected] = useState(null);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showCreateForm, setShowCreateForm] = useState(false);

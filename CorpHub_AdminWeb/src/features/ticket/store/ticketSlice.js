@@ -7,6 +7,7 @@ import {
   getUsersDepartment,
   rejectTicket,
   getMyTickets,
+  getTicketMetaById,
   saveTicket,
   acceptTicket,
   completeTicket,
@@ -211,12 +212,26 @@ export const remove = createAsyncThunk(
   }
 );
 
+export const fetchTickets = createAsyncThunk(
+  "tickets/fetchTickets",
+  async ({ ticketId }, thunkAPI) => {
+    try {
+      const res = await getTicketMetaById(ticketId);
+      console.log("Fectch Ticket, ", res);
+      return res; // { data, meta }
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
 const ticketSlice = createSlice({
   name: "tickets",
   initialState: {
     my: { data: [], meta: {}, loading: false, error: null },
     received: { data: [], meta: {}, loading: false, error: null },
     sent: { data: [], meta: {}, loading: false, error: null },
+    selectedTicket: null,
     users: [],
     actionLoading: false,
     error: null,
@@ -239,6 +254,18 @@ const ticketSlice = createSlice({
       .addCase(fetchMyTickets.rejected, (state, action) => {
         state.my.loading = false;
         state.my.error = action.payload.data;
+      });
+    builder
+      .addCase(fetchTickets.fulfilled, (state, action) => {
+        state.selectedTicket = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(fetchTickets.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchTickets.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
 
     // === RECEIVED ===

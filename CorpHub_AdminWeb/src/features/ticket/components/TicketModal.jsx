@@ -25,6 +25,7 @@ import ConfirmDialog from "../../global/components/ConfirmDialog";
 import { useAttachments } from "../hooks/useAttachment";
 import TicketAttachments from "./TicketAttachments";
 import { useUser } from "../../user/hooks/useUser";
+import { useNavigate } from "react-router-dom";
 
 const TicketModal = ({
   ticket,
@@ -51,8 +52,15 @@ const TicketModal = ({
 
   const { employees: users } = useUser();
 
+  const navigate = useNavigate();
+
+  const handleCreateUser = () => {
+    navigate(`/users?tab=add&ticketId=${ticket.id}`);
+  };
+
   useEffect(() => {
     if (ticket?.id) {
+      //console.log(ticket);
       load(ticket.id);
     }
   }, [ticket, load]);
@@ -234,6 +242,14 @@ const TicketModal = ({
                 className="px-4 py-2 bg-red-500 dark:bg-red-700 hover:bg-red-600 text-white rounded-lg transition-colors"
               >
                 Delete
+              </button>
+            )}
+            {ticket.category.categoryName === "Hệ thống" && (
+              <button
+                onClick={handleCreateUser}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                Create Account
               </button>
             )}
           </div>

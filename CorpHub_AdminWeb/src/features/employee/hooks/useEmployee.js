@@ -12,7 +12,7 @@ export const useEmployee = () => {
 
   // Lấy dữ liệu từ redux
   const {
-    data: employees = [],
+    data,
     meta = {},
     loading,
     error,
@@ -39,6 +39,7 @@ export const useEmployee = () => {
   // Gọi khi filter hoặc phân trang thay đổi
   useEffect(() => {
     fetchEmployees();
+    console.log(data);
   }, [fetchEmployees]);
 
   // ====================== ACTION: CREATE ======================
@@ -68,7 +69,7 @@ export const useEmployee = () => {
 
   // ====================== RETURN ======================
   return {
-    employees,
+    data,
     loading,
     error,
 

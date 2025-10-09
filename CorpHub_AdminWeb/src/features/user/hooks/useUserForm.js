@@ -7,35 +7,38 @@ export const useUserForm = (isOpen, user, onSubmit) => {
   const dispatch = useDispatch();
   const { departments } = useSelector((state) => state.user);
 
-
   const [form, setForm] = useState({
+    id: "",
     fullName: "",
     email: "",
     role: "",
     password: "",
-    departmentId: "",
   });
 
-  const roles = ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR", "ROLE_USER"]; // Hoặc fetch từ backend nếu cần
+  const roles = ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR", "ROLE_USER"];
 
-  // Load departments và set form khi modal mở
   useEffect(() => {
     if (!isOpen) return;
 
     dispatch(fetchDepartments());
 
     if (user) {
-      // Edit
+      // Edit mode
+      // Chỗ bên dưới sẽ còn cần bổ sung
       setForm({
-        fullName: user.fullName || "",
+        employeeId: user.id || "",
         email: user.email || "",
         role: user.role || "",
-        password: "", // trống khi edit
-        departmentId: user.department?.id || "",
+        password: "",
       });
     } else {
-      // Add
-      setForm({ fullName: "", email: "", role: "", password: "", departmentId: "" });
+      // Add mode
+      setForm({
+        employeeId: "",
+        email: "",
+        role: "",
+        password: "",
+      });
     }
   }, [isOpen, user, dispatch]);
 
@@ -45,7 +48,7 @@ export const useUserForm = (isOpen, user, onSubmit) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(form, !!user); // thứ hai là cờ edit/add
+    onSubmit(form, !!user);
   };
 
   return { form, setForm, handleChange, handleSubmit, departments, roles };

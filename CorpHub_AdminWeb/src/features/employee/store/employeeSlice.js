@@ -39,7 +39,7 @@ export const getAllEmployeeProfile = createAsyncThunk(
     try {
       const response = await getAllEmployeeProfileApi({ page, size, keyword });
       console.log(response);
-      return response.data;
+      return response;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
