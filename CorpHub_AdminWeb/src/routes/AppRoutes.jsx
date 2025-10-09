@@ -3,7 +3,6 @@ import LoginPage from "../features/auth/pages/LoginPage";
 import HomePage from "../pages/HomePage";
 import Dashboard from "../pages/Dashboard";
 import TicketsPage from "../features/ticket/pages/TicketPage";
-import UserList from "../features/user/pages/UserList";
 import CalendarPage from "../features/calendar/pages/CalendarPage";
 import PrivateRoute from "../routes/PrivateRoute";
 import UnauthorizedPage from "../pages/UnauthorizedPage";
@@ -11,6 +10,7 @@ import EmployeeTicketPage from "../features/ticket/pages/EmployeeTicketsPage";
 import RoomPage from "../features/room/pages/RoomPage";
 import FeatureComingSoonPage from "../pages/FeatureComingSoonPage";
 import EmployeePage from "../features/employee/pages/EmployeePage";
+import UserPage from "../features/user/pages/UserPage";
 
 const AppRoutes = () => {
   return (
@@ -47,7 +47,7 @@ const AppRoutes = () => {
           path="users"
           element={
             <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
-              <UserList />
+              <UserPage />
             </PrivateRoute>
           }
         />

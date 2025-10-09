@@ -14,8 +14,11 @@ const Pagination = ({ page, setPage, totalPages }) => {
         Page {page + 1} / {totalPages}
       </span>
       <button
-        disabled={page >= totalPages}
-        onClick={() => setPage(page + 1)}
+        disabled={page + 1 >= totalPages}
+        onClick={() => {
+          setPage(page + 1);
+          console.log(totalPages);
+        }}
         className="px-3 py-1 border rounded disabled:opacity-50 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
       >
         Next

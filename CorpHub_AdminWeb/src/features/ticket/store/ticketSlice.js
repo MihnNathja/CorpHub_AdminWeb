@@ -19,11 +19,29 @@ import {
 export const fetchMyTickets = createAsyncThunk(
   "tickets/fetchMyTickets",
   async (
-    { page = 0, size = 10, isRequester = true, status = "", priority = "", from = "", to = "", keyword = "" },
+    {
+      page = 0,
+      size = 10,
+      isRequester = true,
+      status = "",
+      priority = "",
+      from = "",
+      to = "",
+      keyword = "",
+    },
     thunkAPI
   ) => {
     try {
-      const res = await getMyTickets({ page, size, isRequester, status, priority, from, to, keyword });
+      const res = await getMyTickets({
+        page,
+        size,
+        isRequester,
+        status,
+        priority,
+        from,
+        to,
+        keyword,
+      });
       return res.data; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -35,11 +53,27 @@ export const fetchMyTickets = createAsyncThunk(
 export const fetchReceivedTickets = createAsyncThunk(
   "tickets/fetchReceivedTickets",
   async (
-    { page = 0, size = 10, status = "", priority = "", from = "", to = "", keyword = "" },
+    {
+      page = 0,
+      size = 10,
+      status = "",
+      priority = "",
+      from = "",
+      to = "",
+      keyword = "",
+    },
     thunkAPI
   ) => {
     try {
-      const res = await getReceivedTickets({ page, size, status, priority, from, to, keyword });
+      const res = await getReceivedTickets({
+        page,
+        size,
+        status,
+        priority,
+        from,
+        to,
+        keyword,
+      });
       return res.data; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -51,11 +85,27 @@ export const fetchReceivedTickets = createAsyncThunk(
 export const fetchSentTickets = createAsyncThunk(
   "tickets/fetchSentTickets",
   async (
-    { page = 0, size = 10, status = "", priority = "", from = "", to = "", keyword = "" },
+    {
+      page = 0,
+      size = 10,
+      status = "",
+      priority = "",
+      from = "",
+      to = "",
+      keyword = "",
+    },
     thunkAPI
   ) => {
     try {
-      const res = await getSentTickets({ page, size, status, priority, from, to, keyword });
+      const res = await getSentTickets({
+        page,
+        size,
+        status,
+        priority,
+        from,
+        to,
+        keyword,
+      });
       return res.data; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -63,13 +113,13 @@ export const fetchSentTickets = createAsyncThunk(
   }
 );
 
-
 // === USERS DEPARTMENT ===
 export const fetchUsersDepartment = createAsyncThunk(
   "tickets/fetchUsersDepartment",
   async (_, thunkAPI) => {
     try {
       const res = await getUsersDepartment();
+      console.log(res);
       return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -226,10 +276,9 @@ const ticketSlice = createSlice({
       });
 
     // === USERS ===
-    builder
-      .addCase(fetchUsersDepartment.fulfilled, (state, action) => {
-        state.users = action.payload.data;
-      });
+    builder.addCase(fetchUsersDepartment.fulfilled, (state, action) => {
+      state.users = action.payload.data;
+    });
 
     // === CREATE / UPDATE ===
     builder
@@ -255,13 +304,12 @@ const ticketSlice = createSlice({
       });
 
     // === DELETE ===
-    builder
-      .addCase(remove.fulfilled, (state, action) => {
-        const id = action.payload.data;
-        state.my.data = state.my.data.filter((t) => t.id !== id);
-        state.received.data = state.received.data.filter((t) => t.id !== id);
-        state.sent.data = state.sent.data.filter((t) => t.id !== id);
-      });
+    builder.addCase(remove.fulfilled, (state, action) => {
+      const id = action.payload.data;
+      state.my.data = state.my.data.filter((t) => t.id !== id);
+      state.received.data = state.received.data.filter((t) => t.id !== id);
+      state.sent.data = state.sent.data.filter((t) => t.id !== id);
+    });
   },
 });
 

@@ -11,7 +11,7 @@ const EmployeePage = () => {
   ];
 
   return (
-    <div className="text-gray-900 dark:text-gray-700">
+    <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6">
       <h2 className="text-xl dark:text-gray-100 font-bold mb-4">
         Employee Management
       </h2>

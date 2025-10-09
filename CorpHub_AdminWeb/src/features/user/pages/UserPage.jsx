@@ -7,7 +7,7 @@ import UserFormModal from "../components/UserFormModal";
 import UserDetailModal from "../components/UserDetailModal";
 import ButtonOutline from "../../global/components/ButtonOutline";
 
-const UserList = () => {
+const UserPage = () => {
   const dispatch = useDispatch();
   const { list, loading, error } = useSelector((state) => state.user);
 
@@ -33,7 +33,9 @@ const UserList = () => {
       </div>
 
       {loading && <p className="dark:text-gray-200">Loading...</p>}
-      {error && <p className="text-red-500 dark:text-red-400">Error: {error}</p>}
+      {error && (
+        <p className="text-red-500 dark:text-red-400">Error: {error}</p>
+      )}
       {!loading && !error && (
         <UserTable users={list} onSelectUser={setSelectedUserId} />
       )}
@@ -57,4 +59,4 @@ const UserList = () => {
   );
 };
 
-export default UserList;
+export default UserPage;

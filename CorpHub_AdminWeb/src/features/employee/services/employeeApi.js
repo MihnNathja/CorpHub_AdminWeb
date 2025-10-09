@@ -5,4 +5,12 @@ export const createEmployeeProfileApi = (formData) =>
     headers: { "Content-Type": "multipart/form-data" },
   });
 
-export const getAllEmployeeProfileApi = () => api.get("/api/employee");
+export const getAllEmployeeProfileApi = ({ page, size, keyword }) => {
+  return api.get("/api/employee", {
+    params: { page, size, keyword },
+  });
+};
+
+export const createEmployeeProfileTicketApi = (employeeIds) => {
+  return api.post("/api/tickets/create-user-ticket", employeeIds);
+};

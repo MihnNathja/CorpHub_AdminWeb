@@ -70,8 +70,9 @@ const TicketModal = ({
       >
         {/* Header */}
         <div
-          className={`flex justify-between items-center p-4 rounded-t-xl ${statusColors[ticket.status]
-            }`}
+          className={`flex justify-between items-center p-4 rounded-t-xl ${
+            statusColors[ticket.status]
+          }`}
         >
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
@@ -139,9 +140,10 @@ const TicketModal = ({
                 className={`w-full border rounded-lg p-2 transition-colors
                   dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100
                   focus:ring-2 focus:ring-blue-500
-                  ${!(mode === "received" && ticket.status === "WAITING")
-                    ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
-                    : ""
+                  ${
+                    !(mode === "received" && ticket.status === "WAITING")
+                      ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
+                      : ""
                   }`}
               >
                 <option value="">Chưa phân công</option>
@@ -201,7 +203,7 @@ const TicketModal = ({
             Updated At: {new Date(ticket.updatedAt).toLocaleString()}
           </p>
           <div className="flex gap-3">
-            {ticket.status === "OPEN" && (
+            {ticket.status === "OPEN" && isOwner && (
               <button
                 onClick={() => onEdit?.(ticket)}
                 className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg flex items-center gap-2 transition-colors"

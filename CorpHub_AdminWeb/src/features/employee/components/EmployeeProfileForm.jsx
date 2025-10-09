@@ -106,7 +106,7 @@ const EmployeeProfileForm = () => {
   const { departments } = useDepartment();
 
   return (
-    <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md">
+    <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl transition-colors">
       <h2 className="text-3xl font-bold text-blue-600 mb-8 text-center">
         Thêm Hồ sơ Nhân viên
       </h2>
