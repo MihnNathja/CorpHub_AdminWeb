@@ -7,6 +7,7 @@ import TicketModal from "../TicketModal";
 import { statusColors } from "../../../global/const/statusColors";
 import { priorityColors } from "../../../global/const/priorityColors";
 import ReasonForm from "../ReasonForm";
+import { useUser } from "../../../user/hooks/useUser";
 
 const TicketReceivedTable = () => {
   const {
@@ -40,11 +41,16 @@ const TicketReceivedTable = () => {
     setIsReasonFormOpen,
     isModalOpen,
     setIsModalOpen,
+    editingId,
+    setEditingId,
 
     // Actions
     handleAssign,
     handleReject,
+    handleComplete,
   } = useTickets("received");
+
+  const { employees: users } = useUser();
 
   if (loading) {
     return (
@@ -136,7 +142,11 @@ const TicketReceivedTable = () => {
           </thead>
           <TicketReceivedTableBody
             tickets={tickets}
+            users={users}
+            editingId={editingId}
+            setEditingId={setEditingId}
             handleAssign={handleAssign}
+            isReasonFormOpen={isReasonFormOpen}
             setIsReasonFormOpen={setIsReasonFormOpen}
             setIsModalOpen={setIsModalOpen}
             setSelectedTicket={setSelectedTicket}
@@ -169,6 +179,9 @@ const TicketReceivedTable = () => {
       <TicketModal
         ticket={isModalOpen ? selectedTicket : null}
         handleAssign={handleAssign}
+        handleReject={handleReject}
+        handleComplete={handleComplete}
+        setIsReasonFormOpen={setIsReasonFormOpen}
         onClose={() => {
           setSelectedTicket(null);
           setIsModalOpen(false);

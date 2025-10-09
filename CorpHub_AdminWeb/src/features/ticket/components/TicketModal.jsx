@@ -51,8 +51,6 @@ const TicketModal = ({
 
   const { employees: users } = useUser();
 
-  console.log(users);
-
   useEffect(() => {
     if (ticket?.id) {
       load(ticket.id);

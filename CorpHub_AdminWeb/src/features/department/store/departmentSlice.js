@@ -7,7 +7,7 @@ export const fetchDepartments = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const response = await getAllDepartments();
-            return response.data;
+            return response;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
         }

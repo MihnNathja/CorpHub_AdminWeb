@@ -14,7 +14,7 @@ export const fetchRoomRequirements = createAsyncThunk(
         try {
             const res = await getRoomRequirements({ page, size });
             // Giả định API trả về ApiResponse {status, message, data, meta}
-            return res.data;
+            return res;
         } catch (err) {
             return rejectWithValue(
                 err.response?.data || { message: "Lỗi khi tải danh sách yêu cầu phòng" }
@@ -29,7 +29,7 @@ export const approveRoomRequirement = createAsyncThunk(
     async (id, { rejectWithValue }) => {
         try {
             const res = await approveApi(id);
-            return res.data;
+            return res;
         } catch (err) {
             return rejectWithValue(
                 err.response?.data || { message: "Lỗi khi phê duyệt yêu cầu" }
@@ -44,7 +44,7 @@ export const rejectRoomRequirement = createAsyncThunk(
     async (id, { rejectWithValue }) => {
         try {
             const res = await rejectApi(id);
-            return res.data;
+            return res;
         } catch (err) {
             return rejectWithValue(
                 err.response?.data || { message: "Lỗi khi từ chối yêu cầu" }

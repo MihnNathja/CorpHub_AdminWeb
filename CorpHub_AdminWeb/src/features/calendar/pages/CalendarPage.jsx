@@ -36,7 +36,6 @@ const CalendarPage = () => {
     const { isDark } = useTheme();
 
     const { employees, loadingUsers, errorUsers } = useUser();
-    const [isOrganizer, setIsOrganizer] = useState(false);
 
 
     const toggleEmail = (email) => {

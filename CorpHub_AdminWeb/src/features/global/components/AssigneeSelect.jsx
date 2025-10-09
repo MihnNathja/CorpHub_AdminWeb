@@ -1,12 +1,13 @@
 import React from "react";
 import { Pencil, X } from "lucide-react";
+import { useUser } from "../../user/hooks/useUser";
 
-const AssigneeSelect = ({ 
-  ticket, 
-  users, 
-  editingId, 
-  setEditingId, 
-  handleAssign, 
+const AssigneeSelect = ({
+  ticket,
+  users,
+  editingId,
+  setEditingId,
+  handleAssign,
   setIsReasonFormOpen,
   setSelectedTicket
 }) => {
@@ -26,7 +27,7 @@ const AssigneeSelect = ({
         value={ticket.assignee?.id || ""}
         onChange={(e) => {
           handleAssign(ticket.id, e.target.value);
-          setEditingId(null); // sau khi chọn thì thoát chế độ edit
+          setEditingId(null);
         }}
         className="w-full p-1 rounded bg-gray-50 dark:bg-gray-800 
                    text-gray-800 dark:text-gray-100 transition-colors"
@@ -53,11 +54,10 @@ const AssigneeSelect = ({
       </button>
 
       <button
-        onClick={() => 
-            {
-                setSelectedTicket(ticket)
-                setIsReasonFormOpen(true)
-            }}
+        onClick={() => {
+          setSelectedTicket(ticket)
+          setIsReasonFormOpen(true)
+        }}
         className="p-1 rounded text-red-500 hover:bg-red-100 
                    dark:hover:bg-red-900 transition-colors"
       >

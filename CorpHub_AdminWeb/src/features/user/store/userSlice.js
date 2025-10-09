@@ -15,7 +15,7 @@ export const fetchUsers = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await getUsersApi();
-      return res.data;
+      return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -28,7 +28,7 @@ export const getUserById = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const res = await getUserByIdApi(id);
-      return res.data;
+      return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -41,7 +41,7 @@ export const addUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const res = await createUserApi(userData);
-      return res.data;
+      return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -54,7 +54,7 @@ export const updateUser = createAsyncThunk(
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const res = await updateUserApi(id, data); // hoặc gọi API riêng
-      return res.data;
+      return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -67,7 +67,7 @@ export const fetchDepartments = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await getAllDepartments();
-      return res.data;
+      return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -80,7 +80,7 @@ export const fetchUsersBySearch = createAsyncThunk(
   async (query, { rejectWithValue }) => {
     try {
       const res = await getUsersBySearch(query);
-      return res.data;
+      return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }

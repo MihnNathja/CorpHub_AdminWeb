@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
+import ConfirmDialog from "../../global/components/ConfirmDialog";
 
 const EventPopup = ({ event, position, onClose, onEdit, onDelete }) => {
+    const popupRef = useRef(null);
+
+    // ✅ Tự động đóng khi click ra ngoài
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (popupRef.current && !popupRef.current.contains(e.target)) {
+                onClose();
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [onClose]);
+
     if (!event || !position) return null;
+
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
     return (
         <div
+            ref={popupRef}
             className="absolute z-50 bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 w-64"
             style={{ top: position.y, left: position.x }}
         >
@@ -50,10 +70,11 @@ const EventPopup = ({ event, position, onClose, onEdit, onDelete }) => {
                 <button
                     className="text-red-600 text-sm font-medium hover:underline"
                     onClick={() => {
-                        if (window.confirm("Are you sure you want to delete this meeting?")) {
-                            onDelete?.(event.id); // gọi callback từ CalendarPage
-                            setTimeout(onClose, 50);
-                        }
+                        setIsConfirmOpen(true);
+                        // if (window.confirm("Are you sure you want to delete this meeting?")) {
+                        //     onDelete?.(event.id);
+                        //     setTimeout(onClose, 50);
+                        // }
                     }}
                 >
                     🗑 Delete
@@ -66,7 +87,19 @@ const EventPopup = ({ event, position, onClose, onEdit, onDelete }) => {
                     Close
                 </button>
             </div>
+            <ConfirmDialog
+                open={isConfirmOpen}
+                title="Xác nhận xóa sự kiện này"
+                message="Bạn có chắc chắn muốn xóa sự kiện này? Hành động này không thể hoàn tác."
+                onConfirm={() => {
+                    onDelete?.(event.id);
+                    setIsConfirmOpen(false);
+                    onClose();
+                }}
+                onCancel={() => setIsConfirmOpen(false)}
+            />
         </div>
+
     );
 };
 

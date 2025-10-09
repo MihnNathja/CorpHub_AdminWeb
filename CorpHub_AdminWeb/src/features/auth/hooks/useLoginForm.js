@@ -10,8 +10,6 @@ export const useLoginForm = () => {
 
   const { loading, error, user } = useSelector((state) => state.auth);
 
-  console.log(user);
-
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 

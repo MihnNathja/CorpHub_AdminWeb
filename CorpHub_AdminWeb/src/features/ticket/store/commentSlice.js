@@ -7,8 +7,8 @@ export const fetchTicketComments = createAsyncThunk(
   async (ticketId, thunkAPI) => {
     try {
       const res = await getTicketComments(ticketId);
-      //console.log("Ticket's comments:", res.data);
-      return res.data;
+      //console.log("Ticket's comments:", res);
+      return res;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
@@ -21,8 +21,8 @@ export const createTicketComment = createAsyncThunk(
   async ({ ticketId, commentText, parentId = null }, thunkAPI) => {
     try {
       const res = await saveTicketComment({ ticketId, commentText, parentId });
-      //console.log("Save ticket comment:", res.data);
-      return res.data;
+      //console.log("Save ticket comment:", res);
+      return res;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }

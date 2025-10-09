@@ -160,24 +160,6 @@ export const useEventForm = (isOpen, slotInfo) => {
     setRecipients((prev) => prev.filter((r) => r.email !== email));
   };
 
-  const validate = () => {
-    const err = {};
-    if (!form.title.trim()) err.title = "Event title is required";
-    if (!form.start) err.start = "Start time required";
-    if (!form.end) err.end = "End time required";
-
-    const startDate = form.start ? new Date(form.start) : null;
-    const endDate = form.end ? new Date(form.end) : null;
-    if (startDate && endDate && startDate >= endDate) {
-      err.range = "End time must be after start time";
-    }
-
-    if (!recipients.length) err.to = "At least one recipient required";
-
-    setErrors(err);
-    return Object.keys(err).length === 0;
-  };
-
   return {
     form,
     setForm,
@@ -196,6 +178,5 @@ export const useEventForm = (isOpen, slotInfo) => {
     handleAddRecipient,
     handleRemoveRecipient,
     handleConfirmMeetingReady,
-    validate,
   };
 };

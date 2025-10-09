@@ -40,6 +40,7 @@ export const useTickets = (mode = "my") => {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReasonFormOpen, setIsReasonFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState(false);
 
   const totalPages = meta.totalPages ?? 1;
 
@@ -120,13 +121,19 @@ export const useTickets = (mode = "my") => {
 
   const handleCreateOrUpdate = async (ticketData) => {
     try {
-      const res = await dispatch(createOrUpdateTicket(ticketData)).unwrap();
+      await dispatch(createOrUpdateTicket(ticketData)).unwrap();
       showSuccess(ticketData.id ? "Ticket updated" : "Ticket created");
       fetchTickets();
-      return res;
+      return { success: true };
     } catch (err) {
-      showError(err?.message || "Create/Update failed");
-      console.error(err);
+      console.error("Save ticket failed:", err);
+
+      if (err?.data && typeof err.data === "object") {
+        return { success: false, validationErrors: err.data };
+      }
+
+      showError(err?.message || "Save ticket failed");
+      return { success: false };
     }
   };
 
@@ -198,6 +205,8 @@ export const useTickets = (mode = "my") => {
     setIsModalOpen,
     isReasonFormOpen,
     setIsReasonFormOpen,
+    editingId,
+    setEditingId,
 
     // Actions
     handleAssign,

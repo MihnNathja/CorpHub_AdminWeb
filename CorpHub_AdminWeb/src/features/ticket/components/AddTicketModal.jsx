@@ -23,7 +23,7 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
   const [formErrors, setFormErrors] = useState({});
 
   const { departments, loading: loadingDept, error: errorDept } = useDepartment();
-  const { categories, loading: loadingCat, error: errorCat } = useCategory();
+  const { categories, loading: loadingCat, error: errorCat } = useCategory([]);
   const priorities = Object.keys(priorityColors);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
@@ -80,21 +80,25 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
   };
 
   // Validate form 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const errors = {};
+    //const errors = {};
 
-    if (!formData.title.trim()) errors.title = "Title is required.";
-    if (!formData.departmentId) errors.departmentId = "Please select a department.";
-    if (!formData.priority) errors.priority = "Please select a priority.";
-    if (!formData.categoryId) errors.categoryId = "Please select a category.";
+    // if (!formData.title.trim()) errors.title = "Title is required.";
+    // if (!formData.departmentId) errors.departmentId = "Please select a department.";
+    // if (!formData.priority) errors.priority = "Please select a priority.";
+    // if (!formData.categoryId) errors.categoryId = "Please select a category.";
 
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
+    // if (Object.keys(errors).length > 0) {
+    //   setFormErrors(errors);
+    //   return;
+    // }
+
+    const result = await onSubmit({ ...formData, id: ticket?.id });
+
+    if (result.validationErrors) {
+      setFormErrors(result.validationErrors);
     }
-
-    onSubmit({ ...formData, id: ticket?.id });
     onClose();
   };
 
