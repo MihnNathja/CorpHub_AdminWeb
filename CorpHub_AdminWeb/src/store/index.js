@@ -7,6 +7,7 @@ import categoryReducer from "../features/ticket/store/categorySlice";
 import eventReducer from "../features/calendar/store/calendarSlice";
 import commentReducer from "../features/ticket/store/commentSlice";
 import attachmentReducer from "../features/ticket/store/attachmentSlice";
+import employeeReducer from "../features/employee/store/employeeSlice";
 import roomReducer from "../features/room/store/roomSlice"
 import roomRequirementReducer from "../features/room/store/roomRequirementSlice"
 import assetReducer from "../features/asset/store/assetSlice"
@@ -24,5 +25,6 @@ export const store = configureStore({
     roomRequirements: roomRequirementReducer,
     assets: assetReducer,
     attachments: attachmentReducer,
+    employees: employeeReducer,
   },
 });

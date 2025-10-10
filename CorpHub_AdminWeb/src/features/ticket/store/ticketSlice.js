@@ -7,6 +7,7 @@ import {
   getUsersDepartment,
   rejectTicket,
   getMyTickets,
+  getTicketMetaById,
   saveTicket,
   acceptTicket,
   completeTicket,
@@ -19,11 +20,29 @@ import {
 export const fetchMyTickets = createAsyncThunk(
   "tickets/fetchMyTickets",
   async (
-    { page = 0, size = 10, isRequester = true, status = "", priority = "", from = "", to = "", keyword = "" },
+    {
+      page = 0,
+      size = 10,
+      isRequester = true,
+      status = "",
+      priority = "",
+      from = "",
+      to = "",
+      keyword = "",
+    },
     thunkAPI
   ) => {
     try {
-      const res = await getMyTickets({ page, size, isRequester, status, priority, from, to, keyword });
+      const res = await getMyTickets({
+        page,
+        size,
+        isRequester,
+        status,
+        priority,
+        from,
+        to,
+        keyword,
+      });
       return res; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -35,11 +54,27 @@ export const fetchMyTickets = createAsyncThunk(
 export const fetchReceivedTickets = createAsyncThunk(
   "tickets/fetchReceivedTickets",
   async (
-    { page = 0, size = 10, status = "", priority = "", from = "", to = "", keyword = "" },
+    {
+      page = 0,
+      size = 10,
+      status = "",
+      priority = "",
+      from = "",
+      to = "",
+      keyword = "",
+    },
     thunkAPI
   ) => {
     try {
-      const res = await getReceivedTickets({ page, size, status, priority, from, to, keyword });
+      const res = await getReceivedTickets({
+        page,
+        size,
+        status,
+        priority,
+        from,
+        to,
+        keyword,
+      });
       return res; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
@@ -51,18 +86,33 @@ export const fetchReceivedTickets = createAsyncThunk(
 export const fetchSentTickets = createAsyncThunk(
   "tickets/fetchSentTickets",
   async (
-    { page = 0, size = 10, status = "", priority = "", from = "", to = "", keyword = "" },
+    {
+      page = 0,
+      size = 10,
+      status = "",
+      priority = "",
+      from = "",
+      to = "",
+      keyword = "",
+    },
     thunkAPI
   ) => {
     try {
-      const res = await getSentTickets({ page, size, status, priority, from, to, keyword });
+      const res = await getSentTickets({
+        page,
+        size,
+        status,
+        priority,
+        from,
+        to,
+        keyword,
+      });
       return res; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   }
 );
-
 
 // === USERS DEPARTMENT ===
 export const fetchUsersDepartment = createAsyncThunk(
@@ -162,12 +212,26 @@ export const remove = createAsyncThunk(
   }
 );
 
+export const fetchTickets = createAsyncThunk(
+  "tickets/fetchTickets",
+  async ({ ticketId }, thunkAPI) => {
+    try {
+      const res = await getTicketMetaById(ticketId);
+      console.log("Fectch Ticket, ", res);
+      return res; // { data, meta }
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
 const ticketSlice = createSlice({
   name: "tickets",
   initialState: {
     my: { data: [], meta: {}, loading: false, error: null },
     received: { data: [], meta: {}, loading: false, error: null },
     sent: { data: [], meta: {}, loading: false, error: null },
+    selectedTicket: null,
     users: [],
     actionLoading: false,
     error: null,
@@ -190,6 +254,18 @@ const ticketSlice = createSlice({
       .addCase(fetchMyTickets.rejected, (state, action) => {
         state.my.loading = false;
         state.my.error = action.payload.data;
+      });
+    builder
+      .addCase(fetchTickets.fulfilled, (state, action) => {
+        state.selectedTicket = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(fetchTickets.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchTickets.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
 
     // === RECEIVED ===
@@ -226,10 +302,9 @@ const ticketSlice = createSlice({
       });
 
     // === USERS ===
-    builder
-      .addCase(fetchUsersDepartment.fulfilled, (state, action) => {
-        state.users = action.payload.data;
-      });
+    builder.addCase(fetchUsersDepartment.fulfilled, (state, action) => {
+      state.users = action.payload.data;
+    });
 
     // === CREATE / UPDATE ===
     builder
@@ -255,13 +330,12 @@ const ticketSlice = createSlice({
       });
 
     // === DELETE ===
-    builder
-      .addCase(remove.fulfilled, (state, action) => {
-        const id = action.payload.data;
-        state.my.data = state.my.data.filter((t) => t.id !== id);
-        state.received.data = state.received.data.filter((t) => t.id !== id);
-        state.sent.data = state.sent.data.filter((t) => t.id !== id);
-      });
+    builder.addCase(remove.fulfilled, (state, action) => {
+      const id = action.payload.data;
+      state.my.data = state.my.data.filter((t) => t.id !== id);
+      state.received.data = state.received.data.filter((t) => t.id !== id);
+      state.sent.data = state.sent.data.filter((t) => t.id !== id);
+    });
   },
 });
 

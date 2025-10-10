@@ -13,7 +13,7 @@ import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
 } from "@heroicons/react/24/outline";
-import { Building2Icon } from "lucide-react";
+import { UserIcon, Building2Icon } from "lucide-react";
 
 // Thêm roles cho từng item (có thể mở rộng sau này)
 const menu = [
@@ -21,7 +21,7 @@ const menu = [
     name: "Dashboard",
     path: "",
     icon: HomeIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER"],
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"], // HR cũng vào dashboard
   },
   {
     name: "Tickets",
@@ -60,10 +60,16 @@ const menu = [
     roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
   },
   {
+    name: "Employees",
+    path: "employees",
+    icon: UserIcon,
+    roles: ["ROLE_MANAGER", "ROLE_ADMIN", "ROLE_HR"],
+  },
+  {
     name: "Calendar",
     path: "calendar",
     icon: CalendarIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER"],
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"],
   },
   {
     name: "Settings",
@@ -77,6 +83,7 @@ const ROLE_PANEL = {
   ROLE_ADMIN: "Admin",
   ROLE_MANAGER: "Manager",
   ROLE_USER: "Employee",
+  ROLE_HR: "HR",
 };
 
 const Sidebar = () => {

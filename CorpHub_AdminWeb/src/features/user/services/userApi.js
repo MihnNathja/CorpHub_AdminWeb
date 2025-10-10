@@ -6,12 +6,16 @@ export const getUsersApi = () => api.get("/api/user/employee");
 
 export const getUserByIdApi = (id) => api.get(`/api/user/employee/info/${id}`);
 export const getUsersBySearch = async (query) => {
-    if (!query || !query.trim()) return { data: [] };
-    console.log(query);
-    return api.get(`/api/user/search?keyword=${encodeURIComponent(query.trim())}`);
+  if (!query || !query.trim()) return { data: [] };
+  console.log(query);
+  return api.get(
+    `/api/user/search?keyword=${encodeURIComponent(query.trim())}`
+  );
 };
 
 export const getMyInfo = () => api.get(`/api/user/my-info`);
+
+export const getAllRoles = () => api.get("/api/roles");
 
 // export const getUserById = (id) => api.get(`/users/${id}`);
 

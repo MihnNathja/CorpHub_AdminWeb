@@ -12,6 +12,7 @@ import {
   Layers,
   Info,
   Pencil,
+  Phone,
 } from "lucide-react";
 import { useAuth } from "../../auth/hooks/useAuth";
 import TicketActionGroupEmp from "./TicketActionGroupEmp";
@@ -24,6 +25,7 @@ import ConfirmDialog from "../../global/components/ConfirmDialog";
 import { useAttachments } from "../hooks/useAttachment";
 import TicketAttachments from "./TicketAttachments";
 import { useUser } from "../../user/hooks/useUser";
+import { useNavigate } from "react-router-dom";
 import EditButton from "./button/EditButton";
 
 const TicketModal = ({
@@ -51,8 +53,15 @@ const TicketModal = ({
 
   const { employees: users } = useUser();
 
+  const navigate = useNavigate();
+
+  const handleCreateUser = () => {
+    navigate(`/users?tab=add&ticketId=${ticket.id}`);
+  };
+
   useEffect(() => {
     if (ticket?.id) {
+      //console.log(ticket);
       load(ticket.id);
     }
   }, [ticket, load]);
@@ -68,8 +77,9 @@ const TicketModal = ({
       >
         {/* Header */}
         <div
-          className={`flex justify-between items-center p-4 rounded-t-xl ${statusColors[ticket.status]
-            }`}
+          className={`flex justify-between items-center p-4 rounded-t-xl ${
+            statusColors[ticket.status]
+          }`}
         >
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
@@ -109,6 +119,13 @@ const TicketModal = ({
               <User className="w-4 h-4" />
               <b>Requester:</b> {ticket.requester?.fullName || "Ẩn danh"}
             </p>
+            {ticket.requester?.phone && (
+              <p className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                <b>Contact:</b> {ticket.requester.phone}
+              </p>
+            )}
+
             <p className="flex items-center gap-2">
               <CalendarClock className="w-4 h-4" />
               <b>Created At:</b> {new Date(ticket.createdAt).toLocaleString()}
@@ -130,9 +147,10 @@ const TicketModal = ({
                 className={`w-full border rounded-lg p-2 transition-colors
                   dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100
                   focus:ring-2 focus:ring-blue-500
-                  ${!(mode === "received" && ticket.status === "WAITING")
-                    ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
-                    : ""
+                  ${
+                    !(mode === "received" && ticket.status === "WAITING")
+                      ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
+                      : ""
                   }`}
               >
                 <option value="">Chưa phân công</option>
@@ -142,6 +160,11 @@ const TicketModal = ({
                   </option>
                 ))}
               </select>
+              {ticket.assignee?.phone && (
+                <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                  <Phone className="w-3 h-3" /> {ticket.assignee.phone}
+                </div>
+              )}
             </div>
             {/* Attachments */}
             <TicketAttachments
@@ -216,6 +239,14 @@ const TicketModal = ({
                 className="px-4 py-2 bg-red-500 dark:bg-red-700 hover:bg-red-600 text-white rounded-lg transition-colors"
               >
                 Delete
+              </button>
+            )}
+            {ticket.category.categoryName === "Hệ thống" && (
+              <button
+                onClick={handleCreateUser}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                Create Account
               </button>
             )}
           </div>

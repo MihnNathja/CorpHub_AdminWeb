@@ -19,9 +19,12 @@ export const useTickets = (mode = "my") => {
   const dispatch = useDispatch();
 
   // 🔹 Lấy nhánh state tương ứng
-  const { data: tickets = [], meta = {}, loading, error } = useSelector(
-    (state) => state.tickets[mode]
-  );
+  const {
+    data: tickets = [],
+    meta = {},
+    loading,
+    error,
+  } = useSelector((state) => state.tickets[mode]);
   const users = useSelector((state) => state.tickets.users);
 
   // ====================== LOCAL FILTER STATE ======================
@@ -34,7 +37,6 @@ export const useTickets = (mode = "my") => {
   const [to, setTo] = useState("");
   const [keyword, setKeyword] = useState("");
 
-
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReasonFormOpen, setIsReasonFormOpen] = useState(false);
@@ -44,12 +46,32 @@ export const useTickets = (mode = "my") => {
 
   // ====================== FETCH FUNCTION ======================
   const fetchTickets = useCallback(() => {
-    const params = { page, size, isRequester, status, priority, from, to, keyword };
+    const params = {
+      page,
+      size,
+      isRequester,
+      status,
+      priority,
+      from,
+      to,
+      keyword,
+    };
 
     if (mode === "sent") dispatch(fetchSentTickets(params));
     else if (mode === "received") dispatch(fetchReceivedTickets(params));
     else dispatch(fetchMyTickets(params));
-  }, [dispatch, mode, page, size, isRequester, status, priority, from, to, keyword]);
+  }, [
+    dispatch,
+    mode,
+    page,
+    size,
+    isRequester,
+    status,
+    priority,
+    from,
+    to,
+    keyword,
+  ]);
 
   // Gọi mỗi khi filter hoặc phân trang thay đổi
   useEffect(() => {

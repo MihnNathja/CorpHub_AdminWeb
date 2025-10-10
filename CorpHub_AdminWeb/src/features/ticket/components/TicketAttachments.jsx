@@ -12,21 +12,17 @@ const TicketAttachments = ({
 }) => {
   const { user } = useAuth();
   const fileInputRef = useRef(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const isOwner = ticket && user?.id === ticket?.requester?.id;
   const hasAttachments = attachments && attachments.length > 0;
-  const canUpload =
-    (mode === "edit" || mode === "add") &&
-    isOwner &&
-    (ticket.status === "OPEN" || ticket.status === null);
+  const canUpload = mode === "edit" || mode === "add";
+  // && (ticket.status === "OPEN" || ticket.status === null);
 
   return (
     <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
       <label className="flex items-center gap-2 font-semibold mb-2">
         📎 Attachments
       </label>
-
       {/* Danh sách file nếu có */}
       {hasAttachments ? (
         <ul className="list-disc pl-5 space-y-2">
@@ -80,12 +76,11 @@ const TicketAttachments = ({
             );
           })}
         </ul>
-      ) : ticket ? (
+      ) : (
         <p className="text-gray-500 text-sm">No attachments</p>
-      ) : null}
-
+      )}
       {/* Upload: nếu mode là edit hoặc add + owner */}
-      {canUpload && (
+      {canUpload ? (
         <div className="mt-3">
           <input
             type="file"
@@ -103,7 +98,7 @@ const TicketAttachments = ({
             Upload Files
           </button>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-//import EmployeeTable from "../components/employee/EmployeeTable";
 import EmployeeProfileForm from "../components/EmployeeProfileForm";
+import EmployeeTable from "../components/EmployeeTable";
 
 const EmployeePage = () => {
   const [activeTab, setActiveTab] = useState("list");
@@ -11,7 +11,7 @@ const EmployeePage = () => {
   ];
 
   return (
-    <div className="text-gray-900 dark:text-gray-700">
+    <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6">
       <h2 className="text-xl dark:text-gray-100 font-bold mb-4">
         Employee Management
       </h2>
@@ -35,7 +35,7 @@ const EmployeePage = () => {
 
       {/* Content */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-b-lg p-4 -mt-px bg-white dark:bg-gray-800">
-        {/* {activeTab === "list" && <EmployeeTable />} */}
+        {activeTab === "list" && <EmployeeTable />}
         {activeTab === "add" && <EmployeeProfileForm />}
       </div>
     </div>

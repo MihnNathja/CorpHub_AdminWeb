@@ -9,6 +9,9 @@ export const getSentTickets = (params) =>
 export const getMyTickets = (params) =>
   api.get(`/api/tickets/my-tickets`, { params });
 
+export const getTicketMetaById = (ticketId) =>
+  api.get(`/api/tickets/meta/${ticketId}`);
+
 export const getUsersDepartment = () => api.get(`/api/department/users`);
 
 export const saveTicket = (ticket) => api.post(`api/tickets/save`, ticket);

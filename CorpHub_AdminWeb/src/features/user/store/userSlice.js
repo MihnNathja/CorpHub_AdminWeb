@@ -7,7 +7,7 @@ import {
   getUsersBySearch,
 } from "../services/userApi";
 import { getAllDepartments } from "../../department/services/departmentApi";
-
+import { showError, showSuccess } from "../../../utils/toastUtils";
 
 // ✅ Lấy danh sách tất cả người dùng
 export const fetchUsers = createAsyncThunk(
@@ -40,9 +40,12 @@ export const addUser = createAsyncThunk(
   "user/addUser",
   async (userData, { rejectWithValue }) => {
     try {
+      console.log("Thông tin người dùng: ", userData);
       const res = await createUserApi(userData);
+      showSuccess("Create user successfully!");
       return res;
     } catch (err) {
+      showError("Failed with Error:", err);
       return rejectWithValue(err.response?.data || err.message);
     }
   }
@@ -74,6 +77,19 @@ export const fetchDepartments = createAsyncThunk(
   }
 );
 
+// ✅ Lấy danh sách vai trò
+// export const fetchRoles = createAsyncThunk(
+//   "user/fetchRoles",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const res = await getAllRoles();
+//       return res;
+//     } catch (err) {
+//       return rejectWithValue(err.response?.data || err.message);
+//     }
+//   }
+// );
+
 // ✅ Tìm kiếm người dùng
 export const fetchUsersBySearch = createAsyncThunk(
   "user/fetchUsersBySearch",
@@ -87,7 +103,6 @@ export const fetchUsersBySearch = createAsyncThunk(
   }
 );
 
-
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -95,6 +110,7 @@ const userSlice = createSlice({
     currentUser: null,
     searchResults: [],
     departments: [],
+    roles: [],
     loading: false,
     error: null,
   },
