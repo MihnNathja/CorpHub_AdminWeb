@@ -44,7 +44,7 @@ const TicketCard = ({ ticket, setSelectedTicket }) => {
                             className={`px-3 py-1 text-xs font-medium rounded-full ${priorityColors[priorityKey] || "bg-gray-100 text-gray-600"
                                 }`}
                         >
-                            Ưu tiên: {priorityKey}
+                            Priority: {priorityKey}
                         </span>
                     )}
                 </div>
@@ -78,7 +78,7 @@ const TicketCard = ({ ticket, setSelectedTicket }) => {
                 {ticket.updatedAt && (
                     <div className="mt-2 flex items-center text-xs text-gray-400 dark:text-gray-500">
                         <ClockIcon className="h-4 w-4 mr-1" />
-                        Cập nhật lần cuối: {formatDate(ticket.updatedAt)}
+                        Updated at: {formatDate(ticket.updatedAt)}
                     </div>
                 )}
 

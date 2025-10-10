@@ -81,7 +81,7 @@ const CalendarPage = () => {
             <FloatingButton
                 onClick={() => setIsModalOpen(true)}
                 icon={PlusIcon}
-                tooltip="Thêm sự kiện"
+                tooltip="New event"
                 color="green"
             />
 
@@ -134,7 +134,7 @@ const CalendarPage = () => {
                     {!loadingUsers && employees.length > 0 && (
                         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 mt-1 p-3 flex flex-col">
                             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-                                Danh sách nhân viên
+                                Employees List
                             </h3>
 
                             <div className="flex justify-between items-center mb-3">
@@ -142,13 +142,13 @@ const CalendarPage = () => {
                                     className="text-sm text-blue-600 hover:underline"
                                     onClick={selectAll}
                                 >
-                                    Chọn tất cả
+                                    Select all
                                 </button>
                                 <button
                                     className="text-sm text-red-600 hover:underline"
                                     onClick={deselectAll}
                                 >
-                                    Bỏ chọn tất cả
+                                    Deselect all
                                 </button>
                             </div>
 

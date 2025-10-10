@@ -26,6 +26,7 @@ import { useAttachments } from "../hooks/useAttachment";
 import TicketAttachments from "./TicketAttachments";
 import { useUser } from "../../user/hooks/useUser";
 import { useNavigate } from "react-router-dom";
+import EditButton from "./button/EditButton";
 
 const TicketModal = ({
   ticket,
@@ -210,15 +211,11 @@ const TicketModal = ({
           </p>
           <div className="flex gap-3">
             {ticket.status === "OPEN" && isOwner && (
-              <button
-                onClick={() => onEdit?.(ticket)}
-                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg flex items-center gap-2 transition-colors"
-              >
-                <Pencil className="w-4 h-4" /> Edit
-              </button>
+              <EditButton
+                onClick={() => onEdit?.(ticket)} />
             )}
 
-            {isCurrentUserAssignee && ticket.status === "IN_PROGRESS" ? (
+            {(isCurrentUserAssignee && ticket.status === "IN_PROGRESS") || (isOwner && ticket.status != "REJECTED" && ticket.status != "DONE") ? (
               <CompleteButton
                 onClick={() => {
                   onClose();
