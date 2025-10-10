@@ -50,7 +50,7 @@ const UserForm = ({ onSubmit, user, ticketId }) => {
       const meta = JSON.parse(selectedTicket.meta);
       const emp = Array.isArray(meta) ? meta[0] : meta;
 
-      const autoEmail = generateCompanyEmail(emp.fullName, "acme.com");
+      const autoEmail = generateCompanyEmail(emp.fullName, "company.com");
       const autoPassword = generateRandomPassword(emp.fullName);
 
       setForm((prev) => ({
@@ -74,20 +74,6 @@ const UserForm = ({ onSubmit, user, ticketId }) => {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Full Name */}
-        <div>
-          <label className="block mb-1 font-medium">Họ và tên</label>
-          <input
-            type="text"
-            name="fullName"
-            placeholder="Nhập họ và tên"
-            value={form.fullName}
-            onChange={handleChange}
-            className={inputClass}
-            required
-          />
-        </div>
-
         {/* Email công ty */}
         <div>
           <label className="block mb-1 font-medium">Email công ty</label>
