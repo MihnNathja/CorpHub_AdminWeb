@@ -82,22 +82,11 @@ const AddTicketModal = ({ ticket, isOpen, onClose, onSubmit }) => {
   // Validate form 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //const errors = {};
-
-    // if (!formData.title.trim()) errors.title = "Title is required.";
-    // if (!formData.departmentId) errors.departmentId = "Please select a department.";
-    // if (!formData.priority) errors.priority = "Please select a priority.";
-    // if (!formData.categoryId) errors.categoryId = "Please select a category.";
-
-    // if (Object.keys(errors).length > 0) {
-    //   setFormErrors(errors);
-    //   return;
-    // }
 
     const result = await onSubmit({ ...formData, id: ticket?.id });
-
-    if (result.validationErrors) {
+    if (result?.validationErrors) {
       setFormErrors(result.validationErrors);
+      return;
     }
     onClose();
   };

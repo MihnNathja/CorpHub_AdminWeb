@@ -1,9 +1,9 @@
 import React from "react";
 import SearchBar from "./SearchBar";
-import Notifications from "./Notifications";
 import UserProfile from "./UserProfile";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "../context/ThemeContext"; // import context
+import NotificationDropdown from "../features/notification/components/NotificationDropdown";
 
 const Navbar = ({ user }) => {
   const { isDark, toggleTheme } = useTheme();
@@ -24,7 +24,7 @@ const Navbar = ({ user }) => {
           )}
         </button>
 
-        <Notifications />
+        <NotificationDropdown />
         <UserProfile user={user} />
       </div>
     </header>
