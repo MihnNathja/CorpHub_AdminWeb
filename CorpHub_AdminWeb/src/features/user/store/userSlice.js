@@ -12,9 +12,10 @@ import { showError, showSuccess } from "../../../utils/toastUtils";
 // ✅ Lấy danh sách tất cả người dùng
 export const fetchUsers = createAsyncThunk(
   "user/fetchUsers",
-  async (_, { rejectWithValue }) => {
+  async ({ page, keyword }, { rejectWithValue }) => {
     try {
-      const res = await getUsersApi();
+      const res = await getUsersApi({ page, keyword });
+      console.log(res);
       return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -38,10 +39,10 @@ export const getUserById = createAsyncThunk(
 // ✅ Tạo người dùng mới
 export const addUser = createAsyncThunk(
   "user/addUser",
-  async (userData, { rejectWithValue }) => {
+  async ({ userData, ticketId }, { rejectWithValue }) => {
     try {
       console.log("Thông tin người dùng: ", userData);
-      const res = await createUserApi(userData);
+      const res = await createUserApi(userData, ticketId);
       showSuccess("Create user successfully!");
       return res;
     } catch (err) {
@@ -107,6 +108,7 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     list: [],
+    meta: { page: 0, totalPages: 1, size: 10 },
     currentUser: null,
     searchResults: [],
     departments: [],
@@ -128,7 +130,8 @@ const userSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
-        state.list = action.payload?.data || action.payload || [];
+        state.list = action.payload?.data || [];
+        state.meta = action.payload.meta;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;

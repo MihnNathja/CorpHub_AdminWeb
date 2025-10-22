@@ -1,8 +1,9 @@
 import api from "../../../services/api";
 
-export const createUserApi = (data) => api.post("/api/user/create", data);
+export const createUserApi = (userData, ticketId) =>
+  api.post(`/api/user/create?ticketId=${ticketId}`, userData);
 
-export const getUsersApi = () => api.get("/api/user/employee");
+export const getUsersApi = (params) => api.get("/api/user/employee", params);
 
 export const getUserByIdApi = (id) => api.get(`/api/user/employee/info/${id}`);
 export const getUsersBySearch = async (query) => {
