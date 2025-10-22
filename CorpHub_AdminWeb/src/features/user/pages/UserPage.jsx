@@ -31,14 +31,14 @@ const UserPage = () => {
   return (
     <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6 transition-colors">
       <h2 className="text-xl dark:text-gray-100 font-bold mb-4">
-        Quản lý người dùng
+        User Management
       </h2>
 
       {/* Tabs */}
       <div className="flex border-b border-gray-200 dark:border-gray-700">
         {[
-          { key: "list", label: "Danh sách tài khoản" },
-          { key: "add", label: "Thêm tài khoản mới" },
+          { key: "list", label: "Users list" },
+          { key: "add", label: "Add new user" },
         ].map((tab) => (
           <button
             key={tab.key}

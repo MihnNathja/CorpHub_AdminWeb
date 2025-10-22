@@ -27,8 +27,8 @@ const UserTable = ({
             type="text"
             value={keyword}
             onChange={(e) => {
-              console.log(users);
-              setPage(1); // reset page khi tìm kiếm mới
+              console.log("Trang hiện tại: ", page);
+              setPage(0); // reset page khi tìm kiếm mới
               setKeyword(e.target.value);
             }}
             placeholder="Tìm kiếm theo tên, email..."
