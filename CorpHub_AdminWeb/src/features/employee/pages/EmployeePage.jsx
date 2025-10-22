@@ -6,8 +6,8 @@ const EmployeePage = () => {
   const [activeTab, setActiveTab] = useState("list");
 
   const tabs = [
-    { key: "list", label: "Danh sách nhân viên" },
-    { key: "add", label: "Thêm hồ sơ nhân viên" },
+    { key: "list", label: "Employees list" },
+    { key: "add", label: "Add new employee profile" },
   ];
 
   return (

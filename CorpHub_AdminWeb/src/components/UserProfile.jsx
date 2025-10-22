@@ -32,27 +32,25 @@ const UserProfile = ({ user }) => {
     navigate("/settings"); // hoặc route edit profile của bạn
   };
 
-  const avatarUrl = user?.avatar
-    ? `http://localhost:8080/${user.avatar}` // hoặc `${process.env.REACT_APP_API_URL}/${comment.author.avatar}`
-    : null;
-
+  const avatarUrl = user?.avatar;
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          console.log(user);
+          setOpen(!open);
+        }}
         className="flex items-center gap-2 focus:outline-none"
       >
         {/* Avatar */}
-        {avatarUrl ? (
-          <img
-            src={avatarUrl}
-            alt="avatar"
-            className="w-8 h-8 rounded-full object-cover"
-          />
-        ) : (
-          <UserCircle className="w-8 h-8 text-gray-400 flex-shrink-0" />
-        )}
+
+        <img
+          src={avatarUrl || defaultAvatar}
+          alt="avatar"
+          className="w-8 h-8 rounded-full object-cover"
+        />
+
         <span className="font-medium text-gray-800 dark:text-gray-200 transition-colors">
           {user?.fullName || "User"}
         </span>
