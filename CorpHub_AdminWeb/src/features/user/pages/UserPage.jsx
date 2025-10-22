@@ -8,40 +8,25 @@ import { useLocation } from "react-router-dom";
 
 const UserPage = () => {
   const dispatch = useDispatch();
-  const { list, loading, error } = useSelector((state) => state.user);
+  const { list, totalPages, loading, error } = useSelector(
+    (state) => state.user
+  );
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-
   const tab = params.get("tab");
   const ticketId = params.get("ticketId");
 
   const [activeTab, setActiveTab] = useState(tab || "list");
-
-  useEffect(() => {
-    if (tab) setActiveTab(tab);
-  }, [tab]);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
-
-  useEffect(() => {
-    dispatch(fetchUsers());
-  }, [dispatch]);
 
   useEffect(() => {
     if (tab) setActiveTab(tab);
   }, [tab]);
 
   const handleAddUser = (userData) => {
-    dispatch(addUser(userData));
-    setIsModalOpen(false);
+    dispatch(addUser({ userData, ticketId }));
   };
-
-  const tabs = [
-    { key: "list", label: "Danh sách tài khoản" },
-    { key: "add", label: "Thêm tài khoản mới" },
-  ];
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6 transition-colors">
@@ -51,7 +36,10 @@ const UserPage = () => {
 
       {/* Tabs */}
       <div className="flex border-b border-gray-200 dark:border-gray-700">
-        {tabs.map((tab) => (
+        {[
+          { key: "list", label: "Danh sách tài khoản" },
+          { key: "add", label: "Thêm tài khoản mới" },
+        ].map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
@@ -69,25 +57,21 @@ const UserPage = () => {
       {/* Content */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-b-lg p-4 -mt-px bg-white dark:bg-gray-800">
         {activeTab === "list" && (
-          <>
-            {/* Table */}
-            {loading && <p className="dark:text-gray-200">Loading...</p>}
-            {error && (
-              <p className="text-red-500 dark:text-red-400">Error: {error}</p>
-            )}
-            {!loading && !error && (
-              <UserTable users={list} onSelectUser={setSelectedUserId} />
-            )}
-          </>
+          <UserTable
+            users={list}
+            totalPages={totalPages}
+            loading={loading}
+            error={error}
+            onSelectUser={setSelectedUserId}
+            onFetch={(page, keyword) => dispatch(fetchUsers({ page, keyword }))}
+          />
         )}
 
-        {/* Tab Add */}
         {activeTab === "add" && (
           <UserForm onSubmit={handleAddUser} ticketId={ticketId} />
         )}
       </div>
 
-      {/* Modal User Detail */}
       <UserDetailModal
         isOpen={!!selectedUserId}
         onClose={() => setSelectedUserId(null)}
