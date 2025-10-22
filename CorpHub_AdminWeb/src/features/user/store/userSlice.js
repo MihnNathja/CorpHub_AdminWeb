@@ -15,7 +15,7 @@ export const fetchUsers = createAsyncThunk(
   async ({ page, keyword }, { rejectWithValue }) => {
     try {
       const res = await getUsersApi({ page, keyword });
-      console.log(res);
+      console.log("Danh sách người dùng ", res);
       return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);

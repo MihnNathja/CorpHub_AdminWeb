@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Eye, Search } from "lucide-react";
 import Pagination from "../../global/components/Pagination";
+import defaultAvatar from "../../../assets/defaultAvatar.jpg";
 
 const UserTable = ({
   users = [],
@@ -10,7 +11,7 @@ const UserTable = ({
   onSelectUser,
   onFetch,
 }) => {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
@@ -26,6 +27,7 @@ const UserTable = ({
             type="text"
             value={keyword}
             onChange={(e) => {
+              console.log(users);
               setPage(1); // reset page khi tìm kiếm mới
               setKeyword(e.target.value);
             }}
@@ -73,16 +75,11 @@ const UserTable = ({
                   className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                 >
                   <td className="p-2 border text-center">
-                    {i + 1 + (page - 1) * 10}
+                    {i + 1 + page * 10}
                   </td>
                   <td className="p-2 border">
                     <img
-                      src={
-                        u.avatar ||
-                        `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          u.fullName || "?"
-                        )}&background=0D8ABC&color=fff`
-                      }
+                      src={u.avatar || defaultAvatar}
                       alt={u.fullName}
                       className="w-10 h-10 rounded-full object-cover border"
                     />
