@@ -12,9 +12,22 @@ import { showError, showSuccess } from "../../../utils/toastUtils";
 // ✅ Lấy danh sách tất cả người dùng
 export const fetchUsers = createAsyncThunk(
   "user/fetchUsers",
-  async ({ page, keyword }, { rejectWithValue }) => {
+  async ({ page, keyword, filters, sort }, { rejectWithValue }) => {
     try {
-      const res = await getUsersApi({ page, keyword });
+      console.log("Filter: ");
+      console.log("Page: ", page);
+      console.log("keyword: ", keyword);
+      console.log("Filters:", filters);
+      console.log("sort:", sort);
+
+      const res = await getUsersApi({
+        page,
+        keyword,
+        gender: filters.gender,
+        departmentId: filters.departmentId,
+        sortField: sort.field,
+        sortDir: sort.direction,
+      });
       console.log("Danh sách người dùng ", res);
       return res;
     } catch (err) {

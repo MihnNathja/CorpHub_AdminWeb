@@ -5,12 +5,15 @@ import UserTable from "../components/UserTable";
 import UserDetailModal from "../components/UserDetailModal";
 import UserForm from "../components/UserForm";
 import { useLocation } from "react-router-dom";
+import { useDepartment } from "../../department/hooks/useDepartment";
 
 const UserPage = () => {
   const dispatch = useDispatch();
   const { list, totalPages, loading, error } = useSelector(
     (state) => state.user
   );
+
+  const { departments } = useDepartment();
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -63,7 +66,10 @@ const UserPage = () => {
             loading={loading}
             error={error}
             onSelectUser={setSelectedUserId}
-            onFetch={(page, keyword) => dispatch(fetchUsers({ page, keyword }))}
+            onFetch={(page, keyword, filters, sort) =>
+              dispatch(fetchUsers({ page, keyword, filters, sort }))
+            }
+            departments={departments}
           />
         )}
 
