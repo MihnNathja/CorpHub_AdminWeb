@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logoutAsync } from "../features/auth/store/authSlice";
 import { UserCircle } from "lucide-react";
+import defaultAvatar from "../assets/defaultAvatar.jpg";
 
 const UserProfile = ({ user }) => {
   const [open, setOpen] = useState(false);
