@@ -12,9 +12,24 @@ import { showError, showSuccess } from "../../../utils/toastUtils";
 // ✅ Lấy danh sách tất cả người dùng
 export const fetchUsers = createAsyncThunk(
   "user/fetchUsers",
-  async (_, { rejectWithValue }) => {
+  async ({ page, keyword, filters, sort }, { rejectWithValue }) => {
     try {
-      const res = await getUsersApi();
+      // console.log("Filter: ");
+      // console.log("Page: ", page);
+      // console.log("keyword: ", keyword);
+      // console.log("Filters:", filters);
+      // console.log("sort:", sort);
+
+      const res = await getUsersApi({
+        page,
+        keyword,
+        gender: filters.gender,
+        departmentId: filters.departmentId,
+        isActive: filters.active,
+        sortField: sort.field,
+        sortDir: sort.direction,
+      });
+      console.log("Danh sách người dùng ", res);
       return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -38,10 +53,10 @@ export const getUserById = createAsyncThunk(
 // ✅ Tạo người dùng mới
 export const addUser = createAsyncThunk(
   "user/addUser",
-  async (userData, { rejectWithValue }) => {
+  async ({ userData, ticketId }, { rejectWithValue }) => {
     try {
       console.log("Thông tin người dùng: ", userData);
-      const res = await createUserApi(userData);
+      const res = await createUserApi(userData, ticketId);
       showSuccess("Create user successfully!");
       return res;
     } catch (err) {
@@ -107,6 +122,7 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     list: [],
+    meta: { page: 0, totalPages: 1, size: 10 },
     currentUser: null,
     searchResults: [],
     departments: [],
@@ -128,7 +144,8 @@ const userSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
-        state.list = action.payload?.data || action.payload || [];
+        state.list = action.payload?.data || [];
+        state.meta = action.payload.meta;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;

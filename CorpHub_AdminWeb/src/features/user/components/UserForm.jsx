@@ -38,7 +38,9 @@ const UserForm = ({ onSubmit, user, ticketId }) => {
 
   // ✅ Load ticket khi có ticketId
   useEffect(() => {
-    if (ticketId) dispatch(fetchTickets({ ticketId }));
+    if (ticketId) {
+      dispatch(fetchTickets({ ticketId }));
+    }
   }, [dispatch, ticketId]);
 
   // ✅ Khi ticket đã load → fill form
@@ -46,6 +48,7 @@ const UserForm = ({ onSubmit, user, ticketId }) => {
     if (!selectedTicket || !selectedTicket.meta) return;
 
     try {
+      console.log("TicketId: ", ticketId);
       console.log(selectedTicket.meta);
       const meta = JSON.parse(selectedTicket.meta);
       const emp = Array.isArray(meta) ? meta[0] : meta;

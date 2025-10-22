@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useEmployee } from "../hooks/useEmployee";
 import Pagination from "../../global/components/Pagination";
-import { showSuccess } from "../../../utils/toastUtils";
+import defaultAvatar from "../../../assets/defaultAvatar.jpg";
 import { EyeIcon } from "lucide-react";
+import StatCard from "../../global/components/StatCard";
+import EmployeeDetailModal from "./EmployeeDetailModal";
 
 const EmployeeTable = () => {
   const { data, setPage, totalPages, page, sendCreateUserTicket } =
@@ -97,7 +99,7 @@ const EmployeeTable = () => {
               </td>
               <td className="p-3">
                 <img
-                  src={emp.avatarUrl}
+                  src={emp.avatarUrl || defaultAvatar}
                   alt={emp.fullName}
                   className="h-12 w-12 rounded-full object-cover border"
                 />
@@ -109,15 +111,13 @@ const EmployeeTable = () => {
               <td className="p-3">{emp.phone}</td>
               <td className="p-3 text-center">
                 {emp.user ? (
-                  emp.user.active ? (
-                    <span className="px-2 py-1 bg-green-100 text-green-600 rounded-full text-sm">
-                      Active
-                    </span>
-                  ) : (
-                    <span className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-sm">
-                      Inactive
-                    </span>
-                  )
+                  <StatCard
+                    label={emp.user.active ? "Active" : "Inactive"}
+                    colors={{
+                      Active: "bg-green-100 text-green-600",
+                      Inactive: "bg-red-100 text-red-600",
+                    }}
+                  />
                 ) : (
                   <span className="px-2 py-1 bg-yellow-100 text-yellow-600 rounded-full text-sm">
                     Chưa có tài khoản
@@ -125,12 +125,6 @@ const EmployeeTable = () => {
                 )}
               </td>
               <td className="p-3 text-center">
-                {/* <button
-                  onClick={() => setSelected(emp)}
-                  className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Xem chi tiết
-                </button> */}
                 <button
                   type="button"
                   onClick={() => setSelected(emp)}
@@ -148,70 +142,7 @@ const EmployeeTable = () => {
       <Pagination setPage={setPage} totalPages={totalPages} page={page} />
 
       {/* Modal chi tiết */}
-      {selected && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-[700px] max-h-[80vh] overflow-y-auto shadow-lg">
-            <h3 className="text-xl font-bold mb-4 text-blue-600">
-              {selected.fullName}
-            </h3>
-            <p>
-              <strong>Email:</strong> {selected.personalEmail}
-            </p>
-            <p>
-              <strong>SĐT:</strong> {selected.phone}
-            </p>
-            <p>
-              <strong>Phòng ban:</strong> {selected.departmentName}
-            </p>
-            <p>
-              <strong>Role:</strong> {selected.user?.roleName || "Chưa có"}
-            </p>
-
-            {/* Job Histories */}
-            <div className="mt-4">
-              <h4 className="font-semibold mb-2">Lịch sử công việc</h4>
-              {selected.jobHistories?.length > 0 ? (
-                <ul className="list-disc ml-6">
-                  {selected.jobHistories.map((j) => (
-                    <li key={j.id}>
-                      {j.position} tại {j.departmentName || "N/A"} (
-                      {j.startDate} → {j.endDate})
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>Không có</p>
-              )}
-            </div>
-
-            {/* Competencies */}
-            <div className="mt-4">
-              <h4 className="font-semibold mb-2">Năng lực</h4>
-              {selected.competencies?.length > 0 ? (
-                <ul className="list-disc ml-6">
-                  {selected.competencies.map((c) => (
-                    <li key={c.id}>
-                      [{c.type}] {c.name} - {c.level}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>Không có</p>
-              )}
-            </div>
-
-            <div className="mt-6 text-right">
-              <button
-                onClick={() => setSelected(null)}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-              >
-                Đóng
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      <EmployeeDetailModal selected={selected} setSelected={setSelected} />
       {/* Modal tạo tài khoản */}
       {showCreateForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
