@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
-import { Eye, Search, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import {
+  Eye,
+  Search,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
+  Pencil,
+  Trash2,
+  KeyRound,
+} from "lucide-react";
 import Pagination from "../../global/components/Pagination";
 import defaultAvatar from "../../../assets/defaultAvatar.jpg";
+import { Tooltip } from "react-tooltip";
 
 const UserTable = ({
   users = [],
@@ -23,6 +33,14 @@ const UserTable = ({
     field: "fullName",
     direction: "asc",
   });
+
+  // 🧩 Dữ liệu giả cho demo
+  const mockUsers = users.map((u, index) => ({
+    ...u,
+    // Nếu backend chưa có role/active thì gán tạm
+    role: u.role || (index % 2 === 0 ? "Admin" : "Nhân viên"),
+    active: u.active ?? index % 3 !== 0,
+  }));
 
   useEffect(() => {
     onFetch(page, keyword, filters, sort);
@@ -97,7 +115,7 @@ const UserTable = ({
             ))}
           </select>
 
-          {/* 🟩 Trạng thái
+          {/* 🟩 Trạng thái */}
           <select
             value={filters.active}
             onChange={(e) =>
@@ -109,10 +127,10 @@ const UserTable = ({
             className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
                        bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
-            <option value="">Tất cả trạng thái</option>
-            <option value="true">Đang hoạt động</option>
-            <option value="false">Ngừng hoạt động</option>
-          </select> */}
+            <option value="">All Status</option>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
         </div>
       </div>
 
@@ -137,18 +155,9 @@ const UserTable = ({
               </th>
               <th className="p-2 border">Phone</th>
               <th className="p-2 border">Gender</th>
-              <th
-                className="p-2 border cursor-pointer select-none"
-                onClick={() => handleSort("department")}
-              >
-                Phòng ban {renderSortIcon("department")}
-              </th>
-              {/* <th
-                className="p-2 border cursor-pointer select-none"
-                onClick={() => handleSort("active")}
-              >
-                Trạng thái {renderSortIcon("active")}
-              </th> */}
+              <th className="p-2 border">Department</th>
+              <th className="p-2 border">Role</th>
+              <th className="p-2 border">Status</th>
               <th className="p-2 border text-center">Action</th>
             </tr>
           </thead>
@@ -156,18 +165,18 @@ const UserTable = ({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="9" className="text-center p-4">
+                <td colSpan="10" className="text-center p-4">
                   Loading...
                 </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan="9" className="text-center text-red-500 p-4">
+                <td colSpan="10" className="text-center text-red-500 p-4">
                   Error: {error}
                 </td>
               </tr>
-            ) : users.length > 0 ? (
-              users.map((u, i) => (
+            ) : mockUsers.length > 0 ? (
+              mockUsers.map((u, i) => (
                 <tr
                   key={u.id || i}
                   className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
@@ -175,11 +184,11 @@ const UserTable = ({
                   <td className="p-2 border text-center">
                     {i + 1 + page * 10}
                   </td>
-                  <td className="p-2 border">
+                  <td className="p-2 border text-center">
                     <img
                       src={u.avatar || defaultAvatar}
                       alt={u.fullName}
-                      className="w-10 h-10 rounded-full object-cover border"
+                      className="w-10 h-10 rounded-full object-cover border mx-auto"
                     />
                   </td>
                   <td className="p-2 border font-medium">{u.fullName}</td>
@@ -187,31 +196,69 @@ const UserTable = ({
                   <td className="p-2 border">{u.phone || "-"}</td>
                   <td className="p-2 border">{u.gender || "-"}</td>
                   <td className="p-2 border">{u.department?.name || "-"}</td>
-                  {/* <td className="p-2 border">
+                  <td className="p-2 border">{u.role}</td>
+                  <td className="p-2 border">
                     {u.active ? (
-                      <span className="text-green-600 font-medium">
-                        Hoạt động
-                      </span>
+                      <span className="text-green-600 font-medium">Active</span>
                     ) : (
-                      <span className="text-gray-500">Ngừng</span>
+                      <span className="text-gray-500">Inactive</span>
                     )}
-                  </td> */}
+                  </td>
                   <td className="p-2 border text-center">
-                    <button
-                      type="button"
-                      onClick={() => onSelectUser(u.id)}
-                      className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-md
-                                 border border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
-                    >
-                      <Eye className="h-4 w-4" /> View
-                    </button>
+                    <div className="flex justify-center gap-2">
+                      {/* View */}
+                      <button
+                        data-tooltip-id={`view-tip-${u.id}`}
+                        data-tooltip-content="Xem chi tiết"
+                        onClick={() => onSelectUser(u.id)}
+                        className="p-1.5 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <Tooltip id={`view-tip-${u.id}`} place="top" />
+
+                      {/* Edit */}
+                      <button
+                        data-tooltip-id={`edit-tip-${u.id}`}
+                        data-tooltip-content="Chỉnh sửa người dùng"
+                        onClick={() => alert(`Edit ${u.fullName}`)}
+                        className="p-1.5 rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/30 text-amber-600"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <Tooltip id={`edit-tip-${u.id}`} place="top" />
+
+                      {/* Reset password */}
+                      <button
+                        data-tooltip-id={`reset-tip-${u.id}`}
+                        data-tooltip-content="Đặt lại mật khẩu"
+                        onClick={() =>
+                          alert(`Reset password for ${u.fullName}`)
+                        }
+                        className="p-1.5 rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-600"
+                      >
+                        <KeyRound className="w-4 h-4" />
+                      </button>
+                      <Tooltip id={`reset-tip-${u.id}`} place="top" />
+
+                      {/* Delete */}
+                      <button
+                        data-tooltip-id={`delete-tip-${u.id}`}
+                        data-tooltip-content="Xóa người dùng"
+                        onClick={() => confirm(`Xóa ${u.fullName}?`)}
+                        className="p-1.5 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <Tooltip id={`delete-tip-${u.id}`} place="top" />
+                    </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td
-                  colSpan="9"
+                  colSpan="10"
                   className="text-center p-4 text-gray-500 dark:text-gray-300"
                 >
                   Không tìm thấy người dùng

@@ -14,17 +14,18 @@ export const fetchUsers = createAsyncThunk(
   "user/fetchUsers",
   async ({ page, keyword, filters, sort }, { rejectWithValue }) => {
     try {
-      console.log("Filter: ");
-      console.log("Page: ", page);
-      console.log("keyword: ", keyword);
-      console.log("Filters:", filters);
-      console.log("sort:", sort);
+      // console.log("Filter: ");
+      // console.log("Page: ", page);
+      // console.log("keyword: ", keyword);
+      // console.log("Filters:", filters);
+      // console.log("sort:", sort);
 
       const res = await getUsersApi({
         page,
         keyword,
         gender: filters.gender,
         departmentId: filters.departmentId,
+        isActive: filters.active,
         sortField: sort.field,
         sortDir: sort.direction,
       });
