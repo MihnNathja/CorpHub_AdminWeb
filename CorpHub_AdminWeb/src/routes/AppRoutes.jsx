@@ -18,79 +18,22 @@ const AppRoutes = () => {
       {/* Public routes */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
-      {/* Trang Coming Soon cho các module chưa hoàn thiện */}
       <Route path="/coming-soon" element={<FeatureComingSoonPage />} />
 
-      {/* Private routes (Dashboard layout) */}
-      <Route
-        path="/"
-        element={
-          <PrivateRoute>
-            <Dashboard /> {/* Dashboard layout có Sidebar + <Outlet /> */}
-          </PrivateRoute>
-        }
-      >
-        <Route index element={<HomePage />} />
-
-        {/* Chỉ ROLE_ADMIN mới được vào */}
-        <Route
-          path="rooms"
-          element={
-            <PrivateRoute roles={["ROLE_ADMIN"]}>
-              <RoomPage />
-            </PrivateRoute>
-          }
-        />
-
-        {/* Chỉ ROLE_MANAGER & ROLE_ADMIN mới được vào */}
-        <Route
-          path="users"
-          element={
-            <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
-              <UserPage />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="departments"
-          element={
-            <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
-              <FeatureComingSoonPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="tickets"
-          element={
-            <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
-              <TicketsPage />
-            </PrivateRoute>
-          }
-        />
-
-        {/* Chỉ ROLE_HR & ROLE_MANAGER & ROLE_ADMIN mới được vào */}
-        <Route
-          path="employees"
-          element={
-            <PrivateRoute roles={["ROLE_MANAGER", "ROLE_ADMIN", "ROLE_HR"]}>
-              <EmployeePage />
-            </PrivateRoute>
-          }
-        />
-
-        {/* Chỉ ROLE_USER mới được vào */}
-        <Route
-          path="my-tickets"
-          element={
-            <PrivateRoute roles={["ROLE_USER"]}>
-              <EmployeeTicketPage />
-            </PrivateRoute>
-          }
-        />
-        <Route path="projects" element={<FeatureComingSoonPage />} />
-        <Route path="calendar" element={<CalendarPage />} />
-        <Route path="settings" element={<FeatureComingSoonPage />} />
+      {/* ✅ Private routes — chỉ 1 lớp PrivateRoute */}
+      <Route element={<PrivateRoute />}>
+        <Route path="/" element={<Dashboard />}>
+          <Route index element={<HomePage />} />
+          <Route path="rooms" element={<RoomPage />} />
+          <Route path="users" element={<UserPage />} />
+          <Route path="departments" element={<FeatureComingSoonPage />} />
+          <Route path="tickets" element={<TicketsPage />} />
+          <Route path="employees" element={<EmployeePage />} />
+          <Route path="my-tickets" element={<EmployeeTicketPage />} />
+          <Route path="projects" element={<FeatureComingSoonPage />} />
+          <Route path="calendar" element={<CalendarPage />} />
+          <Route path="settings" element={<FeatureComingSoonPage />} />
+        </Route>
       </Route>
     </Routes>
   );

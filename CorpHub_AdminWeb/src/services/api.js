@@ -1,21 +1,27 @@
 // src/services/api.js
 import axios from "axios";
+import { logout, refresh } from "../features/auth/store/authSlice";
+import { store } from "../store/index";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/",
   timeout: 10000,
+  withCredentials: true, // gửi cookie (refreshToken)
 });
 
-// ✅ Add Authorization header (skip for login/register)
+// ✅ Gắn access token vào header
 api.interceptors.request.use((config) => {
   if (
     config.url.includes("/auth/login") ||
-    config.url.includes("/auth/register")
+    config.url.includes("/auth/register") ||
+    config.url.includes("/auth/refresh")
   ) {
     return config;
   }
 
-  const token = localStorage.getItem("token");
+  const state = store.getState();
+  const token = state.auth.accessToken;
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -23,41 +29,59 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ Unified response + error handler
+// ✅ Xử lý response & token refresh tự động
 api.interceptors.response.use(
   (response) => {
-    // Nếu là download file (blob) thì giữ nguyên
-    if (response.config.responseType === "blob") {
-      return response;
-    }
-
-    // Trả response.data để code trong slice nhận đúng {status, message, data}
+    if (response.config.responseType === "blob") return response;
     return response.data;
   },
-  (err) => {
-    // 🧠 Không gói vào new Error(message) để giữ nguyên err.response
+
+  async (err) => {
+    const originalRequest = err.config;
+
+    // ❌ Không refresh cho /auth/refresh để tránh loop
+    if (originalRequest?.url?.includes("/auth/refresh")) {
+      console.warn("⚠️ Refresh endpoint failed → logging out.");
+      store.dispatch(logout());
+      return Promise.reject(err);
+    }
+
+    // 🔁 Nếu 401 và chưa retry → thử refresh access token
+    if (err.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        console.log("🔄 Token expired → attempting refresh...");
+        const result = await store.dispatch(refresh());
+        const refreshed = result.payload;
+
+        // 🧠 refresh trả về { user, accessToken }
+        const newAccessToken = refreshed?.accessToken;
+
+        if (newAccessToken) {
+          // ✅ cập nhật header mới rồi retry request cũ
+          api.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          return api(originalRequest);
+        }
+      } catch (refreshErr) {
+        console.error("🚫 Refresh failed → logging out...");
+        store.dispatch(logout());
+      }
+    }
+
+    // 🚨 Các lỗi khác
     if (err.response) {
-      // Nếu backend trả HTML (VD: 500 HTML page)
-      if (typeof err.response.data === "string") {
-        err.response.data = {
-          status: err.response.status,
+      const res = err.response;
+      if (typeof res.data === "string") {
+        res.data = {
+          status: res.status,
           message: "Server error: please try again later.",
         };
       }
-
-      // Nếu 401 → thông báo và có thể logout
-      if (err.response.status === 401) {
-        console.warn("⚠️ Unauthorized. Please login again.");
-        // localStorage.removeItem("token");
-        // window.location.href = "/login";
-      }
-
-      // 🔥 Giữ nguyên cấu trúc err.response.data (ApiResponse)
-      console.log("From api", err.response);
-      return Promise.reject(err.response);
+      return Promise.reject(res);
     }
 
-    // ❗Không có phản hồi (network hoặc timeout)
     if (err.request) {
       return Promise.reject({
         status: 0,
@@ -65,7 +89,6 @@ api.interceptors.response.use(
       });
     }
 
-    // ❗Lỗi không xác định
     return Promise.reject({
       status: -1,
       message: err.message || "Unknown error occurred",

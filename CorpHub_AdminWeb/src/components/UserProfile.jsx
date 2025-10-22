@@ -2,8 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logout } from "../features/auth/store/authSlice";
-import defaultAvatar from "../assets/defaultAvatar.jpg";
+import { logoutAsync } from "../features/auth/store/authSlice";
 import { UserCircle } from "lucide-react";
 
 const UserProfile = ({ user }) => {
@@ -23,9 +22,9 @@ const UserProfile = ({ user }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
+  const handleLogout = async () => {
+    await dispatch(logoutAsync());
+    navigate("/login", { replace: true });
   };
 
   const handleEditProfile = () => {
