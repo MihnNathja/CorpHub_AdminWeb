@@ -126,9 +126,10 @@ export const useTickets = (mode = "my") => {
       fetchTickets();
       return { success: true };
     } catch (err) {
-      console.error("Save ticket failed:", err);
+
 
       if (err?.data && typeof err.data === "object") {
+        console.error("Save ticket failed:", err.data);
         return { success: false, validationErrors: err.data };
       }
 

@@ -16,6 +16,7 @@
     "@heroicons/react": "^2.2.0",
     "@mui/material": "^7.3.2",
     "@reduxjs/toolkit": "^2.9.0",
+    "@stomp/stompjs": "^7.2.0",
     "axios": "^1.11.0",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
@@ -33,6 +34,7 @@
     "react-tooltip": "^5.29.1",
     "react-tsparticles": "^2.12.2",
     "recharts": "^3.1.2",
+    "sockjs-client": "^1.6.1",
     "tsparticles": "^3.9.1"
   },
   "devDependencies": {

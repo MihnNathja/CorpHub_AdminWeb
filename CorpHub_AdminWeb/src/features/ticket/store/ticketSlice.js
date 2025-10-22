@@ -135,7 +135,8 @@ export const createOrUpdateTicket = createAsyncThunk(
       const res = await saveTicket(ticket);
       return res;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+      console.log("err", err);
+      return thunkAPI.rejectWithValue(err.data || err.message);
     }
   }
 );
@@ -313,6 +314,7 @@ const ticketSlice = createSlice({
       })
       .addCase(createOrUpdateTicket.fulfilled, (state, action) => {
         state.actionLoading = false;
+        console.log(action.payload.data);
         const newTicket = action.payload.data;
         if (!newTicket || !newTicket.id) return;
 

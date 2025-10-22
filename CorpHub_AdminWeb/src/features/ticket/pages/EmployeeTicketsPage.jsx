@@ -237,8 +237,13 @@ const TicketsPage = () => {
               await upload(result.id, formData.attachments);
             }
 
+            if (result.validationErrors) {
+              console.log("hello");
+              return result;
+            }
             setIsAddModalOpen(false);
             setEditingTicket(null);
+
           } catch (err) {
             console.error("Error saving ticket:", err);
           }

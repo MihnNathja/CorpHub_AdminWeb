@@ -1,10 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile } from "../features/auth/store/authSlice";
+import { useNotifications } from "../features/notification/hooks/useNotifications";
 
 const AppLayout = ({ children }) => {
     const dispatch = useDispatch();
     const { token, user, loading } = useSelector((state) => state.auth);
+
+    useNotifications(token, user?.id);
 
     // Mỗi khi có token mà chưa có user -> gọi API lấy thông tin user
     // useEffect(() => {
@@ -14,9 +17,6 @@ const AppLayout = ({ children }) => {
     // }, [token, user, dispatch]);
 
     // Nếu đang gọi API profile -> hiển thị loader toàn trang
-
-    console.log(token);
-    console.log(user);
     if (token && !user && loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
