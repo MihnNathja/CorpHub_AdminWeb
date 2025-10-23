@@ -11,6 +11,7 @@ import RoomPage from "../features/room/pages/RoomPage";
 import FeatureComingSoonPage from "../pages/FeatureComingSoonPage";
 import EmployeePage from "../features/employee/pages/EmployeePage";
 import UserPage from "../features/user/pages/UserPage";
+import RolesPage from "../features/role/pages/RolesPage";
 
 const AppRoutes = () => {
   return (
@@ -26,6 +27,7 @@ const AppRoutes = () => {
           <Route index element={<HomePage />} />
           <Route path="rooms" element={<RoomPage />} />
           <Route path="users" element={<UserPage />} />
+          <Route path="roles" element={<RolesPage />} />
           <Route path="departments" element={<FeatureComingSoonPage />} />
           <Route path="tickets" element={<TicketsPage />} />
           <Route path="employees" element={<EmployeePage />} />
