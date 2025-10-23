@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 // Định nghĩa màu trạng thái yêu cầu
 const statusColors = {
     PENDING: "bg-yellow-100 text-yellow-700 border border-yellow-300",
-    APPROVED: "bg-green-100 text-green-700 border border-green-300",
+    ACCEPTED: "bg-green-100 text-green-700 border border-green-300",
     REJECTED: "bg-red-100 text-red-700 border border-red-300",
 };
 
@@ -25,7 +25,8 @@ const RoomRequirementCard = ({
         start,
         end,
         roomId,
-        status = "PENDING",
+        roomName,
+        status,
     } = requirement;
 
     const formattedStart = dayjs(start).format("DD/MM/YYYY HH:mm");
@@ -66,7 +67,7 @@ const RoomRequirementCard = ({
                     <span className="w-2 h-2 rounded-full bg-current" />
                     {status === "PENDING"
                         ? "Đang chờ duyệt"
-                        : status === "APPROVED"
+                        : status === "ACCEPTED"
                             ? "Đã phê duyệt"
                             : "Đã từ chối"}
                 </span>
@@ -127,7 +128,7 @@ const RoomRequirementCard = ({
                         Phòng:{" "}
                         {roomId ? (
                             <span className="text-green-600 dark:text-green-400 font-medium">
-                                Đã gán
+                                {roomName}
                             </span>
                         ) : (
                             <span className="text-red-500 dark:text-red-400 font-medium">

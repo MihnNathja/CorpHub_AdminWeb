@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRoomRequirement } from "../hooks/useRoomRequirement";
 import RoomRequirementCard from "../components/RoomRequirementCard";
+import RoomRequirementModal from "../components/RoomRequirementModal"; // 🧩 Thêm modal
 import { useAssets } from "../../asset/hooks/useAssets";
 import { RotateCcw } from "lucide-react";
 
 export default function RoomRequestList() {
     const { requirements, loading, approve, reject, refresh } = useRoomRequirement(true);
     const { categories = [], loading: loadingCategories } = useAssets();
+
+    const [selectedRequirement, setSelectedRequirement] = useState(null); // 🧠 state cho modal
 
     const isLoading = loading || loadingCategories;
 
@@ -61,11 +64,20 @@ export default function RoomRequestList() {
                         key={req.id}
                         requirement={req}
                         allCategories={categories}
+                        onClick={() => setSelectedRequirement(req)} // 🧠 mở modal khi click
                         onApprove={() => approve(req.id)}
                         onReject={() => reject(req.id)}
                     />
                 ))}
             </div>
+
+            {/* 🪟 Modal chi tiết */}
+            <RoomRequirementModal
+                open={!!selectedRequirement}
+                requirement={selectedRequirement}
+                allCategories={categories}
+                onClose={() => setSelectedRequirement(null)}
+            />
         </div>
     );
 }
