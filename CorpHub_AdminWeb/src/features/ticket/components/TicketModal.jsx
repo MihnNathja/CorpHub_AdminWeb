@@ -211,11 +211,13 @@ const TicketModal = ({
           </p>
           <div className="flex gap-3">
             {ticket.status === "OPEN" && isOwner && (
-              <EditButton
-                onClick={() => onEdit?.(ticket)} />
+              <EditButton onClick={() => onEdit?.(ticket)} />
             )}
 
-            {(isCurrentUserAssignee && ticket.status === "IN_PROGRESS") || (isOwner && ticket.status != "REJECTED" && ticket.status != "DONE") ? (
+            {(isCurrentUserAssignee && ticket.status === "IN_PROGRESS") ||
+            (isOwner &&
+              ticket.status != "REJECTED" &&
+              ticket.status != "DONE") ? (
               <CompleteButton
                 onClick={() => {
                   onClose();
@@ -241,7 +243,7 @@ const TicketModal = ({
                 Delete
               </button>
             )}
-            {ticket.category.categoryName === "Hệ thống" && (
+            {ticket.category.categoryName === "Account Request" && (
               <button
                 onClick={handleCreateUser}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
