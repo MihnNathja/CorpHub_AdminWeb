@@ -6,6 +6,7 @@ import {
     setSelectedRequirement,
     clearSelectedRequirement,
     fetchSuitableRooms,
+    fetchRoomRequirementsFilter,
 } from "../store/roomRequirementSlice";
 import { useCallback, useEffect } from "react";
 import { showSuccess, showError } from "../../../utils/toastUtils";
@@ -17,8 +18,10 @@ export function useRoomRequirement(autoFetch = true) {
     const {
         items,
         suitableRooms,
+        roomReqsByRoom,
         loading,
         loadingSuitable,
+        loadingRoomReqsByRoom,
         error,
         selected,
         meta,
@@ -97,23 +100,36 @@ export function useRoomRequirement(autoFetch = true) {
         [dispatch]
     );
 
+    /* -------------------- LOAD ROOM REQUIREMENTS BY ROOM -------------------- */
+    const loadRoomRequirements = useCallback(
+        async (roomId, date) => {
+            if (!roomId) return;
+            await dispatch(fetchRoomRequirementsFilter({ roomId, date })).unwrap();
+        },
+        [dispatch]
+    );
+
+
     /* -------------------- TRẢ VỀ -------------------- */
     return {
         // dữ liệu
-        requirements: items,
+        requirements: items,       // tất cả yêu cầu
+        roomRequirements: roomReqsByRoom, // yêu cầu theo phòng
         suitableRooms,
         meta,
         // trạng thái
-        loading,            // loading danh sách yêu cầu
-        loadingSuitable,    // 🆕 loading phòng phù hợp (cho modal)
+        loading,
+        loadingSuitable,
+        loadingRoomReqsByRoom,
         error,
-        selected,
         // hành động
         refresh,
+        loadRoomRequirements,   // ✅ thay thế handleFetchRoomRequirements
         loadSuitableRooms,
         approve,
         reject,
         setSelected,
         clearSelected,
     };
+
 }

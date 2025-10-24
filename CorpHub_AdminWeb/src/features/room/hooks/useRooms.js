@@ -6,6 +6,7 @@ import {
     removeRoom,
     setSelectedRoom,
 } from "../store/roomSlice";
+import { fetchRoomRequirementsFilter } from "../store/roomRequirementSlice";
 
 export const useRooms = () => {
     const dispatch = useDispatch();
@@ -14,6 +15,7 @@ export const useRooms = () => {
     const { items, meta, loading, error, selectedRoom } = useSelector(
         (state) => state.rooms
     );
+
 
     // Local state cho phân trang và filter
     const [page, setPage] = useState(0); // Page trong backend bắt đầu từ 0
@@ -93,6 +95,7 @@ export const useRooms = () => {
         filteredRooms,
         paginatedRooms,
         selectedRoom,
+        // handlers
         setSelectedRoom: setSelected,
         handleCreateOrUpdate,
         handleRemove,

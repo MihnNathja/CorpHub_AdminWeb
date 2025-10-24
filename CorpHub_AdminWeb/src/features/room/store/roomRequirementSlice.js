@@ -3,6 +3,7 @@ import {
     getRoomRequirements,
     approveRoomRequirement as approveApi,
     rejectRoomRequirement as rejectApi,
+    getRoomRequirementsFilter,
 } from "../services/roomRequirementApi";
 import { showError } from "../../../utils/toastUtils";
 import { suitableRooms } from "../services/roomApi";
@@ -70,6 +71,20 @@ export const fetchSuitableRooms = createAsyncThunk(
     }
 );
 
+export const fetchRoomRequirementsFilter = createAsyncThunk(
+    "roomRequirements/fetchFiltered",
+    async ({ roomId, date }, { rejectWithValue }) => {
+        try {
+            const res = await getRoomRequirementsFilter(roomId, date);
+            return res;
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || { message: "Không thể tải danh sách yêu cầu phòng" }
+            );
+        }
+    }
+);
+
 /* ----------------------------- SLICE ----------------------------- */
 
 const roomRequirementSlice = createSlice({
@@ -77,10 +92,12 @@ const roomRequirementSlice = createSlice({
     initialState: {
         items: [], // danh sách yêu cầu phòng
         suitableRooms: [], // danh sách phòng phù hợp (từ RoomRequirementId)
+        roomReqsByRoom: [], // danh sách yêu cầu đã lọc
         selected: null,
         meta: {}, // phân trang
         loading: false, // loading danh sách yêu cầu
         loadingSuitable: false, // 🆕 loading riêng cho suitable rooms
+        loadingRoomReqsByRoom: false,
         error: null,
     },
     reducers: {
@@ -142,6 +159,21 @@ const roomRequirementSlice = createSlice({
                 state.error =
                     action.payload?.message || "Không thể tải danh sách phòng phù hợp";
                 showError(state.error);
+            })
+
+            /* ---- Fetch filtered ---- */
+            .addCase(fetchRoomRequirementsFilter.pending, (state) => {
+                state.loadingRoomReqsByRoom = true;
+                state.error = null;
+            })
+            .addCase(fetchRoomRequirementsFilter.fulfilled, (state, action) => {
+                state.loadingRoomReqsByRoom = false;
+                state.roomReqsByRoom = action.payload.data || [];
+            })
+            .addCase(fetchRoomRequirementsFilter.rejected, (state, action) => {
+                state.loadingRoomReqsByRoom = false;
+                state.error =
+                    action.payload?.message || "Không thể tải danh sách yêu cầu phòng";
             });
     },
 });

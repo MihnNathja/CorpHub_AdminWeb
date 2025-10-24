@@ -7,3 +7,6 @@ export const approveRoomRequirement = (id, roomId) =>
 
 export const rejectRoomRequirement = (id) =>
     api.put(`/api/room-requirements/${id}/reject`);
+
+export const getRoomRequirementsFilter = (roomId, date) =>
+    api.get("/api/room-requirements/filter", { params: { roomId, date } });
