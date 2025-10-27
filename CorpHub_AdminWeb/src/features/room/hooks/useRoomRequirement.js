@@ -5,6 +5,8 @@ import {
     rejectRoomRequirement,
     setSelectedRequirement,
     clearSelectedRequirement,
+    fetchSuitableRooms,
+    fetchRoomRequirementsFilter,
 } from "../store/roomRequirementSlice";
 import { useCallback, useEffect } from "react";
 import { showSuccess, showError } from "../../../utils/toastUtils";
@@ -12,12 +14,20 @@ import { showSuccess, showError } from "../../../utils/toastUtils";
 export function useRoomRequirement(autoFetch = true) {
     const dispatch = useDispatch();
 
-    // ✅ Khớp với slice mới
-    const { items, loading, error, selected, meta } = useSelector(
-        (state) => state.roomRequirements
-    );
+    // ✅ Lấy state mới có thêm loadingSuitable
+    const {
+        items,
+        suitableRooms,
+        roomReqsByRoom,
+        loading,
+        loadingSuitable,
+        loadingRoomReqsByRoom,
+        error,
+        selected,
+        meta,
+    } = useSelector((state) => state.roomRequirements);
 
-    /* -------------------- LOAD DỮ LIỆU -------------------- */
+    /* -------------------- LOAD DANH SÁCH -------------------- */
     const refresh = useCallback(
         (page = meta?.page || 0, size = meta?.size || 9) => {
             dispatch(fetchRoomRequirements({ page, size }));
@@ -31,10 +41,14 @@ export function useRoomRequirement(autoFetch = true) {
 
     /* -------------------- HÀNH ĐỘNG -------------------- */
     const approve = useCallback(
-        async (id) => {
+        async (id, roomId) => {
             try {
-                await dispatch(approveRoomRequirement(id)).unwrap();
-                showSuccess("Đã phê duyệt yêu cầu phòng");
+                const res = await dispatch(approveRoomRequirement({ id, roomId })).unwrap();
+                console.log(res.data);
+                if (res?.data === true)
+                    showSuccess("Đã phê duyệt yêu cầu phòng");
+                else
+                    showError("Phê duyệt thất bại");
                 refresh();
             } catch (err) {
                 showError("Phê duyệt thất bại");
@@ -47,8 +61,11 @@ export function useRoomRequirement(autoFetch = true) {
     const reject = useCallback(
         async (id) => {
             try {
-                await dispatch(rejectRoomRequirement(id)).unwrap();
-                showSuccess("Đã từ chối yêu cầu phòng");
+                const res = await dispatch(rejectRoomRequirement(id)).unwrap();
+                if (res?.data?.success === true)
+                    showSuccess("Đã từ chối yêu cầu phòng");
+                else
+                    showError("Từ chối thất bại");
                 refresh();
             } catch (err) {
                 showError("Từ chối thất bại");
@@ -70,17 +87,49 @@ export function useRoomRequirement(autoFetch = true) {
         dispatch(clearSelectedRequirement());
     }, [dispatch]);
 
+    /* -------------------- LOAD PHÒNG PHÙ HỢP -------------------- */
+    const loadSuitableRooms = useCallback(
+        async (id) => {
+            if (!id) return;
+            try {
+                await dispatch(fetchSuitableRooms(id)).unwrap();
+            } catch (err) {
+                console.error("❌ Lỗi khi tải danh sách phòng phù hợp:", err);
+            }
+        },
+        [dispatch]
+    );
+
+    /* -------------------- LOAD ROOM REQUIREMENTS BY ROOM -------------------- */
+    const loadRoomRequirements = useCallback(
+        async (roomId, date) => {
+            if (!roomId) return;
+            await dispatch(fetchRoomRequirementsFilter({ roomId, date })).unwrap();
+        },
+        [dispatch]
+    );
+
+
     /* -------------------- TRẢ VỀ -------------------- */
     return {
-        requirements: items,
-        loading,
-        error,
-        selected,
+        // dữ liệu
+        requirements: items,       // tất cả yêu cầu
+        roomRequirements: roomReqsByRoom, // yêu cầu theo phòng
+        suitableRooms,
         meta,
+        // trạng thái
+        loading,
+        loadingSuitable,
+        loadingRoomReqsByRoom,
+        error,
+        // hành động
         refresh,
+        loadRoomRequirements,   // ✅ thay thế handleFetchRoomRequirements
+        loadSuitableRooms,
         approve,
         reject,
         setSelected,
         clearSelected,
     };
+
 }

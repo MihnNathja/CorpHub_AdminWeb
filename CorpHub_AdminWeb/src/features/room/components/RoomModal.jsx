@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { X, Trash2, Pencil, Users, Square, Package } from "lucide-react";
 import TimelineTab from "./TimelineTab";
+import { useRooms } from "../hooks/useRooms";
+import { useRoomRequirement } from "../hooks/useRoomRequirement";
 
 const statusColors = {
     AVAILABLE: "bg-green-100 text-green-700",
@@ -8,7 +10,12 @@ const statusColors = {
     MAINTENANCE: "bg-red-100 text-red-700",
 };
 
-const RoomModal = ({ room, onClose, onEdit, onRemove }) => {
+const RoomModal = ({
+    room,
+    onClose,
+    onEdit,
+    onRemove,
+}) => {
     if (!room) return null;
 
     const statusClass =
@@ -20,6 +27,25 @@ const RoomModal = ({ room, onClose, onEdit, onRemove }) => {
     const isMeetingRoom =
         room.type?.toLowerCase().includes("họp") ||
         room.category?.toLowerCase().includes("họp");
+
+    const today = new Date().toISOString().split("T")[0];
+
+    const {
+        roomRequirements,
+        loadRoomRequirements,
+        loadingRoomReqsByRoom,
+    } = useRoomRequirement(false);
+
+    useEffect(() => {
+        if (room?.id) loadRoomRequirements(room.id, today);
+    }, [room?.id, loadRoomRequirements]);
+
+    const handleDateChange = useCallback(
+        (date) => {
+            loadRoomRequirements(room.id, date);
+        },
+        [room?.id, loadRoomRequirements]
+    );
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
@@ -106,15 +132,19 @@ const RoomModal = ({ room, onClose, onEdit, onRemove }) => {
                     </div>
                 </div>
 
-                {/* Section 3: Timeline - chỉ hiện nếu là phòng họp */}
-                {isMeetingRoom && (
-                    <div className="mb-6">
-                        <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-100">
-                            Lịch sử dụng
-                        </h3>
-                        <TimelineTab />
-                    </div>
-                )}
+                {/* Section 3: Timeline */}
+                {/* {isMeetingRoom && ( */}
+                <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-100">
+                        Lịch sử sử dụng
+                    </h3>
+
+                    <TimelineTab
+                        roomRequirements={roomRequirements || []}
+                        loading={loadingRoomReqsByRoom}
+                        onDateChange={handleDateChange}
+                    />
+                </div>
 
                 {/* Footer */}
                 <div className="flex justify-end gap-3 mt-6">

@@ -3,17 +3,19 @@ import {
     getRoomRequirements,
     approveRoomRequirement as approveApi,
     rejectRoomRequirement as rejectApi,
+    getRoomRequirementsFilter,
 } from "../services/roomRequirementApi";
+import { showError } from "../../../utils/toastUtils";
+import { suitableRooms } from "../services/roomApi";
 
 /* ----------------------------- ASYNC ACTIONS ----------------------------- */
 
-// 🟩 Fetch danh sách yêu cầu phòng (có phân trang)
+// 🟩 Lấy danh sách yêu cầu phòng (có phân trang)
 export const fetchRoomRequirements = createAsyncThunk(
     "roomRequirements/fetchAll",
     async ({ page = 0, size = 9 } = {}, { rejectWithValue }) => {
         try {
             const res = await getRoomRequirements({ page, size });
-            // Giả định API trả về ApiResponse {status, message, data, meta}
             return res;
         } catch (err) {
             return rejectWithValue(
@@ -26,9 +28,10 @@ export const fetchRoomRequirements = createAsyncThunk(
 // 🟩 Phê duyệt yêu cầu
 export const approveRoomRequirement = createAsyncThunk(
     "roomRequirements/approve",
-    async (id, { rejectWithValue }) => {
+    async ({ id, roomId }, { rejectWithValue }) => {
         try {
-            const res = await approveApi(id);
+            const res = await approveApi(id, roomId);
+            console.log(res);
             return res;
         } catch (err) {
             return rejectWithValue(
@@ -53,16 +56,49 @@ export const rejectRoomRequirement = createAsyncThunk(
     }
 );
 
+// 🟩 Lấy danh sách phòng phù hợp theo RoomRequirementId
+export const fetchSuitableRooms = createAsyncThunk(
+    "roomRequirements/fetchSuitableRooms",
+    async (requirementId, { rejectWithValue }) => {
+        try {
+            const res = await suitableRooms(requirementId);
+            return res;
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || { message: "Không thể tải danh sách phòng phù hợp" }
+            );
+        }
+    }
+);
+
+export const fetchRoomRequirementsFilter = createAsyncThunk(
+    "roomRequirements/fetchFiltered",
+    async ({ roomId, date }, { rejectWithValue }) => {
+        try {
+            const res = await getRoomRequirementsFilter(roomId, date);
+            return res;
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || { message: "Không thể tải danh sách yêu cầu phòng" }
+            );
+        }
+    }
+);
+
 /* ----------------------------- SLICE ----------------------------- */
 
 const roomRequirementSlice = createSlice({
     name: "roomRequirements",
     initialState: {
         items: [], // danh sách yêu cầu phòng
-        meta: {}, // thông tin phân trang (page, totalPages, v.v.)
-        loading: false,
-        error: null,
+        suitableRooms: [], // danh sách phòng phù hợp (từ RoomRequirementId)
+        roomReqsByRoom: [], // danh sách yêu cầu đã lọc
         selected: null,
+        meta: {}, // phân trang
+        loading: false, // loading danh sách yêu cầu
+        loadingSuitable: false, // 🆕 loading riêng cho suitable rooms
+        loadingRoomReqsByRoom: false,
+        error: null,
     },
     reducers: {
         setSelectedRequirement: (state, action) => {
@@ -70,6 +106,7 @@ const roomRequirementSlice = createSlice({
         },
         clearSelectedRequirement: (state) => {
             state.selected = null;
+            state.suitableRooms = [];
         },
     },
     extraReducers: (builder) => {
@@ -96,9 +133,7 @@ const roomRequirementSlice = createSlice({
                 const updated = action.payload.data;
                 if (!updated) return;
                 const index = state.items.findIndex((r) => r.id === updated.id);
-                if (index !== -1) {
-                    state.items[index] = updated;
-                }
+                if (index !== -1) state.items[index] = updated;
             })
 
             /* ---- Reject ---- */
@@ -106,9 +141,39 @@ const roomRequirementSlice = createSlice({
                 const updated = action.payload.data;
                 if (!updated) return;
                 const index = state.items.findIndex((r) => r.id === updated.id);
-                if (index !== -1) {
-                    state.items[index] = updated;
-                }
+                if (index !== -1) state.items[index] = updated;
+            })
+
+            /* ---- Fetch suitable rooms ---- */
+            .addCase(fetchSuitableRooms.pending, (state) => {
+                state.loadingSuitable = true; // 🆕 chỉ ảnh hưởng modal
+                state.error = null;
+                state.suitableRooms = [];
+            })
+            .addCase(fetchSuitableRooms.fulfilled, (state, action) => {
+                state.loadingSuitable = false; // 🆕
+                state.suitableRooms = action.payload.data || [];
+            })
+            .addCase(fetchSuitableRooms.rejected, (state, action) => {
+                state.loadingSuitable = false; // 🆕
+                state.error =
+                    action.payload?.message || "Không thể tải danh sách phòng phù hợp";
+                showError(state.error);
+            })
+
+            /* ---- Fetch filtered ---- */
+            .addCase(fetchRoomRequirementsFilter.pending, (state) => {
+                state.loadingRoomReqsByRoom = true;
+                state.error = null;
+            })
+            .addCase(fetchRoomRequirementsFilter.fulfilled, (state, action) => {
+                state.loadingRoomReqsByRoom = false;
+                state.roomReqsByRoom = action.payload.data || [];
+            })
+            .addCase(fetchRoomRequirementsFilter.rejected, (state, action) => {
+                state.loadingRoomReqsByRoom = false;
+                state.error =
+                    action.payload?.message || "Không thể tải danh sách yêu cầu phòng";
             });
     },
 });

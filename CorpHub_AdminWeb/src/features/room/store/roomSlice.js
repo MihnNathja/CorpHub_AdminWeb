@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getRooms, saveRoom, deleteRoom } from "../services/roomApi";
+import { getRooms, saveRoom, deleteRoom, suitableRooms } from "../services/roomApi";
 
 // === FETCH ROOMS (phân trang) ===
 export const fetchRooms = createAsyncThunk(
@@ -44,6 +44,7 @@ const roomSlice = createSlice({
     name: "rooms",
     initialState: {
         items: [], // danh sách phòng
+        suitableRooms: [],
         meta: {}, // chứa thông tin phân trang
         loading: false,
         error: null,
@@ -93,6 +94,7 @@ const roomSlice = createSlice({
                 if (!deleted) return;
                 state.items = state.items.filter((r) => r.id !== deleted.id);
             });
+
     },
 });
 
