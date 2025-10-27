@@ -8,6 +8,8 @@ import {
   Pencil,
   Trash2,
   KeyRound,
+  Unlock,
+  Lock,
 } from "lucide-react";
 import Pagination from "../../global/components/Pagination";
 import defaultAvatar from "../../../assets/defaultAvatar.jpg";
@@ -21,6 +23,7 @@ const UserTable = ({
   onSelectUser,
   onFetch,
   departments = [],
+  onToogleActive,
 }) => {
   const [page, setPage] = useState(0);
   const [keyword, setKeyword] = useState("");
@@ -41,6 +44,13 @@ const UserTable = ({
     role: u.role || (index % 2 === 0 ? "Admin" : "Nhân viên"),
     active: u.active ?? index % 3 !== 0,
   }));
+
+  const handleToggleActive = (userId, isActive) => {
+    if (confirm(`${isActive ? "Khóa" : "Mở khóa"} tài khoản này?`)) {
+      // Gọi API backend hoặc service đổi trạng thái
+      onToogleActive(userId);
+    }
+  };
 
   useEffect(() => {
     onFetch(page, keyword, filters, sort);
@@ -241,16 +251,29 @@ const UserTable = ({
                       </button>
                       <Tooltip id={`reset-tip-${u.id}`} place="top" />
 
-                      {/* Delete */}
+                      {/* Lock / Unlock */}
                       <button
-                        data-tooltip-id={`delete-tip-${u.id}`}
-                        data-tooltip-content="Xóa người dùng"
-                        onClick={() => confirm(`Xóa ${u.fullName}?`)}
-                        className="p-1.5 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600"
+                        data-tooltip-id={`lock-tip-${u.id}`}
+                        data-tooltip-content={
+                          u.active ? "Khóa tài khoản" : "Mở khóa tài khoản"
+                        }
+                        onClick={() => {
+                          console.log("Khóa/mở khóa");
+                          handleToggleActive(u.id, u.active);
+                        }}
+                        className={`p-1.5 rounded-full transition-colors ${
+                          u.active
+                            ? "hover:bg-yellow-100 dark:hover:bg-yellow-900/30 text-yellow-600"
+                            : "hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600"
+                        }`}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        {u.active ? (
+                          <Lock className="w-4 h-4" />
+                        ) : (
+                          <Unlock className="w-4 h-4" />
+                        )}
                       </button>
-                      <Tooltip id={`delete-tip-${u.id}`} place="top" />
+                      <Tooltip id={`lock-tip-${u.id}`} place="top" />
                     </div>
                   </td>
                 </tr>

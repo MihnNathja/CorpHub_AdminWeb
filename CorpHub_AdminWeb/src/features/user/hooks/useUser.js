@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchUsers,
-} from "../store/userSlice";
+import { changeUserActive, fetchUsers } from "../store/userSlice";
 
 export const useUser = () => {
   const dispatch = useDispatch();
@@ -17,9 +15,12 @@ export const useUser = () => {
     dispatch(fetchUsers());
   }, [dispatch]);
 
+  const toggleActive = (id) => dispatch(changeUserActive({ id }));
+
   return {
     employees,
     loading,
     error,
+    toggleActive,
   };
 };

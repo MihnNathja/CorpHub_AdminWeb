@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import RoleTable from "../components/RoleTable";
 import RoleFormModal from "../components/RoleFormModal";
 import { mockRoles, allPermissions } from "../components/mockRoles";
+import RolePermissionMatrix from "../components/RolePermissionMatrix";
+import RolePermissionMatrixGrouped from "../components/RolePermissionGrouped";
+import RolePermissionMatrixPro from "../components/RolePermissionMatrixPro";
 
 const RolesPage = () => {
   const [roles, setRoles] = useState(mockRoles);
@@ -73,7 +76,7 @@ const RolesPage = () => {
           />
         )}
 
-        {activeTab === "permissions" && (
+        {/* {activeTab === "permissions" && (
           <div className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">
               Danh sách quyền hệ thống
@@ -89,7 +92,10 @@ const RolesPage = () => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
+        {/* {activeTab === "permissions" && <RolePermissionMatrix />} */}
+        {activeTab === "permissions" && <RolePermissionMatrixGrouped />}
+        {/* {activeTab === "permissions" && <RolePermissionMatrixPro />} */}
       </div>
 
       {/* Modal thêm/sửa vai trò */}
