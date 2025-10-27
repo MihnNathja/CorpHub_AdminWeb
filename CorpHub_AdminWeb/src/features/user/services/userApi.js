@@ -26,3 +26,14 @@ export const getAllRoles = () => api.get("/api/roles");
 // export const updateUser = (id, data) => api.put(`/users/${id}`, data);
 
 // export const deleteUser = (id) => api.delete(`/users/${id}`);
+
+export const toggleUserActive = async (id) => {
+  console.log("Gọi tới API thay đổi active");
+  try {
+    const res = await api.patch(`/api/user/${id}/toggle-active`);
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi gọi API toggleActive:", error);
+    throw new Error("Cập nhật trạng thái thất bại");
+  }
+};

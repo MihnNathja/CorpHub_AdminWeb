@@ -6,6 +6,7 @@ import UserDetailModal from "../components/UserDetailModal";
 import UserForm from "../components/UserForm";
 import { useLocation } from "react-router-dom";
 import { useDepartment } from "../../department/hooks/useDepartment";
+import { useUser } from "../hooks/useUser";
 
 const UserPage = () => {
   const dispatch = useDispatch();
@@ -14,6 +15,8 @@ const UserPage = () => {
   );
 
   const { departments } = useDepartment();
+
+  const { toggleActive } = useUser();
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -69,6 +72,7 @@ const UserPage = () => {
             onFetch={(page, keyword, filters, sort) =>
               dispatch(fetchUsers({ page, keyword, filters, sort }))
             }
+            onToogleActive={toggleActive}
             departments={departments}
           />
         )}

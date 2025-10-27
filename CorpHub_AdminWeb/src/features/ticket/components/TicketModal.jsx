@@ -154,6 +154,12 @@ const TicketModal = ({
                   }`}
               >
                 <option value="">Chưa phân công</option>
+                {ticket.assignee &&
+                  !users.some((u) => u.id === ticket.assignee.id) && (
+                    <option value={ticket.assignee.id}>
+                      {ticket.assignee.fullName}
+                    </option>
+                  )}
                 {users?.map((user) => (
                   <option key={user.id} value={user.id}>
                     {user.fullName}
@@ -161,7 +167,7 @@ const TicketModal = ({
                 ))}
               </select>
               {ticket.assignee?.phone && (
-                <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 mt-2">
+                <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
                   <Phone className="w-3 h-3" /> {ticket.assignee.phone}
                 </div>
               )}
@@ -211,11 +217,13 @@ const TicketModal = ({
           </p>
           <div className="flex gap-3">
             {ticket.status === "OPEN" && isOwner && (
-              <EditButton
-                onClick={() => onEdit?.(ticket)} />
+              <EditButton onClick={() => onEdit?.(ticket)} />
             )}
 
-            {(isCurrentUserAssignee && ticket.status === "IN_PROGRESS") || (isOwner && ticket.status != "REJECTED" && ticket.status != "DONE") ? (
+            {(isCurrentUserAssignee && ticket.status === "IN_PROGRESS") ||
+            (isOwner &&
+              ticket.status != "REJECTED" &&
+              ticket.status != "DONE") ? (
               <CompleteButton
                 onClick={() => {
                   onClose();
@@ -241,7 +249,7 @@ const TicketModal = ({
                 Delete
               </button>
             )}
-            {ticket.category.categoryName === "Hệ thống" && (
+            {ticket.category.categoryName === "Account Request" && (
               <button
                 onClick={handleCreateUser}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
