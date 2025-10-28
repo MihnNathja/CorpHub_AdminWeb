@@ -13,6 +13,7 @@ import EmployeePage from "../features/employee/pages/EmployeePage";
 import UserPage from "../features/user/pages/UserPage";
 import RolesPage from "../features/role/pages/RolesPage";
 import DepartmentManagementPage from "../features/department/pages/DepartmentManagementPage";
+import AccountLockedPage from "../pages/AccountLockedPage";
 
 const AppRoutes = () => {
   return (
@@ -21,6 +22,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/coming-soon" element={<FeatureComingSoonPage />} />
+      <Route path="/account-locked" element={<AccountLockedPage />} />
 
       {/* ✅ Private routes — chỉ 1 lớp PrivateRoute */}
       <Route element={<PrivateRoute />}>
