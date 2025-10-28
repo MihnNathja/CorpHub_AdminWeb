@@ -3,6 +3,7 @@ import { X, Trash2, Pencil, Users, Square, Package } from "lucide-react";
 import TimelineTab from "./TimelineTab";
 import { useRooms } from "../hooks/useRooms";
 import { useRoomRequirement } from "../hooks/useRoomRequirement";
+import EditButton from "../../global/components/button/EditButton";
 
 const statusColors = {
     AVAILABLE: "bg-green-100 text-green-700",
@@ -148,12 +149,11 @@ const RoomModal = ({
 
                 {/* Footer */}
                 <div className="flex justify-end gap-3 mt-6">
-                    <button
-                        onClick={() => onEdit(room)}
+                    <EditButton
+                        onClick={() => onEdit(room.id)}
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg flex items-center gap-1 hover:bg-blue-600 transition"
                     >
-                        <Pencil className="w-4 h-4" /> Sửa
-                    </button>
+                    </EditButton>
                     <button
                         onClick={() => onRemove(room.id)}
                         className="px-4 py-2 bg-red-500 text-white rounded-lg flex items-center gap-1 hover:bg-red-600 transition"

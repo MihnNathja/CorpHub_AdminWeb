@@ -1,5 +1,5 @@
-import AcceptButton from "./button/AcceptButton";
-import RejectButton from "./button/RejectButton";
+import AcceptButton from "../../global/components/button/AcceptButton";
+import RejectButton from "../../global/components/button/RejectButton";
 
 export default function TicketActionGroupEmp({ status, onAccept, onReject, loading = false }) {
   if (status === "ASSIGNING") {
