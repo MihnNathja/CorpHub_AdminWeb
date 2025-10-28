@@ -17,8 +17,6 @@ import {
 import { useAuth } from "../../auth/hooks/useAuth";
 import TicketActionGroupEmp from "./TicketActionGroupEmp";
 import ReasonForm from "./ReasonForm";
-import RejectButton from "./button/RejectButton";
-import CompleteButton from "./button/CompleteButton";
 import CommentSection from "./comment/CommentSection";
 import { useComment } from "../hooks/useComment";
 import ConfirmDialog from "../../global/components/ConfirmDialog";
@@ -26,7 +24,9 @@ import { useAttachments } from "../hooks/useAttachment";
 import TicketAttachments from "./TicketAttachments";
 import { useUser } from "../../user/hooks/useUser";
 import { useNavigate } from "react-router-dom";
-import EditButton from "./button/EditButton";
+import EditButton from "../../global/components/button/EditButton";
+import RejectButton from "../../global/components/button/RejectButton";
+import CompleteButton from "../../global/components/button/CompleteButton";
 
 const TicketModal = ({
   ticket,
@@ -77,9 +77,8 @@ const TicketModal = ({
       >
         {/* Header */}
         <div
-          className={`flex justify-between items-center p-4 rounded-t-xl ${
-            statusColors[ticket.status]
-          }`}
+          className={`flex justify-between items-center p-4 rounded-t-xl ${statusColors[ticket.status]
+            }`}
         >
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
@@ -147,10 +146,9 @@ const TicketModal = ({
                 className={`w-full border rounded-lg p-2 transition-colors
                   dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100
                   focus:ring-2 focus:ring-blue-500
-                  ${
-                    !(mode === "received" && ticket.status === "WAITING")
-                      ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
-                      : ""
+                  ${!(mode === "received" && ticket.status === "WAITING")
+                    ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed"
+                    : ""
                   }`}
               >
                 <option value="">Chưa phân công</option>

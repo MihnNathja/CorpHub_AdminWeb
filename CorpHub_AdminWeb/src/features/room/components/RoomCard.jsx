@@ -85,15 +85,6 @@ const RoomCard = ({ room, onClick }) => {
                     )}
                 </div>
             )}
-
-            {/* Footer */}
-            <div className="mt-2 flex justify-end">
-                <button
-                    className="px-3 py-1 text-xs rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition"
-                >
-                    Chi tiết →
-                </button>
-            </div>
         </div>
     );
 };

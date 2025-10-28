@@ -48,6 +48,7 @@ export default function MeetingRoomRequirementSection({
                             onChange={(e) =>
                                 onBookingTimeChange({ ...bookingTime, start: e.target.value })
                             }
+                            disabled={disabled}
                             className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
                         />
                         {errors["roomRequirement.start"] && <p className="text-sm text-red-500">{errors["roomRequirement.start"]}</p>}
@@ -60,6 +61,7 @@ export default function MeetingRoomRequirementSection({
                             onChange={(e) =>
                                 onBookingTimeChange({ ...bookingTime, end: e.target.value })
                             }
+                            disabled={disabled}
                             className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
                         />
                         {errors["roomRequirement.end"] && <p className="text-sm text-red-500">{errors["roomRequirement.end"]}</p>}

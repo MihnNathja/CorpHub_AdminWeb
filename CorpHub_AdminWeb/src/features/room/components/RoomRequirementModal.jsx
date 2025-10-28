@@ -55,10 +55,6 @@ const RoomRequirementModal = ({ open, onClose, requirement, allCategories = [] }
 
     /* -------------------- HÀNH ĐỘNG -------------------- */
     const handleAcceptRoom = async (room) => {
-        const confirm = window.confirm(
-            `Xác nhận chọn phòng "${room.name}" cho yêu cầu này?`
-        );
-        if (!confirm) return;
 
         try {
             await approve(requirement.id, room.id);
