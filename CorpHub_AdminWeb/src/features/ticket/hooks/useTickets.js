@@ -24,7 +24,9 @@ export const useTickets = (mode = "my") => {
     meta = {},
     loading,
     error,
-  } = useSelector((state) => state.tickets[mode]);
+  } = useSelector(
+    (state) => state.tickets[mode !== "account_request" ? mode : "received"]
+  );
   const users = useSelector((state) => state.tickets.users);
 
   // ====================== LOCAL FILTER STATE ======================
@@ -33,6 +35,7 @@ export const useTickets = (mode = "my") => {
   const [isRequester, setIsRequester] = useState(true);
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [keyword, setKeyword] = useState("");
@@ -52,6 +55,7 @@ export const useTickets = (mode = "my") => {
       isRequester,
       status,
       priority,
+      categoryId,
       from,
       to,
       keyword,
@@ -59,7 +63,12 @@ export const useTickets = (mode = "my") => {
 
     if (mode === "sent") dispatch(fetchSentTickets(params));
     else if (mode === "received") dispatch(fetchReceivedTickets(params));
-    else dispatch(fetchMyTickets(params));
+    else if (mode === "account_request") {
+      console.log("Params trước: ", params);
+      params.categoryId = "756ce149-8f8e-4dbd-b2c2-a26e86881d44"; // Account Request
+      console.log("Params sau: ", params);
+      dispatch(fetchReceivedTickets(params));
+    } else dispatch(fetchMyTickets(params));
   }, [
     dispatch,
     mode,
@@ -68,6 +77,7 @@ export const useTickets = (mode = "my") => {
     isRequester,
     status,
     priority,
+    categoryId,
     from,
     to,
     keyword,
@@ -126,8 +136,6 @@ export const useTickets = (mode = "my") => {
       fetchTickets();
       return { success: true };
     } catch (err) {
-
-
       if (err?.data && typeof err.data === "object") {
         console.error("Save ticket failed:", err.data);
         return { success: false, validationErrors: err.data };
@@ -192,6 +200,8 @@ export const useTickets = (mode = "my") => {
     setIsRequester,
     priority,
     setPriority,
+    categoryId,
+    setCategoryId,
     from,
     setFrom,
     to,

@@ -3,6 +3,7 @@ import TicketSentTable from "../components/sent/TicketSentTable";
 import TicketReceivedTable from "../components/received/TicketReceivedTable";
 import { usePermission } from "../../../hooks/usePermission";
 import { useAuth } from "../../auth/hooks/useAuth";
+import TicketAccountRequestTable from "../components/TicketAccountRequestTable";
 
 const TicketsPage = () => {
   const [activeTab, setActiveTab] = useState("sent");
@@ -19,7 +20,7 @@ const TicketsPage = () => {
     // Nếu là IT, thêm tab "Account Requests"
     if (canViewAccountRequests) {
       baseTabs.push({
-        key: "account-requests",
+        key: "account_request",
         label: "Account Requests",
       });
     }
@@ -54,7 +55,7 @@ const TicketsPage = () => {
       <div className="border border-gray-200 dark:border-gray-700 rounded-b-lg p-4 -mt-px bg-white dark:bg-gray-800">
         {activeTab === "sent" && <TicketSentTable />}
         {activeTab === "received" && <TicketReceivedTable />}
-        {activeTab === "account-requests" && <TicketAccountRequestsTable />}
+        {activeTab === "account_request" && <TicketAccountRequestTable />}
       </div>
     </div>
   );

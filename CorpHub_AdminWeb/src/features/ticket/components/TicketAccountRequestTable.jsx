@@ -1,16 +1,16 @@
 import React from "react";
-import { useTickets } from "../../hooks/useTickets";
-import { useUser } from "../../../user/hooks/useUser";
-import TicketTableBase from "../TicketTableBase";
-import TicketReceivedTableBody from "./TicketReceivedTableBody";
+import { useTickets } from "../hooks/useTickets";
+import TicketTableBase from "./TicketTableBase";
+import TicketReceivedTableBody from "./received/TicketReceivedTableBody";
+import { useUser } from "../../user/hooks/useUser";
 
-const TicketReceivedTable = () => {
-  const props = useTickets("received");
+const TicketAccountRequestTable = () => {
+  const props = useTickets("account_request");
   const { employees: users } = useUser();
 
   return (
     <TicketTableBase
-      title="Received Tickets"
+      title="Account Request Tickets"
       {...props}
       renderTableHead={() => (
         <tr>
@@ -38,7 +38,7 @@ const TicketReceivedTable = () => {
         />
       )}
       modalProps={{
-        mode: "received",
+        mode: "accountRequest",
         handleAssign: props.handleAssign,
         handleReject: props.handleReject,
         handleComplete: props.handleComplete,
@@ -48,4 +48,4 @@ const TicketReceivedTable = () => {
   );
 };
 
-export default TicketReceivedTable;
+export default TicketAccountRequestTable;

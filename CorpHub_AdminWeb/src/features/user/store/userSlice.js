@@ -5,6 +5,7 @@ import {
   getUserByIdApi,
   getUsersApi,
   getUsersBySearch,
+  toggleUserActive,
 } from "../services/userApi";
 import { getAllDepartments } from "../../department/services/departmentApi";
 import { showError, showSuccess } from "../../../utils/toastUtils";
@@ -118,6 +119,22 @@ export const fetchUsersBySearch = createAsyncThunk(
   }
 );
 
+// ===== UPDATE ACTIVE STATUS =====
+export const changeUserActive = createAsyncThunk(
+  "user/changeUserActive",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const res = await toggleUserActive(id);
+      const active = res.data;
+      showSuccess(res?.message || "Cập nhật trạng thái thành công!");
+      return { id, active };
+    } catch (err) {
+      showError("Cập nhật trạng thái thất bại!");
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -193,6 +210,14 @@ const userSlice = createSlice({
       .addCase(fetchUsersBySearch.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Search failed";
+      })
+      // Toggle active
+      .addCase(changeUserActive.fulfilled, (state, action) => {
+        const updated = action.payload; // { id, active }
+        const user = state.list.find((u) => u.id === updated.id);
+        if (user) {
+          user.active = updated.active; // ✅ cập nhật trạng thái mới từ server
+        }
       });
   },
 });
