@@ -6,8 +6,17 @@ const NoticePageLayout = ({
   title,
   message,
   buttonText = "Quay lại",
+  onButtonClick, // nhận callback
 }) => {
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (onButtonClick) {
+      onButtonClick(navigate); // truyền navigate cho callback từ component cha
+    } else {
+      navigate(-1); // mặc định quay lại
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
@@ -20,7 +29,7 @@ const NoticePageLayout = ({
         </h1>
         <p className="text-gray-600 dark:text-gray-300 mb-6">{message}</p>
         <button
-          onClick={() => navigate(-1)}
+          onClick={handleClick}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow transition"
         >
           {buttonText}

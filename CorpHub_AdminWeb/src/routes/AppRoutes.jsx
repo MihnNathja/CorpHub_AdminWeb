@@ -13,6 +13,8 @@ import EmployeePage from "../features/employee/pages/EmployeePage";
 import UserPage from "../features/user/pages/UserPage";
 import RolesPage from "../features/role/pages/RolesPage";
 import DepartmentManagementPage from "../features/department/pages/DepartmentManagementPage";
+import AccountLockedPage from "../pages/AccountLockedPage";
+import EmployeeProfilePage from "../features/profile/pages/EmployeeProfilePage";
 import AssetPage from "../features/asset/page/AssetPage";
 
 const AppRoutes = () => {
@@ -22,6 +24,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/coming-soon" element={<FeatureComingSoonPage />} />
+      <Route path="/account-locked" element={<AccountLockedPage />} />
 
       {/* ✅ Private routes — chỉ 1 lớp PrivateRoute */}
       <Route element={<PrivateRoute />}>
@@ -38,6 +41,7 @@ const AppRoutes = () => {
           <Route path="projects" element={<FeatureComingSoonPage />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="settings" element={<FeatureComingSoonPage />} />
+          <Route path="profile" element={<EmployeeProfilePage />} />
         </Route>
       </Route>
     </Routes>

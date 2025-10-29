@@ -1,4 +1,5 @@
 import api from "../../../services/api";
+import { showError, showSuccess } from "../../../utils/toastUtils";
 
 export const createUserApi = (userData, ticketId) =>
   api.post(`/api/user/create?ticketId=${ticketId}`, userData);
@@ -33,7 +34,18 @@ export const toggleUserActive = async (id) => {
     const res = await api.patch(`/api/user/${id}/toggle-active`);
     return res;
   } catch (error) {
-    console.error("Lỗi khi gọi API toggleActive:", error);
+    console.error("Lỗi khi toggleActive:", error);
     throw new Error("Cập nhật trạng thái thất bại");
+  }
+};
+
+export const resetPassword = async (userId) => {
+  try {
+    const res = await api.post(`/api/user/reset-password/${userId}`);
+    showSuccess(res.data?.message || "Đã đặt lại mật khẩu và gửi qua email!");
+    return res.data;
+  } catch (error) {
+    showError(error.response?.data?.message || "Cập nhật mật khẩu thất bại");
+    throw error;
   }
 };

@@ -10,21 +10,16 @@ import {
   KeyRound,
   Unlock,
   Lock,
+  Loader2,
 } from "lucide-react";
 import Pagination from "../../global/components/Pagination";
 import defaultAvatar from "../../../assets/defaultAvatar.jpg";
 import { Tooltip } from "react-tooltip";
+import { useDepartment } from "../../department/hooks/useDepartment";
+import { useUser } from "../hooks/useUser";
+import { useSelector } from "react-redux";
 
-const UserTable = ({
-  users = [],
-  totalPages = 1,
-  loading,
-  error,
-  onSelectUser,
-  onFetch,
-  departments = [],
-  onToogleActive,
-}) => {
+const UserTable = ({ onSelectUser, onFetch }) => {
   const [page, setPage] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [filters, setFilters] = useState({
@@ -37,8 +32,26 @@ const UserTable = ({
     direction: "asc",
   });
 
+  const { toggleActive, handleResetPassword } = useUser();
+  const { departments } = useDepartment();
+
+  const [loadingId, setLoadingId] = useState(null);
+
+  const onResetPassword = async (userId) => {
+    setLoadingId(userId);
+    try {
+      await handleResetPassword(userId);
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  const { list, totalPages, loading, error } = useSelector(
+    (state) => state.user
+  );
+
   // 🧩 Dữ liệu giả cho demo
-  const mockUsers = users.map((u, index) => ({
+  const mockUsers = list.map((u, index) => ({
     ...u,
     // Nếu backend chưa có role/active thì gán tạm
     role: u.role || (index % 2 === 0 ? "Admin" : "Nhân viên"),
@@ -48,7 +61,7 @@ const UserTable = ({
   const handleToggleActive = (userId, isActive) => {
     if (confirm(`${isActive ? "Khóa" : "Mở khóa"} tài khoản này?`)) {
       // Gọi API backend hoặc service đổi trạng thái
-      onToogleActive(userId);
+      toggleActive(userId);
     }
   };
 
@@ -242,12 +255,19 @@ const UserTable = ({
                       <button
                         data-tooltip-id={`reset-tip-${u.id}`}
                         data-tooltip-content="Đặt lại mật khẩu"
-                        onClick={() =>
-                          alert(`Reset password for ${u.fullName}`)
-                        }
+                        onClick={() => onResetPassword(u.id)}
+                        disabled={loadingId === u.id}
                         className="p-1.5 rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-600"
                       >
-                        <KeyRound className="w-4 h-4" />
+                        {loadingId === u.id ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          </>
+                        ) : (
+                          <>
+                            <KeyRound className="w-4 h-4 mr-2" />
+                          </>
+                        )}
                       </button>
                       <Tooltip id={`reset-tip-${u.id}`} place="top" />
 

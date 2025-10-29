@@ -29,7 +29,7 @@ const UserProfile = ({ user }) => {
   };
 
   const handleEditProfile = () => {
-    navigate("/settings"); // hoặc route edit profile của bạn
+    navigate("/profile"); // hoặc route edit profile của bạn
   };
 
   const avatarUrl = user?.avatar;
