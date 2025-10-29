@@ -88,10 +88,6 @@ const RoomPage = () => {
                     <div className="flex flex-wrap gap-2 mb-4">
                         {statusTabs.map((status) => {
                             const active = statusFilter === status;
-                            const count =
-                                status === "ALL"
-                                    ? rooms.length
-                                    : statusCounts?.[status] || 0;
 
                             return (
                                 <button
@@ -108,14 +104,7 @@ const RoomPage = () => {
                                     <span>
                                         {status === "ALL" ? "Tất cả" : status}
                                     </span>
-                                    <span
-                                        className={`text-xs px-2 py-0.5 rounded-full ${active
-                                            ? "bg-white/30"
-                                            : "bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200"
-                                            }`}
-                                    >
-                                        {count}
-                                    </span>
+
                                 </button>
                             );
                         })}

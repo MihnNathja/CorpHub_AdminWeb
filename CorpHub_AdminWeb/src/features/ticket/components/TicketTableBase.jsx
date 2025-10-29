@@ -7,7 +7,6 @@ import Pagination from "../../global/components/Pagination";
 import TicketFilter from "./AdminTicketFilter";
 
 const TicketTableBase = ({
-  title,
   tickets,
   loading,
   error,
@@ -56,10 +55,7 @@ const TicketTableBase = ({
     );
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl transition-colors">
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
-        {title}
-      </h3>
+    <div className="p-0 bg-white dark:bg-gray-800 rounded-2xl transition-colors">
 
       {/* 🎯 Bộ lọc */}
       <div className="flex flex-wrap items-end gap-4 mb-6">

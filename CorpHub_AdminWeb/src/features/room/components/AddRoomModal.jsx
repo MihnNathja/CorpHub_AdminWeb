@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
+
+    const roomType = ["Phòng họp", "Phòng làm việc"];
+
     const [formData, setFormData] = useState({
         name: "",
         type: "",
@@ -58,14 +61,19 @@ const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
                         onChange={handleChange}
                         className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white"
                     />
-                    <input
-                        type="text"
+                    <select
                         name="type"
-                        placeholder="Loại phòng (họp, làm việc...)"
                         value={formData.type}
                         onChange={handleChange}
                         className="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-white"
-                    />
+                    >
+                        {roomType.map((type) => (
+                            <option key={type} value={type}>
+                                {type}
+                            </option>
+                        ))}
+                    </select>
+
                     <input
                         type="number"
                         name="capacity"
