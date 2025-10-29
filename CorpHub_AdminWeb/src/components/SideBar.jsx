@@ -92,12 +92,18 @@ const ROLE_PANEL = {
   ROLE_HR: "HR",
 };
 
-const Sidebar = () => {
+const Sidebar = ({ onToggle }) => {
   const [collapsed, setCollapsed] = useState(false);
   const user = useSelector((state) => state.auth.user);
 
   // Nếu chưa login, không render sidebar
   if (!user) return null;
+
+  const handleToggle = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    if (onToggle) onToggle(next); // 👉 báo ra ngoài
+  };
 
   return (
     <aside
@@ -113,7 +119,7 @@ const Sidebar = () => {
           </h2>
         )}
         <button
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={handleToggle}
           className="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
           {collapsed ? (

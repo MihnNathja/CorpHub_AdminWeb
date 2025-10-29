@@ -1,22 +1,23 @@
-// src/features/dashboard/Dashboard.jsx
-import React from "react";
-import Sidebar from "../components/SideBar";
-import Navbar from "../components/NavBar";
+import React, { useState } from "react";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../features/auth/hooks/useAuth";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <div className="flex h-screen bg-gray-200 dark:bg-gray-900 transition-colors">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900 transition-colors overflow-hidden">
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar onToggle={setCollapsed} />
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        <Navbar user={user} />
-        <main className="flex-1 p-6 overflow-auto text-gray-900 dark:text-gray-100 dark:bg-gray-900 transition-colors">
-          {/* Content sẽ thay đổi dựa vào route */}
+      <div className="flex-1 flex flex-col relative">
+        <Navbar user={user} collapsed={collapsed} />
+
+        <main className="flex-1 overflow-auto pt-14 px-6 text-gray-900 dark:text-gray-100 transition-colors">
           <Outlet />
         </main>
       </div>
