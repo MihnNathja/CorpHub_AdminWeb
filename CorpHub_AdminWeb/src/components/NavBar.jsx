@@ -9,7 +9,7 @@ const Navbar = ({ user }) => {
   const { isDark, toggleTheme } = useTheme();
 
   return (
-    <header className="h-20 flex justify-between items-center bg-gray-50 dark:bg-gray-800 shadow px-6 py-4 transition-colors duration-200">
+    <header className="h-14 flex justify-between items-center bg-gray-50 dark:bg-gray-800 shadow-sm px-4 py-2 transition-colors duration-200">
       <SearchBar />
 
       <div className="flex items-center gap-6">

@@ -9,6 +9,7 @@ const AccountLockedPage = () => {
       title="Tài khoản của bạn đã bị khóa"
       message="Tài khoản hiện đang bị vô hiệu hóa. Vui lòng liên hệ với quản trị viên để được hỗ trợ mở khóa."
       buttonText="Quay lại đăng nhập"
+      onButtonClick={(navigate) => navigate("/login")}
     />
   );
 };
