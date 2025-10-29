@@ -10,6 +10,7 @@ import {
   KeyRound,
   Unlock,
   Lock,
+  Loader2,
 } from "lucide-react";
 import Pagination from "../../global/components/Pagination";
 import defaultAvatar from "../../../assets/defaultAvatar.jpg";
@@ -31,8 +32,19 @@ const UserTable = ({ onSelectUser, onFetch }) => {
     direction: "asc",
   });
 
-  const { toggleActive } = useUser();
+  const { toggleActive, handleResetPassword } = useUser();
   const { departments } = useDepartment();
+
+  const [loadingId, setLoadingId] = useState(null);
+
+  const onResetPassword = async (userId) => {
+    setLoadingId(userId);
+    try {
+      await handleResetPassword(userId);
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
   const { list, totalPages, loading, error } = useSelector(
     (state) => state.user
@@ -243,12 +255,19 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                       <button
                         data-tooltip-id={`reset-tip-${u.id}`}
                         data-tooltip-content="Đặt lại mật khẩu"
-                        onClick={() =>
-                          alert(`Reset password for ${u.fullName}`)
-                        }
+                        onClick={() => onResetPassword(u.id)}
+                        disabled={loadingId === u.id}
                         className="p-1.5 rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-600"
                       >
-                        <KeyRound className="w-4 h-4" />
+                        {loadingId === u.id ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          </>
+                        ) : (
+                          <>
+                            <KeyRound className="w-4 h-4 mr-2" />
+                          </>
+                        )}
                       </button>
                       <Tooltip id={`reset-tip-${u.id}`} place="top" />
 

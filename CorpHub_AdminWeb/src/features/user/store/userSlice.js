@@ -5,6 +5,7 @@ import {
   getUserByIdApi,
   getUsersApi,
   getUsersBySearch,
+  resetPassword,
   toggleUserActive,
 } from "../services/userApi";
 import { getAllDepartments } from "../../department/services/departmentApi";
@@ -135,6 +136,19 @@ export const changeUserActive = createAsyncThunk(
   }
 );
 
+// ===== RESET PASSWORD STATUS =====
+export const resetUserPassword = createAsyncThunk(
+  "user/resetPassword",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const res = await resetPassword(userId);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -218,6 +232,12 @@ const userSlice = createSlice({
         if (user) {
           user.active = updated.active; // ✅ cập nhật trạng thái mới từ server
         }
+      })
+      // Reset Password
+      .addCase(resetUserPassword.pending, (state) => {})
+      .addCase(resetUserPassword.fulfilled, (state) => {})
+      .addCase(resetUserPassword.rejected, (state, action) => {
+        state.error = action.payload;
       });
   },
 });
