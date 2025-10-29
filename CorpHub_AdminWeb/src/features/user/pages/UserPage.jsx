@@ -5,18 +5,12 @@ import UserTable from "../components/UserTable";
 import UserDetailModal from "../components/UserDetailModal";
 import UserForm from "../components/UserForm";
 import { useLocation } from "react-router-dom";
-import { useDepartment } from "../../department/hooks/useDepartment";
-import { useUser } from "../hooks/useUser";
 
 const UserPage = () => {
   const dispatch = useDispatch();
   const { list, totalPages, loading, error } = useSelector(
     (state) => state.user
   );
-
-  const { departments } = useDepartment();
-
-  const { toggleActive } = useUser();
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -64,16 +58,10 @@ const UserPage = () => {
       <div className="border border-gray-200 dark:border-gray-700 rounded-b-lg p-4 -mt-px bg-white dark:bg-gray-800">
         {activeTab === "list" && (
           <UserTable
-            users={list}
-            totalPages={totalPages}
-            loading={loading}
-            error={error}
             onSelectUser={setSelectedUserId}
             onFetch={(page, keyword, filters, sort) =>
               dispatch(fetchUsers({ page, keyword, filters, sort }))
             }
-            onToogleActive={toggleActive}
-            departments={departments}
           />
         )}
 

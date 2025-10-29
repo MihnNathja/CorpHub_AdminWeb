@@ -13,7 +13,7 @@ import { showError, showSuccess } from "../../../utils/toastUtils";
 // ✅ Lấy danh sách tất cả người dùng
 export const fetchUsers = createAsyncThunk(
   "user/fetchUsers",
-  async ({ page, keyword, filters, sort }, { rejectWithValue }) => {
+  async ({ page = 1, keyword = "", filters, sort }, { rejectWithValue }) => {
     try {
       // console.log("Filter: ");
       // console.log("Page: ", page);

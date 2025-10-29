@@ -5,20 +5,19 @@ import { changeUserActive, fetchUsers } from "../store/userSlice";
 export const useUser = () => {
   const dispatch = useDispatch();
 
-  const {
-    list: employees,
-    loading,
-    error,
-  } = useSelector((state) => state.user);
+  const { list, loading, error } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    dispatch(fetchUsers());
-  }, [dispatch]);
+  useEffect(
+    (params = { page: 0, keyword: "", filters: {}, sort: {} }) => {
+      dispatch(fetchUsers(params));
+    },
+    [dispatch]
+  );
 
   const toggleActive = (id) => dispatch(changeUserActive({ id }));
 
   return {
-    employees,
+    list,
     loading,
     error,
     toggleActive,
