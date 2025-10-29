@@ -15,6 +15,7 @@ import RolesPage from "../features/role/pages/RolesPage";
 import DepartmentManagementPage from "../features/department/pages/DepartmentManagementPage";
 import AccountLockedPage from "../pages/AccountLockedPage";
 import EmployeeProfilePage from "../features/profile/pages/EmployeeProfilePage";
+import AssetPage from "../features/asset/page/AssetPage";
 
 const AppRoutes = () => {
   return (
@@ -30,6 +31,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Dashboard />}>
           <Route index element={<HomePage />} />
           <Route path="rooms" element={<RoomPage />} />
+          <Route path="assets" element={<AssetPage />} />
           <Route path="users" element={<UserPage />} />
           <Route path="roles" element={<RolesPage />} />
           <Route path="departments" element={<DepartmentManagementPage />} />

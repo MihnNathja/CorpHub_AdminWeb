@@ -6,7 +6,6 @@ import {
     removeRoom,
     setSelectedRoom,
 } from "../store/roomSlice";
-import { fetchRoomRequirementsFilter } from "../store/roomRequirementSlice";
 
 export const useRooms = () => {
     const dispatch = useDispatch();

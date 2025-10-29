@@ -12,6 +12,7 @@ import {
   Cog6ToothIcon,
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
+  ArchiveBoxIcon
 } from "@heroicons/react/24/outline";
 import { UserIcon, Building2Icon, ShieldCheckIcon } from "lucide-react";
 
@@ -58,6 +59,12 @@ const menu = [
     path: "rooms",
     icon: Building2Icon,
     roles: ["ROLE_ADMIN"],
+  },
+  {
+    name: "Assets",
+    path: "assets",
+    icon: ArchiveBoxIcon,
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
   },
   {
     name: "Projects",
@@ -107,9 +114,8 @@ const Sidebar = ({ onToggle }) => {
 
   return (
     <aside
-      className={`${
-        collapsed ? "w-20" : "w-64"
-      } bg-white dark:bg-gray-800 shadow-md dark:shadow-lg flex flex-col transition-all duration-300`}
+      className={`${collapsed ? "w-20" : "w-64"
+        } bg-white dark:bg-gray-800 shadow-md dark:shadow-lg flex flex-col transition-all duration-300`}
     >
       {/* Header */}
       <div className="h-20 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700">
@@ -142,11 +148,10 @@ const Sidebar = ({ onToggle }) => {
               className={({ isActive }) =>
                 `flex items-center ${collapsed ? "justify-center" : "gap-3"}
                  px-4 py-2 rounded-lg transition-all 
-                 ${
-                   isActive
-                     ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
-                     : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-                 }`
+                 ${isActive
+                  ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                }`
               }
             >
               <item.icon className="h-6 w-6" />

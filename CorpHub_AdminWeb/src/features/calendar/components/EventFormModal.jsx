@@ -5,7 +5,7 @@ import UserSuggestions from "./UserSuggestions";
 import { useEventForm } from "../hooks/useEventForm";
 import StatusButtonGroup from "../../global/components/StatusButtonGroup";
 import MeetingRoomRequirementSection from "./MeetingRoomRequirementSection";
-import { useAssets } from "../../asset/hooks/useAssets";
+import { useAssetsCategory } from "../../asset/hooks/useAssetsCategory";
 
 export default function EventFormModal({
     isOpen,
@@ -44,7 +44,7 @@ export default function EventFormModal({
         setIsLocationEdited(isEdited && (!form.meetingRoom || !form.roomRequirement?.roomId))
     })
 
-    const { categories } = useAssets();
+    const { categories } = useAssetsCategory();
 
     const handleToggleAsset = (asset) => {
         setForm((prev) => {
@@ -97,8 +97,6 @@ export default function EventFormModal({
             setErrors(result.validationErrors);
         }
     };
-
-
 
     if (!isOpen || typeof document === "undefined") return null;
 
