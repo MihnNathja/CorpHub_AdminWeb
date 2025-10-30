@@ -8,10 +8,11 @@ import eventReducer from "../features/calendar/store/calendarSlice";
 import commentReducer from "../features/ticket/store/commentSlice";
 import attachmentReducer from "../features/ticket/store/attachmentSlice";
 import employeeReducer from "../features/employee/store/employeeSlice";
-import roomReducer from "../features/room/store/roomSlice"
-import roomRequirementReducer from "../features/room/store/roomRequirementSlice"
-import assetReducer from "../features/asset/store/assetSlice"
-import notificationReducer from "../features/notification/store/notificationSlice"
+import roomReducer from "../features/room/store/roomSlice";
+import roomRequirementReducer from "../features/room/store/roomRequirementSlice";
+import assetReducer from "../features/asset/store/assetSlice";
+import notificationReducer from "../features/notification/store/notificationSlice";
+import profileReducer from "../features/profile/store/profileSlice";
 
 export const store = configureStore({
   reducer: {
@@ -28,5 +29,6 @@ export const store = configureStore({
     attachments: attachmentReducer,
     employees: employeeReducer,
     notification: notificationReducer,
+    profile: profileReducer,
   },
 });
