@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllDepartments } from "../services/departmentApi";
+import {
+  fetchDepartmentsWithUsers,
+  getAllDepartments,
+} from "../services/departmentApi";
 
 // Async thunk gọi API
 export const fetchDepartments = createAsyncThunk(
@@ -8,6 +11,18 @@ export const fetchDepartments = createAsyncThunk(
     try {
       const response = await getAllDepartments();
       return response;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const loadDepartmentsWithUsers = createAsyncThunk(
+  "department/loadDepartmentsWithUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await fetchDepartmentsWithUsers();
+      return data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -53,6 +68,20 @@ const departmentSlice = createSlice({
       .addCase(fetchDepartments.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to fetch departments";
+      })
+
+      //loadDepartmentsWithUsers
+      .addCase(loadDepartmentsWithUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loadDepartmentsWithUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.departments = action.payload;
+      })
+      .addCase(loadDepartmentsWithUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

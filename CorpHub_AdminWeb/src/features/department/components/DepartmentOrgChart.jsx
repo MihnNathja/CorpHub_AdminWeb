@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -9,53 +9,67 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 
-const makeNodesFromTree = (tree, parent = null, posX = 0, posY = 0) => {
+// Ảnh mặc định nếu user chưa có avatar
+const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+// ====================== Chuyển đổi dữ liệu sang Node & Edge ======================
+const makeNodesFromDepartments = (departments) => {
   const nodes = [];
   const edges = [];
 
-  tree.forEach((node, index) => {
-    const nodeId = String(node.id);
+  departments.forEach((dept, index) => {
+    const nodeId = String(dept.departmentId);
+
+    // 🎨 Render nội dung node
+    const userList =
+      dept.users
+        ?.map(
+          (u) => `
+          <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+            <img src="${u.avatar || DEFAULT_AVATAR}" 
+                 style="width:20px;height:20px;border-radius:50%;object-fit:cover;border:1px solid #ddd;" />
+            <span style="font-size:12px;color:#f1f1f1;">${u.fullName}</span>
+          </div>`
+        )
+        .join("") || "";
+
+    const labelHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <strong style="font-size:14px;">${dept.departmentName}</strong>
+        <div style="margin-top:6px;">${userList}</div>
+      </div>
+    `;
+
     nodes.push({
       id: nodeId,
-      data: { label: `${node.name}\n👤 ${node.manager || "N/A"}` },
-      position: { x: posX + index * 250, y: posY },
+      data: { label: <div dangerouslySetInnerHTML={{ __html: labelHTML }} /> },
+      position: { x: (index % 4) * 250, y: Math.floor(index / 4) * 180 },
       style: {
-        borderRadius: 10,
-        padding: 10,
         background: "#1e3a8a",
         color: "white",
-        width: 180,
+        padding: 10,
+        borderRadius: 12,
+        minWidth: 180,
         textAlign: "center",
       },
     });
-
-    if (parent) {
-      edges.push({
-        id: `${parent}-${nodeId}`,
-        source: String(parent),
-        target: nodeId,
-      });
-    }
-
-    if (node.children) {
-      const childNodes = makeNodesFromTree(
-        node.children,
-        node.id,
-        posX + index * 250,
-        posY + 150
-      );
-      nodes.push(...childNodes.nodes);
-      edges.push(...childNodes.edges);
-    }
   });
+
+  // ⚙️ Nếu sau này bạn có quan hệ parent-child, thêm edges tại đây
+  // ví dụ edges.push({ id: `${parent}-${child}`, source: parent, target: child });
 
   return { nodes, edges };
 };
 
-const DepartmentOrgChart = ({ data }) => {
-  const { nodes, edges } = makeNodesFromTree(data);
-  const [chartNodes, setNodes, onNodesChange] = useNodesState(nodes);
-  const [chartEdges, setEdges, onEdgesChange] = useEdgesState(edges);
+// ====================== Component chính ======================
+const DepartmentOrgChart = ({ data = [] }) => {
+  const { nodes: initNodes, edges: initEdges } = useMemo(
+    () => makeNodesFromDepartments(data),
+    [data]
+  );
+
+  const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initEdges);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -63,10 +77,10 @@ const DepartmentOrgChart = ({ data }) => {
   );
 
   return (
-    <div style={{ width: "100%", height: "70vh" }}>
+    <div className="w-full h-[80vh] bg-white dark:bg-gray-900 rounded-xl shadow">
       <ReactFlow
-        nodes={chartNodes}
-        edges={chartEdges}
+        nodes={nodes}
+        edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}

@@ -5,15 +5,11 @@ import {
   loadDepartmentsWithUsers,
 } from "../store/departmentSlice";
 
-export const useDepartment = () => {
+export const useDepartmentManagement = () => {
   const dispatch = useDispatch();
   const { departments, loading, error } = useSelector(
     (state) => state.department
   );
-
-  useEffect(() => {
-    dispatch(fetchDepartments());
-  }, [dispatch]);
 
   useEffect(() => {
     dispatch(loadDepartmentsWithUsers());

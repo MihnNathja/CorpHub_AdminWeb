@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DepartmentTreeView from "../components/DepartmentTreeView";
 import DepartmentOrgChart from "../components/DepartmentOrgChart";
+import { useDepartmentManagement } from "../hooks/useDepartmentManagement";
 
 // ✅ Dữ liệu mẫu
 const mockDepartments = [
@@ -31,7 +32,10 @@ const mockDepartments = [
 
 const DepartmentManagementPage = () => {
   const [viewMode, setViewMode] = useState("tree"); // "tree" | "org"
-  const [departments, setDepartments] = useState(mockDepartments);
+  // const [departments, setDepartments] = useState(mockDepartments);
+
+  const { departments } = useDepartmentManagement();
+  console.log(departments);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 p-8">
@@ -73,9 +77,7 @@ const DepartmentManagementPage = () => {
 
       {/* Chế độ hiển thị */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 transition-all">
-        {viewMode === "tree" && (
-          <DepartmentTreeView data={departments} setData={setDepartments} />
-        )}
+        {viewMode === "tree" && <DepartmentTreeView data={departments} />}
         {viewMode === "org" && <DepartmentOrgChart data={departments} />}
       </div>
     </div>
