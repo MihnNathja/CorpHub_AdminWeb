@@ -1,10 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { changePasswordAsync, resetStatus } from "../store/profileSlice";
+import {
+  changePasswordAsync,
+  resetStatus,
+  uploadAvatarAsync,
+} from "../store/profileSlice";
 
 export const useProfile = () => {
   const dispatch = useDispatch();
-  const { loading, success, error } = useSelector((state) => state.profile);
+  const { loading, success, error, uploading, uploadSuccess } = useSelector(
+    (state) => state.profile
+  );
 
   const [form, setForm] = useState({
     oldPassword: "",
@@ -23,6 +29,11 @@ export const useProfile = () => {
 
   const reset = () => dispatch(resetStatus());
 
+  const handleUploadAvatar = (file) => {
+    if (!file) return;
+    dispatch(uploadAvatarAsync(file));
+  };
+
   return {
     form,
     handleChange,
@@ -31,5 +42,8 @@ export const useProfile = () => {
     success,
     error,
     reset,
+    uploading,
+    uploadSuccess,
+    handleUploadAvatar,
   };
 };

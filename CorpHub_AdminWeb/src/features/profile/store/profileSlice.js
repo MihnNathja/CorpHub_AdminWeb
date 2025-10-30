@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { changePassword } from "../services/profileApi";
+import { changePassword, uploadAvatar } from "../services/profileApi";
 import { showError } from "../../../utils/toastUtils";
 
 // ================== ASYNC ACTION ==================
@@ -17,6 +17,18 @@ export const changePasswordAsync = createAsyncThunk(
   }
 );
 
+export const uploadAvatarAsync = createAsyncThunk(
+  "profile/uploadAvatar",
+  async (file, { rejectWithValue }) => {
+    try {
+      const res = await uploadAvatar(file);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "Upload failed");
+    }
+  }
+);
+
 // ================== SLICE ==================
 const profileSlice = createSlice({
   name: "profile",
@@ -25,6 +37,8 @@ const profileSlice = createSlice({
     success: false,
     message: null,
     error: null,
+    uploading: false,
+    uploadSuccess: false,
   },
   reducers: {
     resetStatus: (state) => {
@@ -36,6 +50,7 @@ const profileSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      //Change Password
       .addCase(changePasswordAsync.pending, (state) => {
         state.loading = true;
         state.success = false;
@@ -52,6 +67,20 @@ const profileSlice = createSlice({
         state.error = action.payload;
         state.message = action.payload || "Đổi mật khẩu thất bại.";
         state.success = false;
+      })
+
+      // Upload Avatar
+      .addCase(uploadAvatarAsync.pending, (state) => {
+        state.uploading = true;
+        state.error = null;
+      })
+      .addCase(uploadAvatarAsync.fulfilled, (state) => {
+        state.uploading = false;
+        state.uploadSuccess = true;
+      })
+      .addCase(uploadAvatarAsync.rejected, (state, action) => {
+        state.uploading = false;
+        state.error = action.payload;
       });
   },
 });
