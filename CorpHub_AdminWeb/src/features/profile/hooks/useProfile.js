@@ -4,6 +4,7 @@ import {
   changePasswordAsync,
   resetStatus,
   uploadAvatarAsync,
+  uploadDocumentsAsync,
 } from "../store/profileSlice";
 
 export const useProfile = () => {
@@ -34,6 +35,11 @@ export const useProfile = () => {
     dispatch(uploadAvatarAsync(file));
   };
 
+  const handleUploadDocument = (formData) => {
+    if (!formData) return;
+    dispatch(uploadDocumentsAsync(formData));
+  };
+
   return {
     form,
     handleChange,
@@ -45,5 +51,6 @@ export const useProfile = () => {
     uploading,
     uploadSuccess,
     handleUploadAvatar,
+    handleUploadDocument,
   };
 };

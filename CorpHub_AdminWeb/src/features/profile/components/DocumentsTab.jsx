@@ -1,19 +1,55 @@
-import { useRef } from "react";
-import { Upload } from "lucide-react";
+import { useState, useRef } from "react";
+import { Upload, X } from "lucide-react";
 import Section from "./Section";
+
+const documentTypes = [
+  { id: "1", name: "CONTRACT" },
+  { id: "2", name: "CERTIFICATE" },
+  { id: "3", name: "DECISION" },
+  { id: "4", name: "OTHER" },
+];
 
 const DocumentsTab = ({ profile, onUploadDocuments }) => {
   const fileInputRef = useRef(null);
+  const [pendingFiles, setPendingFiles] = useState([]);
 
-  const handleFileChange = (e) => {
+  const handleSelectFiles = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length > 0 && onUploadDocuments) {
-      onUploadDocuments(files);
-    }
+    setPendingFiles(
+      files.map((f) => ({
+        file: f,
+        typeId: "",
+        title: f.name,
+        description: "",
+      }))
+    );
   };
 
-  const handleClickUpload = () => {
-    fileInputRef.current?.click();
+  const handleMetaChange = (index, field, value) => {
+    const updated = [...pendingFiles];
+    updated[index][field] = value;
+    setPendingFiles(updated);
+  };
+
+  const handleUpload = () => {
+    if (pendingFiles.length === 0) return;
+
+    const formData = new FormData();
+    pendingFiles.forEach((item) => formData.append("files", item.file));
+
+    const metaList = pendingFiles.map((item) => ({
+      documentTypeId: item.typeId,
+      title: item.title,
+      description: item.description,
+    }));
+
+    formData.append(
+      "meta",
+      new Blob([JSON.stringify(metaList)], { type: "application/json" })
+    );
+
+    if (onUploadDocuments) onUploadDocuments(formData);
+    setPendingFiles([]);
   };
 
   return (
@@ -21,7 +57,7 @@ const DocumentsTab = ({ profile, onUploadDocuments }) => {
       title="Tài liệu nhân sự"
       right={
         <button
-          onClick={handleClickUpload}
+          onClick={() => fileInputRef.current?.click()}
           className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium border rounded-xl hover:bg-gray-50"
         >
           <Upload size={16} />
@@ -30,32 +66,71 @@ const DocumentsTab = ({ profile, onUploadDocuments }) => {
       }
     >
       <input
-        type="file"
         ref={fileInputRef}
+        type="file"
         multiple
         className="hidden"
-        onChange={handleFileChange}
+        onChange={handleSelectFiles}
       />
 
-      <div className="divide-y">
-        {profile.documents?.length > 0 ? (
-          profile.documents.map((doc, idx) => (
-            <div key={idx} className="flex items-center justify-between py-3">
-              <div>
-                <div className="text-sm font-medium">{doc.name}</div>
-                <div className="text-xs text-gray-500">{doc.size}</div>
-              </div>
-              <button className="px-3 py-1.5 border rounded-xl text-sm hover:bg-gray-50">
-                Tải xuống
-              </button>
+      {/* Nếu có file chờ upload */}
+      {pendingFiles.length > 0 && (
+        <div className="p-4 border rounded-2xl bg-gray-50 mt-3 space-y-3">
+          <div className="flex justify-between items-center">
+            <h3 className="font-semibold">
+              Thông tin tài liệu tải lên ({pendingFiles.length})
+            </h3>
+            <button onClick={() => setPendingFiles([])}>
+              <X size={16} className="text-gray-500 hover:text-red-600" />
+            </button>
+          </div>
+
+          {pendingFiles.map((item, idx) => (
+            <div
+              key={idx}
+              className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-white p-3 rounded-xl border"
+            >
+              <input
+                type="text"
+                value={item.title}
+                onChange={(e) => handleMetaChange(idx, "title", e.target.value)}
+                placeholder="Tên tài liệu"
+                className="border rounded-lg px-2 py-1 text-sm"
+              />
+              <select
+                value={item.typeId}
+                onChange={(e) =>
+                  handleMetaChange(idx, "typeId", e.target.value)
+                }
+                className="border rounded-lg px-2 py-1 text-sm"
+              >
+                <option value="">-- Loại tài liệu --</option>
+                {documentTypes.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                value={item.description}
+                onChange={(e) =>
+                  handleMetaChange(idx, "description", e.target.value)
+                }
+                placeholder="Ghi chú"
+                className="border rounded-lg px-2 py-1 text-sm"
+              />
             </div>
-          ))
-        ) : (
-          <p className="text-sm text-gray-500 py-3">
-            Chưa có tài liệu nào được tải lên
-          </p>
-        )}
-      </div>
+          ))}
+
+          <button
+            onClick={handleUpload}
+            className="mt-2 px-4 py-1.5 text-sm bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+          >
+            Xác nhận tải lên
+          </button>
+        </div>
+      )}
     </Section>
   );
 };

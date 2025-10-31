@@ -1,5 +1,10 @@
 import api from "../../../services/api";
 
+export const getMyEmployeeProfile = async () => {
+  const res = await api.patch("/api/employee/me");
+  return res;
+};
+
 export const changePassword = async (data) => {
   const res = await api.patch("/api/user/change-password", data);
   return res;
@@ -16,3 +21,8 @@ export const uploadAvatar = async (file) => {
     },
   });
 };
+
+export const uploadEmployeeDocuments = async (formData) =>
+  api.post("/api/employee/documents", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });

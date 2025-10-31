@@ -13,7 +13,13 @@ const EmployeeProfilePage = () => {
 
   const toggleActive = () => setProfile((p) => ({ ...p, active: !p.active }));
 
-  const { handleUploadAvatar, uploading, uploadSuccess, error } = useProfile();
+  const {
+    handleUploadAvatar,
+    handleUploadDocument,
+    uploading,
+    uploadSuccess,
+    error,
+  } = useProfile();
 
   const renderTab = () => {
     switch (tab) {
@@ -22,7 +28,12 @@ const EmployeeProfilePage = () => {
       case "Hồ sơ công việc":
         return <JobProfileTab profile={profile} />;
       case "Tài liệu":
-        return <DocumentsTab profile={profile} />;
+        return (
+          <DocumentsTab
+            profile={profile}
+            onUploadDocuments={handleUploadDocument}
+          />
+        );
       case "Cài đặt tài khoản":
         return <AccountSettingsTab profile={profile} />;
       default:
