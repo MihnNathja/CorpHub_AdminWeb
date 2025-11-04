@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   changePassword,
+  getMyEmployeeProfile,
   uploadAvatar,
   uploadEmployeeDocuments,
 } from "../services/profileApi";
@@ -45,10 +46,24 @@ export const uploadDocumentsAsync = createAsyncThunk(
   }
 );
 
+export const getMyEmployeeProfileAsync = createAsyncThunk(
+  "profile/getMyEmployeeProfile",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await getMyEmployeeProfile();
+      console.log(res);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "Upload failed");
+    }
+  }
+);
+
 // ================== SLICE ==================
 const profileSlice = createSlice({
   name: "profile",
   initialState: {
+    profile: null,
     loading: false,
     success: false,
     message: null,
@@ -110,6 +125,19 @@ const profileSlice = createSlice({
       })
       .addCase(uploadDocumentsAsync.rejected, (state, action) => {
         state.uploading = false;
+        state.error = action.payload;
+      })
+      // ========== Get My Profile ==========
+      .addCase(getMyEmployeeProfileAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMyEmployeeProfileAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profile = action.payload;
+      })
+      .addCase(getMyEmployeeProfileAsync.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },

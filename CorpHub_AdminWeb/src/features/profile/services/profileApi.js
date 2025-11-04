@@ -1,7 +1,7 @@
 import api from "../../../services/api";
 
 export const getMyEmployeeProfile = async () => {
-  const res = await api.patch("/api/employee/me");
+  const res = await api.get("/api/employee/me");
   return res;
 };
 
