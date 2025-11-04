@@ -1,26 +1,12 @@
 import React, { useState } from "react";
-import { useRoomRequirement } from "../hooks/useRoomRequirement";
+import { useRoomRequirements } from "../hooks/useRoomRequirement";
 import RoomRequirementCard from "../components/RoomRequirementCard";
 import RoomRequirementModal from "../components/RoomRequirementModal"; // 🧩 Thêm modal
 import { useAssets } from "../../asset/hooks/useAssets";
-import { RotateCcw } from "lucide-react";
 
-export default function RoomRequestList() {
-    const { requirements, loading, approve, reject, refresh } = useRoomRequirement(true);
-    const { categories = [], loading: loadingCategories } = useAssets();
-
-    const [selectedRequirement, setSelectedRequirement] = useState(null); // 🧠 state cho modal
-
-    const isLoading = loading || loadingCategories;
-
-    /* -------------------- UI Loading -------------------- */
-    if (isLoading)
-        return (
-            <div className="flex flex-col justify-center items-center min-h-[200px] text-gray-500 dark:text-gray-300">
-                <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full mb-3"></div>
-                <p>Đang tải yêu cầu đặt phòng...</p>
-            </div>
-        );
+export const RoomRequestList = () => {
+    const { requirements, page, size, approve, reject, suggest, clearSuggestion, selected, setSelected, allocationSuggestion } = useRoomRequirements();
+    const { categories = [] } = useAssets();
 
     /* -------------------- UI Empty -------------------- */
     if (!requirements || requirements.length === 0)
@@ -32,14 +18,10 @@ export default function RoomRequestList() {
                 <p className="text-gray-500 dark:text-gray-400">
                     Hiện chưa có yêu cầu đặt phòng nào.
                 </p>
-                <button
-                    onClick={refresh}
-                    className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
-                >
-                    Làm mới
-                </button>
             </div>
         );
+
+    console.log(allocationSuggestion);
 
     /* -------------------- UI Chính -------------------- */
     return (
@@ -48,36 +30,53 @@ export default function RoomRequestList() {
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                     Yêu cầu đặt phòng ({requirements.length})
                 </h2>
-                <button
-                    onClick={refresh}
-                    className="flex items-center gap-1 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm transition-colors"
-                >
-                    <RotateCcw className="w-4 h-4" />
-                    Làm mới
-                </button>
+                <div className="flex justify-end mb-4">
+                    <button
+                        onClick={() =>
+                            suggest(requirements
+                                .filter(r => !r.roomId)
+                                .map(r => r.id))
+                        }
+
+                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition"
+                    >
+                        🧠 Gợi ý phân bố phòng
+                    </button>
+                </div>
+
             </div>
 
             {/* Danh sách yêu cầu */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {requirements.map((req) => (
-                    <RoomRequirementCard
-                        key={req.id}
-                        requirement={req}
-                        allCategories={categories}
-                        onClick={() => setSelectedRequirement(req)} // 🧠 mở modal khi click
-                        onApprove={() => approve(req.id)}
-                        onReject={() => reject(req.id)}
-                    />
-                ))}
+                {requirements.map((req) => {
+                    const suggestion = allocationSuggestion?.find(
+                        (s) => s.requirementId === req.id
+                    );
+
+                    return (
+                        <RoomRequirementCard
+                            key={req.id}
+                            requirement={req}
+                            allCategories={categories}
+                            suggestion={suggestion}
+                            onApprove={approve}
+                            clearSuggestion={clearSuggestion}
+                            onClick={() => setSelected(req)}
+                        />
+                    );
+                })}
+
             </div>
 
-            {/* 🪟 Modal chi tiết */}
-            <RoomRequirementModal
-                open={!!selectedRequirement}
-                requirement={selectedRequirement}
-                allCategories={categories}
-                onClose={() => setSelectedRequirement(null)}
-            />
+            {selected && (
+                <RoomRequirementModal
+                    requirement={selected}
+                    allCategories={categories}
+                    onApprove={approve}
+                    onClose={() => setSelected(null)}
+                />
+            )}
+
         </div>
     );
 }

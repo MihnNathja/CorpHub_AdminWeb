@@ -7,3 +7,5 @@ export const saveRoom = (room) => api.post("/api/rooms", room);
 export const deleteRoom = (id) => api.delete(`/api/rooms/${id}`)
 
 export const suitableRooms = (id) => api.get(`/api/rooms/suitable-rooms/${id}`);
+
+export const assignAssetsToRoom = (data) => api.post("/api/rooms/assign-assets", data);

@@ -1,77 +1,83 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
     fetchRooms,
     createOrUpdateRoom,
     removeRoom,
     setSelectedRoom,
+    assignAssetsToRoom,
 } from "../store/roomSlice";
+import { set } from "date-fns";
+import { removeFromRoom } from "../../asset/store/assetSlice";
+import { showError, showSuccess } from "../../../utils/toastUtils";
 
 export const useRooms = () => {
     const dispatch = useDispatch();
 
-    // Lấy dữ liệu từ Redux store
-    const { items, meta, loading, error, selectedRoom } = useSelector(
+    // Redux state
+    const { rooms, meta, loading, error, selectedRoom } = useSelector(
         (state) => state.rooms
     );
 
+    // Local states
+    const [page, setPage] = useState(0); // Backend page start = 0
+    const [size] = useState(meta?.size || 9);
+    const [keywords, setKeywords] = useState("");
 
-    // Local state cho phân trang và filter
-    const [page, setPage] = useState(0); // Page trong backend bắt đầu từ 0
-    const [statusFilter, setStatusFilter] = useState("ALL");
-    const size = meta?.size || 9;
+    // Bộ lọc nâng cao
+    const [filters, setFilters] = useState({
+        typeId: "",
+        departmentId: "",
+        minCapacity: "",
+        minArea: "",
+        status: "",
+    });
 
-    // Fetch khi mount hoặc đổi trang
+    // ✅ Hàm cập nhật bộ lọc
+    const updateFilters = useCallback((newFilters) => {
+        setFilters((prev) => ({ ...prev, ...newFilters }));
+        setPage(0); // reset về page 0 khi đổi filter
+    }, []);
+
+    const clearFilters = () => {
+        const cleared = {
+            typeId: "",
+            departmentId: "",
+            minCapacity: "",
+            minArea: "",
+            status: "",
+        };
+
+        setKeywords("");
+        setFilters(cleared);
+        updateFilters(cleared);
+        setPage(0);
+    };
+
+    // ✅ Fetch rooms mặc định (khi mount hoặc filter thay đổi)
     useEffect(() => {
-        dispatch(fetchRooms({ page, size }));
-    }, [dispatch, page, size]);
+        dispatch(fetchRooms({ page, size, ...filters, keywords }));
+    }, [dispatch, page, size, filters, keywords]);
 
-    // Đếm số lượng theo trạng thái (an toàn)
-    const statusCounts = useMemo(() => {
-        if (!Array.isArray(items)) return {};
-        return items.reduce((acc, room) => {
-            const key = room.status?.toUpperCase() || "UNKNOWN";
-            acc[key] = (acc[key] || 0) + 1;
-            return acc;
-        }, {});
-    }, [items]);
-
-    // Lọc theo trạng thái (client-side)
-    const filteredRooms = useMemo(() => {
-        if (!Array.isArray(items)) return [];
-        if (statusFilter === "ALL") return items;
-        return items.filter(
-            (r) => r.status?.toUpperCase() === statusFilter
-        );
-    }, [items, statusFilter]);
-
-    // Phân trang (nếu backend chưa có meta)
+    // Tổng số trang (fallback nếu meta chưa có)
     const totalPages =
-        meta?.totalPages ||
-        Math.ceil(filteredRooms.length / size) ||
-        1;
-
-    const paginatedRooms = useMemo(() => {
-        if (meta?.totalPages) return filteredRooms; // backend đã phân trang
-        const start = page * size;
-        return filteredRooms.slice(start, start + size);
-    }, [filteredRooms, meta, page, size]);
+        meta?.totalPages || Math.ceil(rooms.length / size) || 1;
 
     // === HANDLERS ===
     const handleCreateOrUpdate = useCallback(
         async (roomData) => {
             await dispatch(createOrUpdateRoom(roomData));
-            dispatch(fetchRooms({ page, size }));
+            dispatch(fetchRooms({ page, size, ...filters, keywords }));
         },
-        [dispatch, page, size]
+        [dispatch, page, size, filters, keywords]
     );
 
     const handleRemove = useCallback(
         async (id) => {
             await dispatch(removeRoom(id));
-            dispatch(fetchRooms({ page, size }));
+            dispatch(fetchRooms({ page, size, ...filters, keywords }));
         },
-        [dispatch, page, size]
+        [dispatch, page, size, filters, keywords]
     );
 
     const setSelected = useCallback(
@@ -81,22 +87,51 @@ export const useRooms = () => {
         [dispatch]
     );
 
+    const handleAssignAssets = useCallback(
+        async (data) => {
+            await dispatch(assignAssetsToRoom(data));
+            dispatch(fetchRooms({ page, size, ...filters, keywords }));
+        },
+        [dispatch, page, size, filters, keywords]
+    );
+
+    const handleRemoveAssetFromRoom = async (assetId) => {
+        try {
+            await dispatch(removeFromRoom(assetId)).unwrap();
+            dispatch(fetchRooms({ page, size, ...filters, keywords }));
+            showSuccess("Remove asset from room successfully");
+        } catch (error) {
+            console.error("Failed to remove asset from room:", error);
+            showError("Failed to remove asset from room");
+        }
+        [dispatch, page, size, filters, keywords]
+    };
+
     return {
-        rooms: items,
+        // Data
+        rooms,
         loading,
         error,
-        page,
         totalPages,
+        page,
+
+        // States
+        size,
+        keywords,
+        setKeywords,
+        filters,
+        updateFilters,
+        clearFilters,
         setPage,
-        statusFilter,
-        setStatusFilter,
-        statusCounts,
-        filteredRooms,
-        paginatedRooms,
+
+        // Selected room
         selectedRoom,
-        // handlers
         setSelectedRoom: setSelected,
+
+        // Handlers
         handleCreateOrUpdate,
         handleRemove,
+        handleAssignAssets,
+        handleRemoveAssetFromRoom
     };
 };

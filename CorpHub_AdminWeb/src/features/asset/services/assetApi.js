@@ -6,3 +6,4 @@ export const getAssetById = (id) => api.get(`/api/assets/${id}`);
 export const createAsset = (data) => api.post(`/api/assets`, data);
 export const updateAsset = (data) => api.put(`/api/assets`, data);
 export const deleteAsset = (id) => api.delete(`/api/assets/${id}`);
+export const removeAssetFromRoom = (assetId) => api.post(`/api/assets/remove-from-room`, null, { params: { assetId } });

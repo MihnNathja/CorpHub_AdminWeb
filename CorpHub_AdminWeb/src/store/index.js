@@ -10,6 +10,7 @@ import attachmentReducer from "../features/ticket/store/attachmentSlice";
 import employeeReducer from "../features/employee/store/employeeSlice";
 import roomReducer from "../features/room/store/roomSlice";
 import roomRequirementReducer from "../features/room/store/roomRequirementSlice";
+import roomTypeReducer from "../features/room/store/roomTypeSlice";
 import assetReducer from "../features/asset/store/assetSlice";
 import notificationReducer from "../features/notification/store/notificationSlice";
 import profileReducer from "../features/profile/store/profileSlice";
@@ -25,6 +26,7 @@ export const store = configureStore({
     comments: commentReducer,
     rooms: roomReducer,
     roomRequirements: roomRequirementReducer,
+    roomTypes: roomTypeReducer,
     assets: assetReducer,
     attachments: attachmentReducer,
     employees: employeeReducer,

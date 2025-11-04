@@ -4,6 +4,7 @@ import {
     approveRoomRequirement as approveApi,
     rejectRoomRequirement as rejectApi,
     getRoomRequirementsFilter,
+    allocationSuggestion,
 } from "../services/roomRequirementApi";
 import { showError } from "../../../utils/toastUtils";
 import { suitableRooms } from "../services/roomApi";
@@ -85,6 +86,21 @@ export const fetchRoomRequirementsFilter = createAsyncThunk(
     }
 );
 
+export const fetchAllocationSuggestion = createAsyncThunk(
+    "roomRequirements/fetchAllocationSuggestion",
+    async (ids, { rejectWithValue }) => {
+        try {
+            const res = await allocationSuggestion(ids);
+            return res;
+        }
+        catch (err) {
+            return rejectWithValue(
+                err.response?.data || { message: "Không thể tải gợi ý sắp phòng" }
+            );
+        }
+    }
+)
+
 /* ----------------------------- SLICE ----------------------------- */
 
 const roomRequirementSlice = createSlice({
@@ -93,7 +109,7 @@ const roomRequirementSlice = createSlice({
         items: [], // danh sách yêu cầu phòng
         suitableRooms: [], // danh sách phòng phù hợp (từ RoomRequirementId)
         roomReqsByRoom: [], // danh sách yêu cầu đã lọc
-        selected: null,
+        allocationSuggestion: [],
         meta: {}, // phân trang
         loading: false, // loading danh sách yêu cầu
         loadingSuitable: false, // 🆕 loading riêng cho suitable rooms
@@ -101,12 +117,11 @@ const roomRequirementSlice = createSlice({
         error: null,
     },
     reducers: {
-        setSelectedRequirement: (state, action) => {
-            state.selected = action.payload;
-        },
-        clearSelectedRequirement: (state) => {
-            state.selected = null;
-            state.suitableRooms = [];
+        clearSuggestionFor(state, action) {
+            const id = action.payload;
+            state.allocationSuggestion = state.allocationSuggestion.filter(
+                (s) => s.requirementId !== id
+            );
         },
     },
     extraReducers: (builder) => {
@@ -174,11 +189,14 @@ const roomRequirementSlice = createSlice({
                 state.loadingRoomReqsByRoom = false;
                 state.error =
                     action.payload?.message || "Không thể tải danh sách yêu cầu phòng";
-            });
+            })
+            /* ---- Fetch allocation suggestion ---- */
+            .addCase(fetchAllocationSuggestion.fulfilled, (state, action) => {
+                state.allocationSuggestion = action.payload.data;
+            })
     },
 });
 
-export const { setSelectedRequirement, clearSelectedRequirement } =
-    roomRequirementSlice.actions;
+export const { clearSuggestionFor } = roomRequirementSlice.actions;
 
 export default roomRequirementSlice.reducer;

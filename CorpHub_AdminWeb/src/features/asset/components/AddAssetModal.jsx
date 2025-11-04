@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useRooms } from "../../room/hooks/useRooms";
+import SearchableSelect from "../../global/components/SearchableSelect";
 
 const AddAssetModal = ({ isOpen, onClose, asset, categories, onSubmit }) => {
     if (!isOpen) return null;
 
     const [isSaving, setIsSaving] = useState(false);
-    const { rooms, loading: roomLoading } = useRooms();
+    const { rooms, keywords, setKeywords, loading: roomLoading } = useRooms();
 
     const [form, setForm] = useState({
         id: "",
@@ -76,6 +77,8 @@ const AddAssetModal = ({ isOpen, onClose, asset, categories, onSubmit }) => {
         onClose();
     };
 
+    console.log(rooms);
+
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-[500px] p-6 relative">
@@ -138,23 +141,14 @@ const AddAssetModal = ({ isOpen, onClose, asset, categories, onSubmit }) => {
                     {/* ✅ Room */}
                     <div>
                         <label className="block text-sm font-medium">Room</label>
-                        <select
-                            name="roomId"
+                        <SearchableSelect
+                            items={rooms}
                             value={form.roomId}
-                            onChange={handleChange}
-                            className="mt-1 w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:text-white"
-                        >
-                            <option value="">Select Room</option>
-                            {roomLoading ? (
-                                <option disabled>Loading rooms...</option>
-                            ) : (
-                                rooms.map((room) => (
-                                    <option key={room.id} value={room.id}>
-                                        {room.name}
-                                    </option>
-                                ))
-                            )}
-                        </select>
+                            onChange={(id) => handleChange({ target: { name: "roomId", value: id } })}
+                            keywords={keywords}
+                            onKeyWordsChange={setKeywords}
+                            loading={roomLoading}
+                        />
                     </div>
 
                     {/* Status */}

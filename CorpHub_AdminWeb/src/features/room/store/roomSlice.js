@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getRooms, saveRoom, deleteRoom, suitableRooms } from "../services/roomApi";
+import { getRooms, saveRoom, deleteRoom, assignAssetsToRoom as assignAssetsToRoomApi } from "../services/roomApi";
+import { showSuccess } from "../../../utils/toastUtils";
 
 // === FETCH ROOMS (phân trang) ===
 export const fetchRooms = createAsyncThunk(
     "rooms/fetchRooms",
-    async ({ page = 0, size = 9 } = {}, { rejectWithValue }) => {
+    async (params, { rejectWithValue }) => {
         try {
-            const res = await getRooms({ page, size });
+            const res = await getRooms(params);
             return res;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
@@ -40,10 +41,24 @@ export const removeRoom = createAsyncThunk(
     }
 );
 
+// === ASSIGN ASSETS TO ROOM ===
+export const assignAssetsToRoom = createAsyncThunk(
+    "rooms/assignAssetsToRoom",
+    async (data, { rejectWithValue }) => {
+        try {
+            const res = await assignAssetsToRoomApi(data);
+            showSuccess("Chuyển tài sản thành công.");
+            return res;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+);
+
 const roomSlice = createSlice({
     name: "rooms",
     initialState: {
-        items: [], // danh sách phòng
+        rooms: [], // danh sách phòng
         suitableRooms: [],
         meta: {}, // chứa thông tin phân trang
         loading: false,
@@ -65,7 +80,7 @@ const roomSlice = createSlice({
             .addCase(fetchRooms.fulfilled, (state, action) => {
                 state.loading = false;
                 // Tránh lỗi "rooms.reduce is not a function"
-                state.items = Array.isArray(action.payload.data)
+                state.rooms = Array.isArray(action.payload.data)
                     ? action.payload.data
                     : [];
                 state.meta = action.payload.meta || {};
@@ -80,11 +95,11 @@ const roomSlice = createSlice({
                 const updated = action.payload.data;
                 if (!updated) return;
 
-                const idx = state.items.findIndex((r) => r.id === updated.id);
+                const idx = state.rooms.findIndex((r) => r.id === updated.id);
                 if (idx >= 0) {
-                    state.items[idx] = updated;
+                    state.rooms[idx] = updated;
                 } else {
-                    state.items.unshift(updated);
+                    state.rooms.unshift(updated);
                 }
             })
 
@@ -92,7 +107,11 @@ const roomSlice = createSlice({
             .addCase(removeRoom.fulfilled, (state, action) => {
                 const deleted = action.payload.data;
                 if (!deleted) return;
-                state.items = state.items.filter((r) => r.id !== deleted.id);
+                state.rooms = state.rooms.filter((r) => r.id !== deleted.id);
+            })
+            // === ASSIGN ASSETS TO ROOM ===
+            .addCase(assignAssetsToRoom.rejected, (state, action) => {
+                state.error = action.payload?.message || "Failed to assign assets to room";
             });
 
     },

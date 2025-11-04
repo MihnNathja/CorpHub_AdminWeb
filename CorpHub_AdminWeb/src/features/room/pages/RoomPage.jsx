@@ -1,46 +1,19 @@
 import React, { useState } from "react";
-import FloatingButton from "../../global/components/FloatingButton";
-import Pagination from "../../global/components/Pagination";
-import { PlusIcon } from "lucide-react";
-import RoomCard from "../components/RoomCard";
-import RoomModal from "../components/RoomModal";
-import AddRoomModal from "../components/AddRoomModal";
-import { useRooms } from "../hooks/useRooms";
-import RoomRequestList from "../components/RoomRequestList";
+import RoomList from "../components/RoomList";
+import { useDepartment } from "../../department/hooks/useDepartment";
+import { useRoomTypes } from "../hooks/useRoomTypes";
+import { RoomRequestList } from "../components/RoomRequestList";
 
 const RoomPage = () => {
     const [activeTab, setActiveTab] = useState("rooms"); // "rooms" | "requests"
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [editingRoom, setEditingRoom] = useState(null);
 
     const {
-        loading,
-        page,
-        totalPages,
-        setPage,
-        statusFilter,
-        setStatusFilter,
-        statusCounts,
-        paginatedRooms,
-        rooms,
-        selectedRoom,
-        setSelectedRoom,
-        handleCreateOrUpdate,
-        handleRemove,
-    } = useRooms();
+        departments,
+    } = useDepartment();
 
-    const statusTabs = ["ALL", "AVAILABLE", "BUSY", "MAINTENANCE"];
-
-    // ✅ Loading
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-[300px]">
-                <p className="text-gray-500 dark:text-gray-300">
-                    Loading...
-                </p>
-            </div>
-        );
-    }
+    const {
+        roomTypes,
+    } = useRoomTypes();
 
     return (
         <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6 relative">
@@ -48,17 +21,7 @@ const RoomPage = () => {
                 Room Management
             </h2>
 
-            {/* 🔹 Floating Button */}
-            {activeTab === "rooms" && (
-                <FloatingButton
-                    onClick={() => setIsAddModalOpen(true)}
-                    icon={PlusIcon}
-                    tooltip="New room"
-                    color="blue"
-                />
-            )}
-
-            {/* 🔹 Tabs chính */}
+            {/* Tabs chính */}
             <div className="flex gap-4 mb-6 border-b border-gray-300 dark:border-gray-700">
                 <button
                     onClick={() => setActiveTab("rooms")}
@@ -81,89 +44,8 @@ const RoomPage = () => {
                 </button>
             </div>
 
-            {/* 🔹 Nội dung tab */}
-            {activeTab === "rooms" && (
-                <>
-                    {/* Bộ lọc trạng thái */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                        {statusTabs.map((status) => {
-                            const active = statusFilter === status;
-
-                            return (
-                                <button
-                                    key={status}
-                                    onClick={() => {
-                                        setStatusFilter(status);
-                                        setPage(0); // ✅ backend page bắt đầu từ 0
-                                    }}
-                                    className={`px-3 py-1 text-sm rounded-full border flex items-center gap-1 transition-colors ${active
-                                        ? "bg-blue-500 text-white border-transparent"
-                                        : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600"
-                                        }`}
-                                >
-                                    <span>
-                                        {status === "ALL" ? "Tất cả" : status}
-                                    </span>
-
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Danh sách phòng */}
-                    {paginatedRooms?.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {paginatedRooms.map((room) => (
-                                <RoomCard
-                                    key={room.id}
-                                    room={room}
-                                    onClick={() => setSelectedRoom(room)}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="text-center text-gray-500 dark:text-gray-400 mt-10">
-                            Không tìm thấy phòng với trạng thái {statusFilter}.
-                        </p>
-                    )}
-
-                    {/* Phân trang */}
-                    <Pagination page={page} setPage={setPage} totalPages={totalPages} />
-
-                    {/* Modal Chi tiết */}
-                    <RoomModal
-                        room={selectedRoom}
-                        onClose={() => setSelectedRoom(null)}
-                        onEdit={(room) => {
-                            setEditingRoom(room);
-                            setIsAddModalOpen(true);
-                            setSelectedRoom(null);
-                        }}
-                        onRemove={async (roomId) => {
-                            await handleRemove(roomId);
-                            setSelectedRoom(null);
-                        }}
-                    />
-
-                    {/* Modal Thêm/Sửa */}
-                    <AddRoomModal
-                        isOpen={isAddModalOpen}
-                        onClose={() => {
-                            setIsAddModalOpen(false);
-                            setEditingRoom(null);
-                        }}
-                        room={editingRoom}
-                        onSubmit={async (formData) => {
-                            await handleCreateOrUpdate(
-                                editingRoom ? { ...formData, id: editingRoom.id } : formData
-                            );
-                            setIsAddModalOpen(false);
-                            setEditingRoom(null);
-                        }}
-                    />
-                </>
-            )}
-
+            {/* Nội dung tab */}
+            {activeTab === "rooms" && <RoomList departments={departments} roomTypes={roomTypes} />}
             {activeTab === "requests" && <RoomRequestList />}
         </div>
     );
