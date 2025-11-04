@@ -1,4 +1,3 @@
-import React, { useEffect, useRef, useState } from "react";
 import {
     X,
     Calendar,
@@ -12,30 +11,19 @@ import {
     CheckCircle,
 } from "lucide-react";
 import dayjs from "dayjs";
-import { useRoomRequirement } from "../hooks/useRoomRequirement";
-import { showSuccess, showError } from "../../../utils/toastUtils";
+import { useRoomRequirements } from "../hooks/useRoomRequirement";
+import { useState } from "react";
 
-const RoomRequirementModal = ({ open, onClose, requirement, allCategories = [] }) => {
+const RoomRequirementModal = ({ onClose, requirement, allCategories = [] }) => {
     const {
         suitableRooms,
-        loadSuitableRooms,
         loadingSuitable,
         approve,
-    } = useRoomRequirement(false);
+    } = useRoomRequirements();
 
     const [expandedRoomId, setExpandedRoomId] = useState(null);
-    const loadFnRef = useRef(loadSuitableRooms);
 
-    useEffect(() => {
-        loadFnRef.current = loadSuitableRooms;
-    }, [loadSuitableRooms]);
-
-    useEffect(() => {
-        if (!open || !requirement?.id) return;
-        loadFnRef.current(requirement.id);
-    }, [open, requirement?.id]);
-
-    if (!open || !requirement) return null;
+    if (!requirement) return null;
 
     /* -------------------- GIẢI NÉN -------------------- */
     const { capacity, assetCategories = [], start, end, roomId, roomName, status } =
@@ -156,7 +144,6 @@ const RoomRequirementModal = ({ open, onClose, requirement, allCategories = [] }
                                 <Layers className="w-4 h-4 text-blue-500" />
                                 Danh sách phòng phù hợp
                             </h3>
-
                             {loadingSuitable ? (
                                 <p className="text-gray-500 dark:text-gray-400">Đang tải...</p>
                             ) : suitableRooms?.length > 0 ? (
@@ -180,7 +167,7 @@ const RoomRequirementModal = ({ open, onClose, requirement, allCategories = [] }
                                                             {room.name}
                                                         </p>
                                                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                            {room.type} • {room.capacity} người •{" "}
+                                                            {room.type.name} • {room.capacity} người •{" "}
                                                             {room.area} m²
                                                         </p>
                                                     </div>

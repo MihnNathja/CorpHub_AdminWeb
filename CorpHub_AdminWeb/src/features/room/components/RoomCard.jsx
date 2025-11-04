@@ -43,7 +43,7 @@ const RoomCard = ({ room, onClick }) => {
             <div className="space-y-2 text-sm mb-3">
                 <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
                     <Building2 className="w-4 h-4 text-blue-500" />
-                    <span>{room.type}</span>
+                    <span>{room.type?.name}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
                     <Users className="w-4 h-4 text-indigo-500" />

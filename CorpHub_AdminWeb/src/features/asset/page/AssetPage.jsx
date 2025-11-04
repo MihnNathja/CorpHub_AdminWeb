@@ -6,6 +6,7 @@ import AssetModal from "../components/AssetModal";
 import AddAssetModal from "../components/AddAssetModal";
 import { useAssets } from "../hooks/useAssets";
 import ConfirmDialog from "../../global/components/ConfirmDialog";
+import { Filter, Search } from "lucide-react";
 
 const AssetPage = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -21,8 +22,12 @@ const AssetPage = () => {
         page,
         size,
         totalPages,
+        keywords,
+        setKeywords,
+        filters,
+        clearFilters,
+        updateFilters,
         setPage,
-        setSize,
         selectedAsset,
         setSelectedAsset,
         addAsset,
@@ -30,13 +35,9 @@ const AssetPage = () => {
         removeAsset,
     } = useAssets();
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-[300px]">
-                <p className="text-gray-500 dark:text-gray-300">Đang tải dữ liệu...</p>
-            </div>
-        );
-    }
+    const handleFilterChange = (name, value) => {
+        updateFilters({ [name]: value });
+    };
 
     return (
         <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6 relative">
@@ -51,6 +52,68 @@ const AssetPage = () => {
                 tooltip="New Asset"
                 color="blue"
             />
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700 mb-5">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    {/* Search bar */}
+                    <div className="relative w-full sm:w-1/3">
+                        <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                        <input
+                            type="text"
+                            value={keywords}
+                            onChange={(e) => setKeywords(e.target.value)}
+                            placeholder="Search room name..."
+                            className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                        />
+                    </div>
+
+                    {/* Bộ lọc dropdown */}
+                    <div className="flex flex-wrap items-center gap-2 sm:justify-end w-full sm:w-auto">
+                        {/* Category */}
+                        <select
+                            name="categoryId"
+                            value={filters.categoryId}
+                            onChange={(e) => handleFilterChange("categoryId", e.target.value)}
+                            className="w-full sm:w-auto max-w-[180px] h-[40px] px-3 py-2 text-sm rounded-lg border 
+               border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white 
+               focus:ring-2 focus:ring-blue-400 focus:outline-none truncate"
+                        >
+                            <option value="">All categories</option>
+                            {categories.map((category) => (
+                                <option key={category.id} value={category.id}>{category.name}</option>
+                            ))}
+                        </select>
+
+                        {/* Status */}
+                        <select
+                            name="status"
+                            value={filters.status}
+                            onChange={(e) => handleFilterChange("status", e.target.value)}
+                            className="w-full sm:w-auto max-w-[160px] h-[40px] px-3 py-2 text-sm rounded-lg border 
+               border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white 
+               focus:ring-2 focus:ring-blue-400 focus:outline-none truncate"
+                        >
+                            <option value="">All status</option>
+                            <option value="USABLE">Usable</option>
+                            <option value="DISPOSED">Disposed</option>
+                            <option value="BROKEN">Broken</option>
+                            <option value="MAINTENANCE">Maintenance</option>
+                        </select>
+
+                        {/* Clear */}
+                        <button
+                            onClick={clearFilters}
+                            className="w-full sm:w-auto max-w-[110px] h-[40px] flex items-center justify-center gap-1 
+               text-sm rounded-lg border border-gray-300 dark:border-gray-600 
+               text-gray-700 dark:text-gray-300 
+               hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                        >
+                            <Filter className="w-4 h-4" />
+                            Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             {/* 🔹 Bảng tài sản */}
             {assets?.length > 0 ? (

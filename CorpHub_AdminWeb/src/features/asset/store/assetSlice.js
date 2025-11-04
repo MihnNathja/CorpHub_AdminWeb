@@ -6,6 +6,7 @@ import {
     createAsset as createAssetApi,
     updateAsset as updateAssetApi,
     deleteAsset as deleteAssetApi,
+    removeAssetFromRoom,
 } from "../services/assetApi";
 
 // ===== Async Thunks =====
@@ -71,6 +72,20 @@ export const deleteAsset = createAsyncThunk(
             const res = await deleteAssetApi(assetId);
             return res;
         } catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+);
+
+// xóa asset khỏi phòng
+export const removeFromRoom = createAsyncThunk(
+    "assets/removeFromRoom",
+    async (params, { rejectWithValue }) => {
+        try {
+            const res = await removeAssetFromRoom(params);
+            return res;
+        }
+        catch (err) {
             return rejectWithValue(err.response?.data || err.message);
         }
     }
@@ -144,6 +159,9 @@ const assetSlice = createSlice({
             .addCase(deleteAsset.fulfilled, (state, action) => {
                 const deletedId = action.meta.arg;
                 state.assets = state.assets.filter((a) => a.id !== deletedId);
+            })
+            .addCase(removeFromRoom.rejected, (state, action) => {
+                state.error = action.payload || "Failed to remove asset from room";
             });
     },
 });

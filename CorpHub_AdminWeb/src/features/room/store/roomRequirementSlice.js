@@ -93,21 +93,11 @@ const roomRequirementSlice = createSlice({
         items: [], // danh sách yêu cầu phòng
         suitableRooms: [], // danh sách phòng phù hợp (từ RoomRequirementId)
         roomReqsByRoom: [], // danh sách yêu cầu đã lọc
-        selected: null,
         meta: {}, // phân trang
         loading: false, // loading danh sách yêu cầu
         loadingSuitable: false, // 🆕 loading riêng cho suitable rooms
         loadingRoomReqsByRoom: false,
         error: null,
-    },
-    reducers: {
-        setSelectedRequirement: (state, action) => {
-            state.selected = action.payload;
-        },
-        clearSelectedRequirement: (state) => {
-            state.selected = null;
-            state.suitableRooms = [];
-        },
     },
     extraReducers: (builder) => {
         builder
@@ -178,7 +168,6 @@ const roomRequirementSlice = createSlice({
     },
 });
 
-export const { setSelectedRequirement, clearSelectedRequirement } =
-    roomRequirementSlice.actions;
+export const { } = roomRequirementSlice.actions;
 
 export default roomRequirementSlice.reducer;

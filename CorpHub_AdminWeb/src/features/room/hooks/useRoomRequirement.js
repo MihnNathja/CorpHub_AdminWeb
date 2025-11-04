@@ -3,15 +3,13 @@ import {
     fetchRoomRequirements,
     approveRoomRequirement,
     rejectRoomRequirement,
-    setSelectedRequirement,
-    clearSelectedRequirement,
     fetchSuitableRooms,
     fetchRoomRequirementsFilter,
 } from "../store/roomRequirementSlice";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { showSuccess, showError } from "../../../utils/toastUtils";
 
-export function useRoomRequirement(autoFetch = true) {
+export const useRoomRequirements = () => {
     const dispatch = useDispatch();
 
     // ✅ Lấy state mới có thêm loadingSuitable
@@ -23,39 +21,35 @@ export function useRoomRequirement(autoFetch = true) {
         loadingSuitable,
         loadingRoomReqsByRoom,
         error,
-        selected,
         meta,
     } = useSelector((state) => state.roomRequirements);
 
-    /* -------------------- LOAD DANH SÁCH -------------------- */
-    const refresh = useCallback(
-        (page = meta?.page || 0, size = meta?.size || 9) => {
-            dispatch(fetchRoomRequirements({ page, size }));
-        },
-        [dispatch, meta?.page, meta?.size]
-    );
+
+    const [page, setPage] = useState(0); // Backend page start = 0
+    const [size] = useState(meta?.size || 9);
+    const [selected, setSelected] = useState(null);
 
     useEffect(() => {
-        if (autoFetch) refresh();
-    }, [autoFetch, refresh]);
+        dispatch(fetchRoomRequirements());
+    }, [dispatch, page, size]);
 
     /* -------------------- HÀNH ĐỘNG -------------------- */
     const approve = useCallback(
         async (id, roomId) => {
             try {
                 const res = await dispatch(approveRoomRequirement({ id, roomId })).unwrap();
-                console.log(res.data);
                 if (res?.data === true)
                     showSuccess("Đã phê duyệt yêu cầu phòng");
                 else
                     showError("Phê duyệt thất bại");
-                refresh();
+
+                dispatch(fetchRoomRequirements());
             } catch (err) {
                 showError("Phê duyệt thất bại");
                 console.error(err);
             }
         },
-        [dispatch, refresh]
+        [dispatch, page, size]
     );
 
     const reject = useCallback(
@@ -66,39 +60,35 @@ export function useRoomRequirement(autoFetch = true) {
                     showSuccess("Đã từ chối yêu cầu phòng");
                 else
                     showError("Từ chối thất bại");
-                refresh();
+                dispatch(fetchRoomRequirements());
             } catch (err) {
                 showError("Từ chối thất bại");
                 console.error(err);
             }
         },
-        [dispatch, refresh]
+        [dispatch, page, size]
     );
-
-    /* -------------------- SELECTED ITEM -------------------- */
-    const setSelected = useCallback(
-        (req) => {
-            dispatch(setSelectedRequirement(req));
-        },
-        [dispatch]
-    );
-
-    const clearSelected = useCallback(() => {
-        dispatch(clearSelectedRequirement());
-    }, [dispatch]);
 
     /* -------------------- LOAD PHÒNG PHÙ HỢP -------------------- */
     const loadSuitableRooms = useCallback(
-        async (id) => {
-            if (!id) return;
+        async (selected) => {
+            if (!selected) return;
             try {
-                await dispatch(fetchSuitableRooms(id)).unwrap();
+                await dispatch(fetchSuitableRooms(selected.id)).unwrap();
             } catch (err) {
                 console.error("❌ Lỗi khi tải danh sách phòng phù hợp:", err);
             }
         },
         [dispatch]
     );
+
+    // ✅ Tự động load phòng phù hợp khi selected thay đổi
+    useEffect(() => {
+        if (selected) {
+            loadSuitableRooms(selected);
+        }
+    }, [selected, loadSuitableRooms]);
+
 
     /* -------------------- LOAD ROOM REQUIREMENTS BY ROOM -------------------- */
     const loadRoomRequirements = useCallback(
@@ -116,20 +106,21 @@ export function useRoomRequirement(autoFetch = true) {
         requirements: items,       // tất cả yêu cầu
         roomRequirements: roomReqsByRoom, // yêu cầu theo phòng
         suitableRooms,
-        meta,
+        page,
+        size,
+        selected,
         // trạng thái
         loading,
         loadingSuitable,
         loadingRoomReqsByRoom,
         error,
         // hành động
-        refresh,
         loadRoomRequirements,   // ✅ thay thế handleFetchRoomRequirements
         loadSuitableRooms,
         approve,
         reject,
-        setSelected,
-        clearSelected,
+        setSelected
+
     };
 
 }
