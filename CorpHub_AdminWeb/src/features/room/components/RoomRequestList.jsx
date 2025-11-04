@@ -5,7 +5,7 @@ import RoomRequirementModal from "../components/RoomRequirementModal"; // 🧩 T
 import { useAssets } from "../../asset/hooks/useAssets";
 
 export const RoomRequestList = () => {
-    const { requirements, page, size, approve, reject, selected, setSelected } = useRoomRequirements();
+    const { requirements, page, size, approve, reject, suggest, clearSuggestion, selected, setSelected, allocationSuggestion } = useRoomRequirements();
     const { categories = [] } = useAssets();
 
     /* -------------------- UI Empty -------------------- */
@@ -21,6 +21,8 @@ export const RoomRequestList = () => {
             </div>
         );
 
+    console.log(allocationSuggestion);
+
     /* -------------------- UI Chính -------------------- */
     return (
         <div className="animate-fade-in">
@@ -28,28 +30,49 @@ export const RoomRequestList = () => {
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                     Yêu cầu đặt phòng ({requirements.length})
                 </h2>
+                <div className="flex justify-end mb-4">
+                    <button
+                        onClick={() =>
+                            suggest(requirements
+                                .filter(r => !r.roomId)
+                                .map(r => r.id))
+                        }
+
+                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition"
+                    >
+                        🧠 Gợi ý phân bố phòng
+                    </button>
+                </div>
+
             </div>
 
             {/* Danh sách yêu cầu */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {requirements.map((req) => (
-                    <RoomRequirementCard
-                        key={req.id}
-                        requirement={req}
-                        allCategories={categories}
-                        onClick={() => {
-                            setSelected(req);
-                        }}
-                        onApprove={() => approve(req.id)}
-                        onReject={() => reject(req.id)}
-                    />
-                ))}
+                {requirements.map((req) => {
+                    const suggestion = allocationSuggestion?.find(
+                        (s) => s.requirementId === req.id
+                    );
+
+                    return (
+                        <RoomRequirementCard
+                            key={req.id}
+                            requirement={req}
+                            allCategories={categories}
+                            suggestion={suggestion}
+                            onApprove={approve}
+                            clearSuggestion={clearSuggestion}
+                            onClick={() => setSelected(req)}
+                        />
+                    );
+                })}
+
             </div>
 
             {selected && (
                 <RoomRequirementModal
                     requirement={selected}
                     allCategories={categories}
+                    onApprove={approve}
                     onClose={() => setSelected(null)}
                 />
             )}

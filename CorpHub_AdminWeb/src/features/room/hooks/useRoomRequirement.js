@@ -5,6 +5,8 @@ import {
     rejectRoomRequirement,
     fetchSuitableRooms,
     fetchRoomRequirementsFilter,
+    fetchAllocationSuggestion,
+    clearSuggestionFor,
 } from "../store/roomRequirementSlice";
 import { useCallback, useEffect, useState } from "react";
 import { showSuccess, showError } from "../../../utils/toastUtils";
@@ -17,6 +19,7 @@ export const useRoomRequirements = () => {
         items,
         suitableRooms,
         roomReqsByRoom,
+        allocationSuggestion,
         loading,
         loadingSuitable,
         loadingRoomReqsByRoom,
@@ -69,6 +72,26 @@ export const useRoomRequirements = () => {
         [dispatch, page, size]
     );
 
+    const suggest = useCallback(
+        async (ids) => {
+            try {
+                const res = await dispatch(fetchAllocationSuggestion(ids)).unwrap();
+            } catch (err) {
+                showError("Có lỗi xảy ra");
+                console.error(err);
+            }
+        },
+        [dispatch, page, size]
+    )
+
+    const clearSuggestion = useCallback(
+        (id) => {
+            dispatch(clearSuggestionFor(id));
+        },
+        [dispatch]
+    );
+
+
     /* -------------------- LOAD PHÒNG PHÙ HỢP -------------------- */
     const loadSuitableRooms = useCallback(
         async (selected) => {
@@ -106,6 +129,7 @@ export const useRoomRequirements = () => {
         requirements: items,       // tất cả yêu cầu
         roomRequirements: roomReqsByRoom, // yêu cầu theo phòng
         suitableRooms,
+        allocationSuggestion,
         page,
         size,
         selected,
@@ -119,6 +143,8 @@ export const useRoomRequirements = () => {
         loadSuitableRooms,
         approve,
         reject,
+        suggest,
+        clearSuggestion,
         setSelected
 
     };

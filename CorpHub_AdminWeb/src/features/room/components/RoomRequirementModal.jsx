@@ -14,11 +14,10 @@ import dayjs from "dayjs";
 import { useRoomRequirements } from "../hooks/useRoomRequirement";
 import { useState } from "react";
 
-const RoomRequirementModal = ({ onClose, requirement, allCategories = [] }) => {
+const RoomRequirementModal = ({ onClose, onApprove, requirement, allCategories = [] }) => {
     const {
         suitableRooms,
         loadingSuitable,
-        approve,
     } = useRoomRequirements();
 
     const [expandedRoomId, setExpandedRoomId] = useState(null);
@@ -45,7 +44,7 @@ const RoomRequirementModal = ({ onClose, requirement, allCategories = [] }) => {
     const handleAcceptRoom = async (room) => {
 
         try {
-            await approve(requirement.id, room.id);
+            await onApprove(requirement.id, room.id);
             onClose();
         } catch (err) {
             console.error(err);

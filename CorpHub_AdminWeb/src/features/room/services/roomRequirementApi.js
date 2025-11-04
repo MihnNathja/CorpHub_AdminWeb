@@ -10,3 +10,7 @@ export const rejectRoomRequirement = (id) =>
 
 export const getRoomRequirementsFilter = (roomId, date) =>
     api.get("/api/room-requirements/filter", { params: { roomId, date } });
+
+export const allocationSuggestion = (ids) =>
+    api.post("/api/room-requirements/allocations/suggestions", { ids });
+
