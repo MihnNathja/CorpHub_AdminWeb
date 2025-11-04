@@ -6,7 +6,7 @@ import Badge from "./Badge";
 
 const ProfileHeader = ({ profile, toggleActive, onUploadAvatar }) => {
   const fileInputRef = useRef(null);
-  const [preview, setPreview] = useState(profile.avatar);
+  const [preview, setPreview] = useState(profile.avatarUrl);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -62,13 +62,13 @@ const ProfileHeader = ({ profile, toggleActive, onUploadAvatar }) => {
           </h1>
           <div className="flex flex-wrap items-center gap-2 mt-1">
             <Badge color="blue">{profile.position}</Badge>
-            <Badge color="yellow">{profile.department.name}</Badge>
+            <Badge color="yellow">{profile.departmentName}</Badge>
             <Badge color={profile.active ? "green" : "red"}>
               {profile.active ? "Đang hoạt động" : "Đã khóa"}
             </Badge>
           </div>
           <p className="text-sm text-gray-500 mt-1">
-            Mã NV: {profile.code} • Vai trò: {profile.role}
+            Mã NV: {profile.code} • Vai trò: {profile.user.roleName}
           </p>
         </div>
 

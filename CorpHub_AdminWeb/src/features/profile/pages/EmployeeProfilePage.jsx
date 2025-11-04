@@ -11,7 +11,7 @@ const EmployeeProfilePage = () => {
   const [tab, setTab] = useState("Tổng quan");
 
   const {
-    //profile,
+    profile,
     handleUploadAvatar,
     handleUploadDocument,
     uploading,
@@ -32,11 +32,13 @@ const EmployeeProfilePage = () => {
     console.log("Gọi API kích hoạt / vô hiệu hóa tài khoản ở đây");
   };
 
+  console.log("Profile load từ database:", profile);
+
   // ================== Render Tab ==================
   const renderTab = () => {
     switch (tab) {
       case "Tổng quan":
-        return <OverviewTab profile={currentProfile} />;
+        return <OverviewTab profile={profile} />;
       case "Hồ sơ công việc":
         return <JobProfileTab profile={currentProfile} />;
       case "Tài liệu":
@@ -53,13 +55,16 @@ const EmployeeProfilePage = () => {
     }
   };
 
+  if (!profile) {
+    return <p className="text-gray-500">Đang tải dữ liệu nhân viên...</p>;
+  }
   // ================== Render Page ==================
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header thông tin nhân viên */}
       <div className="p-6 space-y-6">
         <ProfileHeader
-          profile={currentProfile}
+          profile={profile}
           toggleActive={toggleActive}
           onUploadAvatar={handleUploadAvatar}
         />

@@ -51,7 +51,7 @@ export const getMyEmployeeProfileAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await getMyEmployeeProfile();
-      console.log(res);
+      //console.log("getMyEmployeeProfile: ", res);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || "Upload failed");
