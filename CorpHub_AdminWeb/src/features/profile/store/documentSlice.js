@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   downloadEmployeeDocument,
   getDocumentTypes,
+  getMyDocuments,
   uploadEmployeeDocuments,
 } from "../services/documentApi";
 import { showError, showSuccess } from "../../../utils/toastUtils";
@@ -11,6 +12,18 @@ export const fetchDocumentTypes = createAsyncThunk(
   "document/fetchTypes",
   async () => {
     return await getDocumentTypes();
+  }
+);
+
+export const fetchMyDocuments = createAsyncThunk(
+  "document/fetchMyDocuments",
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await getMyDocuments();
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "Error fetching documents");
+    }
   }
 );
 
@@ -63,6 +76,7 @@ export const downloadDocumentAsync = createAsyncThunk(
 const documentSlice = createSlice({
   name: "document",
   initialState: {
+    items: [],
     types: [],
     loading: false,
     uploading: false,
@@ -111,6 +125,19 @@ const documentSlice = createSlice({
         state.error = action.payload;
         state.downloadSuccess = false;
         // showError("Không thể tải tài liệu."); // optional
+      })
+      // Fetch My Document
+      .addCase(fetchMyDocuments.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMyDocuments.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
+      })
+      .addCase(fetchMyDocuments.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

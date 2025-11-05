@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import {
   downloadDocumentAsync,
   fetchDocumentTypes,
+  fetchMyDocuments,
   uploadDocumentsAsync,
 } from "../store/documentSlice";
 
@@ -12,6 +13,7 @@ export const useDocument = () => {
 
   // Lấy state từ store
   const {
+    items,
     types,
     loading,
     uploading,
@@ -24,13 +26,28 @@ export const useDocument = () => {
   const [downloadingIds, setDownloadingIds] = useState([]);
 
   // 🧭 Action gọi API
-  const getTypes = useCallback(() => {
-    dispatch(fetchDocumentTypes());
-  }, [dispatch]);
+  const getTypes = useCallback(
+    (force = false) => {
+      if (force || types.length === 0) {
+        dispatch(fetchDocumentTypes());
+      }
+    },
+    [dispatch, types.length]
+  );
+
+  const getMyDocuments = useCallback(
+    (force = false) => {
+      if (force || items.length === 0) {
+        dispatch(fetchMyDocuments());
+      }
+    },
+    [dispatch, items.length]
+  );
 
   const uploadDocuments = useCallback(
     async (formData) => {
       await dispatch(uploadDocumentsAsync(formData));
+      getMyDocuments(true);
     },
     [dispatch]
   );
@@ -54,6 +71,7 @@ export const useDocument = () => {
   // ⚙️ useMemo để cache giá trị state tránh re-render không cần thiết
   const state = useMemo(
     () => ({
+      documents: items,
       types,
       loading,
       uploading,
@@ -64,6 +82,7 @@ export const useDocument = () => {
       downloadingIds,
     }),
     [
+      items,
       types,
       loading,
       uploading,
@@ -80,5 +99,6 @@ export const useDocument = () => {
     getTypes,
     uploadDocuments,
     downloadDocument,
+    getMyDocuments,
   };
 };

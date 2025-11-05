@@ -5,6 +5,11 @@ export const getDocumentTypes = async () => {
   return res.data;
 };
 
+export const getMyDocuments = async () => {
+  const res = await api.get("/api/employee/me/documents");
+  return res.data;
+};
+
 export const uploadEmployeeDocuments = async (formData) => {
   console.log("Gọi đến API");
   await api.post("/api/employee/document/upload", formData, {

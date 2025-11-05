@@ -8,6 +8,7 @@ const DocumentsTab = ({ profile }) => {
   const [pendingFiles, setPendingFiles] = useState([]);
 
   const {
+    documents,
     types,
     loading,
     uploading,
@@ -16,7 +17,12 @@ const DocumentsTab = ({ profile }) => {
     uploadDocuments,
     downloadDocument,
     downloadingIds,
+    getMyDocuments,
   } = useDocument();
+
+  useEffect(() => {
+    getMyDocuments();
+  }, [getMyDocuments]);
 
   // ======================= EFFECT =======================
   useEffect(() => {
@@ -199,8 +205,8 @@ const DocumentsTab = ({ profile }) => {
             </tr>
           </thead>
           <tbody>
-            {profile?.documents?.length > 0 ? (
-              profile.documents.map((doc) => {
+            {documents?.length > 0 ? (
+              documents.map((doc) => {
                 const isDownloading = downloadingIds.includes(doc.id);
                 return (
                   <tr
