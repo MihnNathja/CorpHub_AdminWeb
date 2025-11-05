@@ -76,6 +76,19 @@ const DocumentsTab = ({ profile }) => {
     downloadDocument(id);
   };
 
+  // ======================= STATE CHO TÌM KIẾM & LỌC =======================
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("");
+
+  // ======================= LỌC DỮ LIỆU =======================
+  const filteredDocuments = documents.filter((doc) => {
+    const matchesSearch = doc.title
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesType = !filterType || doc.documentTypeName === filterType;
+    return matchesSearch && matchesType;
+  });
+
   // ======================= RENDER =======================
   return (
     <Section
@@ -192,6 +205,47 @@ const DocumentsTab = ({ profile }) => {
         </div>
       )}
 
+      {/* ===== Thanh tìm kiếm & lọc ===== */}
+      <div className="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        {/* Ô tìm kiếm */}
+        <div className="flex items-center w-full sm:w-1/2 relative">
+          <input
+            type="text"
+            placeholder="🔍 Tìm kiếm theo tên tài liệu..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
+        {/* Bộ lọc loại tài liệu */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="border rounded-xl px-3 py-2 text-sm text-gray-700 bg-white"
+          >
+            <option value="">-- Tất cả loại tài liệu --</option>
+            {types.map((t) => (
+              <option key={t.id} value={t.name}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+
+          {/* Nút làm mới */}
+          <button
+            onClick={() => {
+              setSearchTerm("");
+              setFilterType("");
+            }}
+            className="px-3 py-2 text-sm border rounded-xl hover:bg-gray-50 transition"
+          >
+            Làm mới
+          </button>
+        </div>
+      </div>
+
       {/* ===== Danh sách tài liệu ===== */}
       <div className="mt-5 border rounded-xl overflow-hidden">
         <table className="w-full text-sm border-collapse">
@@ -205,8 +259,8 @@ const DocumentsTab = ({ profile }) => {
             </tr>
           </thead>
           <tbody>
-            {documents?.length > 0 ? (
-              documents.map((doc) => {
+            {filteredDocuments?.length > 0 ? (
+              filteredDocuments.map((doc) => {
                 const isDownloading = downloadingIds.includes(doc.id);
                 return (
                   <tr
@@ -214,9 +268,7 @@ const DocumentsTab = ({ profile }) => {
                     className="hover:bg-gray-50 even:bg-gray-50/50"
                   >
                     <td className="p-2 border">{doc.title}</td>
-                    <td className="p-2 border">
-                      {doc.documentTypeName || doc.documentType?.name}
-                    </td>
+                    <td className="p-2 border">{doc.documentTypeName}</td>
                     <td className="p-2 border">
                       {new Date(doc.uploadDate).toLocaleDateString("vi-VN")}
                     </td>

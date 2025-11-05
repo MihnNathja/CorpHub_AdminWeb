@@ -2,19 +2,6 @@ import Section from "./Section";
 
 const JobProfileTab = ({ profile }) => (
   <div className="divide-y">
-    {/* <Section title="Kỹ năng">
-      <div className="flex flex-wrap gap-2">
-        {profile.skills.map((s) => (
-          <span
-            key={s}
-            className="px-3 py-1 rounded-xl border text-sm bg-gray-50"
-          >
-            {s}
-          </span>
-        ))}
-      </div>
-    </Section> */}
-
     {/* ========== LỊCH SỬ LÀM VIỆC ========== */}
     <Section title="Lịch sử làm việc">
       <div className="overflow-x-auto">
