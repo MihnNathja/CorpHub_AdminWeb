@@ -5,7 +5,7 @@ import { store } from "../store/index";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/",
-  timeout: 10000,
+  timeout: 0,
   withCredentials: true, // gửi cookie (refreshToken)
 });
 
@@ -60,7 +60,9 @@ api.interceptors.response.use(
 
         if (newAccessToken) {
           // ✅ cập nhật header mới rồi retry request cũ
-          api.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
+          api.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${newAccessToken}`;
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           return api(originalRequest);
         }

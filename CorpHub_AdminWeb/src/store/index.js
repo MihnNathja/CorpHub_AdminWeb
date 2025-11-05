@@ -14,6 +14,7 @@ import roomTypeReducer from "../features/room/store/roomTypeSlice";
 import assetReducer from "../features/asset/store/assetSlice";
 import notificationReducer from "../features/notification/store/notificationSlice";
 import profileReducer from "../features/profile/store/profileSlice";
+import documentReducer from "../features/profile/store/documentSlice";
 
 export const store = configureStore({
   reducer: {
@@ -32,5 +33,6 @@ export const store = configureStore({
     employees: employeeReducer,
     notification: notificationReducer,
     profile: profileReducer,
+    document: documentReducer,
   },
 });

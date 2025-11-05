@@ -3,7 +3,6 @@ import {
   changePassword,
   getMyEmployeeProfile,
   uploadAvatar,
-  uploadEmployeeDocuments,
 } from "../services/profileApi";
 import { showError } from "../../../utils/toastUtils";
 
@@ -27,18 +26,6 @@ export const uploadAvatarAsync = createAsyncThunk(
   async (file, { rejectWithValue }) => {
     try {
       const res = await uploadAvatar(file);
-      return res.data;
-    } catch (err) {
-      return rejectWithValue(err.response?.data || "Upload failed");
-    }
-  }
-);
-
-export const uploadDocumentsAsync = createAsyncThunk(
-  "profile/uploadDocuments",
-  async (formData, { rejectWithValue }) => {
-    try {
-      const res = await uploadEmployeeDocuments(formData);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || "Upload failed");
@@ -114,19 +101,6 @@ const profileSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Upload Document
-      .addCase(uploadDocumentsAsync.pending, (state) => {
-        state.uploading = true;
-        state.error = null;
-      })
-      .addCase(uploadDocumentsAsync.fulfilled, (state) => {
-        state.uploading = false;
-        state.uploadSuccess = true;
-      })
-      .addCase(uploadDocumentsAsync.rejected, (state, action) => {
-        state.uploading = false;
-        state.error = action.payload;
-      })
       // ========== Get My Profile ==========
       .addCase(getMyEmployeeProfileAsync.pending, (state) => {
         state.loading = true;

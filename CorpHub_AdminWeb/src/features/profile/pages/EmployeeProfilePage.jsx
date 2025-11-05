@@ -13,7 +13,6 @@ const EmployeeProfilePage = () => {
   const {
     profile,
     handleUploadAvatar,
-    handleUploadDocument,
     uploading,
     uploadSuccess,
     error,
@@ -40,16 +39,11 @@ const EmployeeProfilePage = () => {
       case "Tổng quan":
         return <OverviewTab profile={profile} />;
       case "Hồ sơ công việc":
-        return <JobProfileTab profile={currentProfile} />;
+        return <JobProfileTab profile={profile} />;
       case "Tài liệu":
-        return (
-          <DocumentsTab
-            profile={currentProfile}
-            onUploadDocuments={handleUploadDocument}
-          />
-        );
+        return <DocumentsTab profile={profile} />;
       case "Cài đặt tài khoản":
-        return <AccountSettingsTab profile={currentProfile} />;
+        return <AccountSettingsTab profile={profile} />;
       default:
         return null;
     }

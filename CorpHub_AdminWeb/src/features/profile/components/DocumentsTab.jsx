@@ -1,18 +1,30 @@
-import { useState, useRef } from "react";
-import { Upload, X } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Upload, X, Download, Loader2 } from "lucide-react";
 import Section from "./Section";
+import { useDocument } from "../hooks/useDocument";
 
-const documentTypes = [
-  { id: "1", name: "CONTRACT" },
-  { id: "2", name: "CERTIFICATE" },
-  { id: "3", name: "DECISION" },
-  { id: "4", name: "OTHER" },
-];
-
-const DocumentsTab = ({ profile, onUploadDocuments }) => {
+const DocumentsTab = ({ profile }) => {
   const fileInputRef = useRef(null);
   const [pendingFiles, setPendingFiles] = useState([]);
 
+  const {
+    types,
+    loading,
+    uploading,
+    downloading,
+    getTypes,
+    uploadDocuments,
+    downloadDocument,
+  } = useDocument();
+
+  // ======================= EFFECT =======================
+  useEffect(() => {
+    getTypes();
+  }, [getTypes]);
+
+  const allTyped = pendingFiles.every((item) => item.typeId);
+
+  // ======================= HANDLERS =======================
   const handleSelectFiles = (e) => {
     const files = Array.from(e.target.files);
     setPendingFiles(
@@ -31,7 +43,7 @@ const DocumentsTab = ({ profile, onUploadDocuments }) => {
     setPendingFiles(updated);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (pendingFiles.length === 0) return;
 
     const formData = new FormData();
@@ -41,6 +53,7 @@ const DocumentsTab = ({ profile, onUploadDocuments }) => {
       documentTypeId: item.typeId,
       title: item.title,
       description: item.description,
+      employeeId: profile.id,
     }));
 
     formData.append(
@@ -48,23 +61,41 @@ const DocumentsTab = ({ profile, onUploadDocuments }) => {
       new Blob([JSON.stringify(metaList)], { type: "application/json" })
     );
 
-    if (onUploadDocuments) onUploadDocuments(formData);
+    await uploadDocuments(formData);
     setPendingFiles([]);
   };
 
+  const handleDownload = (id) => {
+    downloadDocument(id);
+  };
+
+  // ======================= RENDER =======================
   return (
     <Section
       title="Tài liệu nhân sự"
       right={
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium border rounded-xl hover:bg-gray-50"
+          disabled={uploading || downloading}
+          className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium border rounded-xl transition ${
+            uploading || downloading
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-gray-50"
+          }`}
         >
-          <Upload size={16} />
-          Tải lên
+          {uploading ? (
+            <>
+              <Loader2 size={16} className="animate-spin" /> Đang tải lên...
+            </>
+          ) : (
+            <>
+              <Upload size={16} /> Tải lên
+            </>
+          )}
         </button>
       }
     >
+      {/* Input file ẩn */}
       <input
         ref={fileInputRef}
         type="file"
@@ -73,7 +104,15 @@ const DocumentsTab = ({ profile, onUploadDocuments }) => {
         onChange={handleSelectFiles}
       />
 
-      {/* Nếu có file chờ upload */}
+      {/* ===== Loading lấy loại tài liệu ===== */}
+      {loading && (
+        <div className="mt-3 flex items-center gap-2 text-gray-500 text-sm">
+          <Loader2 size={16} className="animate-spin" />
+          <span>Đang tải danh sách loại tài liệu...</span>
+        </div>
+      )}
+
+      {/* ====== Nhập thông tin upload ====== */}
       {pendingFiles.length > 0 && (
         <div className="p-4 border rounded-2xl bg-gray-50 mt-3 space-y-3">
           <div className="flex justify-between items-center">
@@ -105,7 +144,7 @@ const DocumentsTab = ({ profile, onUploadDocuments }) => {
                 className="border rounded-lg px-2 py-1 text-sm"
               >
                 <option value="">-- Loại tài liệu --</option>
-                {documentTypes.map((t) => (
+                {types.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name}
                   </option>
@@ -123,14 +162,93 @@ const DocumentsTab = ({ profile, onUploadDocuments }) => {
             </div>
           ))}
 
-          <button
-            onClick={handleUpload}
-            className="mt-2 px-4 py-1.5 text-sm bg-blue-600 text-white rounded-xl hover:bg-blue-700"
-          >
-            Xác nhận tải lên
-          </button>
+          {allTyped && (
+            <button
+              disabled={uploading}
+              onClick={handleUpload}
+              className={`mt-2 px-4 py-1.5 text-sm rounded-xl text-white flex items-center gap-2 justify-center ${
+                uploading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+            >
+              {uploading && <Loader2 size={16} className="animate-spin" />}
+              {uploading ? "Đang tải lên..." : "Xác nhận tải lên"}
+            </button>
+          )}
+
+          {!allTyped && (
+            <div className="text-sm text-red-500 mt-1">
+              ⚠️ Vui lòng chọn loại tài liệu cho tất cả file trước khi tải lên.
+            </div>
+          )}
         </div>
       )}
+
+      {/* ===== Danh sách tài liệu ===== */}
+      <div className="mt-5 border rounded-xl overflow-hidden">
+        <table className="w-full text-sm border-collapse">
+          <thead className="bg-gray-100 text-gray-700">
+            <tr>
+              <th className="p-2 border">Tên tài liệu</th>
+              <th className="p-2 border">Loại</th>
+              <th className="p-2 border">Ngày tải lên</th>
+              <th className="p-2 border">Ghi chú</th>
+              <th className="p-2 border text-center">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            {profile?.documents?.length > 0 ? (
+              profile.documents.map((doc) => (
+                <tr
+                  key={doc.id}
+                  className="hover:bg-gray-50 even:bg-gray-50/50"
+                >
+                  <td className="p-2 border">{doc.title}</td>
+                  <td className="p-2 border">
+                    {doc.documentTypeName || doc.documentType?.name}
+                  </td>
+                  <td className="p-2 border">
+                    {new Date(doc.uploadDate).toLocaleDateString("vi-VN")}
+                  </td>
+                  <td className="p-2 border">{doc.description || "-"}</td>
+                  <td className="p-2 border text-center">
+                    <button
+                      onClick={() => handleDownload(doc.id)}
+                      disabled={downloading}
+                      className={`flex items-center gap-1 text-blue-600 mx-auto ${
+                        downloading
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:underline"
+                      }`}
+                    >
+                      {downloading ? (
+                        <>
+                          <Loader2 size={14} className="animate-spin" /> Đang
+                          tải...
+                        </>
+                      ) : (
+                        <>
+                          <Download size={14} /> Tải xuống
+                        </>
+                      )}
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan="5"
+                  className="text-center p-4 text-gray-500 italic"
+                >
+                  Chưa có tài liệu nào
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </Section>
   );
 };

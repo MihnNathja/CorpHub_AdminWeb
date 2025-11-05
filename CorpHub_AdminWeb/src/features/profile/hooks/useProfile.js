@@ -5,8 +5,11 @@ import {
   getMyEmployeeProfileAsync,
   resetStatus,
   uploadAvatarAsync,
-  uploadDocumentsAsync,
 } from "../store/profileSlice";
+import {
+  downloadDocumentAsync,
+  uploadDocumentsAsync,
+} from "../store/documentSlice";
 
 export const useProfile = () => {
   const dispatch = useDispatch();
@@ -40,6 +43,11 @@ export const useProfile = () => {
     dispatch(uploadDocumentsAsync(formData));
   };
 
+  const handleDownloadDocument = (documentId) => {
+    if (!documentId) return;
+    dispatch(downloadDocumentAsync(documentId));
+  };
+
   const fetchBasicInfo = () => {
     dispatch(getMyEmployeeProfileAsync());
   };
@@ -57,6 +65,7 @@ export const useProfile = () => {
     uploadSuccess,
     handleUploadAvatar,
     handleUploadDocument,
+    handleDownloadDocument,
     fetchBasicInfo,
   };
 };

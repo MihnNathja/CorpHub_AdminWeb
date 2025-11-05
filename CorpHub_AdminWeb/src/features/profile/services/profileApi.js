@@ -21,8 +21,3 @@ export const uploadAvatar = async (file) => {
     },
   });
 };
-
-export const uploadEmployeeDocuments = async (formData) =>
-  api.post("/api/employee/documents", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });

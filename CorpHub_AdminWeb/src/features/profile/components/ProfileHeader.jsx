@@ -77,7 +77,7 @@ const ProfileHeader = ({ profile, toggleActive, onUploadAvatar }) => {
           <button className="px-3 py-2 border rounded-xl flex items-center gap-2 hover:bg-gray-50">
             <Pencil className="w-4 h-4" /> Chỉnh sửa
           </button>
-          <button
+          {/* <button
             onClick={toggleActive}
             className={`px-3 py-2 rounded-xl flex items-center gap-2 ${
               profile.active
@@ -91,7 +91,7 @@ const ProfileHeader = ({ profile, toggleActive, onUploadAvatar }) => {
               <Unlock className="w-4 h-4" />
             )}
             {profile.active ? "Khóa" : "Mở"}
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
