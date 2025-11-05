@@ -12,6 +12,7 @@ export const uploadEmployeeDocuments = async (formData) => {
   });
 };
 export const downloadEmployeeDocument = async (documentId) => {
+  console.log(documentId);
   return api.get(`/api/employee/document/download/${documentId}`, {
     responseType: "blob",
   });

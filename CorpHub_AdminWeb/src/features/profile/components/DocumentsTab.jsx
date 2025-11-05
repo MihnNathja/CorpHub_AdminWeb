@@ -15,6 +15,7 @@ const DocumentsTab = ({ profile }) => {
     getTypes,
     uploadDocuments,
     downloadDocument,
+    downloadingIds,
   } = useDocument();
 
   // ======================= EFFECT =======================
@@ -199,43 +200,46 @@ const DocumentsTab = ({ profile }) => {
           </thead>
           <tbody>
             {profile?.documents?.length > 0 ? (
-              profile.documents.map((doc) => (
-                <tr
-                  key={doc.id}
-                  className="hover:bg-gray-50 even:bg-gray-50/50"
-                >
-                  <td className="p-2 border">{doc.title}</td>
-                  <td className="p-2 border">
-                    {doc.documentTypeName || doc.documentType?.name}
-                  </td>
-                  <td className="p-2 border">
-                    {new Date(doc.uploadDate).toLocaleDateString("vi-VN")}
-                  </td>
-                  <td className="p-2 border">{doc.description || "-"}</td>
-                  <td className="p-2 border text-center">
-                    <button
-                      onClick={() => handleDownload(doc.id)}
-                      disabled={downloading}
-                      className={`flex items-center gap-1 text-blue-600 mx-auto ${
-                        downloading
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:underline"
-                      }`}
-                    >
-                      {downloading ? (
-                        <>
-                          <Loader2 size={14} className="animate-spin" /> Đang
-                          tải...
-                        </>
-                      ) : (
-                        <>
-                          <Download size={14} /> Tải xuống
-                        </>
-                      )}
-                    </button>
-                  </td>
-                </tr>
-              ))
+              profile.documents.map((doc) => {
+                const isDownloading = downloadingIds.includes(doc.id);
+                return (
+                  <tr
+                    key={doc.id}
+                    className="hover:bg-gray-50 even:bg-gray-50/50"
+                  >
+                    <td className="p-2 border">{doc.title}</td>
+                    <td className="p-2 border">
+                      {doc.documentTypeName || doc.documentType?.name}
+                    </td>
+                    <td className="p-2 border">
+                      {new Date(doc.uploadDate).toLocaleDateString("vi-VN")}
+                    </td>
+                    <td className="p-2 border">{doc.description || "-"}</td>
+                    <td className="p-2 border text-center">
+                      <button
+                        onClick={() => handleDownload(doc.id)}
+                        disabled={isDownloading}
+                        className={`flex items-center gap-1 text-blue-600 mx-auto ${
+                          isDownloading
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:underline"
+                        }`}
+                      >
+                        {isDownloading ? (
+                          <>
+                            <Loader2 size={14} className="animate-spin" /> Đang
+                            tải...
+                          </>
+                        ) : (
+                          <>
+                            <Download size={14} /> Tải xuống
+                          </>
+                        )}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td

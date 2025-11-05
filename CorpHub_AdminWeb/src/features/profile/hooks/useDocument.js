@@ -1,6 +1,6 @@
 // src/features/document/hooks/useDocument.js
 import { useDispatch, useSelector } from "react-redux";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   downloadDocumentAsync,
   fetchDocumentTypes,
@@ -21,6 +21,8 @@ export const useDocument = () => {
     error,
   } = useSelector((state) => state.document);
 
+  const [downloadingIds, setDownloadingIds] = useState([]);
+
   // 🧭 Action gọi API
   const getTypes = useCallback(() => {
     dispatch(fetchDocumentTypes());
@@ -35,7 +37,16 @@ export const useDocument = () => {
 
   const downloadDocument = useCallback(
     async (documentId) => {
-      await dispatch(downloadDocumentAsync(documentId));
+      try {
+        setDownloadingIds((prev) => [...prev, documentId]); // bắt đầu tải
+
+        await dispatch(downloadDocumentAsync(documentId)).unwrap(); // unwrap() để chờ kết quả thực tế (nếu dùng createAsyncThunk)
+      } catch (err) {
+        console.error("Download failed:", err);
+      } finally {
+        // ✅ cleanup: xóa ID khỏi danh sách đang tải dù thành công hay lỗi
+        setDownloadingIds((prev) => prev.filter((id) => id !== documentId));
+      }
     },
     [dispatch]
   );
@@ -50,6 +61,7 @@ export const useDocument = () => {
       downloading,
       downloadSuccess,
       error,
+      downloadingIds,
     }),
     [
       types,
@@ -59,6 +71,7 @@ export const useDocument = () => {
       downloading,
       downloadSuccess,
       error,
+      downloadingIds,
     ]
   );
 
