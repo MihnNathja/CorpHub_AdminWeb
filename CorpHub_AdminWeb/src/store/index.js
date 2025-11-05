@@ -14,6 +14,9 @@ import roomTypeReducer from "../features/room/store/roomTypeSlice";
 import assetReducer from "../features/asset/store/assetSlice";
 import notificationReducer from "../features/notification/store/notificationSlice";
 import profileReducer from "../features/profile/store/profileSlice";
+import leaveTypeReducer from "../features/leave/store/leaveTypeSlice";
+import leaveBalanceReducer from "../features/leave/store/leaveBalanceSlice";
+import holidayReducer from "../features/leave/store/holidayCalendarSlice";
 
 export const store = configureStore({
   reducer: {
@@ -32,5 +35,8 @@ export const store = configureStore({
     employees: employeeReducer,
     notification: notificationReducer,
     profile: profileReducer,
+    leaveType: leaveTypeReducer,
+    leaveBalance: leaveBalanceReducer,
+    holiday: holidayReducer,
   },
 });

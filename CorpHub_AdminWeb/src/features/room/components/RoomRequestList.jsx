@@ -21,8 +21,6 @@ export const RoomRequestList = () => {
             </div>
         );
 
-    console.log(allocationSuggestion);
-
     /* -------------------- UI Chính -------------------- */
     return (
         <div className="animate-fade-in">
@@ -40,7 +38,7 @@ export const RoomRequestList = () => {
 
                         className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition"
                     >
-                        🧠 Gợi ý phân bố phòng
+                        Gợi ý phân bố phòng
                     </button>
                 </div>
 

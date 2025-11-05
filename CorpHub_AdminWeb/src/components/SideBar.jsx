@@ -12,9 +12,11 @@ import {
   Cog6ToothIcon,
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
-  ArchiveBoxIcon
+  ArchiveBoxIcon,
+  DocumentIcon
 } from "@heroicons/react/24/outline";
 import { UserIcon, Building2Icon, ShieldCheckIcon } from "lucide-react";
+import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 
 // Thêm roles cho từng item (có thể mở rộng sau này)
 const menu = [
@@ -65,6 +67,12 @@ const menu = [
     path: "assets",
     icon: ArchiveBoxIcon,
     roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+  },
+  {
+    name: "Leave",
+    path: "leave",
+    icon: CalendarDaysIcon,
+    roles: ["ROLE_ADMIN"],
   },
   {
     name: "Projects",
