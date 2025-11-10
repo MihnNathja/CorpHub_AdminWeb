@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLeaveType } from "../hooks/useLeaveType";
+import { useAbsenceType } from "../hooks/useAbsenceType";
 import {
     PlusIcon,
     PencilSquareIcon,
@@ -7,11 +7,11 @@ import {
     CheckCircleIcon,
     XCircleIcon,
 } from "@heroicons/react/24/outline";
-import LeaveTypeModal from "./LeaveTypeModal";
+import AbsenceTypeModal from "./AbsenceTypeModal";
 import FloatingButton from "../../global/components/FloatingButton";
 
-const LeaveTypeTable = () => {
-    const { leaveTypes, create, update, remove } = useLeaveType();
+const AbsenceTypeTable = () => {
+    const { absenceTypes, create, update, remove } = useAbsenceType();
     const [showModal, setShowModal] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
 
@@ -32,7 +32,7 @@ const LeaveTypeTable = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this leave type?")) {
+        if (window.confirm("Are you sure you want to delete this absence type?")) {
             await remove(id);
         }
     };
@@ -43,7 +43,7 @@ const LeaveTypeTable = () => {
             <FloatingButton
                 onClick={openAdd}
                 icon={PlusIcon}
-                tooltip="Add Leave Type"
+                tooltip="Add Absence Type"
                 color="blue"
             />
 
@@ -63,17 +63,17 @@ const LeaveTypeTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {leaveTypes.length === 0 ? (
+                        {absenceTypes.length === 0 ? (
                             <tr>
                                 <td
                                     colSpan="8"
                                     className="text-center py-6 text-gray-500 dark:text-gray-400"
                                 >
-                                    No leave types found.
+                                    No absence types found.
                                 </td>
                             </tr>
                         ) : (
-                            leaveTypes.map((t) => (
+                            absenceTypes.map((t) => (
                                 <tr
                                     key={t.id}
                                     className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
@@ -125,7 +125,7 @@ const LeaveTypeTable = () => {
             </div>
 
             {/* Modal */}
-            <LeaveTypeModal
+            <AbsenceTypeModal
                 show={showModal}
                 onClose={() => setShowModal(false)}
                 onSubmit={handleSubmit}
@@ -135,4 +135,4 @@ const LeaveTypeTable = () => {
     );
 };
 
-export default LeaveTypeTable;
+export default AbsenceTypeTable;

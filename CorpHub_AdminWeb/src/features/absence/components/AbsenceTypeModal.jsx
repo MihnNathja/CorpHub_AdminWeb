@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const LeaveTypeModal = ({ show, onClose, onSubmit, initialData }) => {
+const AbsenceTypeModal = ({ show, onClose, onSubmit, initialData }) => {
     const [form, setForm] = useState({
         code: "",
         name: "",
@@ -38,7 +38,7 @@ const LeaveTypeModal = ({ show, onClose, onSubmit, initialData }) => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 w-full max-w-lg">
                 <h4 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
-                    {initialData ? "Edit Leave Type" : "Add Leave Type"}
+                    {initialData ? "Edit Absence Type" : "Add Absence Type"}
                 </h4>
 
                 <form onSubmit={handleSubmit} className="space-y-3">
@@ -217,4 +217,4 @@ const LeaveTypeModal = ({ show, onClose, onSubmit, initialData }) => {
     );
 };
 
-export default LeaveTypeModal;
+export default AbsenceTypeModal;

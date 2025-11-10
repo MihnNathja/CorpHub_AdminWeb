@@ -57,7 +57,7 @@ const HomePage = () => {
 
   // Attendance (tạm thời comment vì chưa có dữ liệu)
   // const { requests: attendanceRequests } = useAttendances();
-  // const pendingLeaves = attendanceRequests?.filter((r) => r.status === "PENDING") || [];
+  // const pendingAbsences = attendanceRequests?.filter((r) => r.status === "PENDING") || [];
 
   // Meetings
   const emptyEmails = useMemo(() => [], []);
@@ -109,8 +109,8 @@ const HomePage = () => {
         />
         {/* Tạm comment attendance */}
         {/* <StatCard
-          title="Pending Leave Requests"
-          value={pendingLeaves.length}
+          title="Pending Absence Requests"
+          value={pendingAbsences.length}
           icon={ClockIcon}
           color="bg-yellow-500"
         /> */}

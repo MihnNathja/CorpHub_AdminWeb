@@ -2,39 +2,65 @@ import React, { useState } from "react";
 import DepartmentTreeView from "../components/DepartmentTreeView";
 import DepartmentOrgChart from "../components/DepartmentOrgChart";
 import { useDepartmentManagement } from "../hooks/useDepartmentManagement";
-
-// ✅ Dữ liệu mẫu
-const mockDepartments = [
-  {
-    id: 1,
-    name: "Công ty ABC",
-    manager: "Nguyễn Văn A",
-    parentId: null,
-    children: [
-      {
-        id: 2,
-        name: "Phòng Nhân sự",
-        manager: "Trần Thị B",
-        children: [{ id: 5, name: "Tuyển dụng", manager: "Lê Văn C" }],
-      },
-      {
-        id: 3,
-        name: "Phòng IT",
-        manager: "Nguyễn Hữu D",
-        children: [
-          { id: 6, name: "Frontend Team", manager: "Đoàn Minh E" },
-          { id: 7, name: "Backend Team", manager: "Phan Hải F" },
-        ],
-      },
-    ],
-  },
-];
+import {
+  Network,
+  TreePine,
+  PlusCircle,
+  Pencil,
+  Trash2,
+  Loader2,
+  RefreshCcw,
+} from "lucide-react";
+import ConfirmDialog from "../../global/components/ConfirmDialog";
 
 const DepartmentManagementPage = () => {
   const [viewMode, setViewMode] = useState("tree"); // "tree" | "org"
-  // const [departments, setDepartments] = useState(mockDepartments);
+  const [form, setForm] = useState({ id: null, name: "", description: "" });
+  const [isEditing, setIsEditing] = useState(false);
 
-  const { departments } = useDepartmentManagement();
+  const {
+    departments,
+    loading,
+    handleCreate,
+    handleUpdate,
+    handleDelete,
+    reload,
+  } = useDepartmentManagement();
+
+  // 🧾 Xử lý form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim()) return alert("Tên phòng ban không được để trống");
+
+    try {
+      if (isEditing) {
+        await handleUpdate(form.id, form);
+      } else {
+        await handleCreate(form);
+      }
+      setForm({ id: null, name: "", description: "" });
+      setIsEditing(false);
+    } catch (err) {
+      alert("Thao tác thất bại: " + err);
+    }
+  };
+
+  const handleEdit = (dept) => {
+    setForm({ id: dept.id, name: dept.name, description: dept.description });
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setForm({ id: null, name: "", description: "" });
+    setIsEditing(false);
+  };
+
+  const handleRemove = async (id) => {
+    if (window.confirm("Bạn có chắc muốn xóa phòng ban này không?")) {
+      await handleDelete(id);
+    }
+  };
+
   console.log(departments);
 
   return (
@@ -50,35 +76,107 @@ const DepartmentManagementPage = () => {
           </p>
         </div>
 
-        {/* Chuyển chế độ */}
+        {/* Nút đổi chế độ + reload */}
         <div className="flex gap-2">
           <button
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+            onClick={reload}
+            className="flex items-center gap-1 px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+          >
+            <RefreshCcw size={16} />
+          </button>
+
+          <button
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
               viewMode === "tree"
                 ? "bg-blue-600 text-white shadow-md"
                 : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
             }`}
             onClick={() => setViewMode("tree")}
           >
-            🌳 Dạng cây
+            <TreePine size={16} />
+            Dạng cây
           </button>
+
           <button
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
               viewMode === "org"
                 ? "bg-blue-600 text-white shadow-md"
                 : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
             }`}
             onClick={() => setViewMode("org")}
           >
-            🧬 Sơ đồ tổ chức
+            <Network size={16} />
+            Sơ đồ tổ chức
           </button>
         </div>
       </div>
 
-      {/* Chế độ hiển thị */}
+      {/* Form thêm / sửa */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow mb-6 flex flex-col md:flex-row gap-3 border border-gray-200 dark:border-gray-700"
+      >
+        <input
+          type="text"
+          placeholder="Tên phòng ban"
+          className="flex-1 border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Mô tả"
+          className="flex-1 border rounded-lg px-3 py-2 dark:bg-gray-900 dark:border-gray-700 dark:text-white"
+          value={form.description}
+          onChange={(e) => setForm({ ...form, description: e.target.value })}
+        />
+        <div className="flex items-center gap-2">
+          <button
+            type="submit"
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            disabled={loading}
+          >
+            {loading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : isEditing ? (
+              <Pencil size={16} />
+            ) : (
+              <PlusCircle size={16} />
+            )}
+            {isEditing ? "Cập nhật" : "Thêm mới"}
+          </button>
+
+          {isEditing && (
+            <button
+              type="button"
+              onClick={handleCancelEdit}
+              className="px-4 py-2 rounded-lg border text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              Hủy
+            </button>
+          )}
+        </div>
+      </form>
+
+      {/* Danh sách hiển thị */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 transition-all">
-        {viewMode === "tree" && <DepartmentTreeView data={departments} />}
-        {viewMode === "org" && <DepartmentOrgChart data={departments} />}
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 size={24} className="animate-spin text-gray-500" />
+          </div>
+        ) : viewMode === "tree" ? (
+          <DepartmentTreeView
+            data={departments}
+            onEdit={handleEdit}
+            onDelete={handleRemove}
+          />
+        ) : (
+          <DepartmentOrgChart
+            data={departments}
+            onEdit={handleEdit}
+            onDelete={handleRemove}
+          />
+        )}
       </div>
     </div>
   );

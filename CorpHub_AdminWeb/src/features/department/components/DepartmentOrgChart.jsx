@@ -18,7 +18,7 @@ const makeNodesFromDepartments = (departments) => {
   const edges = [];
 
   departments.forEach((dept, index) => {
-    const nodeId = String(dept.departmentId);
+    const nodeId = String(dept.id);
 
     // 🎨 Render nội dung node
     const userList =
@@ -35,7 +35,7 @@ const makeNodesFromDepartments = (departments) => {
 
     const labelHTML = `
       <div style="display:flex;flex-direction:column;align-items:center;">
-        <strong style="font-size:14px;">${dept.departmentName}</strong>
+        <strong style="font-size:14px;">${dept.name}</strong>
         <div style="margin-top:6px;">${userList}</div>
       </div>
     `;

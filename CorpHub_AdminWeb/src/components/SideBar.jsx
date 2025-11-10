@@ -13,7 +13,8 @@ import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
   ArchiveBoxIcon,
-  DocumentIcon
+  DocumentIcon,
+  ClipboardDocumentCheckIcon
 } from "@heroicons/react/24/outline";
 import { UserIcon, Building2Icon, ShieldCheckIcon } from "lucide-react";
 import { CalendarDaysIcon } from "@heroicons/react/24/solid";
@@ -69,10 +70,22 @@ const menu = [
     roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
   },
   {
-    name: "Leave",
-    path: "leave",
+    name: "Schedule",
+    path: "schedule",
     icon: CalendarDaysIcon,
     roles: ["ROLE_ADMIN"],
+  },
+  {
+    name: "Absence",
+    path: "absence",
+    icon: ClipboardDocumentCheckIcon,
+    roles: ["ROLE_ADMIN"],
+  },
+  {
+    name: "Absence",
+    path: "my-absence",
+    icon: ClipboardDocumentCheckIcon,
+    roles: ["ROLE_USER"],
   },
   {
     name: "Projects",

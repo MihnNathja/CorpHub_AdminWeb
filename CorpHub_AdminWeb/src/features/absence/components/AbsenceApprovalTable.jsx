@@ -5,7 +5,7 @@ const dummyApprovals = [
     { approver: "Nguyễn Văn C", action: "REJECTED", note: "Trùng lịch họp", createdAt: "2025-04-10" },
 ];
 
-const LeaveApprovalTable = () => (
+const AbsenceApprovalTable = () => (
     <div className="overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-700 dark:text-gray-300">
             <thead className="text-xs uppercase bg-gray-100 dark:bg-gray-800 dark:text-gray-400">
@@ -32,4 +32,4 @@ const LeaveApprovalTable = () => (
     </div>
 );
 
-export default LeaveApprovalTable;
+export default AbsenceApprovalTable;

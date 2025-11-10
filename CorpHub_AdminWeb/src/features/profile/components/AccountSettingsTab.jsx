@@ -17,7 +17,7 @@ const AccountSettingsTab = ({ profile }) => {
     useProfile();
 
   const [settings, setSettings] = useState({
-    email: profile.email,
+    email: profile.user.username,
     phone: profile.phone,
     twoFactor: true,
     notifications: {
@@ -90,6 +90,7 @@ const AccountSettingsTab = ({ profile }) => {
               onChange={(e) =>
                 setSettings({ ...settings, email: e.target.value })
               }
+              disabled={true}
               className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             />
           </div>

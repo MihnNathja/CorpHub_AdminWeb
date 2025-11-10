@@ -1,17 +1,25 @@
 import React, { useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { ChevronDown, ChevronRight, Users } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Users,
+  Pencil,
+  Trash2,
+  PlusCircle,
+  Crown,
+} from "lucide-react";
 
-const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png"; // ảnh mặc định nếu user chưa có avatar
+const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 // ======================== TreeNode ========================
-const TreeNode = ({ node, moveNode }) => {
-  const [isOpen, setIsOpen] = useState(false); // collapse/expand
+const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
   const [{ isDragging }, drag] = useDrag({
     type: "DEPARTMENT",
-    item: { id: node.departmentId },
+    item: { id: node.id },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -19,8 +27,20 @@ const TreeNode = ({ node, moveNode }) => {
 
   const [, drop] = useDrop({
     accept: "DEPARTMENT",
-    drop: (item) => moveNode(item.id, node.departmentId),
+    drop: (item) => moveNode(item.id, node.id),
   });
+
+  // 🧮 Tính tổng số nhân viên (kể cả cấp con, nếu có)
+  const countUsers = (dept) => {
+    const ownCount = dept.users?.length || 0;
+    const childCount = dept.children?.reduce(
+      (acc, c) => acc + countUsers(c),
+      0
+    );
+    return ownCount + (childCount || 0);
+  };
+
+  const totalUsers = countUsers(node);
 
   return (
     <div
@@ -31,24 +51,73 @@ const TreeNode = ({ node, moveNode }) => {
           : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
       }`}
     >
-      {/* Header: Phòng ban */}
-      <div
-        className="flex items-center justify-between"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <div className="flex items-center gap-2">
-          {isOpen ? (
-            <ChevronDown size={16} className="text-gray-500" />
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        {/* Tên + manager */}
+        <div
+          className="flex items-center gap-2 flex-1"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {node.children?.length > 0 ? (
+            isOpen ? (
+              <ChevronDown size={16} className="text-gray-500" />
+            ) : (
+              <ChevronRight size={16} className="text-gray-500" />
+            )
           ) : (
-            <ChevronRight size={16} className="text-gray-500" />
+            <div className="w-4" />
           )}
           <span className="font-semibold text-gray-800 dark:text-gray-100">
-            {node.departmentName}
+            {node.name}
           </span>
+
+          {node.manager && (
+            <span className="flex items-center text-xs text-gray-500 dark:text-gray-400 ml-2">
+              <Crown size={12} className="mr-1 text-yellow-500" />
+              {node.manager.fullName}
+            </span>
+          )}
         </div>
-        <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 gap-1">
-          <Users size={12} />
-          <span>{node.users?.length || 0}</span>
+
+        {/* Số lượng nhân viên + actions */}
+        <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
+          {/* 👥 Số lượng nhân viên */}
+          <div className="flex items-center gap-1 text-xs">
+            <Users size={13} />
+            <span>{totalUsers}</span>
+          </div>
+
+          {/* Action buttons */}
+          {/* <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddChild?.(node);
+            }}
+            title="Thêm phòng ban con"
+            className="hover:text-green-500"
+          >
+            <PlusCircle size={14} />
+          </button> */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit?.(node);
+            }}
+            title="Chỉnh sửa"
+            className="hover:text-blue-500"
+          >
+            <Pencil size={14} />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete?.(node.id);
+            }}
+            title="Xóa"
+            className="hover:text-red-500"
+          >
+            <Trash2 size={14} />
+          </button>
         </div>
       </div>
 
@@ -75,15 +144,31 @@ const TreeNode = ({ node, moveNode }) => {
           ))}
         </div>
       )}
+
+      {/* Danh sách phòng ban con */}
+      {isOpen && node.children?.length > 0 && (
+        <div className="pl-6 mt-3 space-y-2 border-l border-gray-200 dark:border-gray-700">
+          {node.children.map((child) => (
+            <TreeNode
+              key={child.id}
+              node={child}
+              moveNode={moveNode}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onAddChild={onAddChild}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
 // ======================== DepartmentTreeView ========================
-const DepartmentTreeView = ({ data = [], setData }) => {
+const DepartmentTreeView = ({ data = [], onEdit, onDelete, onAddChild }) => {
   const moveNode = (dragId, targetId) => {
     console.log(`🌀 Di chuyển phòng ban ${dragId} vào phòng ban ${targetId}`);
-    // TODO: cập nhật setData hoặc gọi API backend ở đây
+    // TODO: gọi API backend hoặc cập nhật state ở đây
   };
 
   return (
@@ -91,7 +176,13 @@ const DepartmentTreeView = ({ data = [], setData }) => {
       <div className="space-y-3">
         {data.length > 0 ? (
           data.map((dept) => (
-            <TreeNode key={dept.departmentId} node={dept} moveNode={moveNode} />
+            <TreeNode
+              key={dept.id}
+              node={dept}
+              moveNode={moveNode}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
           ))
         ) : (
           <div className="text-sm text-gray-500 italic">

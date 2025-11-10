@@ -14,9 +14,12 @@ import roomTypeReducer from "../features/room/store/roomTypeSlice";
 import assetReducer from "../features/asset/store/assetSlice";
 import notificationReducer from "../features/notification/store/notificationSlice";
 import profileReducer from "../features/profile/store/profileSlice";
-import leaveTypeReducer from "../features/leave/store/leaveTypeSlice";
-import leaveBalanceReducer from "../features/leave/store/leaveBalanceSlice";
-import holidayReducer from "../features/leave/store/holidayCalendarSlice";
+import absenceTypeReducer from "../features/absence/store/absenceTypeSlice";
+import absenceBalanceReducer from "../features/absence/store/absenceBalanceSlice";
+import absenceRequestReducer from "../features/absence/store/absenceRequestSlice";
+import holidayReducer from "../features/absence/store/holidayCalendarSlice";
+import documentReducer from "../features/profile/store/documentSlice";
+import shiftReducer from "../features/schedule/store/shiftSlice";
 
 export const store = configureStore({
   reducer: {
@@ -35,8 +38,11 @@ export const store = configureStore({
     employees: employeeReducer,
     notification: notificationReducer,
     profile: profileReducer,
-    leaveType: leaveTypeReducer,
-    leaveBalance: leaveBalanceReducer,
+    absenceType: absenceTypeReducer,
+    absenceBalance: absenceBalanceReducer,
+    absenceRequest: absenceRequestReducer,
     holiday: holidayReducer,
+    document: documentReducer,
+    shift: shiftReducer
   },
 });

@@ -2,15 +2,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import {
   changePasswordAsync,
+  getMyEmployeeProfileAsync,
   resetStatus,
   uploadAvatarAsync,
 } from "../store/profileSlice";
+import {
+  downloadDocumentAsync,
+  uploadDocumentsAsync,
+} from "../store/documentSlice";
 
 export const useProfile = () => {
   const dispatch = useDispatch();
-  const { loading, success, error, uploading, uploadSuccess } = useSelector(
-    (state) => state.profile
-  );
+  const { profile, loading, success, error, uploading, uploadSuccess } =
+    useSelector((state) => state.profile);
 
   const [form, setForm] = useState({
     oldPassword: "",
@@ -34,7 +38,22 @@ export const useProfile = () => {
     dispatch(uploadAvatarAsync(file));
   };
 
+  const handleUploadDocument = (formData) => {
+    if (!formData) return;
+    dispatch(uploadDocumentsAsync(formData));
+  };
+
+  const handleDownloadDocument = (documentId) => {
+    if (!documentId) return;
+    dispatch(downloadDocumentAsync(documentId));
+  };
+
+  const fetchBasicInfo = () => {
+    dispatch(getMyEmployeeProfileAsync());
+  };
+
   return {
+    profile,
     form,
     handleChange,
     handleSubmit,
@@ -45,5 +64,8 @@ export const useProfile = () => {
     uploading,
     uploadSuccess,
     handleUploadAvatar,
+    handleUploadDocument,
+    handleDownloadDocument,
+    fetchBasicInfo,
   };
 };

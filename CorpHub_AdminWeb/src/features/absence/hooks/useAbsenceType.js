@@ -1,26 +1,26 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useEffect } from "react";
 import {
-    createLeaveBalance,
-    deleteLeaveBalance,
-    fetchLeaveBalances,
-    updateLeaveBalance,
-} from "../store/leaveBalanceSlice";
+    createAbsenceType,
+    deleteAbsenceType,
+    fetchAbsenceTypes,
+    updateAbsenceType,
+} from "../store/absenceTypeSlice";
 import { showError, showSuccess } from "../../../utils/toastUtils";
 
 /**
- * Hook for managing Leave Balances
+ * Hook for managing Absence Types
  * Provides: data, state, and CRUD actions
  */
-export const useLeaveBalance = () => {
+export const useAbsenceType = () => {
     const dispatch = useDispatch();
-    const { items, loading, error } = useSelector((state) => state.leaveBalance);
+    const { items, loading, error } = useSelector((state) => state.absenceType);
 
     /* =============================
        INITIAL FETCH
     ============================= */
     useEffect(() => {
-        dispatch(fetchLeaveBalances());
+        dispatch(fetchAbsenceTypes());
     }, [dispatch]);
 
     /* =============================
@@ -30,17 +30,17 @@ export const useLeaveBalance = () => {
     const create = useCallback(
         async (data) => {
             try {
-                const res = await dispatch(createLeaveBalance(data));
+                const res = await dispatch(createAbsenceType(data));
                 if (res.meta.requestStatus === "fulfilled") {
-                    showSuccess("Leave Balance created successfully.");
-                    dispatch(fetchLeaveBalances());
+                    showSuccess("Absence type created successfully.");
+                    dispatch(fetchAbsenceTypes());
                 } else {
-                    const msg = res.payload?.message || "Failed to create leave Balance.";
+                    const msg = res.payload?.message || "Failed to create absence type.";
                     showError(msg);
                 }
                 return res;
             } catch (err) {
-                showError("An error occurred while creating the leave balance.");
+                showError("An error occurred while creating the absence type.");
                 console.error(err);
             }
         },
@@ -50,17 +50,17 @@ export const useLeaveBalance = () => {
     const update = useCallback(
         async (id, data) => {
             try {
-                const res = await dispatch(updateLeaveBalance({ id, data }));
+                const res = await dispatch(updateAbsenceType({ id, data }));
                 if (res.meta.requestStatus === "fulfilled") {
-                    showSuccess("Leave Balance updated successfully.");
-                    dispatch(fetchLeaveBalances());
+                    showSuccess("Absence type updated successfully.");
+                    dispatch(fetchAbsenceTypes());
                 } else {
-                    const msg = res.payload?.message || "Failed to update leave balance.";
+                    const msg = res.payload?.message || "Failed to update absence type.";
                     showError(msg);
                 }
                 return res;
             } catch (err) {
-                showError("An error occurred while updating the leave balance.");
+                showError("An error occurred while updating the absence type.");
                 console.error(err);
             }
         },
@@ -70,17 +70,17 @@ export const useLeaveBalance = () => {
     const remove = useCallback(
         async (id) => {
             try {
-                const res = await dispatch(deleteLeaveBalance(id));
+                const res = await dispatch(deleteAbsenceType(id));
                 if (res.meta.requestStatus === "fulfilled") {
-                    showSuccess("Leave Balance deleted successfully.");
-                    dispatch(fetchLeaveBalances());
+                    showSuccess("Absence type deleted successfully.");
+                    dispatch(fetchAbsenceTypes());
                 } else {
-                    const msg = res.payload?.message || "Failed to delete leave balance.";
+                    const msg = res.payload?.message || "Failed to delete absence type.";
                     showError(msg);
                 }
                 return res;
             } catch (err) {
-                showError("An error occurred while deleting the leave balance.");
+                showError("An error occurred while deleting the absence type.");
                 console.error(err);
             }
         },
@@ -91,7 +91,7 @@ export const useLeaveBalance = () => {
        RETURN HOOK VALUE
     ============================= */
     return {
-        leaveBalances: items || [],
+        absenceTypes: items || [],
         loading,
         error,
         create,

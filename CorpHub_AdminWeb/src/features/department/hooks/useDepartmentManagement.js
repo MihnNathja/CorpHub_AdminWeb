@@ -1,8 +1,12 @@
-import { useEffect, useMemo } from "react";
+// src/features/department/hooks/useDepartmentManagement.js
+import { useEffect, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchDepartments,
   loadDepartmentsWithUsers,
+  createDepartment,
+  updateDepartment,
+  deleteDepartment,
 } from "../store/departmentSlice";
 
 export const useDepartmentManagement = () => {
@@ -11,11 +15,88 @@ export const useDepartmentManagement = () => {
     (state) => state.department
   );
 
+  // 🔄 Tải danh sách phòng ban khi mount
   useEffect(() => {
     dispatch(loadDepartmentsWithUsers());
   }, [dispatch]);
 
+  // 🧠 Memo hóa dữ liệu để tránh re-render thừa
   const stableDepartments = useMemo(() => departments || [], [departments]);
 
-  return { departments: stableDepartments, loading, error };
+  // 🔁 Tải lại danh sách (dùng cho nút refresh)
+  const reload = useCallback(() => {
+    dispatch(loadDepartmentsWithUsers());
+  }, [dispatch]);
+
+  // ➕ Thêm phòng ban
+  const handleCreate = useCallback(
+    async (data) => {
+      try {
+        await dispatch(createDepartment(data)).unwrap();
+        reload();
+      } catch (err) {
+        console.error("Create department failed:", err);
+        throw err;
+      }
+    },
+    [dispatch, reload]
+  );
+
+  // ✏️ Cập nhật phòng ban
+  const handleUpdate = useCallback(
+    async (id, data) => {
+      try {
+        await dispatch(updateDepartment({ id, data })).unwrap();
+        reload();
+      } catch (err) {
+        console.error("Update department failed:", err);
+        throw err;
+      }
+    },
+    [dispatch, reload]
+  );
+
+  // ❌ Xóa phòng ban
+  const handleDelete = useCallback(
+    async (id) => {
+      try {
+        await dispatch(deleteDepartment(id)).unwrap();
+        reload();
+      } catch (err) {
+        console.error("Delete department failed:", err);
+        throw err;
+      }
+    },
+    [dispatch, reload]
+  );
+
+  // 👤 Gán trưởng phòng (manager)
+  const handleAssignManager = useCallback(
+    async (departmentId, managerId) => {
+      try {
+        await dispatch(
+          updateDepartment({
+            id: departmentId,
+            data: { managerId },
+          })
+        ).unwrap();
+        reload();
+      } catch (err) {
+        console.error("Assign manager failed:", err);
+        throw err;
+      }
+    },
+    [dispatch, reload]
+  );
+
+  return {
+    departments: stableDepartments,
+    loading,
+    error,
+    reload,
+    handleCreate,
+    handleUpdate,
+    handleDelete,
+    handleAssignManager,
+  };
 };
