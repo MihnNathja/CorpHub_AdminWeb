@@ -1,4 +1,7 @@
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, AlertTriangle } from "lucide-react";
+import { useState } from "react";
+
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
 const DocumentUploadPanel = ({
   pendingFiles,
@@ -8,6 +11,7 @@ const DocumentUploadPanel = ({
   uploading,
   profileId,
 }) => {
+  const [error, setError] = useState("");
   const allTyped = pendingFiles.every((item) => item.typeId);
 
   const handleMetaChange = (index, field, value) => {
@@ -17,6 +21,18 @@ const DocumentUploadPanel = ({
   };
 
   const handleSubmit = () => {
+    // 🔹 Kiểm tra kích thước file
+    const tooLarge = pendingFiles.find(
+      (f) => f.file && f.file.size > MAX_FILE_SIZE
+    );
+    if (tooLarge) {
+      setError(
+        `❌ File "${tooLarge.file.name}" vượt quá dung lượng cho phép (tối đa 50MB).`
+      );
+      return;
+    }
+
+    setError("");
     const metaList = pendingFiles.map((item) => ({
       documentTypeId: item.typeId,
       title: item.title,
@@ -36,6 +52,14 @@ const DocumentUploadPanel = ({
           <X size={16} className="text-gray-500 hover:text-red-600" />
         </button>
       </div>
+
+      {/* ⚠️ Cảnh báo lỗi nếu có */}
+      {error && (
+        <div className="flex items-center gap-2 bg-red-100 text-red-700 text-sm p-2 rounded-xl">
+          <AlertTriangle size={16} />
+          <span>{error}</span>
+        </div>
+      )}
 
       {pendingFiles.map((item, idx) => (
         <div

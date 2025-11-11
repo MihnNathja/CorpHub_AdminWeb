@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
-import { LayoutList, BarChart3, AlertCircle } from "lucide-react";
-import Section from "../Section";
+import { useState, useMemo, useEffect } from "react";
+import { LayoutList, BarChart3, AlertCircle, Plus } from "lucide-react";
+import Section from "../../Section";
 import CompetencyTable from "./CompetencyTable";
 import {
   RadarChart,
@@ -10,6 +10,9 @@ import {
   PolarRadiusAxis,
   ResponsiveContainer,
 } from "recharts";
+import AddCompetencyForm from "./AddCompetencyForm";
+import { useCompetency } from "../../../hooks/useCompetency";
+import { useDocument } from "../../../hooks/useDocument";
 
 // ====================== Utility ======================
 const levelToValue = (level) => {
@@ -51,7 +54,7 @@ const SkillProgress = ({ name, level }) => {
 const CompetencyRadar = ({ competencies }) => {
   const data = competencies.map((c) => ({
     name: c.name,
-    levelValue: levelToValue(c.level),
+    levelValue: levelToValue(c.levelName),
   }));
 
   if (data.length === 0)
@@ -82,79 +85,129 @@ const CompetencyRadar = ({ competencies }) => {
 };
 
 // ====================== Component chính ======================
-const CompetencySection = ({ competencies }) => {
-  const [viewMode, setViewMode] = useState("table"); // table | chart
-  const [selectedSkills, setSelectedSkills] = useState(() =>
-    competencies.slice(0, 5).map((c) => c.id)
-  );
+const CompetencySection = ({ profile }) => {
+  const [viewMode, setViewMode] = useState("table");
+  const [selectedSkills, setSelectedSkills] = useState([]);
   const [warning, setWarning] = useState("");
+  const [showForm, setShowForm] = useState(false);
 
   const MAX_SKILLS = 8;
 
+  // ✅ Dữ liệu từ Redux store
+  const {
+    items,
+    create: createCompetency,
+    getMyCompetencies,
+    loading,
+  } = useCompetency();
+  const { downloadDocument } = useDocument();
+
+  // ✅ Lần đầu load danh sách
+  useEffect(() => {
+    getMyCompetencies(true);
+  }, [getMyCompetencies]);
+
+  // ✅ Khi items thay đổi, tự chọn 5 đầu tiên để hiển thị radar
+  useEffect(() => {
+    if (items.length > 0 && selectedSkills.length === 0) {
+      setSelectedSkills(items.slice(0, 5).map((c) => c.id));
+    }
+  }, [items]);
+
   const filteredCompetencies = useMemo(
-    () => competencies.filter((c) => selectedSkills.includes(c.id)),
-    [competencies, selectedSkills]
+    () => items.filter((c) => selectedSkills.includes(c.id)),
+    [items, selectedSkills]
   );
 
   const handleToggleSkill = (id) => {
-    setWarning(""); // reset cảnh báo
-
+    setWarning("");
     setSelectedSkills((prev) => {
       const isSelected = prev.includes(id);
-
-      if (isSelected) {
-        return prev.filter((s) => s !== id);
-      }
-
-      // Nếu thêm mới mà đã đủ giới hạn
+      if (isSelected) return prev.filter((s) => s !== id);
       if (prev.length >= MAX_SKILLS) {
         setWarning(
           `⚠️ Chỉ được chọn tối đa ${MAX_SKILLS} kỹ năng để hiển thị trên biểu đồ.`
         );
         return prev;
       }
-
       return [...prev, id];
     });
+  };
+
+  const handleAdded = async (payload) => {
+    await createCompetency(payload);
+    setShowForm(false);
   };
 
   return (
     <Section
       title="Chứng chỉ & Kỹ năng"
       right={
-        <button
-          onClick={() => setViewMode(viewMode === "table" ? "chart" : "table")}
-          className="px-3 py-1.5 text-sm border rounded-xl hover:bg-gray-50 flex items-center gap-1"
-        >
-          {viewMode === "table" ? (
-            <>
-              <BarChart3 size={16} /> Dạng biểu đồ
-            </>
-          ) : (
-            <>
-              <LayoutList size={16} /> Dạng bảng
-            </>
-          )}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowForm((s) => !s)}
+            className="px-3 py-1.5 text-sm border rounded-xl hover:bg-gray-50 flex items-center gap-1"
+          >
+            <Plus size={16} /> Thêm mới
+          </button>
+          <button
+            onClick={() =>
+              setViewMode(viewMode === "table" ? "chart" : "table")
+            }
+            className="px-3 py-1.5 text-sm border rounded-xl hover:bg-gray-50 flex items-center gap-1"
+          >
+            {viewMode === "table" ? (
+              <>
+                <BarChart3 size={16} /> Dạng biểu đồ
+              </>
+            ) : (
+              <>
+                <LayoutList size={16} /> Dạng bảng
+              </>
+            )}
+          </button>
+        </div>
       }
     >
+      {/* 🔹 Form thêm mới */}
+      {showForm && (
+        <div className="mb-6">
+          <AddCompetencyForm
+            profile={profile}
+            onCancel={() => setShowForm(false)}
+            onAdded={handleAdded}
+          />
+        </div>
+      )}
+
+      {/* 🔹 Loading indicator */}
+      {loading && (
+        <div className="text-sm text-blue-600 italic mb-2">
+          Đang tải dữ liệu...
+        </div>
+      )}
+
+      {/* 🔹 Nội dung chính */}
       {viewMode === "table" ? (
-        <CompetencyTable items={competencies} />
+        <CompetencyTable
+          items={items}
+          onDownload={(id) => downloadDocument(id)}
+        />
       ) : (
         <div className="mt-4 space-y-6">
-          {/* Khu chọn kỹ năng */}
+          {/* Chọn kỹ năng hiển thị */}
           <div>
             <h4 className="font-medium text-sm mb-2">
               Chọn kỹ năng hiển thị trên biểu đồ
             </h4>
-            {competencies.length === 0 ? (
+            {items.length === 0 ? (
               <div className="text-sm text-gray-500 italic">
                 Không có kỹ năng nào để chọn
               </div>
             ) : (
               <>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-36 overflow-y-auto">
-                  {competencies.map((c) => (
+                  {items.map((c) => (
                     <label
                       key={c.id}
                       className="flex items-center gap-2 text-sm cursor-pointer"
@@ -182,19 +235,22 @@ const CompetencySection = ({ competencies }) => {
             )}
           </div>
 
-          {/* Biểu đồ radar + thanh kỹ năng */}
+          {/* Radar + Progress */}
           <div className="grid md:grid-cols-2 gap-8">
             <div>
               <h4 className="font-medium text-sm mb-2">Biểu đồ kỹ năng</h4>
               <CompetencyRadar competencies={filteredCompetencies} />
             </div>
-
             <div>
               <h4 className="font-medium text-sm mb-2">Mức độ chi tiết</h4>
               <div className="space-y-3 max-h-72 overflow-y-auto pr-2">
                 {filteredCompetencies.length > 0 ? (
                   filteredCompetencies.map((c) => (
-                    <SkillProgress key={c.id} name={c.name} level={c.level} />
+                    <SkillProgress
+                      key={c.id}
+                      name={c.name}
+                      level={c.levelName}
+                    />
                   ))
                 ) : (
                   <div className="text-sm text-gray-500 italic">

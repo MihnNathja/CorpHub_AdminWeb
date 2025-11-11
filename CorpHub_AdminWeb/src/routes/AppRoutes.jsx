@@ -16,6 +16,7 @@ import DepartmentManagementPage from "../features/department/pages/DepartmentMan
 import AccountLockedPage from "../pages/AccountLockedPage";
 import EmployeeProfilePage from "../features/profile/pages/EmployeeProfilePage";
 import AssetPage from "../features/asset/page/AssetPage";
+import AdminSettingsPage from "../features/settings/pages/AdminSettingPage";
 
 const AppRoutes = () => {
   return (
@@ -40,7 +41,7 @@ const AppRoutes = () => {
           <Route path="my-tickets" element={<EmployeeTicketPage />} />
           <Route path="projects" element={<FeatureComingSoonPage />} />
           <Route path="calendar" element={<CalendarPage />} />
-          <Route path="settings" element={<FeatureComingSoonPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
           <Route path="profile" element={<EmployeeProfilePage />} />
         </Route>
       </Route>

@@ -16,6 +16,7 @@ import notificationReducer from "../features/notification/store/notificationSlic
 import profileReducer from "../features/profile/store/profileSlice";
 import documentReducer from "../features/profile/store/documentSlice";
 import competencyReducer from "../features/profile/store/competencySlice";
+import parameterReducer from "../features/settings/store/parameterSlice";
 
 export const store = configureStore({
   reducer: {
@@ -36,5 +37,6 @@ export const store = configureStore({
     profile: profileReducer,
     document: documentReducer,
     competency: competencyReducer,
+    parameter: parameterReducer,
   },
 });

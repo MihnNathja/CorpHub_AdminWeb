@@ -4,12 +4,12 @@ import Section from "../Section";
 import CurrentJobSummary from "./CurrentJobSummary";
 import EmploymentHistoryToolbar from "./EmploymentHistoryToolbar";
 import EmploymentHistoryTable from "./EmploymentHistoryTable";
-import CompetencyTable from "./CompetencyTable";
-import CompetencySection from "./CompetencySection";
+import CompetencyTable from "./competency/CompetencyTable";
+import CompetencySection from "./competency/CompetencySection";
 import { mockJobProfile } from "../../mockJobProfile";
 import { useCompetency } from "../../hooks/useCompetency";
 
-const JobProfileTab = ({}) => {
+const JobProfileTab = ({ profiles }) => {
   const { items, getMyCompetencies } = useCompetency();
 
   useEffect(() => {
@@ -110,7 +110,7 @@ const JobProfileTab = ({}) => {
       </Section>
 
       {/* NĂNG LỰC & CHỨNG CHỈ */}
-      <CompetencySection competencies={competencies} />
+      <CompetencySection profile={profiles} competencies={competencies} />
     </div>
   );
 };

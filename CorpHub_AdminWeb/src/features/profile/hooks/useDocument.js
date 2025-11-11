@@ -46,11 +46,17 @@ export const useDocument = () => {
 
   const uploadDocuments = useCallback(
     async (formData) => {
+      console.log("Gọi đến API upload: ", formData);
       await dispatch(uploadDocumentsAsync(formData));
       getMyDocuments(true);
     },
     [dispatch]
   );
+
+  const uploadDocument = async (formData) => {
+    const res = await dispatch(uploadDocumentsAsync(formData)).unwrap();
+    return res; // đây là documentIds được return trong slice
+  };
 
   const downloadDocument = useCallback(
     async (documentId) => {
@@ -98,6 +104,7 @@ export const useDocument = () => {
     ...state,
     getTypes,
     uploadDocuments,
+    uploadDocument,
     downloadDocument,
     getMyDocuments,
   };

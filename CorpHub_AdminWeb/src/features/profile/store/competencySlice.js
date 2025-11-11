@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getMyCompetencies } from "../services/competencyApi";
+import {
+  createCompetency,
+  getCompetencyTypes,
+  getMyCompetencies,
+} from "../services/competencyApi";
 
 export const fetchMyCompetencies = createAsyncThunk(
   "competency/fetchMyCompetencies",
@@ -14,56 +18,53 @@ export const fetchMyCompetencies = createAsyncThunk(
   }
 );
 
+export const fetchCompetencyTypes = createAsyncThunk(
+  "competency/fetchCompetencyTypes",
+  async () => {
+    return await getCompetencyTypes();
+  }
+);
+
+export const addCompetency = createAsyncThunk(
+  "competency/addCompetency",
+  async ({ competency }, { rejectWithValue }) => {
+    try {
+      const res = await createCompetency(competency);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
 const competencySlice = createSlice({
   name: "competency",
   initialState: {
     items: [],
     types: [],
     loading: false,
+    error: false,
+    success: false,
   },
-  reducers: {},
+  reducers: {
+    resetCompetencyState: (state) => {
+      state.error = null;
+      state.success = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      //   .addCase(fetchDocumentTypes.pending, (state) => {
-      //     state.loading = true;
-      //   })
-      //   .addCase(fetchDocumentTypes.fulfilled, (state, action) => {
-      //     state.loading = false;
-      //     state.types = action.payload;
-      //   })
-      //   .addCase(fetchDocumentTypes.rejected, (state) => {
-      //     state.loading = false;
-      //   })
-      // Upload Document
-      //   .addCase(uploadDocumentsAsync.pending, (state) => {
-      //     state.uploading = true;
-      //     state.error = null;
-      //   })
-      //   .addCase(uploadDocumentsAsync.fulfilled, (state) => {
-      //     state.uploading = false;
-      //     state.uploadSuccess = true;
-      //   })
-      //   .addCase(uploadDocumentsAsync.rejected, (state, action) => {
-      //     state.uploading = false;
-      //state.error = action.payload;
-      //   })
-      // Download Document
-      //   .addCase(downloadDocumentAsync.pending, (state) => {
-      //     state.downloading = true;
-      //     state.downloadSuccess = false;
-      //     state.error = null;
-      //   })
-      //   .addCase(downloadDocumentAsync.fulfilled, (state) => {
-      //     state.downloading = false;
-      //     state.downloadSuccess = true;
-      //   })
-      //   .addCase(downloadDocumentAsync.rejected, (state, action) => {
-      //     state.downloading = false;
-      //     state.error = action.payload;
-      //     state.downloadSuccess = false;
-      //     // showError("Không thể tải tài liệu."); // optional
-      //   })
-      // Fetch My Document
+      .addCase(fetchCompetencyTypes.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchCompetencyTypes.fulfilled, (state, action) => {
+        state.loading = false;
+        state.types = action.payload;
+      })
+      .addCase(fetchCompetencyTypes.rejected, (state) => {
+        state.loading = false;
+      })
+
       .addCase(fetchMyCompetencies.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -75,8 +76,24 @@ const competencySlice = createSlice({
       .addCase(fetchMyCompetencies.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // --- Add Competency ---
+      .addCase(addCompetency.pending, (state) => {
+        state.loading = true;
+        state.success = false;
+      })
+      .addCase(addCompetency.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.items.push(action.payload);
+      })
+      .addCase(addCompetency.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.success = false;
       });
   },
 });
-
+export const { resetCompetencyState } = competencySlice.actions;
 export default competencySlice.reducer;

@@ -31,9 +31,10 @@ export const uploadDocumentsAsync = createAsyncThunk(
   "document/uploadDocuments",
   async (formData, { rejectWithValue }) => {
     try {
-      console.log(formData);
-      await uploadEmployeeDocuments(formData);
+      const documentIds = await uploadEmployeeDocuments(formData);
       showSuccess("Upload successfully");
+      console.log("Kết quả gọi API upload: ", documentIds);
+      return documentIds;
     } catch (err) {
       showError("Upload failed");
 
@@ -78,6 +79,7 @@ const documentSlice = createSlice({
   initialState: {
     items: [],
     types: [],
+    documentIds: [],
     loading: false,
     uploading: false,
     uploadSuccess: false,
@@ -102,9 +104,10 @@ const documentSlice = createSlice({
         state.uploading = true;
         state.error = null;
       })
-      .addCase(uploadDocumentsAsync.fulfilled, (state) => {
+      .addCase(uploadDocumentsAsync.fulfilled, (state, action) => {
         state.uploading = false;
         state.uploadSuccess = true;
+        state.documentIds = action.payload;
       })
       .addCase(uploadDocumentsAsync.rejected, (state, action) => {
         state.uploading = false;

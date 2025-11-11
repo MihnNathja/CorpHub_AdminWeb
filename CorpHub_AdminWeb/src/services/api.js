@@ -7,6 +7,8 @@ const api = axios.create({
   baseURL: "http://localhost:8080/",
   timeout: 0,
   withCredentials: true, // gửi cookie (refreshToken)
+  maxContentLength: Infinity, // ⬅ cho phép tải file lớn
+  maxBodyLength: Infinity, // ⬅ cho phép upload file lớn
 });
 
 // ✅ Gắn access token vào header
