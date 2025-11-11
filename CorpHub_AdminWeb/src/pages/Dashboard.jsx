@@ -9,15 +9,17 @@ const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900 transition-colors overflow-hidden">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900 transition-colors overflow-y-hidden">
+
       {/* Sidebar */}
       <Sidebar onToggle={setCollapsed} />
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col relative">
+      <div className="flex-1 flex flex-col relative min-w-0">
+
         <Navbar user={user} collapsed={collapsed} />
 
-        <main className="flex-1 overflow-auto pt-14 px-6 text-gray-900 dark:text-gray-100 transition-colors">
+        <main className="flex-1 overflow-y-auto pt-14 px-6 text-gray-900 dark:text-gray-100 transition-colors min-w-0">
           <Outlet />
         </main>
       </div>

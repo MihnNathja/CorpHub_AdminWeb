@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ShiftTable from "../components/ShiftTable";
 import { Calendar, Clock } from "lucide-react";
-import WorkScheduleMatrix from "../components/WorkScheduleMatrix";
+import ScheduleTimesheet from "../components/ScheduleTimeSheet";
 
 const SchedulePage = () => {
     const [tab, setTab] = useState("shift");
@@ -12,7 +12,10 @@ const SchedulePage = () => {
     ];
 
     return (
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6 relative">
+        <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6 relative w-full overflow-x-auto">
+
+            {/* ✅ overflow-x-auto giúp tạo horizontal scroll khi bảng rộng hơn */}
+
             <h2 className="text-xl font-bold mb-6 text-gray-800 dark:text-gray-100">
                 Quản lý Lịch làm việc
             </h2>
@@ -33,7 +36,11 @@ const SchedulePage = () => {
                 ))}
             </div>
 
-            {tab === "shift" ? <ShiftTable /> : <WorkScheduleMatrix />}
+            <div className="w-full overflow-x-auto">
+
+                {/* ✅ Lớp này đảm bảo nội dung bên trong không giãn vượt container */}
+                {tab === "shift" ? <ShiftTable /> : <ScheduleTimesheet />}
+            </div>
         </div>
     );
 };

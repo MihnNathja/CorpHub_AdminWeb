@@ -4,6 +4,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
+    "./src/assets/css/*.css"
   ],
   theme: {
     extend: {

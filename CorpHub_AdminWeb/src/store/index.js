@@ -20,6 +20,7 @@ import absenceRequestReducer from "../features/absence/store/absenceRequestSlice
 import holidayReducer from "../features/absence/store/holidayCalendarSlice";
 import documentReducer from "../features/profile/store/documentSlice";
 import shiftReducer from "../features/schedule/store/shiftSlice";
+import scheduleReducer from "../features/schedule/store/scheduleSlice";
 
 export const store = configureStore({
   reducer: {
@@ -43,6 +44,7 @@ export const store = configureStore({
     absenceRequest: absenceRequestReducer,
     holiday: holidayReducer,
     document: documentReducer,
-    shift: shiftReducer
+    shift: shiftReducer,
+    schedule: scheduleReducer
   },
 });
