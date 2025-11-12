@@ -21,10 +21,15 @@ const DocumentsTab = ({ profile }) => {
     uploading,
     downloading,
     downloadingIds,
+    checking,
+    deleting,
+    relationInfo,
     getTypes,
     getMyDocuments,
     uploadDocuments,
     downloadDocument,
+    checkRelations,
+    removeDocument,
   } = useDocument();
 
   // ================== INIT ==================
@@ -146,6 +151,11 @@ const DocumentsTab = ({ profile }) => {
           documents={filteredDocuments}
           downloadingIds={downloadingIds}
           handleDownload={downloadDocument}
+          handleDelete={removeDocument}
+          checkRelation={checkRelations}
+          checking={checking}
+          deleting={deleting}
+          relationInfo={relationInfo}
         />
       ) : (
         <DocumentSectionView
