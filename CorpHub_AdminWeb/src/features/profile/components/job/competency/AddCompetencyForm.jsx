@@ -1,5 +1,5 @@
 import { AlertCircle } from "lucide-react";
-import { useAddCompetencyForm } from "../../../hooks/useAddCompetencyForm";
+import { useCompetencyForm } from "../../../hooks/useCompetencyForm";
 import CompetencyBasicInfo from "./CompetencyBasicInfo";
 import CompetencyFileUpload from "./CompetencyFileUpload";
 
@@ -27,7 +27,7 @@ export default function AddCompetencyForm({ profile, onCancel, onAdded }) {
     resetForm,
     documents,
     getMyDocuments,
-  } = useAddCompetencyForm(profile);
+  } = useCompetencyForm(profile);
 
   const handleSubmit = () => {
     if (!form.name)

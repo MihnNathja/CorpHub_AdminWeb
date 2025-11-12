@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useCompetency } from "./useCompetency";
 import { useDocument } from "./useDocument";
 
-export function useAddCompetencyForm(profile) {
+export function useCompetencyForm(profile, initialData = null) {
   const DEFAULT_FORM = {
     id: null,
     typeId: "",
@@ -25,7 +25,14 @@ export function useAddCompetencyForm(profile) {
     uploaded: false,
   };
 
-  const [form, setForm] = useState(DEFAULT_FORM);
+  const [form, setForm] = useState(initialData || DEFAULT_FORM);
+
+  useEffect(() => {
+    if (initialData) {
+      setForm(initialData);
+    }
+  }, [initialData]);
+
   const [error, setError] = useState("");
   const [showCustomLevel, setShowCustomLevel] = useState(false);
   const [pendingFiles, setPendingFiles] = useState([]);

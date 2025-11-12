@@ -37,7 +37,6 @@ export const uploadDocumentsAsync = createAsyncThunk(
       return documentIds;
     } catch (err) {
       showError("Upload failed");
-
       return rejectWithValue(err.response?.data || "Upload failed");
     }
   }

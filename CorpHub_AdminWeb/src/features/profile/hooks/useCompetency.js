@@ -88,6 +88,7 @@ export const useCompetency = () => {
 
   // ====================== UPDATE ======================
   const update = async (formData) => {
+    console.log("hook", formData);
     let documentId = formData.documentId;
 
     try {

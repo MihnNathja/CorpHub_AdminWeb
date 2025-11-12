@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import EditCompetencyModal from "./EditCompetencyModal";
+import { useCompetencyForm } from "../../../hooks/useCompetencyForm";
 
 const fmt = (d) =>
   d
@@ -25,6 +27,12 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
 
   const [openConfirm, setOpenConfirm] = useState(false);
   const [isDeletedFile, setIsDeletedFile] = useState(false);
+  const [selectedCompetency, setSelectedCompetency] = useState(null);
+
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editTarget, setEditTarget] = useState(null);
+
+  const { levelOptions, types } = useCompetencyForm();
 
   return (
     <div className="overflow-x-auto mt-3 relative">
@@ -123,7 +131,8 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
                     <div className="absolute right-2 top-8 bg-white border rounded-lg shadow-lg w-40 z-10">
                       <button
                         onClick={() => {
-                          onEdit?.(c);
+                          setEditTarget(c);
+                          setOpenEdit(true);
                           setOpenRow(null);
                         }}
                         className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-50 text-left"
@@ -133,6 +142,7 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
 
                       <button
                         onClick={() => {
+                          setSelectedCompetency(c);
                           setOpenRow(null);
                           setOpenConfirm(true);
                         }}
@@ -142,22 +152,6 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
                       </button>
                     </div>
                   )}
-                  <ConfirmDeleteModal
-                    open={openConfirm}
-                    title="Xác nhận xóa chứng chỉ"
-                    message={`Bạn có chắc muốn xóa chứng chỉ "${c.name}" không?`}
-                    isDeletedFile={isDeletedFile}
-                    setIsDeletedFile={setIsDeletedFile}
-                    onClose={() => {
-                      setOpenConfirm(false);
-                      setIsDeletedFile(false);
-                    }}
-                    onConfirm={() => {
-                      onDelete?.(c.id, isDeletedFile);
-                      setOpenConfirm(false);
-                      setIsDeletedFile(false);
-                    }}
-                  />
                 </td>
               </tr>
             ))
@@ -170,6 +164,44 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
           )}
         </tbody>
       </table>
+      {selectedCompetency && (
+        <ConfirmDeleteModal
+          open={openConfirm}
+          title="Xác nhận xóa chứng chỉ"
+          message={`Bạn có chắc muốn xóa chứng chỉ "${selectedCompetency.name}" không?`}
+          isDeletedFile={isDeletedFile}
+          setIsDeletedFile={setIsDeletedFile}
+          onClose={() => {
+            setOpenConfirm(false);
+            setIsDeletedFile(false);
+            setSelectedCompetency(null);
+          }}
+          onConfirm={() => {
+            onDelete?.(selectedCompetency.id, isDeletedFile);
+            setOpenConfirm(false);
+            setIsDeletedFile(false);
+            setSelectedCompetency(null);
+          }}
+        />
+      )}
+      {editTarget && (
+        <EditCompetencyModal
+          open={openEdit}
+          data={editTarget}
+          types={types}
+          levels={levelOptions}
+          onClose={() => {
+            setOpenEdit(false);
+            setEditTarget(null);
+          }}
+          onSubmit={(form) => {
+            console.log("Table:", form);
+            onEdit?.(form); // gọi callback từ cha
+            setOpenEdit(false);
+            setEditTarget(null);
+          }}
+        />
+      )}
     </div>
   );
 };
