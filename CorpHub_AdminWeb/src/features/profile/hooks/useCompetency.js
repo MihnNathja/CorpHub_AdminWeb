@@ -5,6 +5,7 @@ import {
   addCompetency,
   fetchCompetencyTypes,
   fetchMyCompetencies,
+  removeCompetency,
 } from "../store/competencySlice";
 import { uploadDocumentsAsync } from "../store/documentSlice";
 import { showError, showSuccess } from "../../../utils/toastUtils";
@@ -70,6 +71,18 @@ export const useCompetency = () => {
     }
   };
 
+  const remove = async (id) => {
+    try {
+      await dispatch(removeCompetency({ competencyId: id })).unwrap();
+      showSuccess("🗑️ Đã xóa chứng chỉ thành công");
+      await dispatch(fetchMyCompetencies());
+    } catch (err) {
+      showError("❌ Lỗi khi xóa chứng chỉ");
+      console.error("❌ Lỗi xóa competency:", err);
+      throw err;
+    }
+  };
+
   const state = useMemo(
     () => ({
       items,
@@ -83,6 +96,7 @@ export const useCompetency = () => {
     error,
     success,
     create,
+    remove,
     getMyCompetencies,
     loadTypes: getTypes,
   };

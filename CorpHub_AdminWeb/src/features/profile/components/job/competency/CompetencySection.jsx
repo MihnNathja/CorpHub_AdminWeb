@@ -97,6 +97,7 @@ const CompetencySection = ({ profile }) => {
   const {
     items,
     create: createCompetency,
+    remove: removeCompetency,
     getMyCompetencies,
     loading,
   } = useCompetency();
@@ -192,6 +193,7 @@ const CompetencySection = ({ profile }) => {
         <CompetencyTable
           items={items}
           onDownload={(id) => downloadDocument(id)}
+          onDelete={(id) => removeCompetency(id)}
         />
       ) : (
         <div className="mt-4 space-y-6">

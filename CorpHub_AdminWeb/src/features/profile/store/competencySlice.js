@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   createCompetency,
+  deleteCompetency,
   getCompetencyTypes,
   getMyCompetencies,
 } from "../services/competencyApi";
@@ -30,6 +31,18 @@ export const addCompetency = createAsyncThunk(
   async ({ competency }, { rejectWithValue }) => {
     try {
       const res = await createCompetency(competency);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const removeCompetency = createAsyncThunk(
+  "competency/removeCompetency",
+  async ({ competencyId }, { rejectWithValue }) => {
+    try {
+      const res = await deleteCompetency(competencyId);
       return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -92,6 +105,20 @@ const competencySlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.success = false;
+      })
+      // === REMOVE COMPETENCY ===
+      .addCase(removeCompetency.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(removeCompetency.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = state.items.filter(
+          (item) => item.id !== action.meta.arg.competencyId
+        );
+      })
+      .addCase(removeCompetency.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
