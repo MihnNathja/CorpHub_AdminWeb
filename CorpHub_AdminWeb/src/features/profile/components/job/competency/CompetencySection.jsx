@@ -193,7 +193,7 @@ const CompetencySection = ({ profile }) => {
         <CompetencyTable
           items={items}
           onDownload={(id) => downloadDocument(id)}
-          onDelete={(id) => removeCompetency(id)}
+          onDelete={(id, isDeletedFile) => removeCompetency(id, isDeletedFile)}
         />
       ) : (
         <div className="mt-4 space-y-6">

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useMemo, useState } from "react";
 import {
   addCompetency,
+  changeCompetency,
   fetchCompetencyTypes,
   fetchMyCompetencies,
   removeCompetency,
@@ -71,14 +72,51 @@ export const useCompetency = () => {
     }
   };
 
-  const remove = async (id) => {
+  const remove = async (id, isDeletedFile) => {
     try {
-      await dispatch(removeCompetency({ competencyId: id })).unwrap();
+      await dispatch(
+        removeCompetency({ competencyId: id, isDeletedFile })
+      ).unwrap();
       showSuccess("🗑️ Đã xóa chứng chỉ thành công");
       await dispatch(fetchMyCompetencies());
     } catch (err) {
       showError("❌ Lỗi khi xóa chứng chỉ");
       console.error("❌ Lỗi xóa competency:", err);
+      throw err;
+    }
+  };
+
+  // ====================== UPDATE ======================
+  const update = async (formData) => {
+    let documentId = formData.documentId;
+
+    try {
+      // 🔹 Nếu có file mới thì upload trước
+      if (formData.file) {
+        const fd = new FormData();
+        fd.append("files", formData.file);
+        const uploadedIds = await dispatch(uploadDocumentsAsync(fd)).unwrap();
+        documentId = uploadedIds?.[0];
+      }
+
+      // 🔹 Gom dữ liệu update
+      const payload = {
+        ...formData,
+        documentId,
+      };
+      delete payload.file;
+
+      // 🔹 Gọi API update
+      const result = await dispatch(
+        changeCompetency({ competency: payload })
+      ).unwrap();
+
+      showSuccess("🔄 Cập nhật chứng chỉ thành công");
+      await dispatch(fetchMyCompetencies());
+      return result;
+    } catch (err) {
+      showError("❌ Lỗi khi cập nhật chứng chỉ");
+      console.error("❌ Lỗi cập nhật competency:", err);
       throw err;
     }
   };
@@ -96,6 +134,7 @@ export const useCompetency = () => {
     error,
     success,
     create,
+    update,
     remove,
     getMyCompetencies,
     loadTypes: getTypes,

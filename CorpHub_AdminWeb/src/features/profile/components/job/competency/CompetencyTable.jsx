@@ -9,6 +9,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
 const fmt = (d) =>
   d
@@ -21,6 +22,9 @@ const fmt = (d) =>
 const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
   const [openRow, setOpenRow] = useState(null);
   const toggleMenu = (id) => setOpenRow(openRow === id ? null : id);
+
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [isDeletedFile, setIsDeletedFile] = useState(false);
 
   return (
     <div className="overflow-x-auto mt-3 relative">
@@ -129,14 +133,8 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
 
                       <button
                         onClick={() => {
-                          if (
-                            window.confirm(
-                              `Bạn có chắc muốn xóa chứng chỉ "${c.name}" không?`
-                            )
-                          ) {
-                            onDelete?.(c.id);
-                          }
                           setOpenRow(null);
+                          setOpenConfirm(true);
                         }}
                         className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-50 text-left text-red-600"
                       >
@@ -144,6 +142,22 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
                       </button>
                     </div>
                   )}
+                  <ConfirmDeleteModal
+                    open={openConfirm}
+                    title="Xác nhận xóa chứng chỉ"
+                    message={`Bạn có chắc muốn xóa chứng chỉ "${c.name}" không?`}
+                    isDeletedFile={isDeletedFile}
+                    setIsDeletedFile={setIsDeletedFile}
+                    onClose={() => {
+                      setOpenConfirm(false);
+                      setIsDeletedFile(false);
+                    }}
+                    onConfirm={() => {
+                      onDelete?.(c.id, isDeletedFile);
+                      setOpenConfirm(false);
+                      setIsDeletedFile(false);
+                    }}
+                  />
                 </td>
               </tr>
             ))

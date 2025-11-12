@@ -4,6 +4,7 @@ import {
   deleteCompetency,
   getCompetencyTypes,
   getMyCompetencies,
+  updateCompetency,
 } from "../services/competencyApi";
 
 export const fetchMyCompetencies = createAsyncThunk(
@@ -38,11 +39,23 @@ export const addCompetency = createAsyncThunk(
   }
 );
 
+export const changeCompetency = createAsyncThunk(
+  "competency/changeCompetency",
+  async ({ competency }, { rejectWithValue }) => {
+    try {
+      const res = await updateCompetency(competency);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
 export const removeCompetency = createAsyncThunk(
   "competency/removeCompetency",
-  async ({ competencyId }, { rejectWithValue }) => {
+  async ({ competencyId, isDeletedFile }, { rejectWithValue }) => {
     try {
-      const res = await deleteCompetency(competencyId);
+      const res = await deleteCompetency(competencyId, isDeletedFile);
       return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -102,6 +115,26 @@ const competencySlice = createSlice({
         state.items.push(action.payload);
       })
       .addCase(addCompetency.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.success = false;
+      })
+      // === UPDATE COMPETENCY ===
+      .addCase(changeCompetency.pending, (state) => {
+        state.loading = true;
+        state.success = false;
+      })
+      .addCase(changeCompetency.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        // cập nhật item trong danh sách
+        const updated = action.payload;
+        const idx = state.items.findIndex((i) => i.id === updated.id);
+        if (idx !== -1) {
+          state.items[idx] = updated;
+        }
+      })
+      .addCase(changeCompetency.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.success = false;

@@ -16,7 +16,15 @@ export const createCompetency = async (data) => {
   return res.data;
 };
 
-export const deleteCompetency = async (id) => {
-  const res = await api.delete(`/api/employee/competency/${id}`);
+export const updateCompetency = async (data) => {
+  console.log(data);
+  const res = await api.put(`/api/employee/competency`, data);
+  return res.data;
+};
+
+export const deleteCompetency = async (id, isDeletedFile) => {
+  const res = await api.delete(
+    `/api/employee/competency/${id}?isDeletedFile=${isDeletedFile}`
+  );
   return res;
 };
