@@ -1,16 +1,30 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { useCompetencyForm } from "../../../hooks/useCompetencyForm";
+import CompetencyFileUpload from "./CompetencyFileUpload";
 
 export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
   const {
     form,
     setForm,
-    handleChange, // nhận e
-    handleTypeChange, // dùng cho select type
-    handleLevelChange, // dùng cho select level
-    levelOptions, // dùng thay cho 'levels'
+    error,
+    uploading,
     types,
+    docTypes,
+    levelOptions,
+    showCustomLevel,
+    pendingFiles,
+    fileInputRef,
+    canSubmit,
+    setError,
+    setPendingFiles,
+    handleChange,
+    handleTypeChange,
+    handleLevelChange,
+    handleSelectFile,
+    handleUpload,
+    documents,
+    getMyDocuments,
   } = useCompetencyForm(null, data);
 
   const [file, setFile] = useState(null); // ✅ bổ sung
@@ -30,9 +44,20 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
     )}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    console.log(">>> EDIT FORM SUBMIT TRIGGERED");
     e.preventDefault();
-    onSubmit?.({ ...form, file }); // ✅ gửi thêm file nếu user chọn
+
+    let updated = { ...form };
+
+    // Nếu có file mới đang chờ
+    if (pendingFiles.length > 0) {
+      const uploaded = await handleUpload();
+      console.log("Khi ấn submit xong, kết quả:", uploaded);
+      if (uploaded?.id) updated.documentId = uploaded.id;
+    }
+
+    onSubmit?.(updated);
   };
 
   return (
@@ -143,11 +168,20 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
           <div className="border-t pt-3">
             <label className="text-sm text-gray-600">Tệp đính kèm</label>
             <div className="flex items-center gap-3 mt-1">
-              <input
-                type="file"
-                onChange={(e) => setFile(e.target.files?.[0] || null)} // ✅ lưu file local
-                className="text-sm"
+              <CompetencyFileUpload
+                form={form}
+                documents={documents}
+                loadDocuments={getMyDocuments}
+                uploading={uploading}
+                fileInputRef={fileInputRef}
+                pendingFiles={pendingFiles}
+                setPendingFiles={setPendingFiles}
+                docTypes={docTypes}
+                handleSelectFile={handleSelectFile}
+                handleUpload={handleUpload}
+                setForm={setForm}
               />
+
               {form.fileName && (
                 <span className="text-xs text-gray-500">{form.fileName}</span>
               )}

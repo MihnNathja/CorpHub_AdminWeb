@@ -20,10 +20,8 @@ export default function CompetencyFileUpload({
   const [mode, setMode] = useState("select"); // "select" | "upload"
 
   useEffect(() => {
-    if (documents.length === 0 && loadDocuments) {
-      loadDocuments();
-    }
-  }, []);
+    if (documents.length === 0) loadDocuments?.();
+  }, [documents.length]);
 
   const handleSelectExisting = (e) => {
     const id = e.target.value;
@@ -214,7 +212,11 @@ export default function CompetencyFileUpload({
             <>
               <div className="flex items-center gap-3 mt-2">
                 <button
-                  onClick={() => fileInputRef.current?.click()}
+                  type="button"
+                  onClick={() => {
+                    console.log("Clicked switch-to-upload mode");
+                    fileInputRef.current?.click();
+                  }}
                   disabled={uploading}
                   className={`flex items-center gap-2 px-3 py-2 text-sm border rounded-lg ${
                     uploading
