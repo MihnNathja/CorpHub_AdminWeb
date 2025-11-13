@@ -112,20 +112,21 @@ export default function PendingCompetencyPage() {
                     {/* Nhân viên */}
                     <td className="p-2 border">
                       <div className="flex items-center gap-2">
-                        <div className="p-1.5 rounded-full bg-gray-100">
-                          <User size={16} />
-                        </div>
-                        <div>
+                        <div className="space-y-0.5">
+                          {/* Tên nhân viên */}
                           <div className="font-medium text-gray-800">
-                            {item.employeeName ||
-                              item.employeeFullName ||
-                              "Không rõ"}
+                            {item.employeeName || "Không rõ"}
                           </div>
-                          {item.employeeCode && (
-                            <div className="text-xs text-gray-500">
-                              Mã: {item.employeeCode}
-                            </div>
-                          )}
+
+                          {/* Mã nhân viên */}
+                          <div className="text-xs text-gray-500">
+                            Mã: {item.employeeCode || "—"}
+                          </div>
+
+                          {/* Phòng ban */}
+                          <div className="text-xs text-blue-600">
+                            {item.departmentName || "Không có phòng ban"}
+                          </div>
                         </div>
                       </div>
                     </td>
