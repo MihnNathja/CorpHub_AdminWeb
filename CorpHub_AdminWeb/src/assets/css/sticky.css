@@ -1,23 +1,26 @@
 /* Sticky cột 1 */
 .sticky-col-1 {
     position: sticky;
+    top: 0;
     left: 0;
     z-index: 50;
-    background: white;
+    background: #f3f4f6;
+    /* bg-gray-100 */
 }
 
 /* Sticky cột 2 */
 .sticky-col-2 {
     position: sticky;
+    top: 0;
     left: 60px;
-    /* = width cột # */
     z-index: 50;
-    background: white;
+    background: #f3f4f6;
+    /* bg-gray-100 */
 }
 
 /* Dark mode */
 .dark .sticky-col-1,
 .dark .sticky-col-2 {
-    background: #1f2937;
-    /* dark:bg-gray-800 */
+    background: #374151;
+    /* dark:bg-gray-700 */
 }

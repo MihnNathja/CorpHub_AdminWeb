@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   changeUserActive,
@@ -8,14 +8,15 @@ import {
 
 export const useUser = () => {
   const dispatch = useDispatch();
+  const [keyword, setKeyword] = useState("");
 
   const { list, loading, error } = useSelector((state) => state.user);
 
   useEffect(
-    (params = { page: 0, keyword: "", filters: {}, sort: {} }) => {
+    (params = { page: 0, keyword, filters: {}, sort: {} }) => {
       dispatch(fetchUsers(params));
     },
-    [dispatch]
+    [dispatch, keyword]
   );
   const handleResetPassword = (userId) => {
     return dispatch(resetUserPassword(userId));
@@ -26,6 +27,8 @@ export const useUser = () => {
     list,
     loading,
     error,
+    keyword,
+    setKeyword,
     toggleActive,
     handleResetPassword,
   };

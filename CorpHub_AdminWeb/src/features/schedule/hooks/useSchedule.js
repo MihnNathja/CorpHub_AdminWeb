@@ -1,8 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
-import { fetchSchedules } from "../store/scheduleSlice";
+import {
+    autoAssignSchedules,
+    fetchSchedules,
+    createSchedule,
+    updateSchedule,
+    deleteSchedule,
+} from "../store/scheduleSlice";
+import { showError, showSuccess } from "../../../utils/toastUtils";
 
 dayjs.extend(isoWeek);
 
@@ -31,9 +38,6 @@ export const useSchedule = () => {
         keywords: "",
     });
 
-    /**
-     * ✅ Fetch API khi thay đổi filter hoặc phân trang
-     */
     useEffect(() => {
         dispatch(
             fetchSchedules({
@@ -46,12 +50,119 @@ export const useSchedule = () => {
         );
     }, [dispatch, page, size, from, to, filters]);
 
+    const autoAssign = useCallback(
+        async (data) => {
+            try {
+                const res = await dispatch(autoAssignSchedules(data));
+                if (res.meta.requestStatus === "fulfilled") {
+                    showSuccess("Phân ca tự động thành công!");
+                    dispatch(
+                        fetchSchedules({
+                            page,
+                            size,
+                            from,
+                            to,
+                            ...filters,
+                        })
+                    );
+                } else {
+                    showError(res.payload?.message || "Không thể phân ca!");
+                }
+                return res;
+            } catch (err) {
+                console.error(err);
+                showError("Lỗi khi phân ca!");
+            }
+        },
+        [dispatch, page, size, from, to, filters]
+    );
+
+    const addSchedule = useCallback(
+        async (data) => {
+            try {
+                const res = await dispatch(createSchedule(data));
+                if (res.meta.requestStatus === "fulfilled") {
+                    showSuccess("Thêm lịch làm việc thành công!");
+                    dispatch(
+                        fetchSchedules({
+                            page,
+                            size,
+                            from,
+                            to,
+                            ...filters,
+                        })
+                    );
+                } else {
+                    showError(res.payload?.message || "Không thể thêm lịch làm việc!");
+                }
+                return res;
+            } catch (err) {
+                console.error(err);
+                showError("Lỗi khi thêm lịch làm việc!");
+            }
+        },
+        [dispatch, page, size, from, to, filters]
+    );
+
+    const editSchedule = useCallback(
+        async (id, data) => {
+            try {
+                const res = await dispatch(updateSchedule({ id, data }));
+                if (res.meta.requestStatus === "fulfilled") {
+                    showSuccess("Cập nhật lịch làm việc thành công!");
+                    dispatch(
+                        fetchSchedules({
+                            page,
+                            size,
+                            from,
+                            to,
+                            ...filters,
+                        })
+                    );
+                } else {
+                    showError(res.payload?.message || "Không thể cập nhật lịch làm việc!");
+                }
+                return res;
+            } catch (err) {
+                console.error(err);
+                showError("Lỗi khi cập nhật lịch làm việc!");
+            }
+        },
+        [dispatch, page, size, from, to, filters]
+    );
+    const removeSchedule = useCallback(
+        async (id) => {
+            try {
+                const res = await dispatch(deleteSchedule(id));
+                if (res.meta.requestStatus === "fulfilled") {
+                    showSuccess("Xóa lịch làm việc thành công!");
+                    dispatch(
+                        fetchSchedules({
+                            page,
+                            size,
+                            from,
+                            to,
+                            ...filters,
+                        })
+                    );
+                } else {
+                    showError(res.payload?.message || "Không thể xóa lịch làm việc!");
+                }
+                return res;
+            } catch (err) {
+                console.error(err);
+                showError("Lỗi khi xóa lịch làm việc!");
+            }
+        },
+        [dispatch, page, size, from, to, filters]
+    );
 
     return {
         schedules: items || [],
         meta,
         loading,
         error,
+
         page,
         setPage,
         size,
@@ -64,5 +175,10 @@ export const useSchedule = () => {
 
         filters,
         setFilters,
+
+        autoAssign,
+        addSchedule,
+        editSchedule,
+        removeSchedule,
     };
 };

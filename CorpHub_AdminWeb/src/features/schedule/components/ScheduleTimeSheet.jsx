@@ -3,8 +3,8 @@ import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import weekday from "dayjs/plugin/weekday";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import "dayjs/locale/vi";
 
+import "dayjs/locale/vi";
 import {
     ArrowLeftIcon,
     ArrowRightIcon,
@@ -14,6 +14,11 @@ import {
 } from "@heroicons/react/24/outline";
 
 import { useSchedule } from "../hooks/useSchedule";
+import AutoAssignModal from "./AutoAssignModal";
+import WorkScheduleModal from "./WorkScheduleModal";
+import { useShift } from "../hooks/useShift";
+import { useUser } from "../../user/hooks/useUser";
+import ShiftCard from "./ShiftCard";
 
 dayjs.extend(isoWeek);
 dayjs.extend(weekday);
@@ -35,68 +40,16 @@ const getDatesInRange = (from, to) => {
     return dates;
 };
 
-const STATUS_STYLE = {
-    SCHEDULED: {
-        bg: "bg-blue-50",
-        border: "border-blue-300",
-        text: "text-blue-700",
-    },
-    IN_PROGRESS: {
-        bg: "bg-indigo-50",
-        border: "border-indigo-300",
-        text: "text-indigo-700",
-    },
-    COMPLETED: {
-        bg: "bg-green-50",
-        border: "border-green-300",
-        text: "text-green-700",
-    },
-    MISSED: {
-        bg: "bg-red-50",
-        border: "border-red-300",
-        text: "text-red-700",
-    },
-    CANCELLED: {
-        bg: "bg-gray-100",
-        border: "border-gray-300",
-        text: "text-gray-500",
-    },
-    LEAVE: {
-        bg: "bg-amber-50",
-        border: "border-amber-300",
-        text: "text-amber-700",
-    },
-};
 
-
-
-// Shift card
-const ShiftCard = ({ shift }) => {
-    // shift.status = "SCHEDULED" | "COMPLETED" | ...
-
-    const style = STATUS_STYLE[shift.status] || STATUS_STYLE.SCHEDULED;
-
-    return (
-        <div
-            className={`w-full border ${style.border} ${style.bg} ${style.text} rounded-lg px-2 py-1 text-[11px]`}
-        >
-            <div className="font-semibold truncate">
-                {shift.title}
-            </div>
-
-            <div>
-                {dayjs(shift.start).format("HH:mm")} – {dayjs(shift.end).format("HH:mm")}
-            </div>
-
-            {shift.notes && <div>{shift.notes}</div>}
-        </div>
-    );
-};
-
-
-export default function ScheduleTimesheet() {
+export default function ScheduleTimesheet({
+    departments = [],
+}) {
     const [view, setView] = useState("week");
     const [anchor, setAnchor] = useState(dayjs());
+    const [showAutoAssign, setShowAutoAssign] = useState(false);
+
+    const [showModal, setShowModal] = useState(false);
+    const [editingSchedule, setEditingSchedule] = useState(null);
 
     const {
         schedules,
@@ -105,7 +58,14 @@ export default function ScheduleTimesheet() {
         setFrom,
         setTo,
         loading,
+        autoAssign,
+        addSchedule,
+        editSchedule,
+        removeSchedule
     } = useSchedule();
+
+    const { shifts, filters, setFilters } = useShift([]);
+    const { list: users, keyword, setKeyword } = useUser();
 
     // ✅ Ngày hiển thị theo from/to
     const days = useMemo(() => {
@@ -186,12 +146,13 @@ export default function ScheduleTimesheet() {
                     <button className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800">
                         <DocumentArrowDownIcon className="w-4 h-4 inline mr-1" /> Export
                     </button>
-                    <button className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800">
-                        <PlusIcon className="w-4 h-4 inline mr-1" /> Create shift
+                    <button
+                        onClick={() => setShowAutoAssign(true)}
+                        className="px-3 py-2 bg-blue-600 text-white rounded-lg"
+                    >
+                        <PlusIcon className="w-4 h-4 inline mr-1" /> Phân ca
                     </button>
-                    <button className="px-3 py-2 bg-green-600 text-white rounded-lg">
-                        <CheckCircleIcon className="w-4 h-4 inline mr-1" /> Approve
-                    </button>
+
                 </div>
             </div>
 
@@ -210,7 +171,7 @@ export default function ScheduleTimesheet() {
                 </button>
 
                 {/* View Switch */}
-                <div className="flex border rounded-xl overflow-hidden">
+                <div className="flex border rounded-xl">
                     <button
                         onClick={switchToWeek}
                         className={`px-3 py-2 text-sm ${view === "week" ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-800"
@@ -229,115 +190,198 @@ export default function ScheduleTimesheet() {
                 </div>
             </div>
 
-            {/* GRID */}
-            <div className="max-h-[70vh] overflow-auto w-full">
-
-                {loading && (
-                    <div className="p-4 text-center text-gray-500">Đang tải...</div>
-                )}
-
-                {/* HEADER ROW */}
-                <div
-                    className="grid sticky top-0 z-30 bg-gray-100 dark:bg-gray-700"
-                    style={{
-                        gridTemplateColumns: `60px 220px repeat(${days.length}, 150px)`,
-                    }}
-                >
-                    <div className="border px-3 py-2 sticky left-0 bg-gray-100 z-40">#</div>
-                    <div className="border px-3 py-2 sticky left-[60px] bg-gray-100 z-40">
-                        Nhân viên
-                    </div>
-
-                    {days.map((d) => (
-                        <div key={d} className="border px-2 py-2 text-center">
-                            {d.format("dd DD/MM")}
-                        </div>
-                    ))}
-                </div>
-
-                {/* BODY */}
-                {schedules.map((emp, i) => (
-                    <div
-                        key={emp.id}
-                        className="grid hover:bg-gray-50 dark:hover:bg-gray-700"
-                        style={{
-                            gridTemplateColumns: `60px 220px repeat(${days.length}, 150px)`,
-                        }}
-                    >
-                        <div className="border px-3 py-2 sticky left-0 bg-white z-30">
-                            {i + 1}
-                        </div>
-
-                        <div className="border px-3 py-2 sticky left-[60px] bg-white z-30">
-                            <div className="font-medium">{emp.name}</div>
-                            <div className="text-xs text-gray-500">{emp.department}</div>
-                        </div>
-
-                        {days.map((d) => {
-                            const shifts = emp.shifts.filter((s) => sameDay(s.workDate, d));
-
-                            return (
-                                <div key={d} className="border px-2 py-2">
-                                    {shifts.length === 0 ? (
-                                        <button className="w-full h-8 border border-dashed rounded-lg text-gray-400">
-                                            +
-                                        </button>
-                                    ) : (
-                                        <div className="flex flex-col gap-1">
-                                            {shifts.map((s) => (
-                                                <ShiftCard
-                                                    key={s.id}
-                                                    shift={{
-                                                        title: s.shiftName,
-                                                        start: dayjs(`${s.workDate}T${s.startTime}`),
-                                                        end: dayjs(`${s.workDate}T${s.endTime}`),
-                                                        notes: s.notes,
-                                                        status: s.status,
-                                                    }}
-                                                />
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
+            {/* LEGEND */}
+            <div className="flex gap-3 items-center mb-3 flex-wrap text-[12px]">
+                {[
+                    { color: "blue", label: "Scheduled" },
+                    { color: "indigo", label: "In progress" },
+                    { color: "green", label: "Completed" },
+                    { color: "red", label: "Missed" },
+                    { color: "gray", label: "Cancelled" },
+                    { color: "amber", label: "Absence" },
+                ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-1">
+                        <span
+                            className={`w-3 h-3 rounded bg-${item.color}-300 border border-${item.color}-500`}
+                        ></span>
+                        <span className="text-gray-700 dark:text-gray-300">{item.label}</span>
                     </div>
                 ))}
             </div>
-            {/* LEGEND */}
-            <div className="flex gap-3 items-center mb-3 flex-wrap text-[12px]">
 
-                <div className="flex items-center gap-1">
-                    <span className="w-3 h-3 rounded bg-blue-300 border border-blue-500"></span>
-                    <span className="text-gray-700 dark:text-gray-300">Scheduled</span>
-                </div>
 
-                <div className="flex items-center gap-1">
-                    <span className="w-3 h-3 rounded bg-indigo-300 border border-indigo-500"></span>
-                    <span className="text-gray-700 dark:text-gray-300">In progress</span>
-                </div>
+            {/* GRID */}
+            <div className="max-h-[70vh] overflow-auto">
+                <div
+                    className="grid min-w-max"
+                    style={{
+                        gridTemplateColumns: `60px 220px repeat(${days.length}, 150px)`
+                    }}
+                >
+                    {/* HEADER ROW */}
+                    <div className="border px-3 py-2 sticky top-0 left-0 
+                        bg-gray-100 dark:bg-gray-700 
+                        z-[50]">
+                        #
+                    </div>
 
-                <div className="flex items-center gap-1">
-                    <span className="w-3 h-3 rounded bg-green-300 border border-green-500"></span>
-                    <span className="text-gray-700 dark:text-gray-300">Completed</span>
-                </div>
+                    <div className="border px-3 py-2 sticky top-0 left-[60px]
+                        bg-gray-100 dark:bg-gray-700 
+                        z-[50]">
+                        Nhân viên
+                    </div>
 
-                <div className="flex items-center gap-1">
-                    <span className="w-3 h-3 rounded bg-red-300 border border-red-500"></span>
-                    <span className="text-gray-700 dark:text-gray-300">Missed</span>
-                </div>
+                    {days.map(d => (
+                        <div
+                            key={d.toString()}
+                            className="border px-2 py-2 text-center sticky top-0 
+                           bg-gray-100 dark:bg-gray-700 
+                           z-[40]"
+                        >
+                            {d.format("dd DD/MM")}
+                        </div>
+                    ))}
 
-                <div className="flex items-center gap-1">
-                    <span className="w-3 h-3 rounded bg-gray-300 border border-gray-500"></span>
-                    <span className="text-gray-700 dark:text-gray-300">Cancelled</span>
-                </div>
 
-                <div className="flex items-center gap-1">
-                    <span className="w-3 h-3 rounded bg-amber-300 border border-amber-500"></span>
-                    <span className="text-gray-700 dark:text-gray-300">Leave</span>
+                    {/* BODY ROWS */}
+                    {schedules.map((emp, i) => (
+                        <React.Fragment key={emp.id}>
+
+                            {/* Col # */}
+                            <div
+                                className="
+                        border px-3 py-2 sticky left-0
+                        bg-gray-50 dark:bg-gray-900
+                        z-[40]
+                    "
+                            >
+                                {i + 1}
+                            </div>
+
+                            {/* Col Nhân viên */}
+                            <div
+                                className="
+                        border px-3 py-2 sticky left-[60px]
+                        bg-gray-50 dark:bg-gray-900
+                        z-[40]
+                    "
+                            >
+                                <div className="font-medium">{emp.name}</div>
+                                <div className="text-xs text-gray-500">{emp.department}</div>
+                            </div>
+
+                            {/* Col ngày */}
+                            {days.map((d) => {
+                                const shifts = emp.shifts?.filter((s) => sameDay(s.workDate, d));
+
+                                return (
+                                    <div key={d.toString()} className="border px-2 py-2">
+                                        {(!shifts || shifts.length === 0) ? (
+                                            <button
+                                                className="w-full h-8 border border-dashed rounded-lg text-gray-400 hover:bg-gray-100"
+                                                onClick={() => {
+                                                    setEditingSchedule({
+                                                        userId: emp.id,
+                                                        fullName: emp.name,
+                                                        shiftId: "",
+                                                        shiftName: "",
+                                                        workDate: d.format("YYYY-MM-DD"),
+                                                        status: "SCHEDULED",
+                                                    });
+                                                    setShowModal(true);
+                                                }}
+                                            >
+                                                +
+                                            </button>
+                                        ) : (
+                                            <div className="flex flex-col gap-1">
+                                                {shifts.map((s) => (
+                                                    <button
+                                                        key={s.id}
+                                                        onClick={() => {
+                                                            setEditingSchedule({
+                                                                id: s.id,
+                                                                userId: emp.id,
+                                                                fullName: emp.name,
+                                                                shiftId: s.shiftId,
+                                                                shiftName: s.name,
+                                                                workDate: s.workDate,
+                                                                status: s.status,
+                                                            });
+                                                            setShowModal(true);
+                                                        }}
+                                                    >
+                                                        <ShiftCard
+                                                            shift={{
+                                                                title: s.shiftName,
+                                                                start: dayjs(`${s.workDate}T${s.startTime}`),
+                                                                end: dayjs(`${s.workDate}T${s.endTime}`),
+                                                                notes: s.notes,
+                                                                status: s.status,
+                                                                checkInTime: s.checkInTime,
+                                                                checkOutTime: s.checkOutTime,
+                                                            }}
+                                                            onDelete={() => removeSchedule(s.id)}
+                                                        />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+
+                        </React.Fragment>
+                    ))}
                 </div>
             </div>
 
+
+            {showAutoAssign && (
+                <AutoAssignModal
+                    onClose={() => setShowAutoAssign(false)}
+                    departments={departments}
+                    shifts={shifts}
+                    shiftFilters={filters}
+                    setShiftFilters={setFilters}
+                    users={users}
+                    userKeyword={keyword}
+                    setUserKeyword={setKeyword}
+                    autoAssign={autoAssign}
+                />
+            )}
+
+            {showModal && (
+                <WorkScheduleModal
+                    schedule={editingSchedule}
+                    shifts={shifts}
+                    users={users}
+                    userKeyword={keyword}
+                    setUserKeyword={setKeyword}
+                    onClose={() => {
+                        setShowModal(false);
+                        setEditingSchedule(null);
+                    }}
+                    onSubmit={async (form) => {
+                        if (form.id) {
+                            await editSchedule(form.id, form);
+                        } else {
+                            await addSchedule(form);
+                        }
+                        setShowModal(false);
+                        setEditingSchedule(null);
+                    }}
+                    onDelete={async (id) => {
+                        await removeSchedule(id);
+                        setShowModal(false);
+                        setEditingSchedule(null);
+                    }}
+
+                />
+            )}
+
         </div>
+
     );
+
 }
