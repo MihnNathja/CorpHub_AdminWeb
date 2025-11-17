@@ -13,7 +13,7 @@ import {
     DocumentArrowDownIcon,
 } from "@heroicons/react/24/outline";
 
-import { useSchedule } from "../hooks/useSchedule";
+import { useAdminSchedule } from "../hooks/useAdminSchedule";
 import AutoAssignModal from "./AutoAssignModal";
 import WorkScheduleModal from "./WorkScheduleModal";
 import { useShift } from "../hooks/useShift";
@@ -62,7 +62,7 @@ export default function ScheduleTimesheet({
         addSchedule,
         editSchedule,
         removeSchedule
-    } = useSchedule();
+    } = useAdminSchedule();
 
     const { shifts, filters, setFilters } = useShift([]);
     const { list: users, keyword, setKeyword } = useUser();

@@ -39,7 +39,7 @@ const ShiftTable = () => {
     };
 
     const clearFilters = () =>
-        setFilters({ keywords: "", isNightShift: "", startFrom: "", endTo: "" });
+        setFilters({ keywords: "", startFrom: "", endTo: "" });
 
     return (
         <div>
@@ -72,16 +72,6 @@ const ShiftTable = () => {
 
                     {/* Các filter phụ */}
                     <div className="flex flex-wrap items-center gap-3 md:justify-end w-full md:w-auto">
-                        {/* Ca đêm */}
-                        <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                            <input
-                                type="checkbox"
-                                name="isNightShift"
-                                checked={!!filters.isNightShift}
-                                onChange={handleFilterChange}
-                            />
-                            Ca đêm
-                        </label>
 
                         {/* Bắt đầu từ */}
                         <div className="flex items-center gap-2">

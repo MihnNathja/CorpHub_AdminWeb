@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const ShiftModal = ({ shift, onClose, onSubmit }) => {
@@ -11,6 +11,8 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
             isNightShift: false,
         }
     );
+
+    const isDirtyRef = useRef(false);
 
     // 🔹 Hàm tính số giờ làm giữa hai mốc
     const calculateHours = (start, end) => {
@@ -28,20 +30,30 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
 
     // 🔹 Cập nhật giờ công mỗi khi thay đổi start hoặc end
     useEffect(() => {
-        if (form.startTime && form.endTime) {
-            const newHours = calculateHours(form.startTime, form.endTime);
-            setForm((prev) => ({
-                ...prev,
-                workingHours: newHours,
-                isNightShift: form.endTime < form.startTime, // tự động đánh dấu ca đêm
-            }));
-        }
+        if (!isDirtyRef.current) return; // ⛔ Không auto tính khi mở modal
+
+        const newHours = calculateHours(form.startTime, form.endTime);
+
+        setForm((prev) => ({
+            ...prev,
+            workingHours: newHours,
+            isNightShift: form.endTime < form.startTime,
+        }));
     }, [form.startTime, form.endTime]);
 
-    // 🔹 Xử lý thay đổi input
+    // Xử lý input
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+
+        // Khi user thay đổi giờ → bật cờ
+        if (name === "startTime" || name === "endTime") {
+            isDirtyRef.current = true;
+        }
+
+        setForm({
+            ...form,
+            [name]: type === "checkbox" ? checked : value,
+        });
     };
 
     const handleSubmit = () => {
@@ -116,7 +128,7 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                             placeholder="Giờ công"
                             className="w-full border rounded p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                             value={form.workingHours}
-                            onChange={handleChange} // cho phép chỉnh tay nếu cần
+                            onChange={handleChange}
                         />
                         <p className="text-xs text-gray-500 mt-1">
                             (Tự tính theo giờ bắt đầu - kết thúc, nhưng có thể chỉnh lại thủ công)

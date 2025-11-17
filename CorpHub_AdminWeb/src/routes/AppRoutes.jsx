@@ -19,6 +19,7 @@ import AssetPage from "../features/asset/page/AssetPage";
 import AbsenceAdminPage from "../features/absence/pages/AbsenceAdminPage";
 import AbsenceEmployeePage from "../features/absence/pages/AbsenceEmployeePage";
 import SchedulePage from "../features/schedule/pages/SchedulePage";
+import AttendancePage from "../features/attendance/pages/AttendancePage";
 
 const AppRoutes = () => {
   return (
@@ -33,6 +34,7 @@ const AppRoutes = () => {
       <Route element={<PrivateRoute />}>
         <Route path="/" element={<Dashboard />}>
           <Route index element={<HomePage />} />
+          <Route path="attendance" element={<AttendancePage />} />
           <Route path="rooms" element={<RoomPage />} />
           <Route path="assets" element={<AssetPage />} />
           <Route path="users" element={<UserPage />} />
@@ -48,6 +50,7 @@ const AppRoutes = () => {
           <Route path="absence" element={<AbsenceAdminPage />} />
           <Route path="my-absence" element={<AbsenceEmployeePage />} />
           <Route path="schedule" element={<SchedulePage />} />
+
         </Route>
       </Route>
     </Routes>

@@ -5,6 +5,7 @@ import { store } from "./store";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import './assets/css/sticky.css';
+import "leaflet/dist/leaflet.css";
 import App from "./App.jsx";
 import AuthInitializer from "./components/AuthInitializer.jsx";
 

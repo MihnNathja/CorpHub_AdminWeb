@@ -3,6 +3,9 @@ import api from "../../../services/api";
 export const getEmployeeSchedule = (params) =>
     api.get(`/api/work-schedules/employee-view`, { params });
 
+export const getScheduleForUserOnDate = () =>
+    api.get(`/api/work-schedules/today`);
+
 export const autoAssign = (data) =>
     api.post(`/api/work-schedules/auto-assign`, data);
 

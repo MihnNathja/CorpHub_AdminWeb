@@ -3,6 +3,7 @@ import {
     autoAssign,
     create,
     getEmployeeSchedule,
+    getScheduleForUserOnDate,
     remove,
     update,
 } from "../services/scheduleApi";
@@ -17,6 +18,18 @@ export const fetchSchedules = createAsyncThunk(
     async (params, { rejectWithValue }) => {
         try {
             const res = await getEmployeeSchedule(params);
+            return res;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+);
+
+export const fetchTodayShiftsForUser = createAsyncThunk(
+    "schedule/fetchTodayShiftsForUser",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await getScheduleForUserOnDate();
             return res;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
@@ -87,7 +100,14 @@ export const deleteSchedule = createAsyncThunk(
 const scheduleSlice = createSlice({
     name: "schedule",
     initialState: {
-        items: [],
+        admin: {
+            items: [],
+            meta: {}
+        },
+        user: {
+            today: [],
+            meta: {}
+        },
         meta: {},
         loading: false,
         error: null,
@@ -109,13 +129,30 @@ const scheduleSlice = createSlice({
             })
             .addCase(fetchSchedules.fulfilled, (state, action) => {
                 state.loading = false;
-                state.items = action.payload.data || [];
-                state.meta = action.payload.metadata || {};
+                state.admin.items = action.payload.data || [];
+                state.admin.meta = action.payload.metadata || {};
             })
             .addCase(fetchSchedules.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
+
+        /* --- FETCH FOR USER --- */
+        builder
+            .addCase(fetchTodayShiftsForUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchTodayShiftsForUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user.today = action.payload.data || [];
+                state.user.meta = action.payload.metadata || {};
+            })
+            .addCase(fetchTodayShiftsForUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
+
 
         /* --- AUTO ASSIGN --- */
         builder
@@ -151,7 +188,7 @@ const scheduleSlice = createSlice({
                 state.loading = false;
                 // Nếu API trả về object mới, thêm vào danh sách
                 const newItem = action.payload.data;
-                if (newItem) state.items.push(newItem);
+                if (newItem) state.admin.items.push(newItem);
             })
             .addCase(createSchedule.rejected, (state, action) => {
                 state.loading = false;
@@ -168,8 +205,8 @@ const scheduleSlice = createSlice({
                 state.loading = false;
                 const updated = action.payload.data;
                 if (updated) {
-                    const idx = state.items.findIndex((i) => i.id === updated.id);
-                    if (idx !== -1) state.items[idx] = updated;
+                    const idx = state.admin.items.findIndex((i) => i.id === updated.id);
+                    if (idx !== -1) state.admin.items[idx] = updated;
                 }
             })
             .addCase(updateSchedule.rejected, (state, action) => {
@@ -186,7 +223,7 @@ const scheduleSlice = createSlice({
             .addCase(deleteSchedule.fulfilled, (state, action) => {
                 state.loading = false;
                 const id = action.payload;
-                state.items = state.items.filter((i) => i.id !== id);
+                state.admin.items = state.admin.items.filter((i) => i.id !== id);
             })
             .addCase(deleteSchedule.rejected, (state, action) => {
                 state.loading = false;
