@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import dayjs from "dayjs";
 
 import TodayShiftList from "../components/TodayShiftList";
 import CheckInButton from "../components/CheckInButton";
@@ -13,8 +14,6 @@ import { useAttendance } from "../hooks/useAttendance";
 import { useClientInfo } from "../hooks/useClientInfo";
 
 export default function AttendancePage() {
-
-    // Danh sách ca hôm nay
     const { schedules } = useSchedule();
 
     const {
@@ -26,23 +25,43 @@ export default function AttendancePage() {
         timeline
     } = useShiftInfo(schedules);
 
-
-    // Chấm công
     const { checkInOut } = useAttendance();
-
-    // Lấy GPS + IP
     const { lat, lng, ip } = useClientInfo();
 
-    // Lịch sử demo
     const [attendanceHistory] = useState([
         { date: "2025-11-10", checkIn: "08:05", checkOut: "11:55" },
         { date: "2025-11-11", checkIn: "08:01", checkOut: "12:02" },
         { date: "2025-11-12", checkIn: "08:10", checkOut: null },
     ]);
 
+    // ✅ Kiểm tra xem ca làm đã hết hay chưa
+    const isShiftExpired = useMemo(() => {
+        if (!finalShift?.shift?.endTime) return false;
+
+        const now = dayjs();
+        const shiftEndTime = dayjs(
+            `${now.format("YYYY-MM-DD")} ${finalShift.shift.endTime}`,
+            "YYYY-MM-DD HH:mm"
+        );
+
+        return now.isAfter(shiftEndTime);
+    }, [finalShift]);
+
+    // ✅ Kiểm tra xem đã check-in hay chưa
+    const isAlreadyCheckedIn = finalShift?.checkInTime;
+
+    // ✅ Disable button nếu: đã hết ca và chưa check-in
+    const isCheckInDisabled = isShiftExpired && !isAlreadyCheckedIn;
+
     const handleDoAttendance = () => {
         if (!finalShift) {
             console.warn("Không có ca hợp lệ để chấm công.");
+            return;
+        }
+
+        // ✅ Kiểm tra trước khi chấm công
+        if (isCheckInDisabled) {
+            console.warn("Ca làm đã hết, không thể chấm công.");
             return;
         }
 
@@ -77,7 +96,12 @@ export default function AttendancePage() {
                                 suggestedShift={suggestedShift}
                             />
 
-                            <CheckInButton onClick={handleDoAttendance} />
+                            {/* ✅ Truyền disabled state + warning message */}
+                            <CheckInButton
+                                onClick={handleDoAttendance}
+                                disabled={isCheckInDisabled}
+                                title={isCheckInDisabled ? "Đã quá thời gian check in" : "Chấm công"}
+                            />
                         </div>
 
                         {/* Shift List */}
