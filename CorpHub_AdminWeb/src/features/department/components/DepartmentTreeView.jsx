@@ -14,7 +14,14 @@ import {
 const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
 // ======================== TreeNode ========================
-const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
+const TreeNode = ({
+  node,
+  moveNode,
+  onEdit,
+  onDelete,
+  onAddChild,
+  onAssignManager,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [{ isDragging }, drag] = useDrag({
@@ -88,6 +95,16 @@ const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
           </div>
 
           {/* Action buttons */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onAssignManager?.(node);
+            }}
+            title="Gán Manager"
+            className="hover:text-yellow-500"
+          >
+            <Crown size={14} />
+          </button>
           {/* <button
             onClick={(e) => {
               e.stopPropagation();
@@ -156,6 +173,7 @@ const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
               onEdit={onEdit}
               onDelete={onDelete}
               onAddChild={onAddChild}
+              onAssignManager={onAssignManager}
             />
           ))}
         </div>
@@ -165,7 +183,13 @@ const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
 };
 
 // ======================== DepartmentTreeView ========================
-const DepartmentTreeView = ({ data = [], onEdit, onDelete, onAddChild }) => {
+const DepartmentTreeView = ({
+  data = [],
+  onEdit,
+  onDelete,
+  onAddChild,
+  onAssignManager,
+}) => {
   const moveNode = (dragId, targetId) => {
     console.log(`🌀 Di chuyển phòng ban ${dragId} vào phòng ban ${targetId}`);
     // TODO: gọi API backend hoặc cập nhật state ở đây
@@ -182,6 +206,8 @@ const DepartmentTreeView = ({ data = [], onEdit, onDelete, onAddChild }) => {
               moveNode={moveNode}
               onEdit={onEdit}
               onDelete={onDelete}
+              onAddChild={onAddChild}
+              onAssignManager={onAssignManager}
             />
           ))
         ) : (
