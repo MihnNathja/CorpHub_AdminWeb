@@ -253,56 +253,85 @@ const PositionManagementPanel = ({ departments }) => {
           </div>
         ) : (
           <ul className="divide-y divide-gray-200 dark:divide-gray-800">
-            {positions.map((pos, idx) => (
-              <li
-                key={pos.id}
-                className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-900"
-              >
-                <div>
-                  <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                    {pos.name}
-                  </p>
-                  {pos.description && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {pos.description}
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  {/* reorder */}
-                  <button
-                    type="button"
-                    onClick={() => movePosition(idx, -1)}
-                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
-                  >
-                    <ArrowUp size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => movePosition(idx, 1)}
-                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
-                  >
-                    <ArrowDown size={16} />
-                  </button>
+            <ul className="divide-y divide-gray-200 dark:divide-gray-800">
+              {positions.map((pos, idx) => (
+                <li
+                  key={pos.id}
+                  className="flex items-center justify-between px-4 py-4 transition-all hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                >
+                  {/* LEFT SIDE */}
+                  <div className="flex flex-col gap-1">
+                    {/* TITLE + BADGES */}
+                    <div className="flex items-center gap-3">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        {pos.name}
+                      </p>
 
-                  {/* edit / delete */}
-                  <button
-                    type="button"
-                    onClick={() => onEditClick(pos)}
-                    className="p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600"
-                  >
-                    <Pencil size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onDeleteClick(pos)}
-                    className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </li>
-            ))}
+                      {/* Level chip */}
+                      <span className="px-2 py-[2px] text-xs rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                        Level {pos.levelOrder}
+                      </span>
+
+                      {/* Lowest chip */}
+                      {idx === 0 && (
+                        <span className="px-2 py-[2px] text-xs rounded-md bg-green-200 dark:bg-green-900 text-green-800 dark:text-green-300">
+                          Thấp nhất • Mặc định
+                        </span>
+                      )}
+
+                      {/* Highest chip */}
+                      {idx === positions.length - 1 && positions.length > 1 && (
+                        <span className="px-2 py-[2px] text-xs rounded-md bg-blue-200 dark:bg-blue-900 text-blue-800 dark:text-blue-300">
+                          Cao nhất
+                        </span>
+                      )}
+                    </div>
+
+                    {/* DESCRIPTION */}
+                    {pos.description && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {pos.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* RIGHT ACTIONS */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => movePosition(idx, -1)}
+                      className="p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+                    >
+                      <ArrowUp size={16} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => movePosition(idx, 1)}
+                      className="p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+                    >
+                      <ArrowDown size={16} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onEditClick(pos)}
+                      className="p-1 rounded-md text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                    >
+                      <Pencil size={16} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onDeleteClick(pos)}
+                      className="p-1 rounded-md text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </ul>
         )}
 
