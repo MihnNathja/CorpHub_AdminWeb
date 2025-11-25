@@ -113,6 +113,12 @@ const menu = [
     roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"],
   },
   {
+    name: "Workflow",
+    path: "workflow",
+    icon: PlayCircleIcon,
+    roles: ["ROLE_ADMIN"],
+  },
+  {
     name: "Settings",
     path: "settings",
     icon: Cog6ToothIcon,

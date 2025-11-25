@@ -10,7 +10,6 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
         startDate: "",
         endDate: "",
         reason: "",
-        attachment: null,
     });
 
     const [selectedType, setSelectedType] = useState(null);
@@ -22,8 +21,8 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                 startDate: dayjs(editingItem.startDate).format("YYYY-MM-DD"),
                 endDate: dayjs(editingItem.endDate).format("YYYY-MM-DD"),
                 reason: editingItem.reason,
-                attachment: null,
             });
+
             const type = absenceTypes.find((t) => t.id === editingItem.absenceTypeId);
             setSelectedType(type || null);
         }
@@ -39,27 +38,18 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
         }
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files?.[0];
-        setForm((prev) => ({ ...prev, attachment: file }));
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Nếu loại nghỉ yêu cầu minh chứng nhưng chưa đính kèm file → báo lỗi
-        if (selectedType?.requireProof && !form.attachment) {
-            alert("Vui lòng đính kèm giấy tờ minh chứng cho loại nghỉ này!");
-            return;
-        }
+        // TẠM THỜI không cần upload file → chỉ gửi JSON
+        const requestBody = {
+            absenceTypeId: form.absenceTypeId,
+            startDate: form.startDate,
+            endDate: form.endDate,
+            reason: form.reason,
+        };
 
-        // Tạo form data nếu có file upload
-        const submitData = new FormData();
-        Object.entries(form).forEach(([key, value]) => {
-            if (value !== null) submitData.append(key, value);
-        });
-
-        onSubmit(submitData);
+        onSubmit(requestBody); // FE gửi JSON -> BE nhận @RequestBody OK
     };
 
     return (
@@ -90,10 +80,10 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                             ))}
                         </select>
 
-                        {/* Gợi ý nếu loại nghỉ yêu cầu minh chứng */}
+                        {/* Hiển thị cảnh báo */}
                         {selectedType?.requireProof && (
                             <p className="text-xs text-yellow-600 mt-1">
-                                ⚠️ Loại nghỉ này yêu cầu minh chứng (giấy khám bệnh, v.v.)
+                                ⚠️ Loại nghỉ này yêu cầu minh chứng (nhưng tính năng upload đang tắt)
                             </p>
                         )}
                     </div>
@@ -143,21 +133,6 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                             className="w-full mt-1 px-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-400 focus:outline-none resize-none"
                         />
                     </div>
-
-                    {/* ========== FILE MINH CHỨNG ========== */}
-                    {selectedType?.requireProof && (
-                        <div>
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Đính kèm giấy tờ minh chứng
-                            </label>
-                            <input
-                                type="file"
-                                accept=".jpg,.png,.pdf"
-                                onChange={handleFileChange}
-                                className="w-full mt-1 text-sm text-gray-700 dark:text-gray-200 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
-                            />
-                        </div>
-                    )}
 
                     {/* ========== NÚT HÀNH ĐỘNG ========== */}
                     <div className="flex justify-end gap-3 pt-3">

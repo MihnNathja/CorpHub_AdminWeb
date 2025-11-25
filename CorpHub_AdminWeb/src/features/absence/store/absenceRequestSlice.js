@@ -1,30 +1,37 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { create, getAll, getMyReq, remove, update } from "../service/absenceRequestApi";
+import {
+    create,
+    getMyReq,
+    remove,
+    update,
+    approveOrReject,
+    getAllMyApprovals
+} from "../service/absenceRequestApi";
 
 /* ===========================
    ASYNC THUNKS
 =========================== */
 
-// Lấy tất cả 
-export const fetchAbsenceRequests = createAsyncThunk(
-    "absenceRequest/fetchAll",
-    async (_, { rejectWithValue }) => {
+// Lấy danh sách request tôi tạo
+export const fetchMyAbsenceRequests = createAsyncThunk(
+    "absenceRequest/fetchMy",
+    async (params, { rejectWithValue }) => {
         try {
-            const res = await getAll();
-            return res; // tuỳ cấu trúc API
+            const res = await getMyReq(params);
+            return res;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
         }
     }
 );
 
-// Lấy của người dùng đang đăng nhập
-export const fetchMyAbsenceRequests = createAsyncThunk(
-    "absenceRequest/fetchMy",
+// Lấy các request tôi phải duyệt hoặc từng duyệt
+export const fetchMyApprovals = createAsyncThunk(
+    "absenceRequest/fetchMyApprovals",
     async (params, { rejectWithValue }) => {
         try {
-            const res = await getMyReq(params);
-            return res; // tuỳ cấu trúc API
+            const res = await getAllMyApprovals(params);
+            return res;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
         }
@@ -36,8 +43,7 @@ export const createAbsenceRequest = createAsyncThunk(
     "absenceRequest/create",
     async (data, { rejectWithValue }) => {
         try {
-            const res = await create(data);
-            return res;
+            return await create(data);
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
         }
@@ -49,8 +55,7 @@ export const updateAbsenceRequest = createAsyncThunk(
     "absenceRequest/update",
     async ({ id, data }, { rejectWithValue }) => {
         try {
-            const res = await update(id, data);
-            return res;
+            return await update(id, data);
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
         }
@@ -69,6 +74,19 @@ export const deleteAbsenceRequest = createAsyncThunk(
         }
     }
 );
+
+// Approve/Reject
+export const approveOrRejectRequest = createAsyncThunk(
+    "absenceRequest/approveOrReject",
+    async ({ instanceId, approve, comment }, { rejectWithValue }) => {
+        try {
+            return await approveOrReject(instanceId, { approve, comment });
+        } catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+);
+
 
 /* ===========================
    SLICE
@@ -89,71 +107,63 @@ const absenceRequestSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        /* --- FETCH ALL --- */
-        builder
-            .addCase(fetchAbsenceRequests.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchAbsenceRequests.fulfilled, (state, action) => {
-                state.loading = false;
-                state.items = action.payload.data;
-            })
-            .addCase(fetchAbsenceRequests.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            });
 
-        /* --- FETCH ALL --- */
+        /* --- FETCH MY REQUESTS --- */
         builder
             .addCase(fetchMyAbsenceRequests.pending, (state) => {
                 state.loading = true;
-                state.error = null;
             })
             .addCase(fetchMyAbsenceRequests.fulfilled, (state, action) => {
                 state.loading = false;
                 state.items = action.payload.data;
+                state.meta = action.payload.meta || {};
             })
             .addCase(fetchMyAbsenceRequests.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
 
-        /* --- CREATE --- */
+        /* --- FETCH MY APPROVALS --- */
         builder
-            .addCase(createAbsenceRequest.pending, (state) => {
+            .addCase(fetchMyApprovals.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(createAbsenceRequest.fulfilled, (state, action) => {
+            .addCase(fetchMyApprovals.fulfilled, (state, action) => {
                 state.loading = false;
-                state.items.push(action.payload.data);
+                state.items = action.payload.data;
+                state.meta = action.payload.meta || {};
             })
-            .addCase(createAbsenceRequest.rejected, (state, action) => {
+            .addCase(fetchMyApprovals.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            });
+
+        /* --- CREATE --- */
+        builder
+            .addCase(createAbsenceRequest.fulfilled, (state, action) => {
+                state.items.push(action.payload.data);
             });
 
         /* --- UPDATE --- */
         builder
             .addCase(updateAbsenceRequest.fulfilled, (state, action) => {
-                state.loading = false;
-                const idx = state.items.findIndex((i) => i.id === action.payload.id);
-                if (idx !== -1) state.items[idx] = action.payload;
-            })
-            .addCase(updateAbsenceRequest.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
+                const data = action.payload.data;
+                const idx = state.items.findIndex((i) => i.id === data.id);
+                if (idx !== -1) state.items[idx] = data;
             });
 
         /* --- DELETE --- */
         builder
             .addCase(deleteAbsenceRequest.fulfilled, (state, action) => {
-                state.loading = false;
-                state.items = state.items.filter((i) => i.id !== action.payload.data);
-            })
-            .addCase(deleteAbsenceRequest.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
+                state.items = state.items.filter((i) => i.id !== action.payload);
+            });
+
+        /* --- APPROVE / REJECT --- */
+        builder
+            .addCase(approveOrRejectRequest.fulfilled, (state, action) => {
+                const updated = action.payload.data;
+                const idx = state.items.findIndex((i) => i.id === updated.id);
+                if (idx !== -1) state.items[idx] = updated;
             });
     },
 });

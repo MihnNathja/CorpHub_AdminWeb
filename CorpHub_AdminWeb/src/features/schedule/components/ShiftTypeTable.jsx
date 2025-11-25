@@ -7,7 +7,7 @@ import Pagination from "../../global/components/Pagination";
 import { useShift } from "../hooks/useShift";
 import { FilterIcon, Search } from "lucide-react";
 
-const ShiftTable = () => {
+const ShiftTypeTable = () => {
     const {
         shifts,
         page,
@@ -237,4 +237,4 @@ const ShiftTable = () => {
     );
 };
 
-export default ShiftTable;
+export default ShiftTypeTable;

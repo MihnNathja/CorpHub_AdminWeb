@@ -20,6 +20,7 @@ import AbsenceAdminPage from "../features/absence/pages/AbsenceAdminPage";
 import AbsenceEmployeePage from "../features/absence/pages/AbsenceEmployeePage";
 import SchedulePage from "../features/schedule/pages/SchedulePage";
 import AttendancePage from "../features/attendance/pages/AttendancePage";
+import WorkflowPage from "../features/workflow/pages/WorkflowPage";
 
 const AppRoutes = () => {
   return (
@@ -50,7 +51,7 @@ const AppRoutes = () => {
           <Route path="absence" element={<AbsenceAdminPage />} />
           <Route path="my-absence" element={<AbsenceEmployeePage />} />
           <Route path="schedule" element={<SchedulePage />} />
-
+          <Route path="workflow" element={<WorkflowPage />} />
         </Route>
       </Route>
     </Routes>

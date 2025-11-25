@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ShiftTable from "../components/ShiftTable";
+import ShiftTypeTable from "../components/ShiftTypeTable";
 import { Calendar, Clock } from "lucide-react";
 import ScheduleTimesheet from "../components/ScheduleTimeSheet";
 import { useDepartment } from "../../department/hooks/useDepartment";
@@ -40,7 +40,7 @@ const SchedulePage = () => {
 
                 {/* ✅ Lớp này đảm bảo nội dung bên trong không giãn vượt container */}
                 {tab === "shift" ? (
-                    <ShiftTable />
+                    <ShiftTypeTable />
                 ) : (
                     <ScheduleTimesheet
                         departments={departments}
