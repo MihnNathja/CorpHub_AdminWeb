@@ -28,6 +28,7 @@ const DepartmentManagementPage = () => {
     handleUpdate,
     handleDelete,
     reload,
+    handleAssignManager,
   } = useDepartmentManagement();
 
   // 🧾 Xử lý form
@@ -186,7 +187,13 @@ const DepartmentManagementPage = () => {
           //   onEdit={handleEdit}
           //   onDelete={handleRemove}
           // />
-          <DepartmentTreePage />
+          <DepartmentTreePage
+            departments={departments}
+            onEditDepartment={handleUpdate}
+            onDeleteDepartment={handleDelete}
+            onAddChildDepartment={(parent) => console.log("Add child", parent)}
+            onAssignManager={handleAssignManager}
+          />
         ) : viewMode === "org" ? (
           <DepartmentOrgChart
             data={departments}

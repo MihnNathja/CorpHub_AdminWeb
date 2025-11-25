@@ -13,6 +13,22 @@ import {
 
 const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
+const formatUsers = (users) => {
+  if (!users) return [];
+
+  return users
+    .map((u) => ({
+      id: u?.userId,
+      fullName: u?.fullName,
+      email: u?.email,
+      avatar: u?.avatar,
+      positionName: u?.positionName || null,
+      positionId: u?.positionId || null,
+      levelOrder: u.positionResponse?.levelOrder ?? 9999,
+    }))
+    .sort((a, b) => a.levelOrder - b.levelOrder);
+};
+
 // ======================== TreeNode ========================
 const TreeNode = ({
   node,
@@ -99,6 +115,7 @@ const TreeNode = ({
             onClick={(e) => {
               e.stopPropagation();
               onAssignManager?.(node);
+              console.log("Assign Manager", node);
             }}
             title="Gán Manager"
             className="hover:text-yellow-500"
@@ -141,7 +158,7 @@ const TreeNode = ({
       {/* Danh sách nhân viên */}
       {isOpen && node.users?.length > 0 && (
         <div className="pl-6 mt-2 border-l border-gray-300 dark:border-gray-600 space-y-1">
-          {node.users.map((user) => (
+          {formatUsers(node.users).map((user) => (
             <div
               key={user.id}
               className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-1 rounded-md"
@@ -153,6 +170,11 @@ const TreeNode = ({
               />
               <div className="flex flex-col leading-tight">
                 <span className="font-medium">{user.fullName}</span>
+                {user.positionName && (
+                  <span className="text-xs text-blue-500">
+                    {user.positionName}
+                  </span>
+                )}
                 {user.email && (
                   <span className="text-xs text-gray-400">{user.email}</span>
                 )}

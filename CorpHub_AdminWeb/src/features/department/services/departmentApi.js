@@ -22,8 +22,13 @@ export const deleteDepartmentApi = async (id) => {
   return res;
 };
 
+export const moveDepartmenApi = async (dragId, newParentId) => {
+  const res = await api.put(`/api/department/${dragId}/move`, newParentId);
+  return res;
+};
+
 export const setManagerApi = async (departmentId, managerId) => {
-  const res = await api.put(
+  const res = await api.patch(
     `/api/department/${departmentId}/assign-manager/${managerId}`
   );
   return res;

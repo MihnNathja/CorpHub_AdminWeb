@@ -7,6 +7,7 @@ import {
   createDepartment,
   updateDepartment,
   deleteDepartment,
+  setManager,
 } from "../store/departmentSlice";
 
 export const useDepartmentManagement = () => {
@@ -75,9 +76,9 @@ export const useDepartmentManagement = () => {
     async (departmentId, managerId) => {
       try {
         await dispatch(
-          updateDepartment({
-            id: departmentId,
-            data: { managerId },
+          setManager({
+            departmentId,
+            managerId,
           })
         ).unwrap();
         reload();

@@ -1,41 +1,28 @@
 import React, { useState } from "react";
 import DepartmentTreeView from "./DepartmentTreeView";
-
-import { PlusCircle } from "lucide-react";
-import { mockDepartments } from "../mockDepartment";
 import AssignManagerModal from "./AssignManagerModal";
 
-const DepartmentTreePage = () => {
-  const [treeData, setTreeData] = useState(mockDepartments);
-
+const DepartmentTreePage = ({
+  departments,
+  onEditDepartment,
+  onDeleteDepartment,
+  onAddChildDepartment,
+  onAssignManager,
+}) => {
   const [selectedDept, setSelectedDept] = useState(null);
   const [managerModalOpen, setManagerModalOpen] = useState(false);
 
-  const handleEdit = (dept) => {
-    console.log("✏ Edit: ", dept);
-  };
-
-  const handleDelete = (id) => {
-    console.log("🗑 Delete: ", id);
-  };
-
-  const handleAddChild = (parent) => {
-    console.log("➕ Add child to: ", parent);
-  };
-
-  const handleAssignManager = (dept) => {
+  // mở modal chọn manager
+  const handleOpenAssignManager = (dept) => {
     setSelectedDept(dept);
     setManagerModalOpen(true);
   };
 
+  // callback khi chọn manager
   const handleSelectManager = async (user) => {
-    //await setManagerApi(selectedDept.id, user.id);
-
-    console.log(`✔ Gán ${user.fullName} làm manager của ${selectedDept.name}`);
-
+    console.log("Select Manager:", selectedDept);
+    await onAssignManager(selectedDept.id, user.userId);
     setManagerModalOpen(false);
-
-    // TODO: gọi lại API lấy cây department
   };
 
   return (
@@ -49,12 +36,14 @@ const DepartmentTreePage = () => {
 
       {/* TREE VIEW */}
       <DepartmentTreeView
-        data={treeData}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onAddChild={handleAddChild}
-        onAssignManager={handleAssignManager}
+        data={departments}
+        onEdit={onEditDepartment}
+        onDelete={onDeleteDepartment}
+        onAddChild={onAddChildDepartment}
+        onAssignManager={handleOpenAssignManager}
       />
+
+      {/* MODAL CHỌN MANAGER */}
       <AssignManagerModal
         open={managerModalOpen}
         dept={selectedDept}
