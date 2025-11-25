@@ -8,6 +8,7 @@ const DepartmentTreePage = ({
   onDeleteDepartment,
   onAddChildDepartment,
   onAssignManager,
+  onMoveDepartment,
 }) => {
   const [selectedDept, setSelectedDept] = useState(null);
   const [managerModalOpen, setManagerModalOpen] = useState(false);
@@ -41,6 +42,7 @@ const DepartmentTreePage = ({
         onDelete={onDeleteDepartment}
         onAddChild={onAddChildDepartment}
         onAssignManager={handleOpenAssignManager}
+        onMoveDepartment={onMoveDepartment}
       />
 
       {/* MODAL CHỌN MANAGER */}

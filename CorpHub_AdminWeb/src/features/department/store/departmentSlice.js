@@ -4,6 +4,7 @@ import {
   deleteDepartmentApi,
   fetchDepartmentsWithUsers,
   getAllDepartments,
+  moveDepartmentApi,
   setManagerApi,
   updateDepartmentApi,
 } from "../services/departmentApi";
@@ -78,6 +79,20 @@ export const setManager = createAsyncThunk(
       const res = await setManagerApi(departmentId, managerId);
       console.log(res);
       return res.data; // API trả về DepartmentDetailDto đã cập nhật
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const moveDepartment = createAsyncThunk(
+  "department/move",
+  async ({ dragId, newParentId }, { rejectWithValue }) => {
+    try {
+      console.log("move");
+      const res = await moveDepartmentApi(dragId, newParentId);
+      console.log("move ", res);
+      return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -188,6 +203,17 @@ const departmentSlice = createSlice({
         }
       })
       .addCase(setManager.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(moveDepartment.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(moveDepartment.fulfilled, (state, action) => {
+        state.loading = false;
+        // Không cập nhật local vì tree thay đổi → reload bên hook
+      })
+      .addCase(moveDepartment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

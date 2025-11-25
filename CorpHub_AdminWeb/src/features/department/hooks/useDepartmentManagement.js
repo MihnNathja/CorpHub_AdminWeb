@@ -8,6 +8,7 @@ import {
   updateDepartment,
   deleteDepartment,
   setManager,
+  moveDepartment,
 } from "../store/departmentSlice";
 
 export const useDepartmentManagement = () => {
@@ -90,6 +91,20 @@ export const useDepartmentManagement = () => {
     [dispatch, reload]
   );
 
+  // Di chuyển phòng ban
+  const handleMove = useCallback(
+    async (dragId, newParentId) => {
+      try {
+        await dispatch(moveDepartment({ dragId, newParentId })).unwrap();
+        reload(); // Quan trọng – load lại cây phòng ban
+      } catch (err) {
+        console.error("Move department failed:", err);
+        throw err;
+      }
+    },
+    [dispatch, reload]
+  );
+
   return {
     departments: stableDepartments,
     loading,
@@ -99,5 +114,6 @@ export const useDepartmentManagement = () => {
     handleUpdate,
     handleDelete,
     handleAssignManager,
+    handleMove,
   };
 };

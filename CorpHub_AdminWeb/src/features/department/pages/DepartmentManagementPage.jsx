@@ -29,6 +29,7 @@ const DepartmentManagementPage = () => {
     handleDelete,
     reload,
     handleAssignManager,
+    handleMove,
   } = useDepartmentManagement();
 
   // 🧾 Xử lý form
@@ -64,8 +65,6 @@ const DepartmentManagementPage = () => {
       await handleDelete(id);
     }
   };
-
-  console.log(departments);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 p-8">
@@ -193,6 +192,7 @@ const DepartmentManagementPage = () => {
             onDeleteDepartment={handleDelete}
             onAddChildDepartment={(parent) => console.log("Add child", parent)}
             onAssignManager={handleAssignManager}
+            onMoveDepartment={handleMove}
           />
         ) : viewMode === "org" ? (
           <DepartmentOrgChart

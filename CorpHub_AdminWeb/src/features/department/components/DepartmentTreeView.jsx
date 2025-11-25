@@ -211,10 +211,13 @@ const DepartmentTreeView = ({
   onDelete,
   onAddChild,
   onAssignManager,
+  onMoveDepartment,
 }) => {
   const moveNode = (dragId, targetId) => {
     console.log(`🌀 Di chuyển phòng ban ${dragId} vào phòng ban ${targetId}`);
-    // TODO: gọi API backend hoặc cập nhật state ở đây
+    if (onMoveDepartment) {
+      onMoveDepartment(dragId, targetId);
+    }
   };
 
   return (
