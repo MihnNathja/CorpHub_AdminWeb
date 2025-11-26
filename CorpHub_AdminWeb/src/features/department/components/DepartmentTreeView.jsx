@@ -7,40 +7,86 @@ import {
   Users,
   Pencil,
   Trash2,
-  PlusCircle,
   Crown,
 } from "lucide-react";
 
 const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-// ======================== TreeNode ========================
-const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
+/* Format user list */
+const formatUsers = (users) => {
+  if (!users) return [];
+  return users
+    .map((u) => ({
+      id: u?.userId,
+      fullName: u?.fullName,
+      email: u?.email,
+      avatar: u?.avatar,
+      positionName: u?.positionName || null,
+      positionId: u?.positionId || null,
+      levelOrder: u.positionResponse?.levelOrder ?? 9999,
+    }))
+    .sort((a, b) => a.levelOrder - b.levelOrder);
+};
+
+/* ======================================================
+    ROOT DROP ZONE — Kéo vào để biến thành phòng ban gốc
+   ====================================================== */
+const RootDropZone = ({ onDropToRoot }) => {
+  const [{ isOver }, drop] = useDrop({
+    accept: "DEPARTMENT",
+    drop: (item) => {
+      if (onDropToRoot) onDropToRoot(item.id, null); // parent = null
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  });
+
+  return (
+    <div
+      ref={drop}
+      className={`p-3 rounded-md text-center border-2 border-dashed transition-all my-3 ${
+        isOver
+          ? "border-blue-500 bg-blue-50 dark:bg-gray-800"
+          : "border-gray-300 dark:border-gray-600"
+      }`}
+    >
+      <span className="text-gray-600 dark:text-gray-300 text-sm">
+        ⬆ Kéo phòng ban vào đây để đưa lên cấp gốc (root)
+      </span>
+    </div>
+  );
+};
+
+/* ======================================================
+                        TREE NODE
+   ====================================================== */
+const TreeNode = ({ node, moveNode, onEdit, onDelete, onAssignManager }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  /* Drag configuration */
   const [{ isDragging }, drag] = useDrag({
     type: "DEPARTMENT",
     item: { id: node.id },
     collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
+      isDragging: monitor.isDragging(),
     }),
   });
 
+  /* Drop configuration */
   const [, drop] = useDrop({
     accept: "DEPARTMENT",
-    drop: (item) => moveNode(item.id, node.id),
+    drop: (item) => {
+      moveNode(item.id, node.id);
+    },
   });
 
-  // 🧮 Tính tổng số nhân viên (kể cả cấp con, nếu có)
+  /* Count users across tree */
   const countUsers = (dept) => {
-    const ownCount = dept.users?.length || 0;
-    const childCount = dept.children?.reduce(
-      (acc, c) => acc + countUsers(c),
-      0
-    );
-    return ownCount + (childCount || 0);
+    const own = dept.users?.length || 0;
+    const child = dept.children?.reduce((acc, c) => acc + countUsers(c), 0);
+    return own + (child || 0);
   };
-
-  const totalUsers = countUsers(node);
 
   return (
     <div
@@ -53,7 +99,6 @@ const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
     >
       {/* Header */}
       <div className="flex items-center justify-between">
-        {/* Tên + manager */}
         <div
           className="flex items-center gap-2 flex-1"
           onClick={() => setIsOpen(!isOpen)}
@@ -67,43 +112,39 @@ const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
           ) : (
             <div className="w-4" />
           )}
+
           <span className="font-semibold text-gray-800 dark:text-gray-100">
             {node.name}
           </span>
 
           {node.manager && (
-            <span className="flex items-center text-xs text-gray-500 dark:text-gray-400 ml-2">
+            <span className="flex items-center text-xs text-gray-500 ml-2">
               <Crown size={12} className="mr-1 text-yellow-500" />
               {node.manager.fullName}
             </span>
           )}
         </div>
 
-        {/* Số lượng nhân viên + actions */}
-        <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-          {/* 👥 Số lượng nhân viên */}
+        <div className="flex items-center gap-3 text-gray-500">
           <div className="flex items-center gap-1 text-xs">
             <Users size={13} />
-            <span>{totalUsers}</span>
+            <span>{countUsers(node)}</span>
           </div>
 
-          {/* Action buttons */}
-          {/* <button
+          <button
             onClick={(e) => {
               e.stopPropagation();
-              onAddChild?.(node);
+              onAssignManager?.(node);
             }}
-            title="Thêm phòng ban con"
-            className="hover:text-green-500"
+            className="hover:text-yellow-500"
           >
-            <PlusCircle size={14} />
-          </button> */}
+            <Crown size={14} />
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
               onEdit?.(node);
             }}
-            title="Chỉnh sửa"
             className="hover:text-blue-500"
           >
             <Pencil size={14} />
@@ -113,7 +154,6 @@ const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
               e.stopPropagation();
               onDelete?.(node.id);
             }}
-            title="Xóa"
             className="hover:text-red-500"
           >
             <Trash2 size={14} />
@@ -121,33 +161,33 @@ const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
         </div>
       </div>
 
-      {/* Danh sách nhân viên */}
+      {/* Users */}
       {isOpen && node.users?.length > 0 && (
-        <div className="pl-6 mt-2 border-l border-gray-300 dark:border-gray-600 space-y-1">
-          {node.users.map((user) => (
+        <div className="pl-6 mt-2 border-l border-gray-300 space-y-1">
+          {formatUsers(node.users).map((u) => (
             <div
-              key={user.id}
-              className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-1 rounded-md"
+              key={u.id}
+              className="flex items-center gap-2 text-sm hover:bg-gray-100 p-1 rounded-md"
             >
               <img
-                src={user.avatar || DEFAULT_AVATAR}
-                alt={user.fullName}
-                className="w-6 h-6 rounded-full object-cover border border-gray-300"
+                src={u.avatar || DEFAULT_AVATAR}
+                className="w-6 h-6 rounded-full border"
               />
-              <div className="flex flex-col leading-tight">
-                <span className="font-medium">{user.fullName}</span>
-                {user.email && (
-                  <span className="text-xs text-gray-400">{user.email}</span>
+              <div className="flex flex-col text-xs">
+                <span className="font-medium">{u.fullName}</span>
+                {u.positionName && (
+                  <span className="text-blue-500">{u.positionName}</span>
                 )}
+                <span className="text-gray-400">{u.email}</span>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Danh sách phòng ban con */}
+      {/* Children */}
       {isOpen && node.children?.length > 0 && (
-        <div className="pl-6 mt-3 space-y-2 border-l border-gray-200 dark:border-gray-700">
+        <div className="pl-6 mt-3 space-y-2 border-l border-gray-200">
           {node.children.map((child) => (
             <TreeNode
               key={child.id}
@@ -155,7 +195,7 @@ const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
               moveNode={moveNode}
               onEdit={onEdit}
               onDelete={onDelete}
-              onAddChild={onAddChild}
+              onAssignManager={onAssignManager}
             />
           ))}
         </div>
@@ -164,15 +204,25 @@ const TreeNode = ({ node, moveNode, onEdit, onDelete, onAddChild }) => {
   );
 };
 
-// ======================== DepartmentTreeView ========================
-const DepartmentTreeView = ({ data = [], onEdit, onDelete, onAddChild }) => {
+/* ======================================================
+                    MAIN TREE VIEW
+   ====================================================== */
+const DepartmentTreeView = ({
+  data = [],
+  onEdit,
+  onDelete,
+  onAssignManager,
+  onMoveDepartment,
+}) => {
   const moveNode = (dragId, targetId) => {
-    console.log(`🌀 Di chuyển phòng ban ${dragId} vào phòng ban ${targetId}`);
-    // TODO: gọi API backend hoặc cập nhật state ở đây
+    if (onMoveDepartment) onMoveDepartment(dragId, targetId);
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
+      {/* ROOT DROP ZONE */}
+      <RootDropZone onDropToRoot={onMoveDepartment} />
+
       <div className="space-y-3">
         {data.length > 0 ? (
           data.map((dept) => (
@@ -182,6 +232,7 @@ const DepartmentTreeView = ({ data = [], onEdit, onDelete, onAddChild }) => {
               moveNode={moveNode}
               onEdit={onEdit}
               onDelete={onDelete}
+              onAssignManager={onAssignManager}
             />
           ))
         ) : (

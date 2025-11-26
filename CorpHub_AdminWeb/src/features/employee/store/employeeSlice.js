@@ -1,9 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
+  approvePendingCompetencies,
   createEmployeeProfileApi,
   createEmployeeProfileTicketApi,
   getAllEmployeeProfileApi,
+  getPendingCompetencies,
+  rejectPendingCompetencies,
 } from "../services/employeeApi";
+import { showError, showSuccess } from "../../../utils/toastUtils";
 
 // Async thunk gọi API
 export const createEmployeeProfile = createAsyncThunk(
@@ -61,6 +65,47 @@ export const createEmployeeProfileTicket = createAsyncThunk(
   }
 );
 
+export const getAllPendingCompetencies = createAsyncThunk(
+  "employee/getAllPendingCompetencies",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getPendingCompetencies();
+      console.log(response);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const approveCompetency = createAsyncThunk(
+  "employee/approveCompetency",
+  async (competencyId, { rejectWithValue }) => {
+    try {
+      const response = await approvePendingCompetencies(competencyId);
+      showSuccess("Approve Successfully");
+      return { id: competencyId, data: response.data };
+    } catch (err) {
+      showError("Approve Failed");
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const rejectCompetency = createAsyncThunk(
+  "employee/rejectCompetency",
+  async ({ competencyId, reason }, { rejectWithValue }) => {
+    try {
+      const response = await rejectPendingCompetencies(competencyId, reason);
+      showSuccess("Reject Successfully");
+      return { id: competencyId, data: response.data };
+    } catch (err) {
+      showError("Reject Failed");
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
 const employeeSlice = createSlice({
   name: "employees",
   initialState: {
@@ -68,6 +113,7 @@ const employeeSlice = createSlice({
     meta: { page: 0, totalPages: 1, size: 10 },
     loading: false,
     error: null,
+    pendingCompetencies: [],
   },
   extraReducers: (builder) => {
     builder
@@ -109,6 +155,58 @@ const employeeSlice = createSlice({
       .addCase(createEmployeeProfileTicket.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Không thể gửi yêu cầu tạo tài khoản";
+      })
+      // ===============================
+      // GET ALL PENDING COMPETENCIES
+      // ===============================
+      .addCase(getAllPendingCompetencies.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllPendingCompetencies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.pendingCompetencies = action.payload;
+      })
+      .addCase(getAllPendingCompetencies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch pending competencies";
+      })
+      // ===============================
+      // APPROVE PENDING COMPETENCY
+      // ===============================
+      .addCase(approveCompetency.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(approveCompetency.fulfilled, (state, action) => {
+        state.loading = false;
+
+        // xóa item khỏi list pending
+        state.pendingCompetencies = state.pendingCompetencies.filter(
+          (c) => c.id !== action.payload.id
+        );
+      })
+      .addCase(approveCompetency.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to approve competency";
+      })
+
+      // ===============================
+      // REJECT PENDING COMPETENCY
+      // ===============================
+      .addCase(rejectCompetency.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(rejectCompetency.fulfilled, (state, action) => {
+        state.loading = false;
+
+        // xóa item khỏi pending
+        state.pendingCompetencies = state.pendingCompetencies.filter(
+          (c) => c.id !== action.payload.id
+        );
+      })
+      .addCase(rejectCompetency.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to reject competency";
       });
   },
 });

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { mockEmployee } from "../mockEmployee";
 import ProfileHeader from "../components/ProfileHeader";
-import OverviewTab from "../components/OverviewTab";
-import JobProfileTab from "../components/JobProfileTab";
-import DocumentsTab from "../components/DocumentsTab";
+import OverviewTab from "../components/overview/OverviewTab";
+import JobProfileTab from "../components/job/JobProfileTab";
+import DocumentsTab from "../components/document/DocumentsTab";
 import AccountSettingsTab from "../components/AccountSettingsTab";
 import { useProfile } from "../hooks/useProfile";
 
@@ -56,7 +56,7 @@ const EmployeeProfilePage = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header thông tin nhân viên */}
-      <div className="p-6 space-y-6">
+      <div className="space-y-2">
         <ProfileHeader
           profile={profile}
           toggleActive={toggleActive}

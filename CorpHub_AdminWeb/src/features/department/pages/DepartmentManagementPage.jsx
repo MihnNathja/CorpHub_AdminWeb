@@ -10,8 +10,11 @@ import {
   Trash2,
   Loader2,
   RefreshCcw,
+  ListTree,
 } from "lucide-react";
 import ConfirmDialog from "../../global/components/ConfirmDialog";
+import DepartmentTreePage from "../components/DepartmentTreePage";
+import PositionManagementPanel from "../components/PositionManagementPanel";
 
 const DepartmentManagementPage = () => {
   const [viewMode, setViewMode] = useState("tree"); // "tree" | "org"
@@ -25,6 +28,8 @@ const DepartmentManagementPage = () => {
     handleUpdate,
     handleDelete,
     reload,
+    handleAssignManager,
+    handleMove,
   } = useDepartmentManagement();
 
   // 🧾 Xử lý form
@@ -108,6 +113,18 @@ const DepartmentManagementPage = () => {
             <Network size={16} />
             Sơ đồ tổ chức
           </button>
+
+          <button
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
+              viewMode === "position"
+                ? "bg-blue-600 text-white shadow-md"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+            }`}
+            onClick={() => setViewMode("position")}
+          >
+            <ListTree size={16} />
+            Chức danh
+          </button>
         </div>
       </div>
 
@@ -159,23 +176,34 @@ const DepartmentManagementPage = () => {
       </form>
 
       {/* Danh sách hiển thị */}
+
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 transition-all">
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 size={24} className="animate-spin text-gray-500" />
           </div>
         ) : viewMode === "tree" ? (
-          <DepartmentTreeView
-            data={departments}
-            onEdit={handleEdit}
-            onDelete={handleRemove}
+          // <DepartmentTreeView
+          //   data={departments}
+          //   onEdit={handleEdit}
+          //   onDelete={handleRemove}
+          // />
+          <DepartmentTreePage
+            departments={departments}
+            onEditDepartment={handleUpdate}
+            onDeleteDepartment={handleDelete}
+            onAddChildDepartment={(parent) => console.log("Add child", parent)}
+            onAssignManager={handleAssignManager}
+            onMoveDepartment={handleMove}
           />
-        ) : (
+        ) : viewMode === "org" ? (
           <DepartmentOrgChart
             data={departments}
             onEdit={handleEdit}
             onDelete={handleRemove}
           />
+        ) : (
+          <PositionManagementPanel departments={departments} />
         )}
       </div>
     </div>

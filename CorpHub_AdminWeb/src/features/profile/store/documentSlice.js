@@ -1,6 +1,8 @@
 // src/features/document/documentSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
+  checkDocumentRelations,
+  deleteDocument,
   downloadEmployeeDocument,
   getDocumentTypes,
   getMyDocuments,
@@ -31,12 +33,12 @@ export const uploadDocumentsAsync = createAsyncThunk(
   "document/uploadDocuments",
   async (formData, { rejectWithValue }) => {
     try {
-      console.log(formData);
-      await uploadEmployeeDocuments(formData);
+      const documentIds = await uploadEmployeeDocuments(formData);
       showSuccess("Upload successfully");
+      console.log("Kết quả gọi API upload: ", documentIds);
+      return documentIds;
     } catch (err) {
       showError("Upload failed");
-
       return rejectWithValue(err.response?.data || "Upload failed");
     }
   }
@@ -73,16 +75,49 @@ export const downloadDocumentAsync = createAsyncThunk(
   }
 );
 
+export const checkDocumentRelationsAsync = createAsyncThunk(
+  "document/checkRelations",
+  async (id, { rejectWithValue }) => {
+    try {
+      const data = await checkDocumentRelations(id);
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "Lỗi kiểm tra tài liệu");
+    }
+  }
+);
+
+export const deleteDocumentAsync = createAsyncThunk(
+  "document/deleteDocument",
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await deleteDocument(id);
+      showSuccess("Xóa tài liệu thành công");
+      return id; // trả về id để filter khỏi state
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        "Không thể xóa tài liệu. Có thể tài liệu đang được sử dụng.";
+      showError(msg);
+      return rejectWithValue(msg);
+    }
+  }
+);
+
 const documentSlice = createSlice({
   name: "document",
   initialState: {
     items: [],
     types: [],
+    documentIds: [],
     loading: false,
     uploading: false,
     uploadSuccess: false,
     downloading: false,
     downloadSuccess: false,
+    checking: false,
+    deleting: false,
+    relationInfo: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -102,9 +137,10 @@ const documentSlice = createSlice({
         state.uploading = true;
         state.error = null;
       })
-      .addCase(uploadDocumentsAsync.fulfilled, (state) => {
+      .addCase(uploadDocumentsAsync.fulfilled, (state, action) => {
         state.uploading = false;
         state.uploadSuccess = true;
+        state.documentIds = action.payload;
       })
       .addCase(uploadDocumentsAsync.rejected, (state, action) => {
         state.uploading = false;
@@ -138,6 +174,32 @@ const documentSlice = createSlice({
       .addCase(fetchMyDocuments.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // 🔹 Check Relations
+      .addCase(checkDocumentRelationsAsync.pending, (state) => {
+        state.checking = true;
+        state.relationInfo = null;
+      })
+      .addCase(checkDocumentRelationsAsync.fulfilled, (state, action) => {
+        state.checking = false;
+        state.relationInfo = action.payload;
+      })
+      .addCase(checkDocumentRelationsAsync.rejected, (state, action) => {
+        state.checking = false;
+        state.error = action.payload;
+      })
+
+      // 🔹 Delete Document
+      .addCase(deleteDocumentAsync.pending, (state) => {
+        state.deleting = true;
+      })
+      .addCase(deleteDocumentAsync.fulfilled, (state, action) => {
+        state.deleting = false;
+        // Xóa khỏi danh sách hiện tại
+        state.items = state.items.filter((d) => d.id !== action.payload);
+      })
+      .addCase(deleteDocumentAsync.rejected, (state) => {
+        state.deleting = false;
       });
   },
 });

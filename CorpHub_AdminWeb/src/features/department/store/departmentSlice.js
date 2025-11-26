@@ -4,6 +4,8 @@ import {
   deleteDepartmentApi,
   fetchDepartmentsWithUsers,
   getAllDepartments,
+  moveDepartmentApi,
+  setManagerApi,
   updateDepartmentApi,
 } from "../services/departmentApi";
 
@@ -64,6 +66,33 @@ export const deleteDepartment = createAsyncThunk(
     try {
       await deleteDepartmentApi(id);
       return id; // chỉ trả về id để filter local list
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const setManager = createAsyncThunk(
+  "department/setManager",
+  async ({ departmentId, managerId }, { rejectWithValue }) => {
+    try {
+      const res = await setManagerApi(departmentId, managerId);
+      console.log(res);
+      return res.data; // API trả về DepartmentDetailDto đã cập nhật
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const moveDepartment = createAsyncThunk(
+  "department/move",
+  async ({ dragId, newParentId }, { rejectWithValue }) => {
+    try {
+      console.log("move");
+      const res = await moveDepartmentApi(dragId, newParentId);
+      console.log("move ", res);
+      return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -156,6 +185,35 @@ const departmentSlice = createSlice({
         );
       })
       .addCase(deleteDepartment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      }) // ===== Set Manager =====
+      .addCase(setManager.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(setManager.fulfilled, (state, action) => {
+        state.loading = false;
+        const updated = action.payload;
+        console.log("Cập nhật: ", updated);
+
+        // tìm department vừa update
+        const idx = state.departments.findIndex((d) => d.id === updated.id);
+        if (idx >= 0) {
+          state.departments[idx] = updated; // cập nhật lại manager mới
+        }
+      })
+      .addCase(setManager.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(moveDepartment.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(moveDepartment.fulfilled, (state, action) => {
+        state.loading = false;
+        // Không cập nhật local vì tree thay đổi → reload bên hook
+      })
+      .addCase(moveDepartment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

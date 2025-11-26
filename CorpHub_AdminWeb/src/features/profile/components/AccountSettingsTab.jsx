@@ -11,6 +11,7 @@ import {
 import Section from "./Section";
 import { useProfile } from "../hooks/useProfile";
 import { showError, showSuccess } from "../../../utils/toastUtils";
+import ToggleSwitch from "./ToogleSwitch";
 
 const AccountSettingsTab = ({ profile }) => {
   const { form, handleChange, handleSubmit, loading, success, error, reset } =
@@ -214,16 +215,7 @@ const AccountSettingsTab = ({ profile }) => {
               </div>
             </div>
           </div>
-          <button
-            onClick={toggle2FA}
-            className={`px-3 py-1.5 rounded-full text-sm ${
-              settings.twoFactor
-                ? "bg-green-100 text-green-700"
-                : "bg-gray-100 text-gray-600"
-            }`}
-          >
-            {settings.twoFactor ? "Đang bật" : "Đang tắt"}
-          </button>
+          <ToggleSwitch enabled={settings.twoFactor} onToggle={toggle2FA} />
         </div>
       </Section>
 
@@ -240,16 +232,10 @@ const AccountSettingsTab = ({ profile }) => {
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => toggleNotify("email")}
-              className={`px-3 py-1.5 rounded-full text-sm ${
-                settings.notifications.email
-                  ? "bg-green-100 text-green-700"
-                  : "bg-gray-100 text-gray-600"
-              }`}
-            >
-              {settings.notifications.email ? "Bật" : "Tắt"}
-            </button>
+            <ToggleSwitch
+              enabled={settings.notifications.email}
+              onToggle={() => toggleNotify("email")}
+            />
           </div>
 
           <div className="flex items-center justify-between">
@@ -262,16 +248,10 @@ const AccountSettingsTab = ({ profile }) => {
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => toggleNotify("internal")}
-              className={`px-3 py-1.5 rounded-full text-sm ${
-                settings.notifications.internal
-                  ? "bg-green-100 text-green-700"
-                  : "bg-gray-100 text-gray-600"
-              }`}
-            >
-              {settings.notifications.internal ? "Bật" : "Tắt"}
-            </button>
+            <ToggleSwitch
+              enabled={settings.notifications.internal}
+              onToggle={() => toggleNotify("internal")}
+            />
           </div>
         </div>
       </Section>

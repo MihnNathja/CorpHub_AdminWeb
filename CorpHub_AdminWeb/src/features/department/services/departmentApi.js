@@ -21,3 +21,44 @@ export const deleteDepartmentApi = async (id) => {
   const res = await api.delete(`/api/department/${id}`);
   return res;
 };
+export const moveDepartmentApi = async (dragId, newParentId) => {
+  const res = await api.patch(`/api/department/${dragId}/move`, {
+    newParentId,
+  });
+  return res;
+};
+
+export const setManagerApi = async (departmentId, managerId) => {
+  const res = await api.patch(
+    `/api/department/${departmentId}/assign-manager/${managerId}`
+  );
+  return res;
+};
+
+export const createPositionApi = async (departmentId, data) => {
+  const res = await api.post(`/api/department/${departmentId}/positions`, data);
+  return res;
+};
+
+export const updatePositionApi = async (id, data) => {
+  const res = await api.put(`/api/department/positions/${id}`, data);
+  return res;
+};
+
+export const deletePositionApi = async (id) => {
+  const res = await api.delete(`/api/department/positions/${id}`);
+  return res;
+};
+
+export const reorderApi = async (departmentId, orderedIds) => {
+  const res = await api.put(
+    `/api/department/${departmentId}/positions/reorder`,
+    orderedIds
+  );
+  return res;
+};
+
+export const getPositionsApi = async (departmentId) => {
+  const res = await api.get(`/api/department/${departmentId}/positions`);
+  return res;
+};

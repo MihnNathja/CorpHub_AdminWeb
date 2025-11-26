@@ -16,6 +16,7 @@ import DepartmentManagementPage from "../features/department/pages/DepartmentMan
 import AccountLockedPage from "../pages/AccountLockedPage";
 import EmployeeProfilePage from "../features/profile/pages/EmployeeProfilePage";
 import AssetPage from "../features/asset/page/AssetPage";
+import AdminSettingsPage from "../features/settings/pages/AdminSettingPage";
 import AbsenceAdminPage from "../features/absence/pages/AbsenceAdminPage";
 import AbsenceEmployeePage from "../features/absence/pages/AbsenceEmployeePage";
 import SchedulePage from "../features/schedule/pages/SchedulePage";
@@ -46,7 +47,7 @@ const AppRoutes = () => {
           <Route path="my-tickets" element={<EmployeeTicketPage />} />
           <Route path="projects" element={<FeatureComingSoonPage />} />
           <Route path="calendar" element={<CalendarPage />} />
-          <Route path="settings" element={<FeatureComingSoonPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
           <Route path="profile" element={<EmployeeProfilePage />} />
           <Route path="absence" element={<AbsenceAdminPage />} />
           <Route path="my-absence" element={<AbsenceEmployeePage />} />

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import EmployeeProfileForm from "../components/EmployeeProfileForm";
 import EmployeeTable from "../components/EmployeeTable";
+import PendingCompetencyPage from "../components/PendingCompetencyPage";
 
 const EmployeePage = () => {
   const [activeTab, setActiveTab] = useState("list");
@@ -8,6 +9,7 @@ const EmployeePage = () => {
   const tabs = [
     { key: "list", label: "Employees list" },
     { key: "add", label: "Add new employee profile" },
+    { key: "pendingCompetency", label: "Pending Competency Employee" },
   ];
 
   return (
@@ -37,6 +39,7 @@ const EmployeePage = () => {
       <div className="border border-gray-200 dark:border-gray-700 rounded-b-lg p-4 -mt-px bg-white dark:bg-gray-800">
         {activeTab === "list" && <EmployeeTable />}
         {activeTab === "add" && <EmployeeProfileForm />}
+        {activeTab === "pendingCompetency" && <PendingCompetencyPage />}
       </div>
     </div>
   );
