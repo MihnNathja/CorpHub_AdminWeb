@@ -5,7 +5,7 @@ import TemplateSidebar from "../components/TemplateSidebar";
 import TemplateDetail from "../components/TemplateDetail";
 import StepList from "../components/StepList";
 import StepEditorModal from "../components/StepEditorModal";
-import { useWorkflowTemplates } from "../hooks/useWorkflowTemplate";
+import { useWorkflowTemplates } from "../hooks/useWorkflowTemplates";
 import { useWorkflowSteps } from "../hooks/useWorkflowStep";
 
 const WorkflowPage = () => {

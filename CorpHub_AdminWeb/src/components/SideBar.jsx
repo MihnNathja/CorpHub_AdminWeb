@@ -86,7 +86,7 @@ const menu = [
     name: "Absence",
     path: "absence",
     icon: ClipboardDocumentCheckIcon,
-    roles: ["ROLE_ADMIN"],
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
   },
   {
     name: "Absence",

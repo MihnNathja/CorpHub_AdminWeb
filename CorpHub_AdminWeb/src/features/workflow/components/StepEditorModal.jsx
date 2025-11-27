@@ -10,11 +10,21 @@ import {
 } from "lucide-react";
 
 const APPROVER_TYPES = [
-    { key: "USER", label: "Người dùng", icon: UserCircle },
-    { key: "POSITION", label: "Chức danh", icon: Users },
-    { key: "POSITION_LEVEL", label: "Cấp bậc vị trí", icon: Filter },
-    { key: "DEPARTMENT", label: "Theo phòng ban", icon: Building2 },
+    { key: "USER", label: "Người dùng", icon: UserCircle, disabled: false },
+    { key: "USER_RELATION", label: "Quan hệ người dùng", icon: Users, disabled: false },
+
+    // Tạm khoá — disable
+    { key: "POSITION", label: "Chức danh", icon: Users, disabled: true },
+    { key: "POSITION_LEVEL", label: "Cấp bậc vị trí", icon: Filter, disabled: true },
+    { key: "DEPARTMENT", label: "Theo phòng ban", icon: Building2, disabled: true },
 ];
+
+
+const USER_RELATION_OPTIONS = [
+    { key: "DIRECT_MANAGER", label: "Quản lý trực tiếp" },
+    { key: "DEPARTMENT_MANAGER", label: "Trưởng phòng" },
+];
+
 
 export default function StepEditorModal({
     open,
@@ -122,6 +132,25 @@ export default function StepEditorModal({
                     </div>
                 );
 
+            case "USER_RELATION":
+                return (
+                    <select
+                        value={params.key || ""}
+                        onChange={(e) =>
+                            updateApproverParam("key", e.target.value)
+                        }
+                        className={inputClass}
+                    >
+                        <option value="">Chọn quan hệ</option>
+
+                        {USER_RELATION_OPTIONS.map((opt) => (
+                            <option key={opt.key} value={opt.key}>
+                                {opt.label}
+                            </option>
+                        ))}
+                    </select>
+                );
+
             case "POSITION":
                 return (
                     <input
@@ -168,12 +197,28 @@ export default function StepEditorModal({
     return (
         <Transition show={open} as={Fragment}>
             <Dialog onClose={() => setOpen(false)} className="relative z-50">
-                {/* Overlay */}
+
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
 
                 <div className="fixed inset-0 flex items-center justify-center p-4">
-                    <Dialog.Panel className="w-full max-w-3xl rounded-2xl p-6 bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-gray-800">
 
+                    <Dialog.Panel
+                        className="
+                    w-full 
+                    max-w-5xl             
+                    sm:max-w-xl          
+                    md:max-w-3xl 
+                    lg:max-w-5xl
+                    rounded-2xl 
+                    p-6 
+                    bg-white dark:bg-gray-900 
+                    shadow-2xl 
+                    border border-gray-200 dark:border-gray-800
+
+                    max-h-[90vh]          /* <— tránh tràn */
+                    overflow-y-auto       /* <— scroll */
+                "
+                    >
                         {/* Header */}
                         <div className="mb-6">
                             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
@@ -185,7 +230,7 @@ export default function StepEditorModal({
                         </div>
 
                         {/* CONTENT SPLIT */}
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                             {/* LEFT SIDE — Step info */}
                             <div className="space-y-4">
@@ -253,31 +298,23 @@ export default function StepEditorModal({
 
                                 {/* Approver Type selection */}
                                 <div className="grid grid-cols-2 gap-3">
-                                    {APPROVER_TYPES.map(({ key, label, icon: Icon }) => (
+                                    {APPROVER_TYPES.map(({ key, label, icon: Icon, disabled }) => (
                                         <div
                                             key={key}
-                                            onClick={() =>
-                                                setForm({
-                                                    ...form,
-                                                    approver: { type: key, params: {} },
-                                                })
-                                            }
-                                            className={`p-3 rounded-lg cursor-pointer border 
-                                                flex items-center gap-3 transition 
-                                                ${form.approver.type === key
-                                                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                                                    : "border-gray-300 dark:border-gray-700"
-                                                }`}
+                                            onClick={() => {
+                                                if (!disabled) {
+                                                    setForm({ ...form, approver: { type: key, params: {} } });
+                                                }
+                                            }}
+                                            className={`p-3 rounded-lg cursor-pointer border flex items-center gap-3 transition ${disabled ? "opacity-40 cursor-not-allowed" : ""}${form.approver.type === key && !disabled
+                                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                                                : "border-gray-300 dark:border-gray-700"}`}
                                         >
-                                            <Icon
-                                                size={20}
-                                                className="text-gray-600 dark:text-gray-300"
-                                            />
-                                            <span className="text-gray-700 dark:text-gray-200 text-sm">
-                                                {label}
-                                            </span>
+                                            <Icon size={20} className="text-gray-600 dark:text-gray-300" />
+                                            <span className="text-gray-700 dark:text-gray-200 text-sm">{label}</span>
                                         </div>
                                     ))}
+
                                 </div>
 
                                 {/* Dynamic fields */}

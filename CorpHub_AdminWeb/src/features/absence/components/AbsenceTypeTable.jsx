@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAbsenceType } from "../hooks/useAbsenceType";
+import { useWorkflowTemplates } from "../../workflow/hooks/useWorkflowTemplates";
 import {
     PlusIcon,
     PencilSquareIcon,
@@ -14,6 +15,8 @@ const AbsenceTypeTable = () => {
     const { absenceTypes, create, update, remove } = useAbsenceType();
     const [showModal, setShowModal] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+
+    const { items: workflowTemplates } = useWorkflowTemplates();
 
     const openAdd = () => {
         setEditingItem(null);
@@ -130,6 +133,7 @@ const AbsenceTypeTable = () => {
                 onClose={() => setShowModal(false)}
                 onSubmit={handleSubmit}
                 initialData={editingItem}
+                workflowTemplates={workflowTemplates}
             />
         </div>
     );

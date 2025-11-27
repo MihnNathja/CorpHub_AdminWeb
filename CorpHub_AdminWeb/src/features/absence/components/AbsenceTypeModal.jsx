@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 
-const AbsenceTypeModal = ({ show, onClose, onSubmit, initialData }) => {
+const AbsenceTypeModal = ({ show, onClose, onSubmit, initialData, workflowTemplates }) => {
     const [form, setForm] = useState({
         code: "",
         name: "",
         description: "",
         requireProof: false,
-        requireApprovalLv: 1,
         affectQuota: true,
         maxPerRequest: 1,
         genderLimit: "ALL",
+
+        // 🔥 Thay requireApprovalLv bằng workflowTemplateId
+        workflowTemplateId: "",
     });
 
     useEffect(() => {
@@ -20,10 +22,10 @@ const AbsenceTypeModal = ({ show, onClose, onSubmit, initialData }) => {
                 name: "",
                 description: "",
                 requireProof: false,
-                requireApprovalLv: 1,
                 affectQuota: true,
                 maxPerRequest: 1,
                 genderLimit: "ALL",
+                workflowTemplateId: "",
             });
     }, [initialData]);
 
@@ -130,47 +132,44 @@ const AbsenceTypeModal = ({ show, onClose, onSubmit, initialData }) => {
                         </div>
                     </div>
 
-                    {/* Approval Level + Max Days */}
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-sm mb-1">
-                                Approval Level
-                            </label>
-                            <select
-                                value={form.requireApprovalLv}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        requireApprovalLv: Number(e.target.value),
-                                    })
-                                }
-                                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 
-                                bg-gray-50 dark:bg-gray-900"
-                            >
-                                <option value={1}>1 Level</option>
-                                <option value={2}>2 Levels</option>
-                                <option value={3}>3 Levels</option>
-                            </select>
-                        </div>
+                    {/* 🔥 Workflow Selection */}
+                    <div>
+                        <label className="block text-sm mb-1">Workflow</label>
+                        <select
+                            value={form.workflowTemplateId}
+                            onChange={(e) =>
+                                setForm({ ...form, workflowTemplateId: e.target.value })
+                            }
+                            className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 
+                            bg-gray-50 dark:bg-gray-900"
+                        >
+                            <option value="">Select Workflow...</option>
+                            {workflowTemplates.map((wt) => (
+                                <option key={wt.id} value={wt.id}>
+                                    {wt.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
 
-                        <div>
-                            <label className="block text-sm mb-1">
-                                Max Days per Request
-                            </label>
-                            <input
-                                type="number"
-                                min="1"
-                                value={form.maxPerRequest}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        maxPerRequest: Number(e.target.value),
-                                    })
-                                }
-                                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 
-                                bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100"
-                            />
-                        </div>
+                    {/* Max Days per request */}
+                    <div>
+                        <label className="block text-sm mb-1">
+                            Max Days per Request
+                        </label>
+                        <input
+                            type="number"
+                            min="1"
+                            value={form.maxPerRequest}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    maxPerRequest: Number(e.target.value),
+                                })
+                            }
+                            className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 
+                            bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100"
+                        />
                     </div>
 
                     {/* Gender */}

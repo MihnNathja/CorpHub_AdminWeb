@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import AbsenceTypeTable from "../components/AbsenceTypeTable";
 import AbsenceBalanceTable from "../components/AbsenceBalanceTable";
 import HolidayCalendarTable from "../components/HolidayCalendarTable";
-import AbsenceApprovalTable from "../components/AbsenceApprovalTable";
 import AbsenceRequestTable from "../components/AbsenceRequestTableAdmin";
 
 const AbsenceAdminPage = () => {
@@ -13,7 +12,6 @@ const AbsenceAdminPage = () => {
     { key: "types", label: "Absence Types" },
     { key: "balances", label: "Absence Balances" },
     { key: "holidays", label: "Holiday Calendar" },
-    { key: "approvals", label: "Absence Approvals" },
   ];
 
   return (
@@ -43,7 +41,6 @@ const AbsenceAdminPage = () => {
       {activeTab === "types" && <AbsenceTypeTable />}
       {activeTab === "balances" && <AbsenceBalanceTable />}
       {activeTab === "holidays" && <HolidayCalendarTable />}
-      {activeTab === "approvals" && <AbsenceApprovalTable />}
     </div>
   );
 };
