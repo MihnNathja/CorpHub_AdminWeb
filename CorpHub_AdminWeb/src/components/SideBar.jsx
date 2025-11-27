@@ -20,111 +20,169 @@ import {
 import { UserIcon, Building2Icon, ShieldCheckIcon, PlayCircleIcon } from "lucide-react";
 import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 
-// Thêm roles cho từng item (có thể mở rộng sau này)
-const menu = [
+// -------- GROUPED MENU --------
+const groupedMenu = [
+
+  // ========== GENERAL ==========
   {
-    name: "Dashboard",
-    path: "",
-    icon: HomeIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"], // HR cũng vào dashboard
+    title: "General",
+    items: [
+      {
+        name: "Dashboard",
+        path: "",
+        icon: HomeIcon,
+        roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"],
+      },
+      {
+        name: "Attendance",
+        path: "attendance",
+        icon: FingerPrintIcon,
+        roles: ["ROLE_HR", "ROLE_MANAGER", "ROLE_ADMIN"],
+      },
+      {
+        name: "Calendar",
+        path: "calendar",
+        icon: CalendarIcon,
+        roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"],
+      },
+    ],
   },
+
+  // ========== MY WORKSPACE ==========
   {
-    name: "Attendance",
-    path: "attendance",
-    icon: FingerPrintIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"], // HR cũng vào dashboard
+    title: "My Workspace",
+    items: [
+      {
+        name: "My Attendance",
+        path: "attendance",
+        icon: FingerPrintIcon,
+        roles: ["ROLE_USER"], // nhân viên
+      },
+      {
+        name: "My Absence",
+        path: "my-absence",
+        icon: ClipboardDocumentCheckIcon,
+        roles: ["ROLE_USER"],
+      },
+      {
+        name: "My Tickets",
+        path: "my-tickets",
+        icon: TicketIcon,
+        roles: ["ROLE_USER"],
+      },
+    ],
   },
+
+  // ========== PEOPLE & HR ==========
   {
-    name: "Tickets",
-    path: "tickets",
-    icon: TicketIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+    title: "People & HR",
+    items: [
+      {
+        name: "Employees",
+        path: "employees",
+        icon: UserIcon,
+        roles: ["ROLE_MANAGER", "ROLE_ADMIN", "ROLE_HR"],
+      },
+      {
+        name: "Departments",
+        path: "departments",
+        icon: BuildingOfficeIcon,
+        roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+      },
+      {
+        name: "Absence Management",
+        path: "absence",
+        icon: ClipboardDocumentCheckIcon,
+        roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR"],
+      },
+      {
+        name: "Work Schedule",
+        path: "schedule",
+        icon: CalendarDaysIcon,
+        roles: ["ROLE_ADMIN", "ROLE_HR"],
+      },
+
+    ],
   },
+
+  // ========== ASSETS ==========
   {
-    name: "Tickets",
-    path: "my-tickets",
-    icon: TicketIcon,
-    roles: ["ROLE_USER"],
+    title: "Assets & Facilities",
+    items: [
+      {
+        name: "Assets",
+        path: "assets",
+        icon: ArchiveBoxIcon,
+        roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+      },
+      {
+        name: "Rooms",
+        path: "rooms",
+        icon: Building2Icon,
+        roles: ["ROLE_ADMIN"],
+      },
+      {
+        name: "Projects",
+        path: "projects",
+        icon: ClipboardDocumentListIcon,
+        roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+      },
+    ],
   },
+
+  // ========== HELPDESK ==========
   {
-    name: "Users",
-    path: "users",
-    icon: UsersIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+    title: "Helpdesk",
+    items: [
+      {
+        name: "Tickets",
+        path: "tickets",
+        icon: TicketIcon,
+        roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+      },
+    ],
   },
+
+  // ========== WORKFLOW ==========
   {
-    name: "Roles",
-    path: "roles",
-    icon: ShieldCheckIcon,
-    roles: ["ROLE_ADMIN"],
+    title: "Workflow",
+    items: [
+      {
+        name: "Workflow Builder",
+        path: "workflow",
+        icon: PlayCircleIcon,
+        roles: ["ROLE_ADMIN"],
+      },
+    ],
   },
+
+  // ========== SYSTEM ==========
   {
-    name: "Departments",
-    path: "departments",
-    icon: BuildingOfficeIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
-  },
-  {
-    name: "Rooms",
-    path: "rooms",
-    icon: Building2Icon,
-    roles: ["ROLE_ADMIN"],
-  },
-  {
-    name: "Assets",
-    path: "assets",
-    icon: ArchiveBoxIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
-  },
-  {
-    name: "Schedule",
-    path: "schedule",
-    icon: CalendarDaysIcon,
-    roles: ["ROLE_ADMIN"],
-  },
-  {
-    name: "Absence",
-    path: "absence",
-    icon: ClipboardDocumentCheckIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
-  },
-  {
-    name: "Absence",
-    path: "my-absence",
-    icon: ClipboardDocumentCheckIcon,
-    roles: ["ROLE_USER"],
-  },
-  {
-    name: "Projects",
-    path: "projects",
-    icon: ClipboardDocumentListIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
-  },
-  {
-    name: "Employees",
-    path: "employees",
-    icon: UserIcon,
-    roles: ["ROLE_MANAGER", "ROLE_ADMIN", "ROLE_HR"],
-  },
-  {
-    name: "Calendar",
-    path: "calendar",
-    icon: CalendarIcon,
-    roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"],
-  },
-  {
-    name: "Workflow",
-    path: "workflow",
-    icon: PlayCircleIcon,
-    roles: ["ROLE_ADMIN"],
-  },
-  {
-    name: "Settings",
-    path: "settings",
-    icon: Cog6ToothIcon,
-    roles: ["ROLE_ADMIN"],
+    title: "System Settings",
+    items: [
+      {
+        name: "Users",
+        path: "users",
+        icon: UsersIcon,
+        roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+      },
+      {
+        name: "Roles & Permissions",
+        path: "roles",
+        icon: ShieldCheckIcon,
+        roles: ["ROLE_ADMIN"],
+      },
+      {
+        name: "Settings",
+        path: "settings",
+        icon: Cog6ToothIcon,
+        roles: ["ROLE_ADMIN"],
+      },
+    ],
   },
 ];
+
+
 
 const ROLE_PANEL = {
   ROLE_ADMIN: "Admin",
@@ -133,8 +191,31 @@ const ROLE_PANEL = {
   ROLE_HR: "HR",
 };
 
+const ArrowIcon = ({ open }) => (
+  <ChevronDoubleRightIcon
+    className={`h-4 w-4 transition-transform ${open ? "rotate-90" : ""
+      }`}
+  />
+);
+
+
 const Sidebar = ({ onToggle }) => {
   const [collapsed, setCollapsed] = useState(false);
+  // ---- GROUP COLLAPSE STATE ----
+  const allGroupTitles = groupedMenu.map((g) => g.title);
+
+  const [openGroups, setOpenGroups] = useState(
+    Object.fromEntries(allGroupTitles.map((title) => [title, false])) // 👈 mặc định đóng hết
+  );
+
+  const toggleGroup = (title) => {
+    setOpenGroups((prev) => ({
+      ...prev,
+      [title]: !prev[title],
+    }));
+  };
+
+
   const user = useSelector((state) => state.auth.user);
 
   // Nếu chưa login, không render sidebar
@@ -148,16 +229,19 @@ const Sidebar = ({ onToggle }) => {
 
   return (
     <aside
-      className={`${collapsed ? "w-20" : "w-64"
-        } bg-white dark:bg-gray-800 shadow-md dark:shadow-lg flex flex-col transition-all duration-300`}
+      className={`${collapsed ? "w-20" : "w-64"}
+      bg-white dark:bg-gray-800 shadow-md dark:shadow-lg
+      flex flex-col transition-all duration-300`}
     >
-      {/* Header */}
+
+      {/* ---------------- HEADER ---------------- */}
       <div className="h-20 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700">
         {!collapsed && (
           <h2 className="text-xl font-bold text-blue-600 dark:text-blue-400">
             {ROLE_PANEL[user.role]} Workspace
           </h2>
         )}
+
         <button
           onClick={handleToggle}
           className="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -170,31 +254,86 @@ const Sidebar = ({ onToggle }) => {
         </button>
       </div>
 
-      {/* Menu */}
-      <nav className="flex-1 flex flex-col gap-1 px-2 py-6">
-        {menu
-          .filter((item) => item.roles.includes(user.role)) // lọc theo role
-          .map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              end
-              className={({ isActive }) =>
-                `flex items-center ${collapsed ? "justify-center" : "gap-3"}
-                 px-4 py-2 rounded-lg transition-all 
-                 ${isActive
-                  ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-                }`
-              }
-            >
-              <item.icon className="h-6 w-6" />
-              {!collapsed && <span className="text-base">{item.name}</span>}
-            </NavLink>
-          ))}
+      {/* ---------------- NAVIGATION ---------------- */}
+      <nav className="flex-1 flex flex-col px-2 py-4">
+
+        {/* ------ COLLAPSED MODE (ICON ONLY) ------ */}
+        {collapsed && (
+          <div className="flex flex-col gap-2">
+            {groupedMenu
+              .flatMap((g) => g.items)
+              .filter((item) => item.roles.includes(user.role))
+              .map((item) => (
+                <NavLink
+                  key={item.name}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `flex justify-center items-center p-3 rounded-lg transition-all
+                  ${isActive
+                      ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`
+                  }
+                >
+                  <item.icon className="h-6 w-6" />
+                </NavLink>
+              ))}
+          </div>
+        )}
+
+        {/* ------ EXPANDED MODE (GROUP + ITEMS) ------ */}
+        {!collapsed && (
+          <div className="flex flex-col gap-2">
+            {groupedMenu.map((group) => {
+              const visibleItems = group.items.filter((i) =>
+                i.roles.includes(user.role)
+              );
+              if (visibleItems.length === 0) return null;
+
+              const isOpen = openGroups[group.title];
+
+              return (
+                <div key={group.title}>
+                  {/* GROUP HEADER */}
+                  <button
+                    onClick={() => toggleGroup(group.title)}
+                    className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+                  >
+                    {group.title}
+                    <ArrowIcon open={isOpen} />
+                  </button>
+
+                  {/* GROUP ITEMS */}
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-96" : "max-h-0"
+                      }`}
+                  >
+                    {visibleItems.map((item) => (
+                      <NavLink
+                        key={item.name}
+                        to={item.path}
+                        end
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 px-4 py-2 ml-2 rounded-lg transition-all 
+                        ${isActive
+                            ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-l-4 border-blue-600 dark:border-blue-400"
+                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          }`
+                        }
+                      >
+                        <item.icon className="h-5 w-5" />
+                        <span className="text-sm">{item.name}</span>
+                      </NavLink>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </nav>
 
-      {/* Footer */}
+      {/* ---------------- FOOTER ---------------- */}
       {!collapsed && (
         <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400 dark:text-gray-500">
           © 2025 Admin Panel
@@ -202,6 +341,7 @@ const Sidebar = ({ onToggle }) => {
       )}
     </aside>
   );
+
 };
 
 export default Sidebar;
