@@ -17,6 +17,11 @@ import AccountLockedPage from "../pages/AccountLockedPage";
 import EmployeeProfilePage from "../features/profile/pages/EmployeeProfilePage";
 import AssetPage from "../features/asset/page/AssetPage";
 import AdminSettingsPage from "../features/settings/pages/AdminSettingPage";
+import AbsenceAdminPage from "../features/absence/pages/AbsenceAdminPage";
+import AbsenceEmployeePage from "../features/absence/pages/AbsenceEmployeePage";
+import SchedulePage from "../features/schedule/pages/SchedulePage";
+import AttendancePage from "../features/attendance/pages/AttendancePage";
+import WorkflowPage from "../features/workflow/pages/WorkflowPage";
 
 const AppRoutes = () => {
   return (
@@ -31,6 +36,7 @@ const AppRoutes = () => {
       <Route element={<PrivateRoute />}>
         <Route path="/" element={<Dashboard />}>
           <Route index element={<HomePage />} />
+          <Route path="attendance" element={<AttendancePage />} />
           <Route path="rooms" element={<RoomPage />} />
           <Route path="assets" element={<AssetPage />} />
           <Route path="users" element={<UserPage />} />
@@ -43,6 +49,10 @@ const AppRoutes = () => {
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
           <Route path="profile" element={<EmployeeProfilePage />} />
+          <Route path="absence" element={<AbsenceAdminPage />} />
+          <Route path="my-absence" element={<AbsenceEmployeePage />} />
+          <Route path="schedule" element={<SchedulePage />} />
+          <Route path="workflow" element={<WorkflowPage />} />
         </Route>
       </Route>
     </Routes>

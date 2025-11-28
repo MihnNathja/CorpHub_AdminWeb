@@ -12,9 +12,13 @@ import {
   Cog6ToothIcon,
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
-  ArchiveBoxIcon
+  ArchiveBoxIcon,
+  DocumentIcon,
+  ClipboardDocumentCheckIcon,
+  FingerPrintIcon
 } from "@heroicons/react/24/outline";
-import { UserIcon, Building2Icon, ShieldCheckIcon } from "lucide-react";
+import { UserIcon, Building2Icon, ShieldCheckIcon, PlayCircleIcon } from "lucide-react";
+import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 
 // Thêm roles cho từng item (có thể mở rộng sau này)
 const menu = [
@@ -22,6 +26,12 @@ const menu = [
     name: "Dashboard",
     path: "",
     icon: HomeIcon,
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"], // HR cũng vào dashboard
+  },
+  {
+    name: "Attendance",
+    path: "attendance",
+    icon: FingerPrintIcon,
     roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"], // HR cũng vào dashboard
   },
   {
@@ -67,6 +77,24 @@ const menu = [
     roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
   },
   {
+    name: "Schedule",
+    path: "schedule",
+    icon: CalendarDaysIcon,
+    roles: ["ROLE_ADMIN"],
+  },
+  {
+    name: "Absence",
+    path: "absence",
+    icon: ClipboardDocumentCheckIcon,
+    roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+  },
+  {
+    name: "Absence",
+    path: "my-absence",
+    icon: ClipboardDocumentCheckIcon,
+    roles: ["ROLE_USER"],
+  },
+  {
     name: "Projects",
     path: "projects",
     icon: ClipboardDocumentListIcon,
@@ -83,6 +111,12 @@ const menu = [
     path: "calendar",
     icon: CalendarIcon,
     roles: ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"],
+  },
+  {
+    name: "Workflow",
+    path: "workflow",
+    icon: PlayCircleIcon,
+    roles: ["ROLE_ADMIN"],
   },
   {
     name: "Settings",

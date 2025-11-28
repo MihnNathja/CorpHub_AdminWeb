@@ -14,10 +14,19 @@ import roomTypeReducer from "../features/room/store/roomTypeSlice";
 import assetReducer from "../features/asset/store/assetSlice";
 import notificationReducer from "../features/notification/store/notificationSlice";
 import profileReducer from "../features/profile/store/profileSlice";
+import absenceTypeReducer from "../features/absence/store/absenceTypeSlice";
+import absenceBalanceReducer from "../features/absence/store/absenceBalanceSlice";
+import absenceRequestReducer from "../features/absence/store/absenceRequestSlice";
+import holidayReducer from "../features/absence/store/holidayCalendarSlice";
 import documentReducer from "../features/profile/store/documentSlice";
 import competencyReducer from "../features/profile/store/competencySlice";
 import parameterReducer from "../features/settings/store/parameterSlice";
 import departmentPositionReducer from "../features/department/store/departmentPositionSlice";
+import shiftReducer from "../features/schedule/store/shiftSlice";
+import scheduleReducer from "../features/schedule/store/scheduleSlice";
+import attendanceReducer from "../features/attendance/store/attendanceSlice";
+import workflowTemplateReducer from "../features/workflow/store/workflowTemplateSlice";
+import workflowStepReducer from "../features/workflow/store/workflowStepSlice";
 
 export const store = configureStore({
   reducer: {
@@ -36,9 +45,18 @@ export const store = configureStore({
     employees: employeeReducer,
     notification: notificationReducer,
     profile: profileReducer,
+    absenceType: absenceTypeReducer,
+    absenceBalance: absenceBalanceReducer,
+    absenceRequest: absenceRequestReducer,
+    holiday: holidayReducer,
     document: documentReducer,
     competency: competencyReducer,
     parameter: parameterReducer,
     positions: departmentPositionReducer,
+    shift: shiftReducer,
+    schedule: scheduleReducer,
+    attendance: attendanceReducer,
+    workflowTemplate: workflowTemplateReducer,
+    workflowStep: workflowStepReducer,
   },
 });
