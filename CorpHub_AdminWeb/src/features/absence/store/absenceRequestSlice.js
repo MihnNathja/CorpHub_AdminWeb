@@ -156,6 +156,10 @@ const absenceRequestSlice = createSlice({
         builder
             .addCase(deleteAbsenceRequest.fulfilled, (state, action) => {
                 state.items = state.items.filter((i) => i.id !== action.payload);
+            })
+            .addCase(deleteAbsenceRequest.rejected, (state, action) => {
+                // Có thể hiện lỗi nếu cần
+                state.error = action.payload;
             });
 
         /* --- APPROVE / REJECT --- */

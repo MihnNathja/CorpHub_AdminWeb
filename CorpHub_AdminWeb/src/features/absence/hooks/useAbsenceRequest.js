@@ -62,7 +62,8 @@ export const useAbsenceRequest = () => {
                 showSuccess("Xóa đơn nghỉ thành công!");
                 dispatch(fetchMyAbsenceRequests({ page, size }));
             } else {
-                showError(res.payload?.message || "Không thể xóa đơn nghỉ!");
+                console.log(error);
+                showError(error || "Không thể xóa đơn nghỉ!");
             }
             return res;
         } catch (err) {
