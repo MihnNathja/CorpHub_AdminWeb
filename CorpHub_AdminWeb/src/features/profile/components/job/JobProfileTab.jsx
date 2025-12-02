@@ -8,6 +8,7 @@ import CompetencyTable from "./competency/CompetencyTable";
 import CompetencySection from "./competency/CompetencySection";
 import { mockJobProfile } from "../../mockJobProfile";
 import { useCompetency } from "../../hooks/useCompetency";
+import PositionChangeList from "./position/PositionChangeList";
 
 const JobProfileTab = ({ profiles }) => {
   const { items, getMyCompetencies } = useCompetency();
@@ -79,6 +80,7 @@ const JobProfileTab = ({ profiles }) => {
     [histories]
   );
 
+  console.log(profiles);
   return (
     <div className="space-y-8">
       {/* TÓM TẮT HIỆN TẠI */}
@@ -108,6 +110,10 @@ const JobProfileTab = ({ profiles }) => {
       >
         <EmploymentHistoryTable histories={filteredHistories} />
       </Section>
+
+      <div className="mt-6">
+        <PositionChangeList employeeId={profiles.id} />
+      </div>
 
       {/* NĂNG LỰC & CHỨNG CHỈ */}
       <CompetencySection profile={profiles} competencies={competencies} />

@@ -39,7 +39,7 @@ const EmployeeProfilePage = () => {
       case "Tổng quan":
         return <OverviewTab profile={profile} />;
       case "Hồ sơ công việc":
-        return <JobProfileTab profile={profile} />;
+        return <JobProfileTab profiles={profile} />;
       case "Tài liệu":
         return <DocumentsTab profile={profile} />;
       case "Cài đặt tài khoản":
