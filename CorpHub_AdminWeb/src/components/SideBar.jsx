@@ -87,7 +87,7 @@ const groupedMenu = [
         name: "Departments",
         path: "departments",
         icon: BuildingOfficeIcon,
-        roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
+        roles: ["ROLE_ADMIN"],
       },
       {
         name: "Absence Management",
