@@ -28,6 +28,7 @@ import attendanceReducer from "../features/attendance/store/attendanceSlice";
 import workflowTemplateReducer from "../features/workflow/store/workflowTemplateSlice";
 import workflowStepReducer from "../features/workflow/store/workflowStepSlice";
 import positionChangeRequestReducer from "../features/profile/store/positionChangeRequestSlice";
+import departmentWithPositionReducer from "../features/profile/store/departmentWithPositionSlice";
 
 export const store = configureStore({
   reducer: {
@@ -60,5 +61,6 @@ export const store = configureStore({
     workflowTemplate: workflowTemplateReducer,
     workflowStep: workflowStepReducer,
     positionChangeRequest: positionChangeRequestReducer,
+    departmentPosition: departmentWithPositionReducer,
   },
 });
