@@ -21,6 +21,7 @@ export const fetchPositionChangeRequestsByEmployee = createAsyncThunk(
   async (employeeId, { rejectWithValue }) => {
     try {
       const res = await getRequestsByEmployee(employeeId);
+      console.log("position request", res);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
