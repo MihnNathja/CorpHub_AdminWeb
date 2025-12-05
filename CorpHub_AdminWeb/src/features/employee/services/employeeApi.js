@@ -26,3 +26,35 @@ export const approvePendingCompetencies = (competencyId) => {
 export const rejectPendingCompetencies = (competencyId, reason) => {
   return api.put(`/api/admin/employee/competencies/reject/${competencyId}`);
 };
+
+// Position change request / approval APIs
+export const getPositionChangeRequestsByEmployee = (employeeId) => {
+  return api.get(`/api/position-change-request/employee/${employeeId}`);
+};
+
+export const getPositionChangeRequest = (id) => {
+  return api.get(`/api/position-change-request/${id}`);
+};
+
+export const getApprovalStepsByRequest = (requestId) => {
+  return api.get(`/api/position-change-approval/request/${requestId}`);
+};
+
+export const approveApprovalStep = (approvalId, comment) => {
+  return api.post(`/api/position-change-approval/${approvalId}/approve`, {
+    comment,
+  });
+};
+
+export const rejectApprovalStep = (approvalId, comment) => {
+  return api.post(`/api/position-change-approval/${approvalId}/reject`, {
+    comment,
+  });
+};
+
+// Get all position requests (global list)
+export const getAllPositionChangeRequests = (status) => {
+  return api.get("/api/position-change-request", {
+    params: status ? { status } : {},
+  });
+};

@@ -1,4 +1,5 @@
 import React from "react";
+import PositionRequestList from "./PositionRequestList";
 import {
   Mail,
   Phone,
@@ -157,6 +158,9 @@ const EmployeeDetailModal = ({ selected, setSelected }) => {
             <p className="text-gray-500 italic">Không có dữ liệu</p>
           )}
         </div>
+
+        {/* Position Requests */}
+        <PositionRequestList employeeId={selected.id} />
 
         {/* Footer */}
         <div className="mt-8 text-right">

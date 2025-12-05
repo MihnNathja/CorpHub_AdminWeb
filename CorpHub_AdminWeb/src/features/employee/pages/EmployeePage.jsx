@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import EmployeeProfileForm from "../components/EmployeeProfileForm";
 import EmployeeTable from "../components/EmployeeTable";
 import PendingCompetencyPage from "../components/PendingCompetencyPage";
+import PositionRequestsTab from "../components/PositionRequestsTab";
 
 const EmployeePage = () => {
   const [activeTab, setActiveTab] = useState("list");
@@ -10,6 +11,7 @@ const EmployeePage = () => {
     { key: "list", label: "Employees list" },
     { key: "add", label: "Add new employee profile" },
     { key: "pendingCompetency", label: "Pending Competency Employee" },
+    { key: "positionRequests", label: "Position Requests" },
   ];
 
   return (
@@ -40,6 +42,7 @@ const EmployeePage = () => {
         {activeTab === "list" && <EmployeeTable />}
         {activeTab === "add" && <EmployeeProfileForm />}
         {activeTab === "pendingCompetency" && <PendingCompetencyPage />}
+        {activeTab === "positionRequests" && <PositionRequestsTab />}
       </div>
     </div>
   );
