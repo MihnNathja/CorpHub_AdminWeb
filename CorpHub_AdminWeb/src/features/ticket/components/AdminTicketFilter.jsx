@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { ChevronDown, Check } from "lucide-react";
 
 const TicketFilter = ({ name, filter, setFilter, colors }) => {
   const [open, setOpen] = useState(false);
@@ -6,58 +7,77 @@ const TicketFilter = ({ name, filter, setFilter, colors }) => {
   // Lấy danh sách các giá trị từ đối tượng màu
   const values = Object.keys(colors);
 
-  return (
-    <div className="mb-4 relative">
-      <label className="block mb-2 text-gray-900 dark:text-gray-100">
-        {name}
-      </label>
+  // Extract background color from Tailwind class
+  const getColorClass = (colorClass) => {
+    if (!colorClass) return "bg-gray-300";
+    const bgMatch = colorClass.match(/bg-\S+/);
+    return bgMatch ? bgMatch[0] : "bg-gray-300";
+  };
 
-      {/* Nút mở dropdown */}
+  return (
+    <div className="relative">
+
+      {/* Dropdown button */}
       <button
         onClick={() => setOpen(!open)}
-        className="w-48 flex justify-between items-center border rounded p-1 dark:bg-gray-900 dark:border-gray-700"
+        className="w-full flex justify-between items-center px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-sm transition-all duration-200"
       >
-        {filter ? (
-          <span
-            className={`flex-1 px-2 py-1 text-sm rounded-md font-medium ${colors[filter] || "bg-gray-200 text-gray-800"
-              }`}
-          >
-            {filter}
-          </span>
-        ) : (
-          <span className="text-gray-500 dark:text-gray-400">All</span>
-        )}
-        <span className="ml-2">▾</span>
+        <span className="flex items-center gap-2">
+          {filter ? (
+            <>
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${getColorClass(colors[filter])}`}
+              />
+              <span className="font-medium">{filter}</span>
+            </>
+          ) : (
+            <span className="text-gray-500 dark:text-gray-400">All {name}</span>
+          )}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""
+            }`}
+        />
       </button>
 
       {/* Dropdown list */}
       {open && (
-        <div className="absolute mt-1 w-48 bg-white dark:bg-gray-900 border dark:border-gray-700 rounded shadow-lg z-10">
-          <div
+        <div className="absolute top-full mt-1 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 overflow-hidden">
+          {/* All option */}
+          <button
             onClick={() => {
               setFilter("");
               setOpen(false);
             }}
-            className="cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200"
+            className="w-full text-left px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm font-medium transition-colors duration-150 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2"
           >
-            All
-          </div>
+            <span className="w-4 h-4 flex items-center justify-center">
+              {filter === "" && <Check className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
+            </span>
+            All {name}
+          </button>
 
+          {/* Filter options */}
           {values.map((value) => (
-            <div
+            <button
               key={value}
               onClick={() => {
                 setFilter(value);
                 setOpen(false);
               }}
-              className={`cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 flex items-center gap-2`}
+              className="w-full text-left px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm transition-colors duration-150 flex items-center gap-2 border-b border-gray-100 dark:border-gray-800 last:border-b-0"
             >
-              <span
-                className={`inline-block w-3 h-3 rounded-full ${colors[value]?.split(" ")[0] || "bg-gray-400"
-                  }`}
-              ></span>
-              {value}
-            </div>
+              <span className="flex items-center justify-center w-4 h-4">
+                {filter === value ? (
+                  <Check className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                ) : (
+                  <span
+                    className={`w-2.5 h-2.5 rounded-full ${getColorClass(colors[value])}`}
+                  />
+                )}
+              </span>
+              <span className="font-medium">{value}</span>
+            </button>
           ))}
         </div>
       )}

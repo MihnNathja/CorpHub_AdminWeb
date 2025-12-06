@@ -1,38 +1,33 @@
 import React, { useState } from "react";
 import dayjs from "dayjs";
 import {
-    EyeIcon,
-    CheckCircleIcon,
-    XCircleIcon,
-    ChevronDownIcon,
-    ChevronUpIcon,
-    PaperClipIcon,
-} from "@heroicons/react/24/outline";
+    Eye,
+    CheckCircle,
+    XCircle,
+    ChevronDown,
+    ChevronUp,
+    Paperclip,
+    Clock,
+} from "lucide-react";
 import ReasonDialog from "../../../components/ReasonDialog";
 
 const statusColors = {
-    PENDING: "bg-yellow-50 text-yellow-700 border border-yellow-200",
-    APPROVED: "bg-green-50 text-green-700 border border-green-200",
-    REJECTED: "bg-red-50 text-red-700 border border-red-200",
-};
-
-const workflowColors = {
-    IN_PROGRESS: "text-blue-600",
-    APPROVED: "text-green-600",
-    REJECTED: "text-red-600",
+    PENDING: "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-100 dark:border-amber-800",
+    APPROVED: "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-100 dark:border-emerald-800",
+    REJECTED: "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-900/30 dark:text-rose-100 dark:border-rose-800",
 };
 
 const IconButton = ({ children, color = "blue", ...props }) => {
     const colors = {
-        blue: "text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900 border-blue-100",
-        green: "text-green-600 hover:bg-green-50 dark:hover:bg-green-900 border-green-100",
-        red: "text-red-500 hover:bg-red-50 dark:hover:bg-red-900 border-red-100",
+        blue: "text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 border-blue-200 dark:border-blue-800",
+        green: "text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800",
+        red: "text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 border-rose-200 dark:border-rose-800",
     };
 
     return (
         <button
             {...props}
-            className={`w-8 h-8 rounded-full flex items-center justify-center border transition ${colors[color]}`}
+            className={`w-8 h-8 rounded-lg flex items-center justify-center border transition-all duration-200 ${colors[color]}`}
         >
             {children}
         </button>
@@ -42,25 +37,22 @@ const IconButton = ({ children, color = "blue", ...props }) => {
 const AbsenceRequestCard = ({ item, currentUserId, approveRequest, rejectRequest }) => {
     const [openHistory, setOpenHistory] = useState(false);
     const [openReasonDialog, setOpenReasonDialog] = useState(false);
-    const [dialogMode, setDialogMode] = useState("approve"); // "approve" | "reject"
+    const [dialogMode, setDialogMode] = useState("approve");
 
     const avatarText = item.user?.fullName
         ? item.user.fullName.charAt(0).toUpperCase()
         : "?";
 
-    // ✅ Xử lý khi click nút Approve
     const handleOpenApproveDialog = () => {
         setDialogMode("approve");
         setOpenReasonDialog(true);
     };
 
-    // ✅ Xử lý khi click nút Reject
     const handleOpenRejectDialog = () => {
         setDialogMode("reject");
         setOpenReasonDialog(true);
     };
 
-    // ✅ Xử lý khi submit dialog
     const handleReasonSubmit = (reason) => {
         if (dialogMode === "approve") {
             approveRequest(item.workflowInstanceId, reason);
@@ -70,161 +62,222 @@ const AbsenceRequestCard = ({ item, currentUserId, approveRequest, rejectRequest
         setOpenReasonDialog(false);
     };
 
-    // ✅ Đóng dialog
     const handleCloseDialog = () => {
         setOpenReasonDialog(false);
     };
 
     return (
         <>
-            <div className="
-                bg-white dark:bg-gray-800 
-                rounded-xl shadow-sm 
-                border border-gray-200 dark:border-gray-700
-                px-5 py-4 space-y-4
-            ">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden hover:shadow-md transition-shadow duration-200">
 
-                {/* HEADER */}
-                <div className="flex justify-between items-center gap-3">
+                {/* HEADER - Compact with all key info */}
+                <div className="px-4 py-3.5 bg-gradient-to-r from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-b border-gray-200 dark:border-gray-800">
+                    {/* Row 1: User + Status */}
+                    <div className="flex justify-between items-start gap-3 mb-3">
+                        {/* User Info */}
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                            {item.user?.avatar ? (
+                                <img
+                                    src={item.user.avatar}
+                                    alt={item.user.fullName}
+                                    className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700 flex-shrink-0"
+                                />
+                            ) : (
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-sm ring-2 ring-gray-200 dark:ring-gray-700 flex-shrink-0">
+                                    {avatarText}
+                                </div>
+                            )}
 
-                    {/* Avatar + user info */}
-                    <div className="flex items-center gap-3">
-                        {/* Avatar */}
-                        {item.user?.avatar ? (
-                            <img
-                                src={item.user.avatar}
-                                className="w-10 h-10 rounded-full object-cover"
-                            />
-                        ) : (
-                            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-300 font-semibold">
-                                {avatarText}
+                            <div className="flex-1 min-w-0">
+                                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100 truncate">
+                                    {item.user?.fullName}
+                                </h3>
+                                <div className="flex items-center gap-2 flex-wrap mt-1">
+                                    {item.user?.department && (
+                                        <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                                            {item.user.department.name}
+                                        </p>
+                                    )}
+                                    <span className="text-gray-300 dark:text-gray-600">•</span>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                        <Clock className="w-3.5 h-3.5" />
+                                        {dayjs(item.createdAt).format("DD/MM HH:mm")}
+                                    </p>
+                                </div>
                             </div>
-                        )}
-
-                        {/* Name + department */}
-                        <div>
-                            <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                                {item.user?.fullName}
-                            </h3>
-
-                            {item.user?.department && (
-                                <span className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded">
-                                    {item.user.department.name}
-                                </span>
-                            )}
                         </div>
-                    </div>
 
-                    {/* ACTION BUTTONS */}
-                    <div className="flex items-center gap-2">
-                        <IconButton>
-                            <EyeIcon className="w-5 h-5" />
-                        </IconButton>
-
-                        {item.currentApproverId === currentUserId &&
-                            item.workflowStatus === "IN_PROGRESS" && (
-                                <>
-                                    <IconButton color="green" onClick={handleOpenApproveDialog}>
-                                        <CheckCircleIcon className="w-5 h-5" />
-                                    </IconButton>
-
-                                    <IconButton color="red" onClick={handleOpenRejectDialog}>
-                                        <XCircleIcon className="w-5 h-5" />
-                                    </IconButton>
-                                </>
-                            )}
-                    </div>
-                </div>
-
-                {/* INFO GRID */}
-                <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-sm text-gray-700 dark:text-gray-300">
-
-                    <p><strong>Loại nghỉ:</strong> {item.absenceType?.name}</p>
-                    <p><strong>Số ngày:</strong> {item.durationDays}</p>
-
-                    <p><strong>Từ:</strong> {dayjs(item.startDate).format("DD/MM/YYYY")}</p>
-                    <p><strong>Đến:</strong> {dayjs(item.endDate).format("DD/MM/YYYY")}</p>
-
-                    <div>
-                        <span className={`px-2 py-0.5 rounded-md text-xs font-semibold ${statusColors[item.status]}`}>
-                            Request: {item.status}
+                        {/* Status Badge */}
+                        <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex-shrink-0 ${statusColors[item.status]}`}>
+                            {item.status}
                         </span>
                     </div>
 
-                    <p className={`font-medium ${workflowColors[item.workflowStatus]}`}>
-                        Workflow: {item.workflowStatus}
-                    </p>
-                </div>
+                    {/* Row 2: Type, Duration, Dates */}
+                    <div className="grid grid-cols-4 gap-3 text-sm">
+                        {/* Type */}
+                        <div>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-1">
+                                Loại
+                            </p>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+                                {item.absenceType?.name}
+                            </p>
+                        </div>
 
-                {/* CREATED INFO */}
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Gửi lúc: {dayjs(item.createdAt).format("HH:mm DD/MM/YYYY")}
-                </div>
+                        {/* Duration */}
+                        <div>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-1">
+                                Kỳ hạn
+                            </p>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">
+                                {item.durationDays} ngày
+                            </p>
+                        </div>
 
-                {/* REASON */}
-                <div>
-                    <div className="text-xs font-medium text-gray-500 mb-1">Lý do</div>
-                    <div className="text-sm text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700 rounded-lg px-3 py-2">
-                        {item.reason || "-"}
+                        {/* From */}
+                        <div>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-1">
+                                Từ
+                            </p>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">
+                                {dayjs(item.startDate).format("DD/MM")}
+                            </p>
+                        </div>
+
+                        {/* To */}
+                        <div>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-1">
+                                Đến
+                            </p>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">
+                                {dayjs(item.endDate).format("DD/MM")}
+                            </p>
+                        </div>
                     </div>
-
-                    {/* Attachment */}
-                    {item.attachmentUrl && (
-                        <a
-                            href={item.attachmentUrl}
-                            target="_blank"
-                            className="mt-2 inline-flex items-center gap-1 text-sm text-blue-600 hover:underline"
-                        >
-                            <PaperClipIcon className="w-4 h-4" />
-                            Xem tệp đính kèm
-                        </a>
-                    )}
                 </div>
 
-                {/* HISTORY COLLAPSE */}
-                <button
-                    className="w-full flex justify-between items-center text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 px-2 py-1 rounded-lg"
-                    onClick={() => setOpenHistory(!openHistory)}
-                >
-                    <span className="font-medium">Lịch sử duyệt</span>
-                    {openHistory ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />}
-                </button>
-
-                {openHistory && (
-                    <div className="pt-2 border-t border-gray-200 dark:border-gray-700 space-y-3">
-                        {item.workflowActions?.length > 0 ? (
-                            item.workflowActions.map((a, idx) => (
-                                <div key={idx} className="flex gap-3 items-start">
-                                    <div className="mt-1">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
-                                    </div>
-
+                {/* CONTENT - 2 Column Layout (2:1 ratio) */}
+                <div className="px-4 py-3.5 grid grid-cols-3 gap-3">
+                    {/* Left Column (2/3) - Reason and Attachment */}
+                    <div className="col-span-2 space-y-3">
+                        {/* Reason Section */}
+                        {(item.reason || item.attachmentUrl) && (
+                            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg px-3.5 py-3 border border-gray-200 dark:border-gray-700 space-y-2">
+                                {item.reason && (
                                     <div>
-                                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
-                                            {a.actorName}
-                                            <span className={a.action === "APPROVE" ? "text-green-600" : "text-red-600"}>
-                                                {" • "}{a.action}
-                                            </span>
+                                        <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5 uppercase tracking-wide">
+                                            Lý do
                                         </p>
-
-                                        {a.comment && (
-                                            <p className="text-xs italic text-gray-500">"{a.comment}"</p>
-                                        )}
-
-                                        <p className="text-xs text-gray-400">
-                                            {dayjs(a.createdAt).format("HH:mm • DD/MM/YYYY")}
+                                        <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-3 leading-relaxed">
+                                            {item.reason}
                                         </p>
                                     </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-xs text-gray-400 italic">Chưa có lịch sử duyệt</p>
+                                )}
+                                {item.attachmentUrl && (
+                                    <a
+                                        href={item.attachmentUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
+                                    >
+                                        <Paperclip className="w-4 h-4" />
+                                        Tệp đính kèm
+                                    </a>
+                                )}
+                            </div>
+                        )}
+
+                        {!item.reason && !item.attachmentUrl && (
+                            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg px-3.5 py-3 border border-gray-200 dark:border-gray-700">
+                                <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                                    Không có lý do hoặc tệp đính kèm
+                                </p>
+                            </div>
                         )}
                     </div>
-                )}
+
+                    {/* Right Column (1/3) - History */}
+                    <div className="col-span-1">
+                        {item.workflowActions?.length > 0 ? (
+                            <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden h-full flex flex-col">
+                                <button
+                                    className="flex justify-between items-center px-3.5 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors bg-gray-50/50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wide"
+                                    onClick={() => setOpenHistory(!openHistory)}
+                                >
+                                    <span className="truncate">Lịch sử ({item.workflowActions.length})</span>
+                                    {openHistory ? (
+                                        <ChevronUp className="w-4 h-4 flex-shrink-0" />
+                                    ) : (
+                                        <ChevronDown className="w-4 h-4 flex-shrink-0" />
+                                    )}
+                                </button>
+
+                                {openHistory && (
+                                    <div className="px-3 py-2.5 overflow-y-auto flex-1 max-h-[250px] space-y-2">
+                                        {item.workflowActions.map((a, idx) => (
+                                            <div key={idx} className="flex gap-2 items-start pb-2 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+                                                <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${a.action === "APPROVE"
+                                                    ? "bg-emerald-500"
+                                                    : "bg-rose-500"
+                                                    }`} />
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-start justify-between gap-1.5 mb-1">
+                                                        <p className="text-xs font-semibold text-gray-800 dark:text-gray-100 truncate">
+                                                            {a.actorName}
+                                                        </p>
+                                                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded whitespace-nowrap flex-shrink-0 ${a.action === "APPROVE"
+                                                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+                                                            : "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300"
+                                                            }`}>
+                                                            {a.action === "APPROVE" ? "✓" : "✕"}
+                                                        </span>
+                                                    </div>
+                                                    {a.comment && (
+                                                        <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-1 mb-1">
+                                                            "{a.comment}"
+                                                        </p>
+                                                    )}
+                                                    <p className="text-[10px] text-gray-500 dark:text-gray-500">
+                                                        {dayjs(a.createdAt).format("HH:mm • DD/MM")}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg px-3.5 py-3 border border-gray-200 dark:border-gray-700 text-center">
+                                <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                                    Không có lịch sử
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* FOOTER - Actions */}
+                <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                    <button className="p-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        <Eye className="w-4 h-4" />
+                    </button>
+
+                    {item.currentApproverId === currentUserId &&
+                        item.workflowStatus === "IN_PROGRESS" && (
+                            <div className="flex items-center gap-1">
+                                <IconButton color="green" onClick={handleOpenApproveDialog} title="Approve">
+                                    <CheckCircle className="w-4 h-4" />
+                                </IconButton>
+                                <IconButton color="red" onClick={handleOpenRejectDialog} title="Reject">
+                                    <XCircle className="w-4 h-4" />
+                                </IconButton>
+                            </div>
+                        )}
+                </div>
             </div>
 
-            {/* ✅ ReasonDialog */}
+            {/* ReasonDialog */}
             <ReasonDialog
                 open={openReasonDialog}
                 onClose={handleCloseDialog}

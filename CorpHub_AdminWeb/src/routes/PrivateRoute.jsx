@@ -1,9 +1,32 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import UnauthorizedPage from "../pages/UnauthorizedPage";
 
-const PrivateRoute = ({ children, roles }) => {
+// Define role requirements for each route - aligned with SideBar roles
+const ROUTE_ROLES = {
+  "/attendance": ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR"],
+  "/rooms": ["ROLE_ADMIN"],
+  "/assets": ["ROLE_ADMIN", "ROLE_MANAGER"],
+  "/users": ["ROLE_ADMIN", "ROLE_MANAGER"],
+  "/roles": ["ROLE_ADMIN"],
+  "/departments": ["ROLE_ADMIN"],
+  "/tickets": ["ROLE_ADMIN", "ROLE_MANAGER"],
+  "/employees": ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR"],
+  "/my-tickets": ["ROLE_USER"],
+  "/projects": ["ROLE_ADMIN", "ROLE_MANAGER"],
+  "/calendar": ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"],
+  "/settings": ["ROLE_ADMIN"],
+  "/profile": ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER", "ROLE_HR"],
+  "/absence": ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR"],
+  "/my-absence": ["ROLE_USER"],
+  "/schedule": ["ROLE_ADMIN", "ROLE_HR"],
+  "/workflow": ["ROLE_ADMIN"],
+};
+
+const PrivateRoute = ({ children }) => {
   const { accessToken, user } = useSelector((state) => state.auth);
+  const location = useLocation();
 
   const isTokenExpired = (token) => {
     try {
@@ -13,20 +36,14 @@ const PrivateRoute = ({ children, roles }) => {
       return true;
     }
   };
-  // 🔒 Nếu không có active hết hạn → về login
-  if (!accessToken && user && !user.active) {
-    return <Navigate to="/account-locked" replace />;
-  }
 
   // 🔒 Nếu không có token hoặc token hết hạn → về login
   if (!accessToken || isTokenExpired(accessToken)) {
-    console.log("Kiểm tra token: ", accessToken);
     return <Navigate to="/login" replace />;
   }
 
-  // ⏳ Nếu cần roles mà user chưa load
-  if (roles && !user) {
-    console.log("Kiểm tra user: ", user);
+  // ⏳ Nếu user chưa load
+  if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p className="text-gray-500 dark:text-gray-300">
@@ -36,17 +53,18 @@ const PrivateRoute = ({ children, roles }) => {
     );
   }
 
-  // 🔒 Nếu không có active hết hạn → về login
-  if (user.active == false || accessToken == "inactive") {
+  // 🔒 Nếu tài khoản bị khóa → về account-locked
+  if (!user.active) {
     return <Navigate to="/account-locked" replace />;
   }
 
-  // ❌ Sai quyền
-  if (roles && user && !roles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
+  // ❌ Kiểm tra quyền truy cập route
+  const requiredRoles = ROUTE_ROLES[location.pathname];
+  if (requiredRoles && !requiredRoles.includes(user.role)) {
+    return <UnauthorizedPage />;
   }
 
-  // ✅ OK
+  // ✅ OK - cho phép vào
   return children || <Outlet />;
 };
 

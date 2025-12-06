@@ -3,10 +3,22 @@ import { useTickets } from "../../hooks/useTickets";
 import { useUser } from "../../../user/hooks/useUser";
 import TicketTableBase from "../TicketTableBase";
 import TicketReceivedTableBody from "./TicketReceivedTableBody";
+import { User, FileText, Tag, CheckCircle, AlertCircle, Users, Calendar, Eye } from "lucide-react";
 
 const TicketReceivedTable = () => {
   const props = useTickets("received");
   const { employees: users } = useUser();
+
+  const headerConfig = [
+    { icon: User, label: "Requester", width: "w-32" },
+    { icon: FileText, label: "Title", width: "w-48" },
+    { icon: Tag, label: "Category", width: "w-28" },
+    { icon: CheckCircle, label: "Status", width: "w-28" },
+    { icon: AlertCircle, label: "Priority", width: "w-24" },
+    { icon: Users, label: "Assignee", width: "w-32" },
+    { icon: Calendar, label: "Created At", width: "w-32" },
+    { icon: Eye, label: "Action", width: "w-16" },
+  ];
 
   return (
     <TicketTableBase
@@ -14,15 +26,20 @@ const TicketReceivedTable = () => {
       {...props}
       renderTableHead={() => (
         <tr>
-          <th className="px-4 py-2">Requester</th>
-          <th className="px-4 py-2">Title</th>
-          <th className="px-4 py-2">Description</th>
-          <th className="px-4 py-2">Category</th>
-          <th className="px-4 py-2">Status</th>
-          <th className="px-4 py-2">Priority</th>
-          <th className="px-4 py-2">Assignee</th>
-          <th className="px-4 py-2">Created At</th>
-          <th className="px-4 py-2">View</th>
+          {headerConfig.map((header, idx) => {
+            const Icon = header.icon;
+            return (
+              <th
+                key={idx}
+                className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-200 whitespace-nowrap"
+              >
+                <div className="flex items-center gap-2">
+                  <Icon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  <span>{header.label}</span>
+                </div>
+              </th>
+            );
+          })}
         </tr>
       )}
       renderTableBody={() => (
