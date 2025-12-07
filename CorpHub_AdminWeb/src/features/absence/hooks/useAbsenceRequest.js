@@ -17,10 +17,11 @@ export const useAbsenceRequest = () => {
     const [page, setPage] = useState(meta.page ?? 0);
     const [size, setSize] = useState(meta.size ?? 9);
 
-    // Load data when page or size changes
+
+    // Load data when page, size, or filter changes
     useEffect(() => {
         dispatch(fetchMyAbsenceRequests({ page, size }));
-    }, [dispatch, page, size]);
+    }, [dispatch, page, size,]);
 
     const create = useCallback(async (data) => {
         try {
@@ -37,7 +38,7 @@ export const useAbsenceRequest = () => {
             console.error(err);
             showError("Lỗi khi tạo đơn nghỉ!");
         }
-    }, [dispatch, page, size]);
+    }, [dispatch, page, size,]);
 
     const update = useCallback(async (id, data) => {
         try {
@@ -62,7 +63,8 @@ export const useAbsenceRequest = () => {
                 showSuccess("Xóa đơn nghỉ thành công!");
                 dispatch(fetchMyAbsenceRequests({ page, size }));
             } else {
-                showError(res.payload?.message || "Không thể xóa đơn nghỉ!");
+                console.log(error);
+                showError(error || "Không thể xóa đơn nghỉ!");
             }
             return res;
         } catch (err) {

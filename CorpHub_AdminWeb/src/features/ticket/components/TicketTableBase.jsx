@@ -5,6 +5,7 @@ import { statusColors } from "../../global/const/statusColors";
 import { priorityColors } from "../../global/const/priorityColors";
 import Pagination from "../../global/components/Pagination";
 import TicketFilter from "./AdminTicketFilter";
+import { Search, Filter, Calendar, AlertCircle } from "lucide-react";
 
 const TicketTableBase = ({
   tickets,
@@ -49,96 +50,148 @@ const TicketTableBase = ({
 }) => {
   if (error)
     return (
-      <div className="p-6 text-center text-red-500 dark:text-red-400">
-        Failed to load tickets: {error.message || error}
+      <div className="p-8 text-center">
+        <AlertCircle className="w-12 h-12 mx-auto text-red-500 dark:text-red-400 mb-3" />
+        <p className="text-lg font-semibold text-red-600 dark:text-red-400">
+          Failed to load tickets
+        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          {error.message || error}
+        </p>
       </div>
     );
 
   return (
-    <div className="p-0 bg-white dark:bg-gray-800 rounded-2xl transition-colors">
-
-      {/* 🎯 Bộ lọc */}
-      <div className="flex flex-wrap items-end gap-4 mb-6">
-        <div className="flex flex-col mb-4">
-          <label className="text-gray-900 dark:text-gray-100 mb-1">
-            Search
-          </label>
-          <input
-            type="text"
-            placeholder="Search by title or description..."
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            className="border rounded p-1 dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-200"
-          />
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden transition-colors">
+      {/* Filter Panel */}
+      <div className="border-b border-gray-200 dark:border-gray-800 p-5 space-y-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Filter className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+          <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
+            Filters
+          </h3>
         </div>
 
-        <TicketFilter
-          name="Status"
-          filter={status}
-          setFilter={setStatus}
-          colors={statusColors}
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search tickets..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+            />
+          </div>
 
-        <TicketFilter
-          name="Priority"
-          filter={priority}
-          setFilter={setPriority}
-          colors={priorityColors}
-        />
+          {/* Status Filter */}
+          <div>
+            <TicketFilter
+              name="Status"
+              filter={status}
+              setFilter={setStatus}
+              colors={statusColors}
+            />
+          </div>
 
-        <div className="flex flex-col mb-4">
-          <label className="text-gray-900 dark:text-gray-100 mb-1">From</label>
-          <input
-            type="date"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className="border rounded p-1 dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-200"
-          />
-        </div>
+          {/* Priority Filter */}
+          <div>
+            <TicketFilter
+              name="Priority"
+              filter={priority}
+              setFilter={setPriority}
+              colors={priorityColors}
+            />
+          </div>
 
-        <div className="flex flex-col mb-4">
-          <label className="text-gray-900 dark:text-gray-100 mb-1">To</label>
-          <input
-            type="date"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            className="border rounded p-1 dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-200"
-          />
-        </div>
-      </div>
+          {/* From Date */}
+          <div className="relative">
+            <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
+            <input
+              type="date"
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+            />
+          </div>
 
-      {/* 🧾 Bảng */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
-            {renderTableHead()}
-          </thead>
-          {renderTableBody()}
-        </table>
-      </div>
-
-      {/* 📄 Pagination */}
-      <div className="mt-4 flex items-center justify-between">
-        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-700 dark:text-gray-300">
-            Rows:
-          </label>
-          <select
-            value={size}
-            onChange={(e) => setSize(Number(e.target.value))}
-            className="border rounded p-1 text-sm dark:bg-gray-900 dark:border-gray-700 text-gray-700 dark:text-gray-200"
-          >
-            {[5, 10, 20, 50].map((v) => (
-              <option key={v} value={v}>
-                {v}
-              </option>
-            ))}
-          </select>
+          {/* To Date */}
+          <div className="relative">
+            <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
+            <input
+              type="date"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+            />
+          </div>
         </div>
       </div>
 
-      {/* 🔍 Modal */}
+      {/* Empty State */}
+      {!loading && tickets?.length === 0 && (
+        <div className="p-12 text-center">
+          <AlertCircle className="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-3" />
+          <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+            No tickets found
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Try adjusting your filters or search terms
+          </p>
+        </div>
+      )}
+
+      {/* Table */}
+      {tickets?.length > 0 && (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 uppercase text-xs font-semibold border-b border-gray-200 dark:border-gray-700">
+              {renderTableHead()}
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {renderTableBody()}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading && (
+        <div className="p-12 text-center">
+          <div className="inline-block">
+            <div className="w-8 h-8 border-4 border-gray-200 dark:border-gray-700 border-t-blue-500 rounded-full animate-spin" />
+          </div>
+          <p className="text-gray-600 dark:text-gray-400 mt-3">
+            Loading tickets...
+          </p>
+        </div>
+      )}
+
+      {/* Footer: Pagination + Size */}
+      {tickets?.length > 0 && (
+        <div className="border-t border-gray-200 dark:border-gray-800 p-4 flex items-center justify-between flex-wrap gap-3">
+          <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-medium text-gray-700 dark:text-gray-300">
+              Rows per page:
+            </label>
+            <select
+              value={size}
+              onChange={(e) => setSize(Number(e.target.value))}
+              className="rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1 text-xs focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+            >
+              {[5, 10, 20, 50].map((v) => (
+                <option key={v} value={v}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
+
+      {/* Ticket Detail Modal */}
       <TicketModal
         ticket={isModalOpen ? selectedTicket : null}
         onClose={() => {
@@ -148,10 +201,10 @@ const TicketTableBase = ({
         {...modalProps}
       />
 
-      {/* ❌ Form Reject */}
+      {/* Reject Reason Modal */}
       {isReasonFormOpen && selectedTicket && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="w-full max-w-2xl">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
             <ReasonForm
               ticket={selectedTicket}
               mode="reject"

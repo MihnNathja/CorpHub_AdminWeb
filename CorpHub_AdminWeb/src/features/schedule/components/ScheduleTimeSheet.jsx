@@ -11,6 +11,8 @@ import {
     PlusIcon,
     CheckCircleIcon,
     DocumentArrowDownIcon,
+    CalendarIcon,
+    UserGroupIcon,
 } from "@heroicons/react/24/outline";
 
 import { useAdminSchedule } from "../hooks/useAdminSchedule";
@@ -39,7 +41,6 @@ const getDatesInRange = (from, to) => {
     }
     return dates;
 };
-
 
 export default function ScheduleTimesheet({
     departments = [],
@@ -91,7 +92,6 @@ export default function ScheduleTimesheet({
         }
     };
 
-
     // ✅ Next
     const next = () => {
         let newAnchor;
@@ -110,7 +110,6 @@ export default function ScheduleTimesheet({
         }
     };
 
-
     // ✅ Khi chuyển sang view Tháng → set from/to về tháng đó
     const switchToMonth = () => {
         setView("month");
@@ -119,7 +118,6 @@ export default function ScheduleTimesheet({
         setFrom(m.startOf("month").format("YYYY-MM-DD"));
         setTo(m.endOf("month").format("YYYY-MM-DD"));
     };
-
 
     // ✅ Khi chuyển sang view Tuần → set from/to về tuần hiện tại
     const switchToWeek = () => {
@@ -130,212 +128,258 @@ export default function ScheduleTimesheet({
         setTo(m.endOf("week").add(1, "day").format("YYYY-MM-DD"));
     };
 
-
     const periodLabel =
         view === "week"
             ? `${dayjs(from).format("DD/MM")} – ${dayjs(to).format("DD/MM/YYYY")}`
             : dayjs(from).format("MMMM YYYY");
 
+    const isToday = (date) => dayjs(date).isSame(dayjs(), "day");
+
     return (
-        <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner w-full">
+        <div className="h-full flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
 
-            {/* HEADER */}
-            <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold">Schedule & Timesheet</h2>
-                <div className="flex gap-2">
-                    <button className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800">
-                        <DocumentArrowDownIcon className="w-4 h-4 inline mr-1" /> Export
-                    </button>
-                    <button
-                        onClick={() => setShowAutoAssign(true)}
-                        className="px-3 py-2 bg-blue-600 text-white rounded-lg"
-                    >
-                        <PlusIcon className="w-4 h-4 inline mr-1" /> Phân ca
-                    </button>
+            {/* MODERN HEADER */}
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 px-6 py-5 border-b border-blue-500/20">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                            <CalendarIcon className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-white">Schedule & Timesheet</h2>
+                            <p className="text-blue-100 text-sm flex items-center gap-2 mt-1">
+                                <UserGroupIcon className="w-4 h-4" />
+                                <span>{schedules.length} nhân viên</span>
+                            </p>
+                        </div>
+                    </div>
 
+                    <div className="flex gap-3">
+                        <button className="px-4 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-xl transition-all flex items-center gap-2 border border-white/20 font-medium">
+                            <DocumentArrowDownIcon className="w-5 h-5" />
+                            <span>Export</span>
+                        </button>
+                        <button
+                            onClick={() => setShowAutoAssign(true)}
+                            className="px-4 py-2.5 bg-white hover:bg-gray-50 text-blue-600 rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
+                        >
+                            <PlusIcon className="w-5 h-5" />
+                            <span>Phân ca tự động</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* FILTER BAR */}
-            <div className="flex items-center gap-3 mb-4">
-                <button onClick={prev} className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800">
-                    <ArrowLeftIcon className="w-4 h-4" />
-                </button>
+            {/* CONTROL BAR */}
+            <div className="bg-gray-50 dark:bg-gray-900/50 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
 
-                <div className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 min-w-[180px]">
-                    {periodLabel}
-                </div>
+                    {/* Navigation */}
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={prev}
+                            className="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        >
+                            <ArrowLeftIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                        </button>
 
-                <button onClick={next} className="px-3 py-2 border rounded-lg bg-white dark:bg-gray-800">
-                    <ArrowRightIcon className="w-4 h-4" />
-                </button>
+                        <div className="px-5 py-2.5 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600 min-w-[200px] text-center">
+                            <span className="font-semibold text-gray-900 dark:text-gray-100">
+                                {periodLabel}
+                            </span>
+                        </div>
 
-                {/* View Switch */}
-                <div className="flex border rounded-xl">
-                    <button
-                        onClick={switchToWeek}
-                        className={`px-3 py-2 text-sm ${view === "week" ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-800"
-                            }`}
-                    >
-                        Tuần
-                    </button>
+                        <button
+                            onClick={next}
+                            className="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        >
+                            <ArrowRightIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                        </button>
+                    </div>
 
-                    <button
-                        onClick={switchToMonth}
-                        className={`px-3 py-2 text-sm border-l ${view === "month" ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-800"
-                            }`}
-                    >
-                        Tháng
-                    </button>
+                    {/* View Switch */}
+                    <div className="flex bg-white dark:bg-gray-800 rounded-lg p-1 border border-gray-300 dark:border-gray-600">
+                        <button
+                            onClick={switchToWeek}
+                            className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${view === "week"
+                                    ? "bg-blue-600 text-white shadow-sm"
+                                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                }`}
+                        >
+                            Tuần
+                        </button>
+
+                        <button
+                            onClick={switchToMonth}
+                            className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${view === "month"
+                                    ? "bg-blue-600 text-white shadow-sm"
+                                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                }`}
+                        >
+                            Tháng
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {/* LEGEND */}
-            <div className="flex gap-3 items-center mb-3 flex-wrap text-[12px]">
-                {[
-                    { color: "blue", label: "Scheduled" },
-                    { color: "indigo", label: "In progress" },
-                    { color: "green", label: "Completed" },
-                    { color: "red", label: "Missed" },
-                    { color: "gray", label: "Cancelled" },
-                    { color: "amber", label: "Absence" },
-                ].map((item) => (
-                    <div key={item.label} className="flex items-center gap-1">
-                        <span
-                            className={`w-3 h-3 rounded bg-${item.color}-300 border border-${item.color}-500`}
-                        ></span>
-                        <span className="text-gray-700 dark:text-gray-300">{item.label}</span>
+            <div className="px-6 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex gap-5 items-center flex-wrap text-xs">
+                    {[
+                    {color: "blue", bg: "bg-blue-100", border: "border-blue-400", text: "text-blue-700", label: "Scheduled" },
+                    {color: "indigo", bg: "bg-indigo-100", border: "border-indigo-400", text: "text-indigo-700", label: "In progress" },
+                    {color: "green", bg: "bg-green-100", border: "border-green-400", text: "text-green-700", label: "Completed" },
+                    {color: "red", bg: "bg-red-100", border: "border-red-400", text: "text-red-700", label: "Missed" },
+                    {color: "gray", bg: "bg-gray-100", border: "border-gray-400", text: "text-gray-700", label: "Cancelled" },
+                    {color: "amber", bg: "bg-amber-100", border: "border-amber-400", text: "text-amber-700", label: "Absence" },
+                    ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded ${item.bg} border ${item.border}`}></div>
+                        <span className={`font-medium ${item.text} dark:text-gray-300`}>
+                            {item.label}
+                        </span>
                     </div>
-                ))}
-            </div>
-
-
-            {/* GRID */}
-            <div className="max-h-[70vh] overflow-auto">
-                <div
-                    className="grid min-w-max"
-                    style={{
-                        gridTemplateColumns: `60px 220px repeat(${days.length}, 150px)`
-                    }}
-                >
-                    {/* HEADER ROW */}
-                    <div className="border px-3 py-2 sticky top-0 left-0 
-                        bg-gray-100 dark:bg-gray-700 
-                        z-[50]">
-                        #
-                    </div>
-
-                    <div className="border px-3 py-2 sticky top-0 left-[60px]
-                        bg-gray-100 dark:bg-gray-700 
-                        z-[50]">
-                        Nhân viên
-                    </div>
-
-                    {days.map(d => (
-                        <div
-                            key={d.toString()}
-                            className="border px-2 py-2 text-center sticky top-0 
-                           bg-gray-100 dark:bg-gray-700 
-                           z-[40]"
-                        >
-                            {d.format("dd DD/MM")}
-                        </div>
-                    ))}
-
-
-                    {/* BODY ROWS */}
-                    {schedules.map((emp, i) => (
-                        <React.Fragment key={emp.id}>
-
-                            {/* Col # */}
-                            <div
-                                className="
-                        border px-3 py-2 sticky left-0
-                        bg-gray-50 dark:bg-gray-900
-                        z-[40]
-                    "
-                            >
-                                {i + 1}
-                            </div>
-
-                            {/* Col Nhân viên */}
-                            <div
-                                className="
-                        border px-3 py-2 sticky left-[60px]
-                        bg-gray-50 dark:bg-gray-900
-                        z-[40]
-                    "
-                            >
-                                <div className="font-medium">{emp.name}</div>
-                                <div className="text-xs text-gray-500">{emp.department}</div>
-                            </div>
-
-                            {/* Col ngày */}
-                            {days.map((d) => {
-                                const shifts = emp.shifts?.filter((s) => sameDay(s.workDate, d));
-
-                                return (
-                                    <div key={d.toString()} className="border px-2 py-2">
-                                        {(!shifts || shifts.length === 0) ? (
-                                            <button
-                                                className="w-full h-8 border border-dashed rounded-lg text-gray-400 hover:bg-gray-100"
-                                                onClick={() => {
-                                                    setEditingSchedule({
-                                                        userId: emp.id,
-                                                        fullName: emp.name,
-                                                        shiftId: "",
-                                                        shiftName: "",
-                                                        workDate: d.format("YYYY-MM-DD"),
-                                                        status: "SCHEDULED",
-                                                    });
-                                                    setShowModal(true);
-                                                }}
-                                            >
-                                                +
-                                            </button>
-                                        ) : (
-                                            <div className="flex flex-col gap-1">
-                                                {shifts.map((s) => (
-                                                    <button
-                                                        key={s.id}
-                                                        onClick={() => {
-                                                            setEditingSchedule({
-                                                                id: s.id,
-                                                                userId: emp.id,
-                                                                fullName: emp.name,
-                                                                shiftId: s.shiftId,
-                                                                shiftName: s.name,
-                                                                workDate: s.workDate,
-                                                                status: s.status,
-                                                            });
-                                                            setShowModal(true);
-                                                        }}
-                                                    >
-                                                        <ShiftCard
-                                                            shift={{
-                                                                title: s.shiftName,
-                                                                start: dayjs(`${s.workDate}T${s.startTime}`),
-                                                                end: dayjs(`${s.workDate}T${s.endTime}`),
-                                                                notes: s.notes,
-                                                                status: s.status,
-                                                                checkInTime: s.checkInTime,
-                                                                checkOutTime: s.checkOutTime,
-                                                            }}
-                                                            onDelete={() => removeSchedule(s.id)}
-                                                        />
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-
-                        </React.Fragment>
                     ))}
                 </div>
             </div>
 
+            {/* GRID CONTAINER */}
+            <div className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900/50">
+                {loading ? (
+                    <div className="flex items-center justify-center h-full">
+                        <div className="text-center">
+                            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                            <p className="text-gray-500 dark:text-gray-400">Đang tải...</p>
+                        </div>
+                    </div>
+                ) : (
+                    <div
+                        className="grid min-w-max"
+                        style={{
+                            gridTemplateColumns: `60px 240px repeat(${days.length}, 160px)`
+                        }}
+                    >
+                        {/* HEADER ROW */}
+                        <div className="sticky top-0 left-0 z-50 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 border-b-2 border-gray-300 dark:border-gray-600 px-3 py-3 font-semibold text-gray-700 dark:text-gray-200 text-center">
+                            #
+                        </div>
+
+                        <div className="sticky top-0 left-[60px] z-50 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 border-b-2 border-gray-300 dark:border-gray-600 border-l border-gray-300 dark:border-gray-600 px-4 py-3 font-semibold text-gray-700 dark:text-gray-200">
+                            Nhân viên
+                        </div>
+
+                        {days.map(d => {
+                            const today = isToday(d);
+                            return (
+                                <div
+                                    key={d.toString()}
+                                    className={`sticky top-0 z-40 border-b-2 border-l border-gray-300 dark:border-gray-600 px-3 py-3 text-center ${today
+                                            ? "bg-blue-600 text-white font-bold"
+                                            : "bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 text-gray-700 dark:text-gray-200"
+                                        }`}
+                                >
+                                    <div className={`text-xs uppercase ${today ? "text-blue-100" : "text-gray-500 dark:text-gray-400"}`}>
+                                        {d.format("dd")}
+                                    </div>
+                                    <div className="text-base font-semibold mt-1">
+                                        {d.format("DD/MM")}
+                                    </div>
+                                </div>
+                            );
+                        })}
+
+                        {/* BODY ROWS */}
+                        {schedules.map((emp, i) => (
+                            <React.Fragment key={emp.id}>
+
+                                {/* Col # */}
+                                <div className="sticky left-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-4 text-center font-medium text-gray-600 dark:text-gray-300">
+                                    {i + 1}
+                                </div>
+
+                                {/* Col Nhân viên */}
+                                <div className="sticky left-[60px] z-40 bg-white dark:bg-gray-800 border-b border-l border-gray-200 dark:border-gray-700 px-4 py-4">
+                                    <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+                                        {emp.name}
+                                    </div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1">
+                                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                                        <span>{emp.department}</span>
+                                    </div>
+                                </div>
+
+                                {/* Col ngày */}
+                                {days.map((d) => {
+                                    const shifts = emp.shifts?.filter((s) => sameDay(s.workDate, d));
+                                    const today = isToday(d);
+
+                                    return (
+                                        <div
+                                            key={d.toString()}
+                                            className={`border-b border-l border-gray-200 dark:border-gray-700 p-2 ${today ? "bg-blue-50/50 dark:bg-blue-900/10" : "bg-white dark:bg-gray-800"
+                                                }`}
+                                        >
+                                            {(!shifts || shifts.length === 0) ? (
+                                                <button
+                                                    className="w-full h-full min-h-[60px] border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-400 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 transition-all group"
+                                                    onClick={() => {
+                                                        setEditingSchedule({
+                                                            userId: emp.id,
+                                                            fullName: emp.name,
+                                                            shiftId: "",
+                                                            shiftName: "",
+                                                            workDate: d.format("YYYY-MM-DD"),
+                                                            status: "SCHEDULED",
+                                                        });
+                                                        setShowModal(true);
+                                                    }}
+                                                >
+                                                    <PlusIcon className="w-5 h-5 mx-auto group-hover:scale-110 transition-transform" />
+                                                </button>
+                                            ) : (
+                                                <div className="flex flex-col gap-2">
+                                                    {shifts.map((s) => (
+                                                        <button
+                                                            key={s.id}
+                                                            onClick={() => {
+                                                                setEditingSchedule({
+                                                                    id: s.id,
+                                                                    userId: emp.id,
+                                                                    fullName: emp.name,
+                                                                    shiftId: s.shiftId,
+                                                                    shiftName: s.name,
+                                                                    workDate: s.workDate,
+                                                                    status: s.status,
+                                                                });
+                                                                setShowModal(true);
+                                                            }}
+                                                            className="w-full text-left"
+                                                        >
+                                                            <ShiftCard
+                                                                shift={{
+                                                                    title: s.shiftName,
+                                                                    start: dayjs(`${s.workDate}T${s.startTime}`),
+                                                                    end: dayjs(`${s.workDate}T${s.endTime}`),
+                                                                    notes: s.notes,
+                                                                    status: s.status,
+                                                                    checkInTime: s.checkInTime,
+                                                                    checkOutTime: s.checkOutTime,
+                                                                }}
+                                                                onDelete={() => removeSchedule(s.id)}
+                                                            />
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+
+                            </React.Fragment>
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {showAutoAssign && (
                 <AutoAssignModal
@@ -376,12 +420,9 @@ export default function ScheduleTimesheet({
                         setShowModal(false);
                         setEditingSchedule(null);
                     }}
-
                 />
             )}
 
         </div>
-
     );
-
 }

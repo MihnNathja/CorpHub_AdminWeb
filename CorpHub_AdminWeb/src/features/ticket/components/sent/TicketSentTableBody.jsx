@@ -1,11 +1,15 @@
 import React from "react";
 import TicketSentRow from "./TicketSentRow";
 
-const TicketSentTableBody = ({ tickets, handleConfirmSend, setSelectedTicket,
+const TicketSentTableBody = ({
+  tickets,
+  handleConfirmSend,
+  setSelectedTicket,
   setIsReasonFormOpen,
-  setIsModalOpen }) => {
+  setIsModalOpen
+}) => {
   return (
-    <tbody>
+    <>
       {tickets.map((ticket) => (
         <TicketSentRow
           key={ticket.id}
@@ -16,7 +20,7 @@ const TicketSentTableBody = ({ tickets, handleConfirmSend, setSelectedTicket,
           setIsModalOpen={setIsModalOpen}
         />
       ))}
-    </tbody>
+    </>
   );
 };
 
