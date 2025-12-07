@@ -58,3 +58,32 @@ export const getAllPositionChangeRequests = (status) => {
     params: status ? { status } : {},
   });
 };
+
+// HR Finalization APIs
+export const getFinalizationRequests = (status = "FINALIZE") => {
+  return api.get("/api/position-change-request", {
+    params: { status },
+  });
+};
+
+export const uploadDecisionFile = (requestId, files, notes) => {
+  const formData = new FormData();
+
+  // Add multiple files
+  files.forEach((file) => {
+    formData.append("file", file);
+  });
+
+  // Add notes if provided
+  if (notes) {
+    formData.append("notes", notes);
+  }
+
+  return api.post(
+    `/api/position-change-request/${requestId}/upload-decision`,
+    formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
+};

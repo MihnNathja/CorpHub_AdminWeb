@@ -5,26 +5,28 @@ import {
   rejectApprovalStep,
 } from "../services/employeeApi";
 import { showSuccess, showError } from "../../../utils/toastUtils";
+import { useAuth } from "../../auth/hooks/useAuth";
 
 export default function PositionRequestDetailModal({
   request,
   onClose,
   onRefresh,
 }) {
-  const [approvalComment, setApprovalComment] = useState("");
+  const { hasAnyRole } = useAuth();
+  const [stepComments, setStepComments] = useState({}); // { stepId: comment }
   const [actionInProgress, setActionInProgress] = useState(null);
 
+  const getStepComment = (stepId) => stepComments[stepId] || "";
+  const setStepComment = (stepId, comment) => {
+    setStepComments((prev) => ({ ...prev, [stepId]: comment }));
+  };
+  console.log(request);
   const handleApprove = async (approvalId) => {
-    if (!approvalComment.trim()) {
-      showError("Vui lòng nhập bình luận");
-      return;
-    }
-
     setActionInProgress(approvalId);
     try {
-      await approveApprovalStep(approvalId, approvalComment);
+      await approveApprovalStep(approvalId, getStepComment(approvalId) || "");
       showSuccess("Phê duyệt thành công");
-      setApprovalComment("");
+      setStepComment(approvalId, "");
       onRefresh?.();
       onClose?.();
     } catch (err) {
@@ -36,16 +38,17 @@ export default function PositionRequestDetailModal({
   };
 
   const handleReject = async (approvalId) => {
-    if (!approvalComment.trim()) {
+    const comment = getStepComment(approvalId);
+    if (!comment.trim()) {
       showError("Vui lòng nhập lý do từ chối");
       return;
     }
 
     setActionInProgress(approvalId);
     try {
-      await rejectApprovalStep(approvalId, approvalComment);
+      await rejectApprovalStep(approvalId, comment);
       showSuccess("Từ chối thành công");
-      setApprovalComment("");
+      setStepComment(approvalId, "");
       onRefresh?.();
       onClose?.();
     } catch (err) {
@@ -205,83 +208,115 @@ export default function PositionRequestDetailModal({
               Các bước phê duyệt
             </h3>
             <div className="space-y-4">
-              {request.approvalSteps.map((step, idx) => (
-                <div
-                  key={step.id}
-                  className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-700/50"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
-                        Bước {idx + 1} - {step.stepName || "Phê duyệt"}
-                      </p>
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">
-                        {step.approverName || "-"}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {step.status === "APPROVED" && (
-                        <CheckCircle size={20} className="text-green-600" />
-                      )}
-                      {step.status === "REJECTED" && (
-                        <XCircle size={20} className="text-red-600" />
-                      )}
-                      {step.status === "PENDING" && (
-                        <Clock size={20} className="text-yellow-600" />
-                      )}
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-semibold ${
-                          step.status === "APPROVED"
-                            ? "bg-green-100 text-green-800"
-                            : step.status === "REJECTED"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {step.status}
-                      </span>
-                    </div>
-                  </div>
+              {request.approvalSteps.map((step, idx) => {
+                // TODO: Uncomment role check after testing
+                // const canApprove =
+                //   hasAnyRole(["ROLE_ADMIN", "ROLE_HR", "ROLE_MANAGER"]) &&
+                //   step.decision === "PENDING";
 
-                  {step.comment && (
-                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-3 p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600">
-                      {step.comment}
-                    </p>
-                  )}
+                const canApprove = step.decision === "PENDING"; // Temporary: show all PENDING steps
+                const isActionInProgress = actionInProgress === step.id;
+                const stepComment = getStepComment(step.id);
 
-                  {step.status === "PENDING" && (
-                    <div className="mt-3 space-y-2">
-                      <textarea
-                        placeholder="Nhập bình luận (bắt buộc)"
-                        value={approvalComment}
-                        onChange={(e) => setApprovalComment(e.target.value)}
-                        className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
-                        rows="2"
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleApprove(step.id)}
-                          disabled={actionInProgress === step.id}
-                          className="px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded text-sm font-medium"
+                return (
+                  <div
+                    key={step.id}
+                    className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-700/50"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          Bước {step.stepOrder || idx + 1} - [
+                          {step.role || "Phê duyệt"}]
+                        </p>
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">
+                          {step.approver?.fullName || "-"}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {step.approver?.positionName &&
+                            `Vị trí: ${step.approver.positionName}`}
+                          {step.approver?.positionName &&
+                            step.approver?.departmentName &&
+                            " | "}
+                          {step.approver?.departmentName &&
+                            `Phòng ban: ${step.approver.departmentName}`}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {step.decision === "APPROVED" && (
+                          <CheckCircle size={20} className="text-green-600" />
+                        )}
+                        {step.decision === "REJECTED" && (
+                          <XCircle size={20} className="text-red-600" />
+                        )}
+                        {step.decision === "PENDING" && (
+                          <Clock size={20} className="text-yellow-600" />
+                        )}
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-semibold ${
+                            step.decision === "APPROVED"
+                              ? "bg-green-100 text-green-800"
+                              : step.decision === "REJECTED"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-yellow-100 text-yellow-800"
+                          }`}
                         >
-                          {actionInProgress === step.id
-                            ? "Đang xử lý..."
-                            : "Phê duyệt"}
-                        </button>
-                        <button
-                          onClick={() => handleReject(step.id)}
-                          disabled={actionInProgress === step.id}
-                          className="px-3 py-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded text-sm font-medium"
-                        >
-                          {actionInProgress === step.id
-                            ? "Đang xử lý..."
-                            : "Từ chối"}
-                        </button>
+                          {step.decision}
+                        </span>
                       </div>
                     </div>
-                  )}
-                </div>
-              ))}
+
+                    {step.decidedAt && (
+                      <p className="text-xs text-gray-500 mb-2">
+                        Quyết định vào:{" "}
+                        {new Date(step.decidedAt).toLocaleString("vi-VN")}
+                      </p>
+                    )}
+
+                    {step.comment && (
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3 p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600">
+                        {step.comment}
+                      </p>
+                    )}
+
+                    {canApprove && (
+                      <div className="mt-3 space-y-2">
+                        <textarea
+                          placeholder="Nhập bình luận (tùy chọn)"
+                          value={stepComment}
+                          onChange={(e) =>
+                            setStepComment(step.id, e.target.value)
+                          }
+                          className="w-full p-2 border rounded text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
+                          rows="2"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleApprove(step.id)}
+                            disabled={isActionInProgress}
+                            className="px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded text-sm font-medium transition"
+                          >
+                            {isActionInProgress ? "Đang xử lý..." : "Phê duyệt"}
+                          </button>
+                          <button
+                            onClick={() => handleReject(step.id)}
+                            disabled={isActionInProgress}
+                            className="px-3 py-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded text-sm font-medium transition"
+                          >
+                            {isActionInProgress ? "Đang xử lý..." : "Từ chối"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {!canApprove && step.decision === "PENDING" && (
+                      <p className="text-xs text-gray-500 italic mt-2">
+                        Chờ {step.approver?.fullName} phê duyệt
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
