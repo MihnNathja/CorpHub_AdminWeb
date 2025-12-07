@@ -97,6 +97,7 @@ export const useAssets = () => {
         filters,
         loading,
         error,
+        meta,
 
         page,
         size,

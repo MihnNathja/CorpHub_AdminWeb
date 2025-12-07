@@ -113,6 +113,7 @@ export const useRooms = () => {
         loading,
         error,
         totalPages,
+        meta,
         page,
 
         // States

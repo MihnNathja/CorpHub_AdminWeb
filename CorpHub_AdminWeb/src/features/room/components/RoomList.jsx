@@ -22,6 +22,7 @@ const RoomList = ({ departments, roomTypes }) => {
     const {
         rooms,
         page,
+        meta,
         totalPages,
         setPage,
         keywords,
@@ -66,7 +67,7 @@ const RoomList = ({ departments, roomTypes }) => {
                         <div>
                             <p className="text-sm text-white/80">Quản lý phòng</p>
                             <h2 className="text-xl font-semibold">
-                                {rooms?.length ?? 0} phòng được tìm thấy
+                                {meta?.totalElements ?? 0} phòng được tìm thấy
                             </h2>
                         </div>
                     </div>

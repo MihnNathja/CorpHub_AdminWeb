@@ -15,12 +15,6 @@ const statusStyles = {
         border: "border-emerald-200 dark:border-emerald-800",
         dot: "bg-emerald-500",
     },
-    IN_USE: {
-        bg: "bg-blue-100 dark:bg-blue-900/30",
-        text: "text-blue-700 dark:text-blue-300",
-        border: "border-blue-200 dark:border-blue-800",
-        dot: "bg-blue-500",
-    },
     BROKEN: {
         bg: "bg-rose-100 dark:bg-rose-900/30",
         text: "text-rose-700 dark:text-rose-300",
@@ -50,8 +44,7 @@ const AssetPage = () => {
     const {
         assets,
         categories,
-        loading,
-        error,
+        meta,
         page,
         size,
         totalPages,
@@ -70,13 +63,6 @@ const AssetPage = () => {
 
     const handleFilterChange = (name, value) => {
         updateFilters({ [name]: value });
-    };
-
-    const statusCounts = {
-        total: assets?.length || 0,
-        usable: assets?.filter(a => a.status === "USABLE").length || 0,
-        inUse: assets?.filter(a => a.status === "IN_USE").length || 0,
-        broken: assets?.filter(a => a.status === "BROKEN").length || 0,
     };
 
     return (
@@ -118,7 +104,7 @@ const AssetPage = () => {
                         <Package className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {statusCounts.total}
+                        {meta.totalElements || 0}
                     </p>
                 </div>
 
@@ -130,19 +116,19 @@ const AssetPage = () => {
                         <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {statusCounts.usable}
+                        {meta.assetCounts?.USABLE || 0}
                     </p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-200 dark:border-blue-800 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
                         <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                            In Use
+                            Disposed
                         </p>
                         <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     </div>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {statusCounts.inUse}
+                        {meta.assetCounts?.DISPOSED || 0}
                     </p>
                 </div>
 
@@ -154,7 +140,7 @@ const AssetPage = () => {
                         <Zap className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                     </div>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {statusCounts.broken}
+                        {meta.assetCounts?.BROKEN || 0}
                     </p>
                 </div>
             </div>
@@ -205,7 +191,6 @@ const AssetPage = () => {
                     >
                         <option value="">All Status</option>
                         <option value="USABLE">Usable</option>
-                        <option value="IN_USE">In Use</option>
                         <option value="BROKEN">Broken</option>
                         <option value="MAINTENANCE">Maintenance</option>
                         <option value="DISPOSED">Disposed</option>
@@ -272,8 +257,8 @@ const AssetPage = () => {
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                                                     <span className={`inline-block px-3 py-1.5 rounded-lg text-xs font-semibold ${asset.roomName
-                                                            ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
-                                                            : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                                                        ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                                                        : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
                                                         }`}>
                                                         {asset.roomName || "Unassigned"}
                                                     </span>
