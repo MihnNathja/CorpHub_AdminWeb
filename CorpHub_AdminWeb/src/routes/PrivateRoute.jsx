@@ -5,7 +5,7 @@ import UnauthorizedPage from "../pages/UnauthorizedPage";
 
 // Define role requirements for each route - aligned with SideBar roles
 const ROUTE_ROLES = {
-  "/attendance": ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR"],
+  "/attendance": ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR", "ROLE_USER"],
   "/rooms": ["ROLE_ADMIN"],
   "/assets": ["ROLE_ADMIN", "ROLE_MANAGER"],
   "/users": ["ROLE_ADMIN", "ROLE_MANAGER"],

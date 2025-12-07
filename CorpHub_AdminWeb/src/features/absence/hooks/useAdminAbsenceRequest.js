@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import {
     fetchMyApprovals,
     approveOrRejectRequest,
@@ -8,16 +8,19 @@ import { showSuccess, showError } from "../../../utils/toastUtils";
 
 export const useAbsenceRequest = () => {
     const dispatch = useDispatch();
-    const { items, loading, error } = useSelector(
+    const { items, meta = {}, loading, error } = useSelector(
         (state) => state.absenceRequest
     );
+    const [page, setPage] = useState(meta.page ?? 0);
+    const [size, setSize] = useState(meta.size ?? 9);
+    const [filter, setFilter] = useState({});
 
     /* =============================
        INITIAL FETCH
     ============================= */
     useEffect(() => {
-        dispatch(fetchMyApprovals());
-    }, [dispatch]);
+        dispatch(fetchMyApprovals({ page, size, ...filter }));
+    }, [dispatch, page, size, filter]);
 
     /* =============================
        ACTIONS (with useCallback)
@@ -81,6 +84,8 @@ export const useAbsenceRequest = () => {
         absenceRequests: items || [],
         loading,
         error,
+        filter,
+        setFilter,
         approveRequest,
         rejectRequest,
     };
