@@ -1,4 +1,4 @@
-                       import React, { useState } from "react";
+import React, { useState } from "react";
 import { PlusIcon, Search, Filter, Sparkles, Building2, Users, Square } from "lucide-react";
 import FloatingButton from "../../global/components/FloatingButton";
 import Pagination from "../../global/components/Pagination";
@@ -11,7 +11,7 @@ import { useAssets } from "../../asset/hooks/useAssets";
 const statusQuick = [
     { value: "", label: "Tất cả" },
     { value: "AVAILABLE", label: "Sẵn sàng" },
-    { value: "BUSY", label: "Đang dùng" },
+    { value: "RESERVED", label: "Đang dùng" },
     { value: "MAINTENANCE", label: "Bảo trì" },
 ];
 
@@ -41,7 +41,7 @@ const RoomList = ({ departments, roomTypes }) => {
 
     const activeFilters = [
         filters.typeId && roomTypes.find((t) => t.id === filters.typeId)?.name,
-        filters.departmentId && departments.find((d) => d.departmentId === filters.departmentId)?.departmentName,
+        filters.departmentId && departments.find((d) => d.id === filters.departmentId)?.name,
         filters.minCapacity && `≥ ${filters.minCapacity} chỗ`,
         filters.minArea && `≥ ${filters.minArea} m²`,
         filters.status && statusQuick.find((s) => s.value === filters.status)?.label,
@@ -118,14 +118,14 @@ const RoomList = ({ departments, roomTypes }) => {
 
                         <select
                             name="departmentId"
-                            value={filters.departmentId}
+                            value={filters.id}
                             onChange={(e) => handleFilterChange("departmentId", e.target.value)}
                             className="w-full sm:w-auto max-w-[200px] h-[40px] px-3 py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none truncate"
                         >
                             <option value="">Tất cả khoa/phòng</option>
                             {departments.map((department) => (
-                                <option key={department.departmentId} value={department.departmentId}>
-                                    {department.departmentName}
+                                <option key={department.id} value={department.id}>
+                                    {department.name}
                                 </option>
                             ))}
                         </select>
@@ -184,8 +184,8 @@ const RoomList = ({ departments, roomTypes }) => {
                                 key={s.value}
                                 onClick={() => handleFilterChange("status", s.value)}
                                 className={`px-3 py-1 text-xs font-medium rounded-full border transition ${active
-                                        ? "bg-blue-600 text-white border-blue-600 shadow-sm"
-                                        : "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
+                                    ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                                    : "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                                     }`}
                             >
                                 {s.label}
@@ -260,6 +260,8 @@ const RoomList = ({ departments, roomTypes }) => {
                     setEditingRoom(null);
                 }}
                 room={editingRoom}
+                departments={departments}
+                roomTypes={roomTypes}
                 onSubmit={async (formData) => {
                     await handleCreateOrUpdate(
                         editingRoom ? { ...formData, id: editingRoom.id } : formData
