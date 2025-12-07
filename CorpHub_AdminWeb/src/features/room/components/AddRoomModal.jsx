@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { X, Building2, Users, Maximize2, CheckCircle, AlertCircle } from "lucide-react";
+import { X, Building2, Users, Maximize2, CheckCircle, AlertCircle, Building } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
-    const roomType = ["Phòng họp", "Phòng làm việc"];
+const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit }) => {
 
     const [formData, setFormData] = useState({
         name: "",
-        type: "",
+        typeId: "",
         capacity: "",
         area: "",
+        departmentId: "",
         status: "AVAILABLE",
     });
 
@@ -17,13 +17,21 @@ const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
 
     useEffect(() => {
         if (room) {
-            setFormData(room);
+            setFormData({
+                name: room.name || "",
+                typeId: room.typeId || room.type?.id || "",
+                capacity: room.capacity || "",
+                area: room.area || "",
+                departmentId: room.departmentId || room.department?.id || "",
+                status: room.status || "AVAILABLE",
+            });
         } else {
             setFormData({
                 name: "",
-                type: "",
+                typeId: "",
                 capacity: "",
                 area: "",
+                departmentId: "",
                 status: "AVAILABLE",
             });
         }
@@ -41,9 +49,10 @@ const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
     const validate = () => {
         const newErrors = {};
         if (!formData.name.trim()) newErrors.name = "Tên phòng là bắt buộc";
-        if (!formData.type) newErrors.type = "Loại phòng là bắt buộc";
+        if (!formData.typeId) newErrors.typeId = "Loại phòng là bắt buộc";
         if (!formData.capacity || formData.capacity <= 0) newErrors.capacity = "Sức chứa phải lớn hơn 0";
         if (!formData.area || formData.area <= 0) newErrors.area = "Diện tích phải lớn hơn 0";
+        if (!formData.departmentId) newErrors.departmentId = "Phòng ban là bắt buộc";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -62,7 +71,7 @@ const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
             bg: "bg-emerald-50 dark:bg-emerald-900/20",
             icon: CheckCircle,
         },
-        BUSY: {
+        RESERVED: {
             label: "Đang sử dụng",
             color: "text-amber-600 dark:text-amber-400",
             bg: "bg-amber-50 dark:bg-amber-900/20",
@@ -97,7 +106,7 @@ const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             transition={{ duration: 0.2 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-gray-200 dark:border-gray-700"
+                            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden border border-gray-200 dark:border-gray-700"
                         >
                             {/* Header with gradient */}
                             <div className="relative bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-6 py-5 text-white">
@@ -141,12 +150,12 @@ const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
                             </div>
 
                             {/* Form Content */}
-                            <div className="p-6 space-y-4">
-                                {/* Room Name */}
+                            <div className="p-6 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+                                {/* Room Name - Full Width */}
                                 <div>
                                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                         <Building2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                                        Tên phòng
+                                        Tên phòng <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -175,41 +184,81 @@ const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
                                     )}
                                 </div>
 
-                                {/* Room Type */}
-                                <div>
-                                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        <Building2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                                        Loại phòng
-                                    </label>
-                                    <select
-                                        name="type"
-                                        value={formData.type}
-                                        onChange={handleChange}
-                                        className={`w-full px-4 py-2.5 rounded-xl border-2 transition-all
-                                            ${errors.type
-                                                ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
-                                                : "border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-4 focus:ring-purple-500/20"
-                                            }
-                                            bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
-                                            focus:outline-none cursor-pointer`}
-                                    >
-                                        <option value="">-- Chọn loại phòng --</option>
-                                        {roomType.map((type) => (
-                                            <option key={type} value={type}>
-                                                {type}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    {errors.type && (
-                                        <motion.p
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            className="text-xs text-red-600 dark:text-red-400 mt-1 flex items-center gap-1"
+                                {/* Grid for Type and Department */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Room Type */}
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                            <Building2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                                            Loại phòng <span className="text-red-500">*</span>
+                                        </label>
+                                        <select
+                                            name="typeId"
+                                            value={formData.typeId}
+                                            onChange={handleChange}
+                                            className={`w-full px-4 py-2.5 rounded-xl border-2 transition-all
+                                                ${errors.typeId
+                                                    ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
+                                                    : "border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-4 focus:ring-purple-500/20"
+                                                }
+                                                bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
+                                                focus:outline-none cursor-pointer`}
                                         >
-                                            <AlertCircle className="w-3 h-3" />
-                                            {errors.type}
-                                        </motion.p>
-                                    )}
+                                            <option value="">-- Chọn loại phòng --</option>
+                                            {roomTypes?.map((type) => (
+                                                <option key={type.id} value={type.id}>
+                                                    {type.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.typeId && (
+                                            <motion.p
+                                                initial={{ opacity: 0, y: -10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="text-xs text-red-600 dark:text-red-400 mt-1 flex items-center gap-1"
+                                            >
+                                                <AlertCircle className="w-3 h-3" />
+                                                {errors.typeId}
+                                            </motion.p>
+                                        )}
+                                    </div>
+
+                                    {/* Department */}
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                            <Building className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                                            Phòng ban <span className="text-red-500">*</span>
+                                        </label>
+                                        <select
+                                            name="departmentId"
+                                            value={formData.departmentId}
+                                            onChange={handleChange}
+                                            className={`w-full px-4 py-2.5 rounded-xl border-2 transition-all
+                                                ${errors.departmentId
+                                                    ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
+                                                    : "border-gray-200 dark:border-gray-700 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/20"
+                                                }
+                                                bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
+                                                focus:outline-none cursor-pointer`}
+                                        >
+                                            <option value="">-- Chọn phòng ban --</option>
+                                            {departments?.map((dept) => (
+                                                <option key={dept.id} value={dept.id}>
+                                                    {dept.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.departmentId && (
+                                            <motion.p
+                                                initial={{ opacity: 0, y: -10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="text-xs text-red-600 dark:text-red-400 mt-1 flex items-center gap-1"
+                                            >
+                                                <AlertCircle className="w-3 h-3" />
+                                                {errors.departmentId}
+                                            </motion.p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Grid for Capacity and Area */}
@@ -218,12 +267,13 @@ const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
                                     <div>
                                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                             <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                                            Sức chứa
+                                            Sức chứa <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="number"
                                             name="capacity"
                                             placeholder="0"
+                                            min="1"
                                             value={formData.capacity}
                                             onChange={handleChange}
                                             className={`w-full px-4 py-2.5 rounded-xl border-2 transition-all
@@ -251,12 +301,14 @@ const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
                                     <div>
                                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                             <Maximize2 className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                                            Diện tích (m²)
+                                            Diện tích (m²) <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="number"
                                             name="area"
                                             placeholder="0"
+                                            min="1"
+                                            step="0.1"
                                             value={formData.area}
                                             onChange={handleChange}
                                             className={`w-full px-4 py-2.5 rounded-xl border-2 transition-all
@@ -284,7 +336,7 @@ const AddRoomModal = ({ isOpen, onClose, room, onSubmit }) => {
                                 {/* Status */}
                                 <div>
                                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        <CheckCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                                        <CheckCircle className="w-4 h-4 text-pink-600 dark:text-pink-400" />
                                         Trạng thái
                                     </label>
                                     <div className="grid grid-cols-3 gap-2">
