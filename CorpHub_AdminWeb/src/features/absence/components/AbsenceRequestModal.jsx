@@ -8,7 +8,7 @@ import {
   clearDraftAttachment,
 } from "../store/absenceRequestSlice";
 import { showError } from "../../../utils/toastUtils";
-import { downloadAttachment } from "../service/absenceRequestApi";
+import { downloadAttachment } from "../service/absenceAttachmentApi";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -39,6 +39,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
   const {
     uploadAttachment,
     removeAttachment,
+    deleteTempFile,
     deleteAttachment,
     replaceAttachment,
     draftAttachment,
@@ -63,8 +64,8 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
       // If editing item already has an attachmentUrl, initialize draftAttachment in slice
       if (editingItem.attachmentUrl) {
         const payload = {
-          fileKey: editingItem.attachmentKey || null,
-          fileUrl: editingItem.attachmentUrl,
+          objectKey: editingItem.attachmentId || null,
+          url: editingItem.attachmentUrl,
           fileName: editingItem.attachmentName || "Tệp đính kèm",
         };
         dispatch(setDraftAttachment(payload));
@@ -123,16 +124,11 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
 
     // include attachment info if uploaded (from slice)
     if (draftAttachment) {
-      // sẽ dùng key làm url để lưu
-      //   if (draftAttachment.fileUrl)
-      //     requestBody.attachmentUrl = draftAttachment.fileUrl;
-      if (draftAttachment.fileKey)
-        requestBody.attachmentUrl = draftAttachment.fileKey;
+      if (draftAttachment.objectKey)
+        requestBody.attachmentUrl = draftAttachment.objectKey;
     } else if (editingItem?.attachmentUrl) {
       // fallback to existing attachment on editing item
       requestBody.attachmentUrl = editingItem.attachmentUrl;
-      if (editingItem.attachmentKey)
-        requestBody.attachmentKey = editingItem.attachmentKey;
     }
 
     onSubmit(requestBody);
@@ -154,26 +150,22 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
 
   const handleDownload = async () => {
     try {
-      const objectKey = draftAttachment?.fileKey || editingItem?.attachmentUrl;
-      console.log(objectKey);
-      if (!objectKey) {
+      const requestId = editingItem?.id;
+      console.log(requestId);
+      if (!requestId) {
         window.open(
-          editingItem?.attachmentUrl || draftAttachment?.fileUrl,
+          editingItem?.attachmentUrl || draftAttachment?.url,
           "_blank"
         );
         return;
       }
 
-      const blob = await downloadAttachment(objectKey);
+      const { blob, filename } = await downloadAttachment(requestId);
       const fileBlob = blob instanceof Blob ? blob : new Blob([blob]);
       const url = window.URL.createObjectURL(fileBlob);
       const a = document.createElement("a");
       a.href = url;
-      const filename =
-        (draftAttachment && draftAttachment.fileName) ||
-        editingItem?.attachmentName ||
-        "attachment";
-      a.download = filename;
+      a.download = filename || "attachment";
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -352,7 +344,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                                 <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                                 <a
                                   href={
-                                    draftAttachment?.fileUrl ||
+                                    draftAttachment?.url ||
                                     editingItem?.attachmentUrl
                                   }
                                   target="_blank"
@@ -392,11 +384,19 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                                   });
                                   if (!file) return;
                                   try {
-                                    const oldKey =
-                                      draftAttachment?.fileKey ||
-                                      editingItem?.attachmentUrl;
-                                    if (oldKey) {
-                                      await replaceAttachment(oldKey, file);
+                                    console.log("change ", draftAttachment);
+                                    if (editingItem?.id) {
+                                      // After submit: replace attachment by requestId
+                                      await replaceAttachment(
+                                        editingItem.id,
+                                        file
+                                      );
+                                    } else if (draftAttachment?.objectKey) {
+                                      // Before submit: delete old temp and upload new
+                                      await deleteTempFile(
+                                        draftAttachment.objectKey
+                                      );
+                                      await uploadAttachment(file);
                                     }
                                   } catch (err) {
                                     console.error(err);
@@ -411,11 +411,14 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                                 type="button"
                                 onClick={async () => {
                                   try {
-                                    const objectKey =
-                                      draftAttachment?.fileKey ||
-                                      editingItem?.attachmentUrl;
-                                    if (objectKey) {
-                                      await deleteAttachment(objectKey);
+                                    if (editingItem?.id) {
+                                      // After submit: delete attachment by requestId
+                                      await deleteAttachment(editingItem.id);
+                                    } else if (draftAttachment?.objectKey) {
+                                      // Before submit: delete temp file
+                                      await deleteTempFile(
+                                        draftAttachment.objectKey
+                                      );
                                     } else {
                                       removeAttachment();
                                     }
@@ -572,8 +575,9 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
               onClick={async () => {
                 // Cleanup: delete draft attachment if exists before closing
                 try {
-                  if (draftAttachment?.fileKey) {
-                    await deleteAttachment(draftAttachment.fileKey);
+                  if (draftAttachment?.objectKey && !editingItem?.id) {
+                    // Only delete temp file if not editing (i.e., still a draft)
+                    await deleteTempFile(draftAttachment.objectKey);
                   }
                 } catch (err) {
                   console.error("Cleanup error:", err);

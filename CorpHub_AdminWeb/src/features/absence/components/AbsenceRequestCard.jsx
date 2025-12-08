@@ -11,7 +11,6 @@ import {
   Download,
 } from "lucide-react";
 import ReasonDialog from "../../../components/ReasonDialog";
-import { downloadAttachment } from "../service/absenceRequestApi";
 import { showError } from "../../../utils/toastUtils";
 
 const statusColors = {

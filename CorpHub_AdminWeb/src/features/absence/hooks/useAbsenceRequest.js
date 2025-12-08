@@ -6,6 +6,7 @@ import {
   fetchMyAbsenceRequests,
   updateAbsenceRequest,
   uploadAbsenceProof,
+  deleteTempAttachment,
   deleteAbsenceAttachment,
   replaceAbsenceAttachment,
 } from "../store/absenceRequestSlice";
@@ -114,10 +115,14 @@ export const useAbsenceRequest = () => {
     dispatch({ type: "absenceRequest/clearDraftAttachment" });
   }, [dispatch]);
 
-  const deleteAttachment = useCallback(
+  /**
+   * Delete temp attachment (before submit)
+   * Called when user uploaded file but hasn't submitted the form
+   */
+  const deleteTempFile = useCallback(
     async (objectKey) => {
       try {
-        const res = await dispatch(deleteAbsenceAttachment(objectKey));
+        const res = await dispatch(deleteTempAttachment(objectKey));
         if (res.meta.requestStatus === "fulfilled") {
           showSuccess("Xóa tệp thành công");
         } else {
@@ -132,11 +137,37 @@ export const useAbsenceRequest = () => {
     [dispatch]
   );
 
+  /**
+   * Delete attachment (after submit)
+   * Called when user has already submitted and wants to delete the attachment from the request
+   */
+  const deleteAttachment = useCallback(
+    async (requestId) => {
+      try {
+        const res = await dispatch(deleteAbsenceAttachment(requestId));
+        if (res.meta.requestStatus === "fulfilled") {
+          showSuccess("Xóa tệp thành công");
+        } else {
+          showError(res.payload?.message || "Không thể xóa tệp");
+        }
+        return res;
+      } catch (err) {
+        console.error(err);
+        showError("Lỗi khi xóa tệp");
+      }
+    },
+    [dispatch]
+  );
+
+  /**
+   * Replace attachment (after submit)
+   * Called when user wants to replace an already submitted attachment
+   */
   const replaceAttachment = useCallback(
-    async (oldKey, newFile) => {
+    async (requestId, newFile) => {
       try {
         const res = await dispatch(
-          replaceAbsenceAttachment({ oldKey, newFile })
+          replaceAbsenceAttachment({ requestId, newFile })
         );
         if (res.meta.requestStatus === "fulfilled") {
           showSuccess("Thay thế tệp thành công");
@@ -166,6 +197,7 @@ export const useAbsenceRequest = () => {
     remove,
     uploadAttachment,
     removeAttachment,
+    deleteTempFile,
     deleteAttachment,
     replaceAttachment,
     draftAttachment,

@@ -3,13 +3,16 @@ import {
   create,
   getMyReq,
   remove,
-  update,
   approveOrReject,
   getAllMyApprovals,
-  uploadProof as uploadProofService,
-  deleteAttachment as deleteAttachmentService,
-  replaceAttachment as replaceAttachmentService,
 } from "../service/absenceRequestApi";
+import {
+  uploadTemp,
+  deleteTemp,
+  deleteAttachment,
+  replaceAttachment,
+  downloadAttachment,
+} from "../service/absenceAttachmentApi";
 
 /* ===========================
    ASYNC THUNKS
@@ -95,34 +98,49 @@ export const uploadAbsenceProof = createAsyncThunk(
   "absenceRequest/uploadProof",
   async (file, { rejectWithValue }) => {
     try {
-      const res = await uploadProofService(file);
-      return res; // expected { objectKey (or fileKey), presignedUrl (or fileUrl) }
+      const res = await uploadTemp(file);
+      console.log(res);
+      return res; // expected { objectKey, url }
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
-// Delete attachment by objectKey
-export const deleteAbsenceAttachment = createAsyncThunk(
-  "absenceRequest/deleteAttachment",
+// Delete temp file (before submit)
+export const deleteTempAttachment = createAsyncThunk(
+  "absenceRequest/deleteTempAttachment",
   async (objectKey, { rejectWithValue }) => {
     try {
-      await deleteAttachmentService(objectKey);
-      return objectKey;
+      console.log("deleteTemp ", objectKey);
+      const res = await deleteTemp(objectKey);
+      return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
-// Replace attachment (delete old, upload new)
+// Delete attachment by requestId (after submit)
+export const deleteAbsenceAttachment = createAsyncThunk(
+  "absenceRequest/deleteAttachment",
+  async (requestId, { rejectWithValue }) => {
+    try {
+      const res = await deleteAttachment(requestId);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+// Replace attachment by requestId (after submit)
 export const replaceAbsenceAttachment = createAsyncThunk(
   "absenceRequest/replaceAttachment",
-  async ({ oldKey, newFile }, { rejectWithValue }) => {
+  async ({ requestId, newFile }, { rejectWithValue }) => {
     try {
-      const res = await replaceAttachmentService(oldKey, newFile);
-      return res; // expected { objectKey, presignedUrl }
+      const res = await replaceAttachment(requestId, newFile);
+      return res; // expected { objectKey, url }
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -141,7 +159,7 @@ const absenceRequestSlice = createSlice({
     loading: false,
     error: null,
     uploading: false,
-    draftAttachment: null, // { fileKey, fileUrl, fileName }
+    draftAttachment: null, // { objectKey, url, fileName }
   },
   reducers: {
     resetAbsenceRequestState: (state) => {
@@ -157,16 +175,17 @@ const absenceRequestSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Upload proof file
+    // Upload temp file
     builder.addCase(uploadAbsenceProof.pending, (state) => {
       state.uploading = true;
     });
     builder.addCase(uploadAbsenceProof.fulfilled, (state, action) => {
       state.uploading = false;
-      const payload = action.payload || {};
+      const payload = action.payload?.data || action.payload || {};
+      // Backend AttachmentUploadResponse returns { fileKey, fileUrl }
       state.draftAttachment = {
-        fileKey: payload.objectKey || payload.fileKey || payload.key || null,
-        fileUrl: payload.presignedUrl || payload.fileUrl || payload.url || null,
+        objectKey: payload.objectKey || payload.fileKey || null,
+        url: payload.url || payload.fileUrl || null,
         fileName: payload.fileName || payload.filename || null,
       };
     });
@@ -174,30 +193,41 @@ const absenceRequestSlice = createSlice({
       state.uploading = false;
     });
 
-    // Delete attachment
+    // Delete temp file (before submit)
+    builder.addCase(deleteTempAttachment.pending, (state) => {
+      state.uploading = true;
+    });
+    builder.addCase(deleteTempAttachment.fulfilled, (state, action) => {
+      state.uploading = false;
+      state.draftAttachment = null;
+    });
+    builder.addCase(deleteTempAttachment.rejected, (state, action) => {
+      state.uploading = false;
+    });
+
+    // Delete attachment (after submit)
     builder.addCase(deleteAbsenceAttachment.pending, (state) => {
       state.uploading = true;
     });
     builder.addCase(deleteAbsenceAttachment.fulfilled, (state, action) => {
       state.uploading = false;
-      // Clear draft attachment on successful delete
       state.draftAttachment = null;
     });
     builder.addCase(deleteAbsenceAttachment.rejected, (state, action) => {
       state.uploading = false;
     });
 
-    // Replace attachment
+    // Replace attachment (after submit)
     builder.addCase(replaceAbsenceAttachment.pending, (state) => {
       state.uploading = true;
     });
     builder.addCase(replaceAbsenceAttachment.fulfilled, (state, action) => {
       state.uploading = false;
-      const payload = action.payload || {};
+      const payload = action.payload?.data || action.payload || {};
       state.draftAttachment = {
-        fileKey: payload.objectKey || payload.fileKey || payload.key || null,
-        fileUrl: payload.presignedUrl || payload.fileUrl || payload.url || null,
-        fileName: payload.fileName || payload.filename || null,
+        objectKey: payload.objectKey || null,
+        url: payload.url || null,
+        fileName: payload.fileName || null,
       };
     });
     builder.addCase(replaceAbsenceAttachment.rejected, (state, action) => {
