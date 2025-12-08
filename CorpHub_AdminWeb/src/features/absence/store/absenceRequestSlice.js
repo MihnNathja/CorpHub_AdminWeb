@@ -37,6 +37,7 @@ export const fetchMyApprovals = createAsyncThunk(
   async (params, { rejectWithValue }) => {
     try {
       const res = await getAllMyApprovals(params);
+      console.log(res);
       return res;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);

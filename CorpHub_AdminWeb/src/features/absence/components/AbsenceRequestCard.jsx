@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import ReasonDialog from "../../../components/ReasonDialog";
 import { showError } from "../../../utils/toastUtils";
+import { downloadAttachment } from "../service/absenceAttachmentApi";
 
 const statusColors = {
   PENDING:
@@ -80,24 +81,19 @@ const AbsenceRequestCard = ({
   const handleDownload = async (e) => {
     e?.preventDefault();
     try {
-      // Prefer server download by objectKey if available
-      const objectKey = item.attachmentKey || item.attachmentUrl;
-      if (!objectKey) {
+      const requestId = item.id;
+      if (!requestId) {
         // fallback to opening url
         window.open(item.attachmentUrl, "_blank");
         return;
       }
 
-      const result = await downloadAttachment(objectKey);
-      const blob = result?.blob ?? result;
-      const serverFilename = result?.filename;
-      // blob may be a Blob or ArrayBuffer depending on axios config
+      const { blob, filename } = await downloadAttachment(requestId);
       const fileBlob = blob instanceof Blob ? blob : new Blob([blob]);
       const url = window.URL.createObjectURL(fileBlob);
       const a = document.createElement("a");
       a.href = url;
-      const filename = serverFilename || item.attachmentName || "attachment";
-      a.download = filename;
+      a.download = filename || item.attachmentName || "attachment";
       document.body.appendChild(a);
       a.click();
       a.remove();
