@@ -8,64 +8,65 @@ import CompetencyTable from "./competency/CompetencyTable";
 import CompetencySection from "./competency/CompetencySection";
 import { mockJobProfile } from "../../mockJobProfile";
 import { useCompetency } from "../../hooks/useCompetency";
+import { useInternalWorkHistory } from "../../hooks/useInternalWorkHistory";
 import PositionChangeList from "./position/PositionChangeList";
+import { showInfo } from "../../../../utils/toastUtils";
 
 const JobProfileTab = ({ profiles }) => {
   const { items, getMyCompetencies } = useCompetency();
+  const { histories, loading, getHistoriesByEmployee } =
+    useInternalWorkHistory();
 
   useEffect(() => {
     getMyCompetencies();
   }, [getMyCompetencies]);
 
-  const profile = mockJobProfile;
-  // Chuẩn hoá field theo DTO backend (EmployeeProfileResponse)
-  const histories = profile?.jobHistories ?? [];
+  // Load Internal Work History khi có employeeId
+  useEffect(() => {
+    if (profiles?.id) {
+      getHistoriesByEmployee(profiles.id);
+    }
+  }, [profiles?.id, getHistoriesByEmployee]);
 
   const competencies = items;
 
-  // Suy ra vị trí/phòng ban hiện tại (endDate null/empty là đang làm)
+  // Suy ra vị trí/phòng ban hiện tại từ lịch sử mới nhất
   const current = useMemo(() => {
     if (!histories.length) return null;
-    const active = histories.find((h) => !h.endDate);
-    if (active) return active;
-    // nếu tất cả đã kết thúc, lấy bản ghi mới nhất
+    // Lấy bản ghi mới nhất theo effectiveDate
     return [...histories].sort(
-      (a, b) => new Date(b.startDate) - new Date(a.startDate)
+      (a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate)
     )[0];
   }, [histories]);
 
   // State cho lọc/sắp xếp lịch sử
   const [search, setSearch] = useState("");
   const [dept, setDept] = useState("");
-  const [contract, setContract] = useState("");
-  const [sortKey, setSortKey] = useState("startDate"); // startDate | endDate
-  const [sortDir, setSortDir] = useState("desc"); // asc | desc
+  const [changeType, setChangeType] = useState("");
+  const [sortKey, setSortKey] = useState("effectiveDate");
+  const [sortDir, setSortDir] = useState("desc");
 
   const filteredHistories = useMemo(() => {
     const data = histories.filter((h) => {
       const matchesText =
         !search ||
-        [h.departmentName, h.positionName, h.contractType, h.note]
+        [h.departmentName, h.positionName, h.reason, h.changeType]
           .filter(Boolean)
           .join(" ")
           .toLowerCase()
           .includes(search.toLowerCase());
       const matchesDept = !dept || h.departmentName === dept;
-      const matchesContract = !contract || h.contractType === contract;
-      return matchesText && matchesDept && matchesContract;
+      const matchesChangeType = !changeType || h.changeType === changeType;
+      return matchesText && matchesDept && matchesChangeType;
     });
 
     const factor = sortDir === "asc" ? 1 : -1;
     return data.sort((a, b) => {
-      const va = new Date(
-        a[sortKey] ?? (sortKey === "endDate" ? "1900-01-01" : "1900-01-01")
-      );
-      const vb = new Date(
-        b[sortKey] ?? (sortKey === "endDate" ? "1900-01-01" : "1900-01-01")
-      );
+      const va = new Date(a[sortKey] ?? "1900-01-01");
+      const vb = new Date(b[sortKey] ?? "1900-01-01");
       return (va - vb) * factor;
     });
-  }, [histories, search, dept, contract, sortKey, sortDir]);
+  }, [histories, search, dept, changeType, sortKey, sortDir]);
 
   const deptOptions = useMemo(
     () =>
@@ -74,11 +75,19 @@ const JobProfileTab = ({ profiles }) => {
       ),
     [histories]
   );
-  const contractOptions = useMemo(
+
+  const changeTypeOptions = useMemo(
     () =>
-      Array.from(new Set(histories.map((h) => h.contractType))).filter(Boolean),
+      Array.from(new Set(histories.map((h) => h.changeType))).filter(Boolean),
     [histories]
   );
+
+  // Handler cho việc xem yêu cầu
+  const handleViewRequest = (requestId) => {
+    // TODO: Implement API call to get request details
+    showInfo(`Xem chi tiết yêu cầu: ${requestId}. API sẽ được thêm sau.`);
+    console.log("View request:", requestId);
+  };
 
   console.log(profiles);
   return (
@@ -90,7 +99,7 @@ const JobProfileTab = ({ profiles }) => {
 
       {/* LỊCH SỬ LÀM VIỆC */}
       <Section
-        title="Lịch sử làm việc"
+        title="Lịch sử làm việc nội bộ"
         right={
           <EmploymentHistoryToolbar
             search={search}
@@ -98,9 +107,9 @@ const JobProfileTab = ({ profiles }) => {
             dept={dept}
             setDept={setDept}
             deptOptions={deptOptions}
-            contract={contract}
-            setContract={setContract}
-            contractOptions={contractOptions}
+            contract={changeType}
+            setContract={setChangeType}
+            contractOptions={changeTypeOptions}
             sortKey={sortKey}
             setSortKey={setSortKey}
             sortDir={sortDir}
@@ -108,7 +117,16 @@ const JobProfileTab = ({ profiles }) => {
           />
         }
       >
-        <EmploymentHistoryTable histories={filteredHistories} />
+        {loading ? (
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            Đang tải dữ liệu...
+          </div>
+        ) : (
+          <EmploymentHistoryTable
+            histories={filteredHistories}
+            onViewRequest={handleViewRequest}
+          />
+        )}
       </Section>
 
       <div className="mt-6">
