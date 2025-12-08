@@ -17,7 +17,13 @@ import {
   FingerPrintIcon,
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
-import { UserIcon, Building2Icon, ShieldCheckIcon, PlayCircleIcon, Sparkles } from "lucide-react";
+import {
+  UserIcon,
+  Building2Icon,
+  ShieldCheckIcon,
+  PlayCircleIcon,
+  Sparkles,
+} from "lucide-react";
 import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -247,7 +253,11 @@ const Sidebar = ({ onToggle }) => {
               transition={{ duration: 0.2 }}
               className="flex items-center gap-3"
             >
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${ROLE_COLORS[user.role]} flex items-center justify-center shadow-lg`}>
+              <div
+                className={`w-10 h-10 rounded-xl bg-gradient-to-br ${
+                  ROLE_COLORS[user.role]
+                } flex items-center justify-center shadow-lg`}
+              >
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -298,16 +308,16 @@ const Sidebar = ({ onToggle }) => {
                     title={item.name}
                     className={({ isActive }) =>
                       `group flex justify-center items-center p-3 rounded-xl transition-all relative
-                      ${isActive
-                        ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/30"
-                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ${
+                        isActive
+                          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/30"
+                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`
                     }
                   >
                     {({ isActive }) => (
                       <>
                         <item.icon className="h-6 w-6" />
-
                       </>
                     )}
                   </NavLink>
@@ -375,9 +385,10 @@ const Sidebar = ({ onToggle }) => {
                                 end
                                 className={({ isActive }) =>
                                   `group flex items-center gap-3 px-4 py-2.5 ml-2 rounded-xl transition-all relative
-                                  ${isActive
-                                    ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/20"
-                                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:translate-x-1"
+                                  ${
+                                    isActive
+                                      ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/20"
+                                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:translate-x-1"
                                   }`
                                 }
                               >
@@ -390,7 +401,9 @@ const Sidebar = ({ onToggle }) => {
                                       />
                                     )} */}
                                     <item.icon className="h-5 w-5 flex-shrink-0" />
-                                    <span className="text-sm font-medium">{item.name}</span>
+                                    <span className="text-sm font-medium">
+                                      {item.name}
+                                    </span>
                                   </>
                                 )}
                               </NavLink>

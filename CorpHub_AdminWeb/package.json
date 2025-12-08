@@ -33,6 +33,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.1.1",
+    "react-hook-form": "^7.67.0",
     "react-leaflet": "^5.0.0",
     "react-medium-image-zoom": "^5.4.0",
     "react-qr-code": "^2.0.18",

@@ -19,14 +19,16 @@ import absenceBalanceReducer from "../features/absence/store/absenceBalanceSlice
 import absenceRequestReducer from "../features/absence/store/absenceRequestSlice";
 import holidayReducer from "../features/absence/store/holidayCalendarSlice";
 import documentReducer from "../features/profile/store/documentSlice";
+import competencyReducer from "../features/profile/store/competencySlice";
+import parameterReducer from "../features/settings/store/parameterSlice";
+import departmentPositionReducer from "../features/department/store/departmentPositionSlice";
 import shiftReducer from "../features/schedule/store/shiftSlice";
 import scheduleReducer from "../features/schedule/store/scheduleSlice";
 import attendanceReducer from "../features/attendance/store/attendanceSlice";
 import workflowTemplateReducer from "../features/workflow/store/workflowTemplateSlice";
 import workflowStepReducer from "../features/workflow/store/workflowStepSlice";
-import competencyReducer from "../features/profile/store/competencySlice";
-import parameterReducer from "../features/settings/store/parameterSlice";
-import departmentPositionReducer from "../features/department/store/departmentPositionSlice";
+import positionChangeRequestReducer from "../features/profile/store/positionChangeRequestSlice";
+import departmentWithPositionReducer from "../features/profile/store/departmentWithPositionSlice";
 
 export const store = configureStore({
   reducer: {
@@ -50,13 +52,15 @@ export const store = configureStore({
     absenceRequest: absenceRequestReducer,
     holiday: holidayReducer,
     document: documentReducer,
+    competency: competencyReducer,
+    parameter: parameterReducer,
+    positions: departmentPositionReducer,
     shift: shiftReducer,
     schedule: scheduleReducer,
     attendance: attendanceReducer,
     workflowTemplate: workflowTemplateReducer,
     workflowStep: workflowStepReducer,
-    competency: competencyReducer,
-    parameter: parameterReducer,
-    positions: departmentPositionReducer,
+    positionChangeRequest: positionChangeRequestReducer,
+    departmentPosition: departmentWithPositionReducer,
   },
 });

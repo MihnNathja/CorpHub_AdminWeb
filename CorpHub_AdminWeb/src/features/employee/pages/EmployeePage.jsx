@@ -2,14 +2,23 @@ import React, { useState } from "react";
 import EmployeeProfileForm from "../components/EmployeeProfileForm";
 import EmployeeTable from "../components/EmployeeTable";
 import PendingCompetencyPage from "../components/PendingCompetencyPage";
+import PositionRequestsTab from "../components/PositionRequestsTab";
+import HRFinalizationTab from "../components/HRFinalizationTab";
+import { useAuth } from "../../auth/hooks/useAuth";
 
 const EmployeePage = () => {
+  const { hasRole } = useAuth();
   const [activeTab, setActiveTab] = useState("list");
 
   const tabs = [
     { key: "list", label: "Employees list" },
     { key: "add", label: "Add new employee profile" },
     { key: "pendingCompetency", label: "Pending Competency Employee" },
+    { key: "positionRequests", label: "Position Requests" },
+    { key: "hrFinalization", label: "HR Finalization" },
+    // ...(hasRole("ROLE_HR_MANAGER")
+    //   ? [{ key: "hrFinalization", label: "HR Finalization" }]
+    //   : []),
   ];
 
   return (
@@ -19,12 +28,12 @@ const EmployeePage = () => {
       </h2>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700">
+      <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 -mb-px font-medium rounded-t-lg transition-colors ${
+            className={`px-4 py-2 -mb-px font-medium rounded-t-lg transition-colors whitespace-nowrap ${
               activeTab === tab.key
                 ? "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 border-b-0 text-gray-900 dark:text-gray-100"
                 : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
@@ -40,6 +49,8 @@ const EmployeePage = () => {
         {activeTab === "list" && <EmployeeTable />}
         {activeTab === "add" && <EmployeeProfileForm />}
         {activeTab === "pendingCompetency" && <PendingCompetencyPage />}
+        {activeTab === "positionRequests" && <PositionRequestsTab />}
+        {activeTab === "hrFinalization" && <HRFinalizationTab />}
       </div>
     </div>
   );

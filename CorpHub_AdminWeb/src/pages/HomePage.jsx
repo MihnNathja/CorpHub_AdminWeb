@@ -4,7 +4,6 @@ import { useAuth } from "../features/auth/hooks/useAuth";
 import { useSchedule } from "../features/schedule/hooks/useSchedule";
 import { useCalendar } from "../features/calendar/hooks/useCalendar";
 import { useTickets } from "../features/ticket/hooks/useTickets";
-import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
 import {
@@ -28,16 +27,16 @@ const HomePage = () => {
   // Stats calculation
   const stats = {
     todayShifts: schedules?.length || 0,
-    upcomingMeetings: meetings?.filter(m => new Date(m.start) > new Date()).length || 0,
-    openTickets: tickets?.filter(t => t.status === "OPEN").length || 0,
-    completedTickets: tickets?.filter(t => t.status === "DONE").length || 0,
+    upcomingMeetings:
+      meetings?.filter((m) => new Date(m.start) > new Date()).length || 0,
+    openTickets: tickets?.filter((t) => t.status === "OPEN").length || 0,
+    completedTickets: tickets?.filter((t) => t.status === "DONE").length || 0,
   };
 
   const isLoading = scheduleLoading || calendarLoading || ticketsLoading;
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
-
       {/* Main content */}
       <div className="flex-1 flex flex-col relative min-w-0">
         <Navbar user={user} collapsed={collapsed} />
@@ -202,16 +201,18 @@ const HomePage = () => {
                           className="flex items-center gap-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                         >
                           <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold">
-                            {new Date(meeting.start).toLocaleString('vi-VN', { day: '2-digit' })}
+                            {new Date(meeting.start).toLocaleString("vi-VN", {
+                              day: "2-digit",
+                            })}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold text-gray-900 dark:text-white truncate">
                               {meeting.title}
                             </p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {new Date(meeting.start).toLocaleString('vi-VN', {
-                                hour: '2-digit',
-                                minute: '2-digit'
+                              {new Date(meeting.start).toLocaleString("vi-VN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
                               })}
                             </p>
                           </div>
@@ -224,7 +225,10 @@ const HomePage = () => {
                       ))}
                     </div>
                   ) : (
-                    <EmptyState icon={CalendarIcon} message="No upcoming meetings" />
+                    <EmptyState
+                      icon={CalendarIcon}
+                      message="No upcoming meetings"
+                    />
                   )}
                 </div>
               </motion.div>
@@ -256,9 +260,11 @@ const HomePage = () => {
                     {tickets.slice(0, 5).map((ticket, idx) => {
                       const statusColors = {
                         OPEN: "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300",
-                        IN_PROGRESS: "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300",
+                        IN_PROGRESS:
+                          "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300",
                         DONE: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300",
-                        REJECTED: "bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300",
+                        REJECTED:
+                          "bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300",
                       };
 
                       return (
@@ -274,7 +280,11 @@ const HomePage = () => {
                               {ticket.title}
                             </p>
                           </div>
-                          <span className={`inline-block px-2.5 py-1 text-xs font-bold rounded ${statusColors[ticket.status] || statusColors.OPEN}`}>
+                          <span
+                            className={`inline-block px-2.5 py-1 text-xs font-bold rounded ${
+                              statusColors[ticket.status] || statusColors.OPEN
+                            }`}
+                          >
                             {ticket.status}
                           </span>
                         </motion.div>
@@ -302,9 +312,12 @@ const HomePage = () => {
 const StatCard = ({ icon: Icon, label, value, color, loading, action }) => {
   const colorClasses = {
     blue: "from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800",
-    emerald: "from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-emerald-200 dark:border-emerald-800",
-    amber: "from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800",
-    purple: "from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-800",
+    emerald:
+      "from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-emerald-200 dark:border-emerald-800",
+    amber:
+      "from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800",
+    purple:
+      "from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-800",
   };
 
   const iconColorClasses = {
@@ -324,7 +337,9 @@ const StatCard = ({ icon: Icon, label, value, color, loading, action }) => {
       <div className="absolute inset-0 bg-white dark:bg-gray-800 opacity-0 group-hover:opacity-5 transition-opacity" />
       <div className="relative">
         <div className="flex items-center justify-between mb-4">
-          <div className={`p-3 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm`}>
+          <div
+            className={`p-3 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm`}
+          >
             <Icon className={`w-6 h-6 ${iconColorClasses[color]}`} />
           </div>
           <span className="text-2xl">→</span>
