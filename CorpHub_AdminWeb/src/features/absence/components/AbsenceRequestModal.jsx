@@ -165,7 +165,11 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
       const url = window.URL.createObjectURL(fileBlob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = filename || "attachment";
+      a.download =
+        filename ||
+        editingItem?.attachmentName ||
+        draftAttachment?.fileName ||
+        "attachment";
       document.body.appendChild(a);
       a.click();
       a.remove();

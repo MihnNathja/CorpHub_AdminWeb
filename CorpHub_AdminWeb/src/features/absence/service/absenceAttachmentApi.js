@@ -30,7 +30,6 @@ export const deleteTemp = (objectKey) =>
  * Replace attachment của một absence request đã được submit
  */
 export const replaceAttachment = (requestId, newFile) => {
-  console.log("replace ", requestId);
   const fd = new FormData();
   fd.append("file", newFile);
   return api
@@ -74,5 +73,15 @@ export const downloadAttachment = (requestId) =>
           }
         }
       }
-      return { blob: res.data, filename };
+
+      // Preserve server-provided mime type if available to avoid "weird" files
+      const contentType = res.headers?.["content-type"];
+      const blob =
+        res.data instanceof Blob
+          ? res.data
+          : new Blob([res.data], {
+              type: contentType || "application/octet-stream",
+            });
+
+      return { blob, filename };
     });
