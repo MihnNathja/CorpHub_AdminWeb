@@ -96,6 +96,7 @@ const assetSlice = createSlice({
     name: "assets",
     initialState: {
         assets: [],
+        assetCounts: [],
         meta: {}, // thông tin phân trang
         categories: [],
         loading: false,
