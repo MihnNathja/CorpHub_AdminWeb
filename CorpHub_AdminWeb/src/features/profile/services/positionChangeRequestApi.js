@@ -14,3 +14,8 @@ export const getRequestsByEmployee = (employeeId) => {
   const res = api.get(`/api/position-change-request/employee/${employeeId}`);
   return res;
 };
+
+export const getApprovalStepsByRequest = (requestId) => {
+  const res = api.get(`/api/position-change-approval/request/${requestId}`);
+  return res;
+};

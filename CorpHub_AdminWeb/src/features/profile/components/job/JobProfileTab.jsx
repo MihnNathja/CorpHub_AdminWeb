@@ -1,5 +1,5 @@
 // src/features/profile/components/JobProfileTab.jsx
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Section from "../Section";
 import CurrentJobSummary from "./CurrentJobSummary";
 import EmploymentHistoryToolbar from "./EmploymentHistoryToolbar";
@@ -10,12 +10,15 @@ import { mockJobProfile } from "../../mockJobProfile";
 import { useCompetency } from "../../hooks/useCompetency";
 import { useInternalWorkHistory } from "../../hooks/useInternalWorkHistory";
 import PositionChangeList from "./position/PositionChangeList";
-import { showInfo } from "../../../../utils/toastUtils";
+import PositionChangeRequestDetailModal from "./position/PositionChangeRequestDetailModal";
+import { usePositionChangeRequest } from "../../hooks/usePositionChangeRequest";
+import { showError } from "../../../../utils/toastUtils";
 
 const JobProfileTab = ({ profiles }) => {
   const { items, getMyCompetencies } = useCompetency();
   const { histories, loading, getHistoriesByEmployee } =
     useInternalWorkHistory();
+  const { getRequestDetail, getApprovalSteps } = usePositionChangeRequest();
 
   useEffect(() => {
     getMyCompetencies();
@@ -45,6 +48,8 @@ const JobProfileTab = ({ profiles }) => {
   const [changeType, setChangeType] = useState("");
   const [sortKey, setSortKey] = useState("effectiveDate");
   const [sortDir, setSortDir] = useState("desc");
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [loadingRequestDetail, setLoadingRequestDetail] = useState(false);
 
   const filteredHistories = useMemo(() => {
     const data = histories.filter((h) => {
@@ -83,13 +88,25 @@ const JobProfileTab = ({ profiles }) => {
   );
 
   // Handler cho việc xem yêu cầu
-  const handleViewRequest = (requestId) => {
-    // TODO: Implement API call to get request details
-    showInfo(`Xem chi tiết yêu cầu: ${requestId}. API sẽ được thêm sau.`);
-    console.log("View request:", requestId);
-  };
+  const handleViewRequest = useCallback(
+    async (requestId) => {
+      if (!requestId) return;
 
-  console.log(profiles);
+      setLoadingRequestDetail(true);
+      try {
+        const detail = await getRequestDetail(requestId);
+        const steps = await getApprovalSteps(requestId);
+        setSelectedRequest({ ...detail, approvalSteps: steps });
+      } catch (err) {
+        console.error(err);
+        showError("Không thể tải chi tiết yêu cầu");
+      } finally {
+        setLoadingRequestDetail(false);
+      }
+    },
+    [getApprovalSteps, getRequestDetail]
+  );
+
   return (
     <div className="space-y-8">
       {/* TÓM TẮT HIỆN TẠI */}
@@ -128,6 +145,19 @@ const JobProfileTab = ({ profiles }) => {
           />
         )}
       </Section>
+
+      {loadingRequestDetail && (
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Đang tải chi tiết yêu cầu...
+        </p>
+      )}
+
+      {selectedRequest && (
+        <PositionChangeRequestDetailModal
+          request={selectedRequest}
+          onClose={() => setSelectedRequest(null)}
+        />
+      )}
 
       <div className="mt-6">
         <PositionChangeList employeeId={profiles.id} />
