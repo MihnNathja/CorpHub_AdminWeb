@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   changePasswordAsync,
   getMyEmployeeProfileAsync,
   resetStatus,
   uploadAvatarAsync,
+  updateMyContactInfoAsync,
 } from "../store/profileSlice";
 import {
   downloadDocumentAsync,
@@ -15,6 +16,8 @@ export const useProfile = () => {
   const dispatch = useDispatch();
   const { profile, loading, success, error, uploading, uploadSuccess } =
     useSelector((state) => state.profile);
+
+  const updatingContact = useSelector((state) => state.profile.updatingContact);
 
   const [form, setForm] = useState({
     oldPassword: "",
@@ -48,8 +51,14 @@ export const useProfile = () => {
     dispatch(downloadDocumentAsync(documentId));
   };
 
-  const fetchBasicInfo = () => {
+  // memoize to avoid re-creating the function each render (prevents repeated refetches)
+  const fetchBasicInfo = useCallback(() => {
     dispatch(getMyEmployeeProfileAsync());
+  }, [dispatch]);
+
+  const updateContact = async (payload) => {
+    const res = await dispatch(updateMyContactInfoAsync(payload));
+    return res;
   };
 
   return {
@@ -67,5 +76,7 @@ export const useProfile = () => {
     handleUploadDocument,
     handleDownloadDocument,
     fetchBasicInfo,
+    updateContact,
+    updatingContact,
   };
 };

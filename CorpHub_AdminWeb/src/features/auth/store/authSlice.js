@@ -46,15 +46,18 @@ export const refresh = createAsyncThunk(
 );
 
 /* -------------------- LOGOUT -------------------- */
-export const logoutAsync = createAsyncThunk("auth/logoutAsync", async (_, { dispatch }) => {
-  try {
-    await logoutAPI(); // BE xoá cookie
-  } catch (e) {
-    console.warn("Logout request failed:", e.message);
-  } finally {
-    dispatch(logout());
+export const logoutAsync = createAsyncThunk(
+  "auth/logoutAsync",
+  async (_, { dispatch }) => {
+    try {
+      await logoutAPI(); // BE xoá cookie
+    } catch (e) {
+      console.warn("Logout request failed:", e.message);
+    } finally {
+      dispatch(logout());
+    }
   }
-});
+);
 
 /* -------------------- SLICE -------------------- */
 const authSlice = createSlice({
