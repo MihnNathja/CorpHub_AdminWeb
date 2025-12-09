@@ -35,6 +35,7 @@ export const useAdminSchedule = () => {
     // Filters
     const [filters, setFilters] = useState({
         keywords: "",
+        departmentId: "",
     });
 
     useEffect(() => {
