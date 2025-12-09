@@ -12,7 +12,10 @@ const DocumentSectionView = ({
     items: documents.filter((d) => d.documentTypeName === t.name),
   }));
 
-  const [expanded, setExpanded] = useState({});
+  // Mở sẵn tất cả nhóm khi render lần đầu
+  const [expanded, setExpanded] = useState(() =>
+    types.reduce((acc, t) => ({ ...acc, [t.id]: true }), {})
+  );
 
   return (
     <div className="mt-5 space-y-3">
