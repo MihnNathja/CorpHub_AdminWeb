@@ -204,29 +204,6 @@ const UserDetailModal = ({ isOpen, onClose, userId, onSubmitEdit }) => {
             </>
           )}
         </div>
-
-        {/* Footer */}
-        <div className="mt-6 flex justify-end gap-3">
-          {isEditing && (
-            <span className="text-xs text-slate-500">
-              Lưu sẽ gọi API cập nhật (sẽ nối khi có).
-            </span>
-          )}
-          {!isEditing && (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-            >
-              Chỉnh sửa
-            </button>
-          )}
-          <button
-            onClick={handleClose}
-            className="px-4 py-2 rounded-lg bg-slate-200 text-slate-800 hover:bg-slate-300"
-          >
-            Đóng
-          </button>
-        </div>
       </div>
     </div>
   );
