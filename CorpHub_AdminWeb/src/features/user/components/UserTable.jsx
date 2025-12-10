@@ -55,9 +55,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
     }
   };
 
-  const { list, totalPages, loading, error } = useSelector(
-    (state) => state.user
-  );
+  const { list, meta, loading, error } = useSelector((state) => state.user);
 
   // 🧩 Dữ liệu giả cho demo
   const mockUsers = list.map((u, index) => ({
@@ -199,6 +197,40 @@ const UserTable = ({ onSelectUser, onFetch }) => {
           </select>
         </div>
       </div>
+
+      {selectedIds.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 shadow-sm">
+          <div className="text-sm font-semibold text-blue-800">
+            Đã chọn {selectedIds.length} người dùng
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setBulkConfirm({ open: true, type: "lock" })}
+              className="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 text-sm font-semibold"
+            >
+              Khóa
+            </button>
+            <button
+              onClick={() => setBulkConfirm({ open: true, type: "unlock" })}
+              className="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 text-sm font-semibold"
+            >
+              Mở khóa
+            </button>
+            <button
+              onClick={() => setBulkConfirm({ open: true, type: "reset" })}
+              className="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 text-sm font-semibold"
+            >
+              Đặt lại mật khẩu
+            </button>
+            <button
+              onClick={() => setSelectedIds([])}
+              className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 text-sm"
+            >
+              Bỏ chọn
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 🧾 Table */}
       <div className="overflow-x-auto">
@@ -364,41 +396,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
         </table>
       </div>
 
-      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
-
-      {selectedIds.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 shadow-sm">
-          <div className="text-sm font-semibold text-blue-800">
-            Đã chọn {selectedIds.length} người dùng
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setBulkConfirm({ open: true, type: "lock" })}
-              className="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 text-sm font-semibold"
-            >
-              Khóa
-            </button>
-            <button
-              onClick={() => setBulkConfirm({ open: true, type: "unlock" })}
-              className="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 text-sm font-semibold"
-            >
-              Mở khóa
-            </button>
-            <button
-              onClick={() => setBulkConfirm({ open: true, type: "reset" })}
-              className="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 text-sm font-semibold"
-            >
-              Đặt lại mật khẩu
-            </button>
-            <button
-              onClick={() => setSelectedIds([])}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 text-sm"
-            >
-              Bỏ chọn
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination page={page} setPage={setPage} totalPages={meta.totalPages} />
 
       <ConfirmDialog
         open={confirmData.open}
