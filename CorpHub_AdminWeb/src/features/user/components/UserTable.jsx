@@ -5,7 +5,7 @@ import {
   ArrowUp,
   ArrowDown,
   ArrowUpDown,
-  Pencil,
+  NotebookPen,
   Trash2,
   KeyRound,
   Unlock,
@@ -18,6 +18,7 @@ import { Tooltip } from "react-tooltip";
 import { useDepartment } from "../../department/hooks/useDepartment";
 import { useUser } from "../hooks/useUser";
 import { useSelector } from "react-redux";
+import ConfirmDialog from "../../global/components/ConfirmDialog";
 
 const UserTable = ({ onSelectUser, onFetch }) => {
   const [page, setPage] = useState(0);
@@ -36,6 +37,11 @@ const UserTable = ({ onSelectUser, onFetch }) => {
   const { departments } = useDepartment();
 
   const [loadingId, setLoadingId] = useState(null);
+  const [confirmData, setConfirmData] = useState({
+    open: false,
+    userId: null,
+    isActive: false,
+  });
 
   const onResetPassword = async (userId) => {
     setLoadingId(userId);
@@ -59,10 +65,14 @@ const UserTable = ({ onSelectUser, onFetch }) => {
   }));
 
   const handleToggleActive = (userId, isActive) => {
-    if (confirm(`${isActive ? "Khóa" : "Mở khóa"} tài khoản này?`)) {
-      // Gọi API backend hoặc service đổi trạng thái
-      toggleActive(userId);
+    setConfirmData({ open: true, userId, isActive });
+  };
+
+  const handleConfirmToggle = () => {
+    if (confirmData.userId) {
+      toggleActive(confirmData.userId);
     }
+    setConfirmData({ open: false, userId: null, isActive: false });
   };
 
   useEffect(() => {
@@ -179,7 +189,6 @@ const UserTable = ({ onSelectUser, onFetch }) => {
               <th className="p-2 border">Phone</th>
               <th className="p-2 border">Gender</th>
               <th className="p-2 border">Department</th>
-              <th className="p-2 border">Role</th>
               <th className="p-2 border">Status</th>
               <th className="p-2 border text-center">Action</th>
             </tr>
@@ -188,13 +197,13 @@ const UserTable = ({ onSelectUser, onFetch }) => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="10" className="text-center p-4">
+                <td colSpan="9" className="text-center p-4">
                   Loading...
                 </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan="10" className="text-center text-red-500 p-4">
+                <td colSpan="9" className="text-center text-red-500 p-4">
                   Error: {error}
                 </td>
               </tr>
@@ -219,7 +228,6 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                   <td className="p-2 border">{u.phone || "-"}</td>
                   <td className="p-2 border">{u.gender || "-"}</td>
                   <td className="p-2 border">{u.department?.name || "-"}</td>
-                  <td className="p-2 border">{u.role}</td>
                   <td className="p-2 border">
                     {u.active ? (
                       <span className="text-green-600 font-medium">Active</span>
@@ -229,27 +237,16 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                   </td>
                   <td className="p-2 border text-center">
                     <div className="flex justify-center gap-2">
-                      {/* View */}
+                      {/* View + Edit combined */}
                       <button
-                        data-tooltip-id={`view-tip-${u.id}`}
-                        data-tooltip-content="Xem chi tiết"
+                        data-tooltip-id={`detail-tip-${u.id}`}
+                        data-tooltip-content="Xem / Chỉnh sửa"
                         onClick={() => onSelectUser(u.id)}
                         className="p-1.5 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600"
                       >
-                        <Eye className="w-4 h-4" />
+                        <NotebookPen className="w-4 h-4" />
                       </button>
-                      <Tooltip id={`view-tip-${u.id}`} place="top" />
-
-                      {/* Edit */}
-                      <button
-                        data-tooltip-id={`edit-tip-${u.id}`}
-                        data-tooltip-content="Chỉnh sửa người dùng"
-                        onClick={() => alert(`Edit ${u.fullName}`)}
-                        className="p-1.5 rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/30 text-amber-600"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <Tooltip id={`edit-tip-${u.id}`} place="top" />
+                      <Tooltip id={`detail-tip-${u.id}`} place="top" />
 
                       {/* Reset password */}
                       <button
@@ -278,7 +275,6 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                           u.active ? "Khóa tài khoản" : "Mở khóa tài khoản"
                         }
                         onClick={() => {
-                          console.log("Khóa/mở khóa");
                           handleToggleActive(u.id, u.active);
                         }}
                         className={`p-1.5 rounded-full transition-colors ${
@@ -301,7 +297,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
             ) : (
               <tr>
                 <td
-                  colSpan="10"
+                  colSpan="9"
                   className="text-center p-4 text-gray-500 dark:text-gray-300"
                 >
                   Không tìm thấy người dùng
@@ -313,6 +309,20 @@ const UserTable = ({ onSelectUser, onFetch }) => {
       </div>
 
       <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+
+      <ConfirmDialog
+        open={confirmData.open}
+        title={confirmData.isActive ? "Khóa tài khoản" : "Mở khóa tài khoản"}
+        message={
+          confirmData.isActive
+            ? "Bạn có chắc chắn muốn khóa tài khoản này?"
+            : "Bạn có chắc chắn muốn mở khóa tài khoản này?"
+        }
+        onConfirm={handleConfirmToggle}
+        onCancel={() =>
+          setConfirmData({ open: false, userId: null, isActive: false })
+        }
+      />
     </div>
   );
 };

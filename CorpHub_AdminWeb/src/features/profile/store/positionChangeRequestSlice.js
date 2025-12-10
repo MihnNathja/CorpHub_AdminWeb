@@ -42,6 +42,7 @@ const positionChangeRequestSlice = createSlice({
     builder
       .addCase(createPositionChangeRequest.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(createPositionChangeRequest.fulfilled, (state, action) => {
         state.loading = false;
@@ -51,10 +52,22 @@ const positionChangeRequestSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(fetchPositionChangeRequestsByEmployee.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(
         fetchPositionChangeRequestsByEmployee.fulfilled,
         (state, action) => {
+          state.loading = false;
           state.items = action.payload;
+        }
+      )
+      .addCase(
+        fetchPositionChangeRequestsByEmployee.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
         }
       );
   },
