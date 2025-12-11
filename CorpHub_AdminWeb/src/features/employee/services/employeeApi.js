@@ -27,6 +27,10 @@ export const rejectPendingCompetencies = (competencyId, reason) => {
   return api.put(`/api/admin/employee/competencies/reject/${competencyId}`);
 };
 
+// Employee detail
+export const getEmployeeFullDetail = (employeeId) =>
+  api.get(`/api/employee/${employeeId}/full-detail`);
+
 // Position change request / approval APIs
 export const getPositionChangeRequestsByEmployee = (employeeId) => {
   return api.get(`/api/position-change-request/employee/${employeeId}`);

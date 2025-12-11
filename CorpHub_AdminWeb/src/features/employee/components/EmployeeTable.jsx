@@ -1,16 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useEmployee } from "../hooks/useEmployee";
 import Pagination from "../../global/components/Pagination";
 import defaultAvatar from "../../../assets/defaultAvatar.jpg";
 import { EyeIcon } from "lucide-react";
 import StatCard from "../../global/components/StatCard";
-import EmployeeDetailModal from "./EmployeeDetailModal";
 
 const EmployeeTable = () => {
   const { data, setPage, totalPages, page, sendCreateUserTicket } =
     useEmployee();
   const employees = data;
-  const [selected, setSelected] = useState(null);
+  const navigate = useNavigate();
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
@@ -127,7 +127,7 @@ const EmployeeTable = () => {
               <td className="p-3 text-center">
                 <button
                   type="button"
-                  onClick={() => setSelected(emp)}
+                  onClick={() => navigate(`/employees/${emp.id}`)}
                   className={`flex items-center gap-1 px-3 py-1 text-sm font-medium rounded-md
       bg-transparent text-blue-600 border border-blue-600 hover:bg-blue-50 transition`}
                 >
@@ -141,8 +141,6 @@ const EmployeeTable = () => {
 
       <Pagination setPage={setPage} totalPages={totalPages} page={page} />
 
-      {/* Modal chi tiết */}
-      <EmployeeDetailModal selected={selected} setSelected={setSelected} />
       {/* Modal tạo tài khoản */}
       {showCreateForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
