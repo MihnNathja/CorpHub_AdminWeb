@@ -31,6 +31,15 @@ export const rejectPendingCompetencies = (competencyId, reason) => {
 export const getEmployeeFullDetail = (employeeId) =>
   api.get(`/api/employee/${employeeId}/full-detail`);
 
+export const updateEmployeeBasicInfo = (employeeId, payload) =>
+  api.patch(`/api/employee/${employeeId}/basic-info`, payload);
+
+export const updateEmployeeContactInfo = (employeeId, payload) =>
+  api.patch(`/api/employee/${employeeId}/contact-info`, payload);
+
+export const updateEmployeeAdministrativeInfo = (employeeId, payload) =>
+  api.patch(`/api/employee/${employeeId}/administrative-info`, payload);
+
 // Position change request / approval APIs
 export const getPositionChangeRequestsByEmployee = (employeeId) => {
   return api.get(`/api/position-change-request/employee/${employeeId}`);

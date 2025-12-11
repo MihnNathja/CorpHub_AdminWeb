@@ -4,22 +4,27 @@ import {
   AlertCircle,
   ArrowLeft,
   Award,
-  BadgeCheck,
-  Banknote,
-  Building2,
-  Calendar,
   CheckCircle2,
   FileText,
   History,
   Loader2,
-  Mail,
-  MapPin,
-  AtSign,
-  Phone,
   ShieldCheck,
-  UserRound,
 } from "lucide-react";
-import { getEmployeeFullDetail } from "../services/employeeApi";
+import {
+  getEmployeeFullDetail,
+  updateEmployeeAdministrativeInfo,
+  updateEmployeeBasicInfo,
+  updateEmployeeContactInfo,
+} from "../services/employeeApi";
+import { showSuccess, showError } from "../../../utils/toastUtils";
+import { Card } from "../components/EmployeeDetailCard";
+import { EmptyState } from "../components/EmployeeDetailFields";
+import EmployeeDetailBasicSection from "../components/EmployeeDetailBasicSection";
+import EmployeeDetailContactSection from "../components/EmployeeDetailContactSection";
+import EmployeeDetailAdminSection from "../components/EmployeeDetailAdminSection";
+import EmployeeDetailJobSection from "../components/EmployeeDetailJobSection";
+import { useDocument } from "../../profile/hooks/useDocument";
+import PositionChangeCreateModal from "../../profile/components/job/position/PositionChangeCreateModal";
 
 const EmployeeDetailPage = () => {
   const { id } = useParams();
@@ -27,6 +32,46 @@ const EmployeeDetailPage = () => {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [savingBasic, setSavingBasic] = useState(false);
+  const [savingContact, setSavingContact] = useState(false);
+  const [savingAdmin, setSavingAdmin] = useState(false);
+  const [editingBasic, setEditingBasic] = useState(false);
+  const [editingContact, setEditingContact] = useState(false);
+  const [editingAdmin, setEditingAdmin] = useState(false);
+  const [showPositionChangeModal, setShowPositionChangeModal] = useState(false);
+
+  const [basicForm, setBasicForm] = useState({
+    fullName: "",
+    dob: "",
+    gender: "",
+  });
+  const [contactForm, setContactForm] = useState({
+    personalEmail: "",
+    phone: "",
+    address: "",
+    about: "",
+  });
+
+  const [adminForm, setAdminForm] = useState({
+    identityNumber: "",
+    identityIssuedDate: "",
+    identityIssuedPlace: "",
+    taxCode: "",
+    socialInsuranceNumber: "",
+    bankAccountNumber: "",
+    bankName: "",
+    maritalStatus: "",
+    note: "",
+  });
+
+  const profile = detail || {};
+  const adminInfo = profile.administrativeInfo || {};
+  const competencies = profile.competencies || [];
+  const documents = profile.documents || [];
+  const histories = profile.internalHistories || [];
+  const positionRequests = profile.positionChangeRequests || [];
+
+  const { downloadDocument, downloadingIds } = useDocument();
 
   const fetchDetail = useCallback(async () => {
     if (!id) return;
@@ -48,12 +93,113 @@ const EmployeeDetailPage = () => {
     fetchDetail();
   }, [fetchDetail]);
 
-  const profile = detail || {};
-  const adminInfo = profile.administrativeInfo || {};
-  const competencies = profile.competencies || [];
-  const documents = profile.documents || [];
-  const histories = profile.internalHistories || [];
-  const positionRequests = profile.positionChangeRequests || [];
+  useEffect(() => {
+    if (!detail) return;
+    resetBasicForm(detail);
+    resetContactForm(detail);
+    resetAdminForm(adminInfo);
+    setEditingBasic(false);
+    setEditingContact(false);
+    setEditingAdmin(false);
+  }, [detail]);
+
+  const resetBasicForm = (source) => {
+    const payload = source || profile;
+    setBasicForm({
+      fullName: payload.fullName || "",
+      dob: payload.dob || "",
+      gender: payload.gender || "",
+    });
+  };
+
+  const resetContactForm = (source) => {
+    const payload = source || profile;
+    setContactForm({
+      personalEmail: payload.personalEmail || "",
+      phone: payload.phone || "",
+      address: payload.address || "",
+      about: payload.about || "",
+    });
+  };
+
+  const resetAdminForm = (source) => {
+    const payload = source || adminInfo;
+    setAdminForm({
+      identityNumber: payload.identityNumber || "",
+      identityIssuedDate: payload.identityIssuedDate || "",
+      identityIssuedPlace: payload.identityIssuedPlace || "",
+      taxCode: payload.taxCode || "",
+      socialInsuranceNumber: payload.socialInsuranceNumber || "",
+      bankAccountNumber: payload.bankAccountNumber || "",
+      bankName: payload.bankName || "",
+      maritalStatus: payload.maritalStatus || "",
+      note: payload.note || "",
+    });
+  };
+
+  const handleSaveBasic = async () => {
+    try {
+      setSavingBasic(true);
+      const payload = { ...basicForm };
+      const res = await updateEmployeeBasicInfo(id, payload);
+      const basic = res.data?.data || res.data;
+      setDetail((prev) => ({
+        ...prev,
+        ...basic,
+      }));
+      showSuccess("Cập nhật thông tin cơ bản thành công");
+      setEditingBasic(false);
+    } catch (e) {
+      showError(
+        e.response?.data?.message || "Cập nhật thông tin cơ bản thất bại"
+      );
+    } finally {
+      setSavingBasic(false);
+    }
+  };
+
+  const handleCreatePositionRequest = () => {
+    setShowPositionChangeModal(true);
+  };
+
+  const handleSaveContact = async () => {
+    try {
+      setSavingContact(true);
+      const res = await updateEmployeeContactInfo(id, contactForm);
+      const contact = res.data?.data || res.data;
+      setDetail((prev) => ({
+        ...prev,
+        ...contact,
+      }));
+      showSuccess("Cập nhật liên hệ thành công");
+      setEditingContact(false);
+    } catch (e) {
+      showError(e.response?.data?.message || "Cập nhật liên hệ thất bại");
+    } finally {
+      setSavingContact(false);
+    }
+  };
+
+  const handleSaveAdmin = async () => {
+    try {
+      setSavingAdmin(true);
+      const res = await updateEmployeeAdministrativeInfo(id, adminForm);
+      const admin = res.data?.data || res.data;
+      setDetail((prev) => ({
+        ...prev,
+        administrativeInfo: {
+          ...(prev?.administrativeInfo || {}),
+          ...admin,
+        },
+      }));
+      showSuccess("Cập nhật hành chính thành công");
+      setEditingAdmin(false);
+    } catch (e) {
+      showError(e.response?.data?.message || "Cập nhật hành chính thất bại");
+    } finally {
+      setSavingAdmin(false);
+    }
+  };
 
   const formatDate = (value, options) =>
     value ? new Date(value).toLocaleDateString("vi-VN", options) : "—";
@@ -64,6 +210,7 @@ const EmployeeDetailPage = () => {
     ? `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}`
     : "https://ui-avatars.com/api/?background=0D8ABC&color=fff";
 
+  console.log(profile);
   return (
     <div className="p-6">
       <div className="mb-4 flex items-center gap-3">
@@ -112,6 +259,7 @@ const EmployeeDetailPage = () => {
                 {profile.positionName || "Chưa có vị trí"} ·{" "}
                 {profile.departmentName || "Chưa có phòng ban"}
               </p>
+
               {profile.managerName && (
                 <p className="text-xs text-white/80">
                   Quản lý: {profile.managerName}
@@ -144,77 +292,40 @@ const EmployeeDetailPage = () => {
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-3" id="personal">
             <section className="xl:col-span-2 space-y-6">
-              <Card
-                title="Thông tin cá nhân"
-                subtitle={`Ngày vào: ${formatDate(profile.joinDate)}`}
-              >
-                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <InfoItem
-                    icon={<Mail size={16} />}
-                    label="Email cá nhân"
-                    value={profile.personalEmail}
-                  />
-                  <InfoItem
-                    icon={<Phone size={16} />}
-                    label="Số điện thoại"
-                    value={profile.phone}
-                  />
-                  <InfoItem
-                    icon={<UserRound size={16} />}
-                    label="Giới tính"
-                    value={profile.gender}
-                  />
-                  <InfoItem
-                    icon={<Calendar size={16} />}
-                    label="Ngày sinh"
-                    value={formatDate(profile.dob)}
-                  />
-                  <InfoItem
-                    icon={<MapPin size={16} />}
-                    label="Địa chỉ"
-                    value={profile.address}
-                  />
-                  <InfoItem
-                    icon={<AtSign size={16} />}
-                    label="Email công ty"
-                    value={profile.workEmail || profile.personalEmail}
-                  />
-                </div>
-                {profile.about && (
-                  <p className="mt-4 rounded-xl bg-gray-50 p-3 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                    {profile.about}
-                  </p>
-                )}
-              </Card>
+              <EmployeeDetailBasicSection
+                profile={profile}
+                basicForm={basicForm}
+                setBasicForm={setBasicForm}
+                editing={editingBasic}
+                setEditing={setEditingBasic}
+                saving={savingBasic}
+                onSave={handleSaveBasic}
+                onCancel={() => {
+                  resetBasicForm();
+                  setEditingBasic(false);
+                }}
+                formatDate={formatDate}
+              />
 
-              <Card
-                title="Thông tin công việc"
-                icon={<Building2 size={18} />}
-                id="job"
-              >
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <InfoItem
-                    icon={<BadgeCheck size={16} />}
-                    label="Vị trí"
-                    value={profile.positionName}
-                  />
-                  <InfoItem
-                    icon={<Building2 size={16} />}
-                    label="Phòng ban"
-                    value={profile.departmentName}
-                  />
-                  <InfoItem
-                    icon={<ShieldCheck size={16} />}
-                    label="Quản lý"
-                    value={profile.managerName}
-                  />
-                  <InfoItem
-                    icon={<Calendar size={16} />}
-                    label="Ngày bắt đầu"
-                    value={formatDate(profile.joinDate)}
-                  />
-                </div>
-              </Card>
+              <EmployeeDetailJobSection
+                profile={profile}
+                onCreateRequest={handleCreatePositionRequest}
+                formatDate={formatDate}
+              />
+
+              <EmployeeDetailContactSection
+                profile={profile}
+                contactForm={contactForm}
+                setContactForm={setContactForm}
+                editing={editingContact}
+                setEditing={setEditingContact}
+                saving={savingContact}
+                onSave={handleSaveContact}
+                onCancel={() => {
+                  resetContactForm();
+                  setEditingContact(false);
+                }}
+              />
 
               <Card title="Năng lực" icon={<Award size={18} />} id="competency">
                 {competencies.length === 0 ? (
@@ -285,14 +396,21 @@ const EmployeeDetailPage = () => {
                         <p className="text-xs text-gray-500">
                           Ngày tải: {formatDate(doc.uploadDate)}
                         </p>
-                        <a
-                          href={doc.fileUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-sm font-semibold text-blue-600 hover:underline"
+                        <button
+                          type="button"
+                          onClick={() => {
+                            console.log(doc);
+                            downloadDocument(doc.id || doc.documentId);
+                          }}
+                          disabled={downloadingIds?.includes(
+                            doc.id || doc.documentId
+                          )}
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:underline disabled:cursor-not-allowed disabled:text-gray-400"
                         >
-                          Tải / mở
-                        </a>
+                          {downloadingIds?.includes(doc.id || doc.documentId)
+                            ? "Đang tải..."
+                            : "Tải / mở"}
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -301,31 +419,20 @@ const EmployeeDetailPage = () => {
             </section>
 
             <section className="space-y-6" id="admin">
-              <Card title="Thông tin hành chính" icon={<Banknote size={18} />}>
-                <div className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
-                  <InfoRow label="CCCD/CMND" value={adminInfo.identityNumber} />
-                  <InfoRow
-                    label="Ngày cấp"
-                    value={formatDate(adminInfo.identityIssuedDate)}
-                  />
-                  <InfoRow
-                    label="Nơi cấp"
-                    value={adminInfo.identityIssuedPlace}
-                  />
-                  <InfoRow label="MST" value={adminInfo.taxCode} />
-                  <InfoRow
-                    label="BHXH"
-                    value={adminInfo.socialInsuranceNumber}
-                  />
-                  <InfoRow
-                    label="Số tài khoản"
-                    value={adminInfo.bankAccountNumber}
-                  />
-                  <InfoRow label="Ngân hàng" value={adminInfo.bankName} />
-                  <InfoRow label="Hôn nhân" value={adminInfo.maritalStatus} />
-                  <InfoRow label="Ghi chú" value={adminInfo.note} />
-                </div>
-              </Card>
+              <EmployeeDetailAdminSection
+                adminInfo={adminInfo}
+                adminForm={adminForm}
+                setAdminForm={setAdminForm}
+                editing={editingAdmin}
+                setEditing={setEditingAdmin}
+                saving={savingAdmin}
+                onSave={handleSaveAdmin}
+                onCancel={() => {
+                  resetAdminForm();
+                  setEditingAdmin(false);
+                }}
+                formatDate={formatDate}
+              />
 
               <Card
                 title="Lịch sử nội bộ"
@@ -425,53 +532,19 @@ const EmployeeDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {showPositionChangeModal && (
+        <PositionChangeCreateModal
+          employeeId={id}
+          onClose={() => setShowPositionChangeModal(false)}
+          onCreated={() => {
+            setShowPositionChangeModal(false);
+            fetchDetail();
+          }}
+        />
+      )}
     </div>
   );
 };
-
-const Card = ({ title, subtitle, icon, children, id }) => (
-  <div id={id} className="rounded-2xl bg-white p-5 shadow-sm dark:bg-gray-900">
-    <div className="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100">
-      {icon}
-      <span>{title}</span>
-      {subtitle && (
-        <span className="ml-auto text-xs font-normal text-gray-500">
-          {subtitle}
-        </span>
-      )}
-    </div>
-    {children}
-  </div>
-);
-
-const InfoItem = ({ icon, label, value }) => (
-  <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-3 text-sm shadow-sm dark:border-gray-800 dark:bg-gray-800">
-    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/40 dark:text-blue-200">
-      {icon}
-    </div>
-    <div>
-      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="font-semibold text-gray-800 dark:text-gray-100">
-        {value || "—"}
-      </p>
-    </div>
-  </div>
-);
-
-const InfoRow = ({ label, value }) => (
-  <div className="flex justify-between gap-3 rounded-lg bg-gray-50 px-3 py-2 dark:bg-gray-800">
-    <span className="text-gray-500">{label}</span>
-    <span className="font-semibold text-gray-800 dark:text-gray-100">
-      {value || "—"}
-    </span>
-  </div>
-);
-
-const EmptyState = ({ label }) => (
-  <div className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-sm text-gray-500 dark:bg-gray-800 dark:text-gray-300">
-    <AlertCircle size={16} />
-    <span>{label}</span>
-  </div>
-);
 
 export default EmployeeDetailPage;
