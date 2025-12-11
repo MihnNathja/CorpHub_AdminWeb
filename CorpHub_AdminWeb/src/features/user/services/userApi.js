@@ -9,7 +9,10 @@ export const getUsersApi = (params) => {
   return api.get("/api/user/employee", { params });
 };
 
-export const getUserByIdApi = (id) => api.get(`/api/user/employee/info/${id}`);
+export const getUserByIdApi = async (id) => {
+  const res = await api.get(`/api/user/${id}`);
+  return res.data?.data || res.data;
+};
 export const getUsersBySearch = async (query) => {
   if (!query || !query.trim()) return { data: [] };
   console.log(query);
@@ -41,7 +44,7 @@ export const toggleUserActive = async (id) => {
 
 export const resetPassword = async (userId) => {
   try {
-    const res = await api.post(`/api/user/reset-password/${userId}`);
+    const res = await api.post(`/api/user/admin/reset-password/${userId}`);
     showSuccess(res.data?.message || "Đã đặt lại mật khẩu và gửi qua email!");
     return res.data;
   } catch (error) {

@@ -106,12 +106,23 @@ const EmployeeProfileForm = () => {
   const { departments } = useDepartment();
 
   return (
-    <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl transition-colors">
-      <h2 className="text-3xl font-bold text-blue-600 mb-8 text-center">
-        Thêm Hồ sơ Nhân viên
-      </h2>
+    <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl transition-colors shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Thêm Hồ sơ Nhân viên
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Nhập thông tin cơ bản, lịch sử công việc và năng lực kèm avatar để
+            tạo mới hồ sơ.
+          </p>
+        </div>
+        <div className="text-xs text-gray-500 dark:text-gray-400">
+          Trường bắt buộc được đánh dấu *
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-10">
+      <form onSubmit={handleSubmit} className="space-y-8">
         <BasicInfoSection
           profile={profile}
           departments={departments}
@@ -132,12 +143,18 @@ const EmployeeProfileForm = () => {
           removeCompetency={removeCompetency}
         />
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg shadow"
-        >
-          💾 Lưu Hồ sơ
-        </button>
+        <div className="flex flex-col gap-2">
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-sm transition"
+          >
+            💾 Lưu Hồ sơ
+          </button>
+          <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+            Kiểm tra lại thông tin trước khi lưu để tránh phải chỉnh sửa sau
+            này.
+          </p>
+        </div>
       </form>
     </div>
   );

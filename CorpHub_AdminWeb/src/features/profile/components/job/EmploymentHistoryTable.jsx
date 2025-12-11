@@ -1,61 +1,111 @@
-// src/features/profile/components/job/EmploymentHistoryTable.jsx
-const fmt = (d) => (d ? new Date(d).toLocaleDateString("vi-VN") : "Hiện tại");
+import { Eye } from "lucide-react";
 
-const StatusPill = ({ text }) => {
-  const isActive = (text || "").toLowerCase().includes("đang");
-  const cls = isActive
-    ? "bg-green-100 text-green-700"
-    : "bg-gray-100 text-gray-700";
+const fmt = (d) => (d ? new Date(d).toLocaleDateString("vi-VN") : "-");
+
+const ChangeTypeBadge = ({ changeType }) => {
+  const colors = {
+    PROMOTION:
+      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+    TRANSFER:
+      "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+    DEMOTION:
+      "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+    OTHER: "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300",
+  };
+
+  const labels = {
+    PROMOTION: "Thăng chức",
+    TRANSFER: "Chuyển đổi",
+    DEMOTION: "Giáng chức",
+    OTHER: "Khác",
+  };
+
   return (
-    <span className={`px-2 py-1 text-xs rounded-full ${cls}`}>
-      {text || "-"}
+    <span
+      className={`px-2 py-1 text-xs rounded-full font-medium ${
+        colors[changeType] || colors.OTHER
+      }`}
+    >
+      {labels[changeType] || changeType || "-"}
     </span>
   );
 };
 
-const EmploymentHistoryTable = ({ histories }) => {
+const EmploymentHistoryTable = ({ histories, onViewRequest }) => {
   return (
     <div className="overflow-x-auto mt-3">
-      <table className="min-w-full text-sm border">
-        <thead className="bg-gray-100">
+      <table className="min-w-full text-sm border border-gray-200 dark:border-gray-700">
+        <thead className="bg-gray-100 dark:bg-gray-800">
           <tr className="text-left">
-            <th className="p-2 border">Phòng ban</th>
-            <th className="p-2 border">Chức vụ</th>
-            <th className="p-2 border">Loại hợp đồng</th>
-            <th className="p-2 border">Ngày bắt đầu</th>
-            <th className="p-2 border">Ngày kết thúc</th>
-            <th className="p-2 border">Trạng thái</th>
-            <th className="p-2 border">Ghi chú</th>
+            <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
+              Phòng ban
+            </th>
+            <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
+              Chức vụ
+            </th>
+            <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
+              Loại thay đổi
+            </th>
+            <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
+              Ngày hiệu lực
+            </th>
+            <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
+              Lý do
+            </th>
+            <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300 text-center">
+              Thao tác
+            </th>
           </tr>
         </thead>
         <tbody>
           {!histories?.length ? (
             <tr>
-              <td colSpan="7" className="text-center p-4 text-gray-500">
-                Chưa có dữ liệu công tác
+              <td
+                colSpan="6"
+                className="text-center p-8 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700"
+              >
+                Chưa có dữ liệu lịch sử làm việc
               </td>
             </tr>
           ) : (
-            histories.map((job) => (
-              <tr key={job.id} className="hover:bg-gray-50 even:bg-gray-50/50">
-                <td className="p-2 border">
-                  {job.departmentName || job.department || "-"}
+            histories.map((history) => (
+              <tr
+                key={history.id}
+                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 even:bg-gray-50/50 dark:even:bg-gray-800/30"
+              >
+                <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                  {history.departmentName || "-"}
                 </td>
-                <td className="p-2 border">
-                  {job.positionName || job.position || "-"}
+                <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                  {history.positionName || "-"}
                 </td>
-                <td className="p-2 border">{job.contractType || "-"}</td>
-                <td className="p-2 border">{fmt(job.startDate)}</td>
-                <td className="p-2 border">{fmt(job.endDate)}</td>
-                <td className="p-2 border">
-                  <StatusPill
-                    text={
-                      job.employmentStatus ||
-                      (!job.endDate ? "Đang làm việc" : "Đã kết thúc")
-                    }
-                  />
+                <td className="p-3 border border-gray-200 dark:border-gray-700">
+                  <ChangeTypeBadge changeType={history.changeType} />
                 </td>
-                <td className="p-2 border">{job.note || "-"}</td>
+                <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                  {fmt(history.effectiveDate)}
+                </td>
+                <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 max-w-xs truncate">
+                  {history.reason || "-"}
+                </td>
+                <td className="p-3 border border-gray-200 dark:border-gray-700 text-center">
+                  {history.requestId ? (
+                    <button
+                      onClick={() =>
+                        onViewRequest && onViewRequest(history.requestId)
+                      }
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
+                      title="Xem yêu cầu"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      Xem yêu cầu
+                    </button>
+                  ) : (
+                    <span className="text-xs text-gray-400 dark:text-gray-600">
+                      -
+                    </span>
+                  )}
+                </td>
               </tr>
             ))
           )}

@@ -177,6 +177,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.list = action.payload?.data || [];
         state.meta = action.payload.meta;
+        console.log("Phân trang", state.meta);
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;

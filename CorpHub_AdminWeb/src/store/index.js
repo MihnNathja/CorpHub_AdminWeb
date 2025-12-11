@@ -29,6 +29,7 @@ import workflowTemplateReducer from "../features/workflow/store/workflowTemplate
 import workflowStepReducer from "../features/workflow/store/workflowStepSlice";
 import positionChangeRequestReducer from "../features/profile/store/positionChangeRequestSlice";
 import departmentWithPositionReducer from "../features/profile/store/departmentWithPositionSlice";
+import internalWorkHistoryReducer from "../features/profile/store/internalWorkHistorySlice";
 
 export const store = configureStore({
   reducer: {
@@ -62,5 +63,6 @@ export const store = configureStore({
     workflowStep: workflowStepReducer,
     positionChangeRequest: positionChangeRequestReducer,
     departmentPosition: departmentWithPositionReducer,
+    internalWorkHistory: internalWorkHistoryReducer,
   },
 });

@@ -5,6 +5,11 @@ export const getMyEmployeeProfile = async () => {
   return res;
 };
 
+export const updateMyContactInfo = async (payload) => {
+  const res = await api.patch("/api/employee/me/contact-info", payload);
+  return res;
+};
+
 export const changePassword = async (data) => {
   const res = await api.patch("/api/user/change-password", data);
   return res;

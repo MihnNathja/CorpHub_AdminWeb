@@ -1,8 +1,13 @@
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createPositionChangeRequest,
   fetchPositionChangeRequestsByEmployee,
 } from "../store/positionChangeRequestSlice";
+import {
+  getRequest,
+  getApprovalStepsByRequest,
+} from "../services/positionChangeRequestApi";
 
 export const usePositionChangeRequest = () => {
   const dispatch = useDispatch();
@@ -18,5 +23,13 @@ export const usePositionChangeRequest = () => {
     createRequest: (data) => dispatch(createPositionChangeRequest(data)),
     getRequestsByEmployee: (id) =>
       dispatch(fetchPositionChangeRequestsByEmployee(id)),
+    getRequestDetail: useCallback(async (id) => {
+      const res = await getRequest(id);
+      return res?.data?.data || res?.data;
+    }, []),
+    getApprovalSteps: useCallback(async (requestId) => {
+      const res = await getApprovalStepsByRequest(requestId);
+      return res?.data?.data || res?.data || [];
+    }, []),
   };
 };

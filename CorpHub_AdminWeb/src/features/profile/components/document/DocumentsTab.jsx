@@ -116,6 +116,13 @@ const DocumentsTab = ({ profile }) => {
         </div>
       }
     >
+      <div className="mb-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-200">
+        <span className="mt-0.5 text-amber-500">⚠️</span>
+        <p className="leading-snug">
+          Lưu ý: tài liệu thuộc nhóm chính sách công ty không thể xóa.
+        </p>
+      </div>
+
       <input
         ref={fileInputRef}
         type="file"

@@ -1,21 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   X,
   FileText,
+  Clock,
   CheckCircle,
   XCircle,
-  Clock,
   ArrowRight,
   CalendarClock,
   UserRound,
   Paperclip,
 } from "lucide-react";
-import {
-  approveApprovalStep,
-  rejectApprovalStep,
-} from "../services/employeeApi";
-import { showSuccess, showError } from "../../../utils/toastUtils";
-import { useAuth } from "../../auth/hooks/useAuth";
 
 const statusTone = {
   PENDING:
@@ -63,57 +57,7 @@ const formatDateTime = (val) =>
 const formatDate = (val) =>
   val ? new Date(val).toLocaleDateString("vi-VN") : "-";
 
-export default function PositionRequestDetailModal({
-  request,
-  onClose,
-  onRefresh,
-}) {
-  const { hasAnyRole } = useAuth();
-  const [stepComments, setStepComments] = useState({});
-  const [actionInProgress, setActionInProgress] = useState(null);
-
-  const getStepComment = (stepId) => stepComments[stepId] || "";
-  const setStepComment = (stepId, comment) =>
-    setStepComments((prev) => ({ ...prev, [stepId]: comment }));
-
-  const handleApprove = async (approvalId) => {
-    setActionInProgress(approvalId);
-    try {
-      await approveApprovalStep(approvalId, getStepComment(approvalId) || "");
-      showSuccess("Phê duyệt thành công");
-      setStepComment(approvalId, "");
-      onRefresh?.();
-      onClose?.();
-    } catch (err) {
-      showError("Phê duyệt thất bại");
-      console.error(err);
-    } finally {
-      setActionInProgress(null);
-    }
-  };
-
-  const handleReject = async (approvalId) => {
-    const comment = getStepComment(approvalId);
-    if (!comment.trim()) {
-      showError("Vui lòng nhập lý do từ chối");
-      return;
-    }
-
-    setActionInProgress(approvalId);
-    try {
-      await rejectApprovalStep(approvalId, comment);
-      showSuccess("Từ chối thành công");
-      setStepComment(approvalId, "");
-      onRefresh?.();
-      onClose?.();
-    } catch (err) {
-      showError("Từ chối thất bại");
-      console.error(err);
-    } finally {
-      setActionInProgress(null);
-    }
-  };
-
+export default function PositionChangeRequestDetailModal({ request, onClose }) {
   if (!request) return null;
 
   const statusClass = statusTone[request.status] || statusTone.CANCELLED;
@@ -269,100 +213,56 @@ export default function PositionRequestDetailModal({
                 <div className="relative mt-4">
                   <div className="absolute left-[11px] top-0 h-full border-l border-slate-200 dark:border-slate-700" />
                   <div className="space-y-4">
-                    {request.approvalSteps.map((step, idx) => {
-                      const isActionInProgress = actionInProgress === step.id;
-                      const stepComment = getStepComment(step.id);
+                    {request.approvalSteps.map((step, idx) => (
+                      <div key={step.id || idx} className="relative pl-8">
+                        <span className="absolute left-[2px] top-2 flex h-3.5 w-3.5 items-center justify-center rounded-full border border-white bg-white shadow ring-2 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
+                          <StepIcon decision={step.decision} />
+                        </span>
 
-                      return (
-                        <div key={step.id || idx} className="relative pl-8">
-                          <span className="absolute left-[2px] top-2 flex h-3.5 w-3.5 items-center justify-center rounded-full border border-white bg-white shadow ring-2 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
-                            <StepIcon decision={step.decision} />
-                          </span>
-
-                          <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/80">
-                            <div className="flex items-start justify-between gap-3">
-                              <div>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                                  Bước {step.stepOrder || idx + 1} -{" "}
-                                  {step.role || "Phê duyệt"}
-                                </p>
-                                <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
-                                  {step.approver?.fullName || "-"}
-                                </p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
-                                  {[
-                                    step.approver?.positionName,
-                                    step.approver?.departmentName,
-                                  ]
-                                    .filter(Boolean)
-                                    .join(" | ") || "Không rõ vị trí"}
-                                </p>
-                              </div>
-
-                              <span
-                                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
-                                  decisionTone[step.decision] ||
-                                  decisionTone.PENDING
-                                }`}
-                              >
-                                {step.decision}
-                              </span>
+                        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/80">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                Bước {step.stepOrder || idx + 1} -{" "}
+                                {step.role || "Phê duyệt"}
+                              </p>
+                              <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+                                {step.approver?.fullName || "-"}
+                              </p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                                {[
+                                  step.approver?.positionName,
+                                  step.approver?.departmentName,
+                                ]
+                                  .filter(Boolean)
+                                  .join(" | ") || "Không rõ vị trí"}
+                              </p>
                             </div>
 
-                            {step.decidedAt && (
-                              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                Quyết định: {formatDateTime(step.decidedAt)}
-                              </p>
-                            )}
-
-                            {step.comment && (
-                              <p className="mt-2 rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
-                                {step.comment}
-                              </p>
-                            )}
-
-                            <div className="mt-3 space-y-2">
-                              <textarea
-                                placeholder="Nhập bình luận (tùy chọn)"
-                                value={stepComment}
-                                onChange={(e) =>
-                                  setStepComment(step.id, e.target.value)
-                                }
-                                className="w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-                                rows="2"
-                              />
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleApprove(step.id)}
-                                  disabled={isActionInProgress}
-                                  className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-                                >
-                                  {isActionInProgress
-                                    ? "Đang xử lý..."
-                                    : "Phê duyệt"}
-                                </button>
-                                <button
-                                  onClick={() => handleReject(step.id)}
-                                  disabled={isActionInProgress}
-                                  className="inline-flex items-center justify-center rounded-md bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-                                >
-                                  {isActionInProgress
-                                    ? "Đang xử lý..."
-                                    : "Từ chối"}
-                                </button>
-                              </div>
-                            </div>
-
-                            {step.decision === "PENDING" && (
-                              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 italic">
-                                Chờ {step.approver?.fullName || "người duyệt"}{" "}
-                                phê duyệt
-                              </p>
-                            )}
+                            <span
+                              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                                decisionTone[step.decision] ||
+                                decisionTone.PENDING
+                              }`}
+                            >
+                              {step.decision}
+                            </span>
                           </div>
+
+                          {step.decidedAt && (
+                            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                              Quyết định: {formatDateTime(step.decidedAt)}
+                            </p>
+                          )}
+
+                          {step.comment && (
+                            <p className="mt-2 rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                              {step.comment}
+                            </p>
+                          )}
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -372,7 +272,8 @@ export default function PositionRequestDetailModal({
 
         <div className="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-6 py-4 dark:border-slate-800 dark:bg-slate-900/70">
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            Bạn có thể phê duyệt/từ chối trực tiếp các bước đang chờ.
+            Chi tiết chỉ mang tính tham khảo, không thể thao tác duyệt ở màn
+            này.
           </div>
           <button
             onClick={onClose}

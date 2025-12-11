@@ -5,12 +5,13 @@ import {
   ArrowUp,
   ArrowDown,
   ArrowUpDown,
-  Pencil,
+  NotebookPen,
   Trash2,
   KeyRound,
   Unlock,
   Lock,
   Loader2,
+  UserRound,
 } from "lucide-react";
 import Pagination from "../../global/components/Pagination";
 import defaultAvatar from "../../../assets/defaultAvatar.jpg";
@@ -18,6 +19,7 @@ import { Tooltip } from "react-tooltip";
 import { useDepartment } from "../../department/hooks/useDepartment";
 import { useUser } from "../hooks/useUser";
 import { useSelector } from "react-redux";
+import ConfirmDialog from "../../global/components/ConfirmDialog";
 
 const UserTable = ({ onSelectUser, onFetch }) => {
   const [page, setPage] = useState(0);
@@ -36,6 +38,13 @@ const UserTable = ({ onSelectUser, onFetch }) => {
   const { departments } = useDepartment();
 
   const [loadingId, setLoadingId] = useState(null);
+  const [confirmData, setConfirmData] = useState({
+    open: false,
+    userId: null,
+    isActive: false,
+  });
+  const [bulkConfirm, setBulkConfirm] = useState({ open: false, type: null });
+  const [selectedIds, setSelectedIds] = useState([]);
 
   const onResetPassword = async (userId) => {
     setLoadingId(userId);
@@ -46,9 +55,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
     }
   };
 
-  const { list, totalPages, loading, error } = useSelector(
-    (state) => state.user
-  );
+  const { list, meta, loading, error } = useSelector((state) => state.user);
 
   // 🧩 Dữ liệu giả cho demo
   const mockUsers = list.map((u, index) => ({
@@ -59,10 +66,30 @@ const UserTable = ({ onSelectUser, onFetch }) => {
   }));
 
   const handleToggleActive = (userId, isActive) => {
-    if (confirm(`${isActive ? "Khóa" : "Mở khóa"} tài khoản này?`)) {
-      // Gọi API backend hoặc service đổi trạng thái
-      toggleActive(userId);
+    setConfirmData({ open: true, userId, isActive });
+  };
+
+  const handleConfirmToggle = () => {
+    if (confirmData.userId) {
+      toggleActive(confirmData.userId);
     }
+    setConfirmData({ open: false, userId: null, isActive: false });
+  };
+
+  const toggleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedIds(mockUsers.map((u) => u.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const toggleSelectOne = (userId) => {
+    setSelectedIds((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId]
+    );
   };
 
   useEffect(() => {
@@ -107,20 +134,51 @@ const UserTable = ({ onSelectUser, onFetch }) => {
           <Search className="absolute left-2 top-2.5 text-gray-400 w-4 h-4" />
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center gap-2">
-          <select
-            value={filters.gender}
-            onChange={(e) =>
-              setFilters((f) => ({ ...f, gender: e.target.value }))
-            }
-            className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
-                       bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-          >
-            <option value="">All Genders</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
+        {/* Filters as pill toolbar */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
+            <span>Giới tính</span>
+            {["", "male", "female"].map((g) => (
+              <button
+                key={g || "all"}
+                onClick={() => {
+                  setPage(0);
+                  setFilters((f) => ({ ...f, gender: g }));
+                }}
+                className={`px-3 py-1 rounded-full transition ${
+                  filters.gender === g
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-slate-600 hover:text-blue-600"
+                }`}
+              >
+                {g === "male" ? "Nam" : g === "female" ? "Nữ" : "Tất cả"}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
+            <span>Trạng thái</span>
+            {["", "true", "false"].map((v) => (
+              <button
+                key={v || "all"}
+                onClick={() => {
+                  setPage(0);
+                  setFilters((f) => ({ ...f, active: v }));
+                }}
+                className={`px-3 py-1 rounded-full transition ${
+                  filters.active === v
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-slate-600 hover:text-blue-600"
+                }`}
+              >
+                {v === "true"
+                  ? "Active"
+                  : v === "false"
+                  ? "Inactive"
+                  : "Tất cả"}
+              </button>
+            ))}
+          </div>
 
           <select
             value={filters.departmentId}
@@ -130,38 +188,65 @@ const UserTable = ({ onSelectUser, onFetch }) => {
             className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
                        bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
-            <option value="">All Departments</option>
+            <option value="">Tất cả phòng ban</option>
             {departments.map((d) => (
               <option key={d.id} value={d.id}>
                 {d.name}
               </option>
             ))}
           </select>
-
-          {/* 🟩 Trạng thái */}
-          <select
-            value={filters.active}
-            onChange={(e) =>
-              setFilters((f) => ({
-                ...f,
-                active: e.target.value,
-              }))
-            }
-            className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
-                       bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-          >
-            <option value="">All Status</option>
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
-          </select>
         </div>
       </div>
+
+      {selectedIds.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 shadow-sm">
+          <div className="text-sm font-semibold text-blue-800">
+            Đã chọn {selectedIds.length} người dùng
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setBulkConfirm({ open: true, type: "lock" })}
+              className="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 text-sm font-semibold"
+            >
+              Khóa
+            </button>
+            <button
+              onClick={() => setBulkConfirm({ open: true, type: "unlock" })}
+              className="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 text-sm font-semibold"
+            >
+              Mở khóa
+            </button>
+            <button
+              onClick={() => setBulkConfirm({ open: true, type: "reset" })}
+              className="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 text-sm font-semibold"
+            >
+              Đặt lại mật khẩu
+            </button>
+            <button
+              onClick={() => setSelectedIds([])}
+              className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 text-sm"
+            >
+              Bỏ chọn
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 🧾 Table */}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300 dark:border-gray-700 text-sm">
           <thead>
             <tr className="bg-gray-100 dark:bg-gray-700 text-left">
+              <th className="p-2 border text-center w-10">
+                <input
+                  type="checkbox"
+                  checked={
+                    selectedIds.length === mockUsers.length &&
+                    mockUsers.length > 0
+                  }
+                  onChange={(e) => toggleSelectAll(e.target.checked)}
+                />
+              </th>
               <th className="p-2 border text-center w-10">#</th>
               <th className="p-2 border">Avatar</th>
               <th
@@ -179,7 +264,6 @@ const UserTable = ({ onSelectUser, onFetch }) => {
               <th className="p-2 border">Phone</th>
               <th className="p-2 border">Gender</th>
               <th className="p-2 border">Department</th>
-              <th className="p-2 border">Role</th>
               <th className="p-2 border">Status</th>
               <th className="p-2 border text-center">Action</th>
             </tr>
@@ -205,6 +289,13 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                   className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                 >
                   <td className="p-2 border text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(u.id)}
+                      onChange={() => toggleSelectOne(u.id)}
+                    />
+                  </td>
+                  <td className="p-2 border text-center">
                     {i + 1 + page * 10}
                   </td>
                   <td className="p-2 border text-center">
@@ -219,7 +310,6 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                   <td className="p-2 border">{u.phone || "-"}</td>
                   <td className="p-2 border">{u.gender || "-"}</td>
                   <td className="p-2 border">{u.department?.name || "-"}</td>
-                  <td className="p-2 border">{u.role}</td>
                   <td className="p-2 border">
                     {u.active ? (
                       <span className="text-green-600 font-medium">Active</span>
@@ -229,27 +319,16 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                   </td>
                   <td className="p-2 border text-center">
                     <div className="flex justify-center gap-2">
-                      {/* View */}
+                      {/* View + Edit combined */}
                       <button
-                        data-tooltip-id={`view-tip-${u.id}`}
-                        data-tooltip-content="Xem chi tiết"
+                        data-tooltip-id={`detail-tip-${u.id}`}
+                        data-tooltip-content="Xem / Chỉnh sửa"
                         onClick={() => onSelectUser(u.id)}
                         className="p-1.5 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600"
                       >
-                        <Eye className="w-4 h-4" />
+                        <NotebookPen className="w-4 h-4" />
                       </button>
-                      <Tooltip id={`view-tip-${u.id}`} place="top" />
-
-                      {/* Edit */}
-                      <button
-                        data-tooltip-id={`edit-tip-${u.id}`}
-                        data-tooltip-content="Chỉnh sửa người dùng"
-                        onClick={() => alert(`Edit ${u.fullName}`)}
-                        className="p-1.5 rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/30 text-amber-600"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <Tooltip id={`edit-tip-${u.id}`} place="top" />
+                      <Tooltip id={`detail-tip-${u.id}`} place="top" />
 
                       {/* Reset password */}
                       <button
@@ -278,7 +357,6 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                           u.active ? "Khóa tài khoản" : "Mở khóa tài khoản"
                         }
                         onClick={() => {
-                          console.log("Khóa/mở khóa");
                           handleToggleActive(u.id, u.active);
                         }}
                         className={`p-1.5 rounded-full transition-colors ${
@@ -304,7 +382,13 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                   colSpan="10"
                   className="text-center p-4 text-gray-500 dark:text-gray-300"
                 >
-                  Không tìm thấy người dùng
+                  <div className="flex flex-col items-center gap-2 text-slate-500">
+                    <UserRound className="w-6 h-6" />
+                    <p className="font-semibold">Không tìm thấy người dùng</p>
+                    <p className="text-xs text-slate-400">
+                      Hãy thử thay đổi bộ lọc hoặc tìm kiếm.
+                    </p>
+                  </div>
                 </td>
               </tr>
             )}
@@ -312,7 +396,47 @@ const UserTable = ({ onSelectUser, onFetch }) => {
         </table>
       </div>
 
-      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+      <Pagination page={page} setPage={setPage} totalPages={meta.totalPages} />
+
+      <ConfirmDialog
+        open={confirmData.open}
+        title={confirmData.isActive ? "Khóa tài khoản" : "Mở khóa tài khoản"}
+        message={
+          confirmData.isActive
+            ? "Bạn có chắc chắn muốn khóa tài khoản này?"
+            : "Bạn có chắc chắn muốn mở khóa tài khoản này?"
+        }
+        onConfirm={handleConfirmToggle}
+        onCancel={() =>
+          setConfirmData({ open: false, userId: null, isActive: false })
+        }
+      />
+
+      <ConfirmDialog
+        open={bulkConfirm.open}
+        title={
+          bulkConfirm.type === "lock"
+            ? "Khóa tài khoản"
+            : bulkConfirm.type === "unlock"
+            ? "Mở khóa tài khoản"
+            : "Đặt lại mật khẩu"
+        }
+        message={`Thực hiện hành động cho ${selectedIds.length} người dùng đã chọn?`}
+        onConfirm={async () => {
+          if (bulkConfirm.type === "reset") {
+            for (const id of selectedIds) {
+              await onResetPassword(id);
+            }
+          } else {
+            for (const id of selectedIds) {
+              await toggleActive(id);
+            }
+          }
+          setBulkConfirm({ open: false, type: null });
+          setSelectedIds([]);
+        }}
+        onCancel={() => setBulkConfirm({ open: false, type: null })}
+      />
     </div>
   );
 };

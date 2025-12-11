@@ -231,7 +231,7 @@ const ShiftTypeTable = () => {
                                         className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                                     >
                                         <td className="px-5 py-4 text-sm text-gray-500 dark:text-gray-400 font-medium">
-                                            {(page - 1) * size + i + 1}
+                                            {page * size + i + 1}
                                         </td>
                                         <td className="px-5 py-4">
                                             <div className="flex items-center gap-3">

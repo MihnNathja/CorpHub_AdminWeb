@@ -3,6 +3,7 @@ import {
   changePassword,
   getMyEmployeeProfile,
   uploadAvatar,
+  updateMyContactInfo,
 } from "../services/profileApi";
 import { showError } from "../../../utils/toastUtils";
 
@@ -38,10 +39,21 @@ export const getMyEmployeeProfileAsync = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await getMyEmployeeProfile();
-      //console.log("getMyEmployeeProfile: ", res);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || "Upload failed");
+    }
+  }
+);
+
+export const updateMyContactInfoAsync = createAsyncThunk(
+  "profile/updateMyContactInfo",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await updateMyContactInfo(payload);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "Update failed");
     }
   }
 );
@@ -52,6 +64,7 @@ const profileSlice = createSlice({
   initialState: {
     profile: null,
     loading: false,
+    updatingContact: false,
     success: false,
     message: null,
     error: null,
@@ -108,11 +121,31 @@ const profileSlice = createSlice({
       })
       .addCase(getMyEmployeeProfileAsync.fulfilled, (state, action) => {
         state.loading = false;
-        state.profile = action.payload;
+        state.profile = action.payload?.data || action.payload;
       })
       .addCase(getMyEmployeeProfileAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // ========== Update My Contact Info ==========
+      .addCase(updateMyContactInfoAsync.pending, (state) => {
+        state.updatingContact = true;
+        state.error = null;
+      })
+      .addCase(updateMyContactInfoAsync.fulfilled, (state, action) => {
+        state.updatingContact = false;
+        const updated = action.payload?.data || action.payload;
+        if (updated) {
+          state.profile = state.profile
+            ? { ...state.profile, ...updated }
+            : updated;
+        }
+      })
+      .addCase(updateMyContactInfoAsync.rejected, (state, action) => {
+        state.updatingContact = false;
+        state.error = action.payload;
+        showError(action.payload?.message || "Cập nhật liên hệ thất bại");
       });
   },
 });

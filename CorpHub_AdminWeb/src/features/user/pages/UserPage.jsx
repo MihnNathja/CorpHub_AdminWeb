@@ -28,6 +28,11 @@ const UserPage = () => {
     dispatch(addUser({ userData, ticketId }));
   };
 
+  // Khi có API update sẽ nối vào đây
+  const handleEditUser = ({ id, data }) => {
+    console.log("Edit user payload (chờ API)", { id, data });
+  };
+
   return (
     <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-inner p-6 transition-colors">
       <h2 className="text-xl dark:text-gray-100 font-bold mb-4">
@@ -74,6 +79,7 @@ const UserPage = () => {
         isOpen={!!selectedUserId}
         onClose={() => setSelectedUserId(null)}
         userId={selectedUserId}
+        onSubmitEdit={handleEditUser}
       />
     </div>
   );

@@ -10,6 +10,7 @@ import EmployeeTicketPage from "../features/ticket/pages/EmployeeTicketsPage";
 import RoomPage from "../features/room/pages/RoomPage";
 import FeatureComingSoonPage from "../pages/FeatureComingSoonPage";
 import EmployeePage from "../features/employee/pages/EmployeePage";
+import EmployeeDetailPage from "../features/employee/pages/EmployeeDetailPage";
 import UserPage from "../features/user/pages/UserPage";
 import RolesPage from "../features/role/pages/RolesPage";
 import DepartmentManagementPage from "../features/department/pages/DepartmentManagementPage";
@@ -44,6 +45,7 @@ const AppRoutes = () => {
           <Route path="departments" element={<DepartmentManagementPage />} />
           <Route path="tickets" element={<TicketsPage />} />
           <Route path="employees" element={<EmployeePage />} />
+          <Route path="employees/:id" element={<EmployeeDetailPage />} />
           <Route path="my-tickets" element={<EmployeeTicketPage />} />
           <Route path="projects" element={<FeatureComingSoonPage />} />
           <Route path="calendar" element={<CalendarPage />} />

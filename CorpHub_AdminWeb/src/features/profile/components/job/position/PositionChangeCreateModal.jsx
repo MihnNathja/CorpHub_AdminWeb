@@ -4,7 +4,7 @@ import { usePositionChangeRequest } from "../../../hooks/usePositionChangeReques
 import { useDepartmentPositions } from "../../../hooks/useDepartmentPosition";
 import { useAttachmentUpload } from "../../../hooks/useAttachmentUpload";
 
-const PositionChangeCreateModal = ({ employeeId, onClose }) => {
+const PositionChangeCreateModal = ({ employeeId, onClose, onCreated }) => {
   const { createRequest, loading } = usePositionChangeRequest();
   const { departments } = useDepartmentPositions();
   const { attachments, uploading, upload, remove } = useAttachmentUpload();
@@ -23,6 +23,9 @@ const PositionChangeCreateModal = ({ employeeId, onClose }) => {
     };
 
     await createRequest(payload);
+    if (typeof onCreated === "function") {
+      onCreated();
+    }
     reset();
     onClose();
   };
