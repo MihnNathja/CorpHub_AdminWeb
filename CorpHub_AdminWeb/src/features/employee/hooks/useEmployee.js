@@ -43,14 +43,17 @@ export const useEmployee = () => {
   }, [fetchEmployees]);
 
   // ====================== ACTION: CREATE ======================
-  const createProfile = async (profile, avatarFile) => {
+  const createProfile = async (profile) => {
     try {
-      await dispatch(createEmployeeProfile({ profile, avatarFile })).unwrap();
-      showSuccess("Create successfully");
-      fetchEmployees(); // reload list
+      const res = await dispatch(createEmployeeProfile(profile)).unwrap();
+      showSuccess(res?.message || "Create employee successfully");
+      fetchEmployees();
+      return res;
     } catch (err) {
-      showError("Create failed");
+      const message = err?.message || err?.error || "Create failed";
+      showError(message);
       console.error("Create failed:", err);
+      throw err;
     }
   };
 

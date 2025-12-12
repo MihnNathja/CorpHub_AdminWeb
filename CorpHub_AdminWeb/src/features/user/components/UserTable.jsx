@@ -12,6 +12,7 @@ import {
   Lock,
   Loader2,
   UserRound,
+  RefreshCw,
 } from "lucide-react";
 import Pagination from "../../global/components/Pagination";
 import defaultAvatar from "../../../assets/defaultAvatar.jpg";
@@ -96,6 +97,10 @@ const UserTable = ({ onSelectUser, onFetch }) => {
     onFetch(page, keyword, filters, sort);
   }, [page, keyword, filters, sort]);
 
+  const handleRefresh = () => {
+    onFetch(page, keyword, filters, sort);
+  };
+
   const handleSort = (field) => {
     setSort((prev) => ({
       field,
@@ -116,10 +121,34 @@ const UserTable = ({ onSelectUser, onFetch }) => {
 
   return (
     <div className="space-y-3">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+            <UserRound className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 font-semibold">
+              Danh sách người dùng
+            </p>
+            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">
+              Quản lý, lọc và thao tác nhanh
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={handleRefresh}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Làm mới
+        </button>
+      </div>
+
       {/* 🔍 Search + Filters */}
-      <div className="flex flex-wrap justify-between items-center gap-3">
+      <div className="flex flex-wrap justify-between items-center gap-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3 shadow-sm">
         {/* Search */}
-        <div className="relative w-64">
+        <div className="relative w-full md:w-72">
           <input
             type="text"
             value={keyword}
@@ -127,11 +156,10 @@ const UserTable = ({ onSelectUser, onFetch }) => {
               setPage(0);
               setKeyword(e.target.value);
             }}
-            placeholder="Search by Fullname, Email, Phone"
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 pl-9
-                       bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+            placeholder="Tìm theo tên, email, phone"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2.5 pl-9 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
           />
-          <Search className="absolute left-2 top-2.5 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-2.5 top-3 text-gray-400 w-4 h-4" />
         </div>
 
         {/* Filters as pill toolbar */}
@@ -185,8 +213,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
             onChange={(e) =>
               setFilters((f) => ({ ...f, departmentId: e.target.value }))
             }
-            className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
-                       bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             <option value="">Tất cả phòng ban</option>
             {departments.map((d) => (
@@ -233,10 +260,10 @@ const UserTable = ({ onSelectUser, onFetch }) => {
       )}
 
       {/* 🧾 Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-gray-300 dark:border-gray-700 text-sm">
+      <div className="overflow-x-auto bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-sm">
+        <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="bg-gray-100 dark:bg-gray-700 text-left">
+            <tr className="bg-gray-50 dark:bg-gray-750 text-left text-gray-700 dark:text-gray-100">
               <th className="p-2 border text-center w-10">
                 <input
                   type="checkbox"
@@ -272,8 +299,11 @@ const UserTable = ({ onSelectUser, onFetch }) => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="10" className="text-center p-4">
-                  Loading...
+                <td colSpan="10" className="text-center p-6 text-gray-500">
+                  <div className="inline-flex items-center gap-2 text-sm font-semibold">
+                    <Loader2 className="w-4 h-4 animate-spin" /> Đang tải dữ
+                    liệu...
+                  </div>
                 </td>
               </tr>
             ) : error ? (
@@ -286,71 +316,78 @@ const UserTable = ({ onSelectUser, onFetch }) => {
               mockUsers.map((u, i) => (
                 <tr
                   key={u.id || i}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <td className="p-2 border text-center">
+                  <td className="p-3 border text-center">
                     <input
                       type="checkbox"
                       checked={selectedIds.includes(u.id)}
                       onChange={() => toggleSelectOne(u.id)}
                     />
                   </td>
-                  <td className="p-2 border text-center">
+                  <td className="p-3 border text-center text-xs font-semibold text-gray-500">
                     {i + 1 + page * 10}
                   </td>
-                  <td className="p-2 border text-center">
+                  <td className="p-3 border text-center">
                     <img
                       src={u.avatar || defaultAvatar}
                       alt={u.fullName}
-                      className="w-10 h-10 rounded-full object-cover border mx-auto"
+                      className="w-10 h-10 rounded-full object-cover border mx-auto shadow-sm"
                     />
                   </td>
-                  <td className="p-2 border font-medium">{u.fullName}</td>
-                  <td className="p-2 border">{u.email}</td>
-                  <td className="p-2 border">{u.phone || "-"}</td>
-                  <td className="p-2 border">{u.gender || "-"}</td>
-                  <td className="p-2 border">{u.department?.name || "-"}</td>
-                  <td className="p-2 border">
-                    {u.active ? (
-                      <span className="text-green-600 font-medium">Active</span>
-                    ) : (
-                      <span className="text-gray-500">Inactive</span>
-                    )}
+                  <td className="p-3 border font-semibold text-gray-900 dark:text-gray-100">
+                    {u.fullName}
                   </td>
-                  <td className="p-2 border text-center">
+                  <td className="p-3 border text-gray-700 dark:text-gray-200">
+                    {u.email}
+                  </td>
+                  <td className="p-3 border text-gray-600 dark:text-gray-300">
+                    {u.phone || "-"}
+                  </td>
+                  <td className="p-3 border text-gray-600 dark:text-gray-300">
+                    {u.gender || "-"}
+                  </td>
+                  <td className="p-3 border text-gray-600 dark:text-gray-300">
+                    {u.department?.name || "-"}
+                  </td>
+                  <td className="p-3 border">
+                    <span
+                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${
+                        u.active
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : "bg-slate-100 text-slate-600 border-slate-200"
+                      }`}
+                    >
+                      {u.active ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="p-3 border text-center">
                     <div className="flex justify-center gap-2">
-                      {/* View + Edit combined */}
                       <button
                         data-tooltip-id={`detail-tip-${u.id}`}
-                        data-tooltip-content="Xem / Chỉnh sửa"
+                        data-tooltip-content="Xem chi tiết"
                         onClick={() => onSelectUser(u.id)}
-                        className="p-1.5 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600"
+                        className="p-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600"
                       >
                         <NotebookPen className="w-4 h-4" />
                       </button>
                       <Tooltip id={`detail-tip-${u.id}`} place="top" />
 
-                      {/* Reset password */}
                       <button
                         data-tooltip-id={`reset-tip-${u.id}`}
                         data-tooltip-content="Đặt lại mật khẩu"
                         onClick={() => onResetPassword(u.id)}
                         disabled={loadingId === u.id}
-                        className="p-1.5 rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/30 text-purple-600"
+                        className="p-1.5 rounded-full hover:bg-purple-50 dark:hover:bg-purple-900/30 text-purple-600"
                       >
                         {loadingId === u.id ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          </>
+                          <Loader2 className="w-4 h-4 animate-spin" />
                         ) : (
-                          <>
-                            <KeyRound className="w-4 h-4 mr-2" />
-                          </>
+                          <KeyRound className="w-4 h-4" />
                         )}
                       </button>
                       <Tooltip id={`reset-tip-${u.id}`} place="top" />
 
-                      {/* Lock / Unlock */}
                       <button
                         data-tooltip-id={`lock-tip-${u.id}`}
                         data-tooltip-content={
@@ -361,8 +398,8 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                         }}
                         className={`p-1.5 rounded-full transition-colors ${
                           u.active
-                            ? "hover:bg-yellow-100 dark:hover:bg-yellow-900/30 text-yellow-600"
-                            : "hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600"
+                            ? "hover:bg-yellow-50 dark:hover:bg-yellow-900/30 text-yellow-600"
+                            : "hover:bg-green-50 dark:hover:bg-green-900/30 text-green-600"
                         }`}
                       >
                         {u.active ? (
@@ -380,7 +417,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
               <tr>
                 <td
                   colSpan="10"
-                  className="text-center p-4 text-gray-500 dark:text-gray-300"
+                  className="text-center p-6 text-gray-500 dark:text-gray-300"
                 >
                   <div className="flex flex-col items-center gap-2 text-slate-500">
                     <UserRound className="w-6 h-6" />

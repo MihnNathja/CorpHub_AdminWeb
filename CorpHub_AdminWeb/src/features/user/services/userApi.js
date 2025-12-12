@@ -1,8 +1,12 @@
 import api from "../../../services/api";
 import { showError, showSuccess } from "../../../utils/toastUtils";
 
-export const createUserApi = (userData, ticketId) =>
-  api.post(`/api/user/create?ticketId=${ticketId}`, userData);
+export const createUserApi = (userData, ticketId) => {
+  const path = ticketId
+    ? `/api/user/create?ticketId=${encodeURIComponent(ticketId)}`
+    : "/api/user/create";
+  return api.post(path, userData);
+};
 
 export const getUsersApi = (params) => {
   console.log(params);
