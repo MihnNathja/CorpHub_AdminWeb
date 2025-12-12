@@ -65,7 +65,7 @@ export const useTickets = (mode = "my") => {
     else if (mode === "received") dispatch(fetchReceivedTickets(params));
     else if (mode === "account_request") {
       console.log("Params trước: ", params);
-      params.categoryId = "756ce149-8f8e-4dbd-b2c2-a26e86881d44"; // Account Request
+      params.categoryId = "12a5363e-ca3b-4634-ba1e-1d34e6105d0d"; // Account Request
       console.log("Params sau: ", params);
       dispatch(fetchReceivedTickets(params));
     } else dispatch(fetchMyTickets(params));

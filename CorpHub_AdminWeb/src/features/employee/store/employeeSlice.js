@@ -12,25 +12,10 @@ import { showError, showSuccess } from "../../../utils/toastUtils";
 // Async thunk gọi API
 export const createEmployeeProfile = createAsyncThunk(
   "employee/createEmployeeProfile",
-  async ({ profile, avatarFile }, { rejectWithValue }) => {
+  async (payload, { rejectWithValue }) => {
     try {
-      console.log(profile);
-      const formData = new FormData();
-
-      // append JSON profile
-      formData.append(
-        "profile",
-        new Blob([JSON.stringify(profile)], { type: "application/json" })
-      );
-
-      // append file avatar
-      if (avatarFile) {
-        formData.append("avatar", avatarFile);
-      }
-
-      const response = await createEmployeeProfileApi(formData);
-      console.log(response);
-      return response.data;
+      const { data } = await createEmployeeProfileApi(payload);
+      return data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -113,6 +98,8 @@ const employeeSlice = createSlice({
     meta: { page: 0, totalPages: 1, size: 10 },
     loading: false,
     error: null,
+    lastCreatedId: null,
+    successMessage: null,
     pendingCompetencies: [],
   },
   extraReducers: (builder) => {
@@ -123,11 +110,12 @@ const employeeSlice = createSlice({
       })
       .addCase(createEmployeeProfile.fulfilled, (state, action) => {
         state.loading = false;
-        // thêm employee mới vào danh sách
-        state.data.push(action.payload.data);
+        state.lastCreatedId = action.payload?.data ?? null;
+        state.successMessage = action.payload?.message || null;
       })
       .addCase(createEmployeeProfile.rejected, (state, action) => {
         state.loading = false;
+        state.lastCreatedId = null;
         state.error = action.payload || "Failed to create employee";
       })
       .addCase(getAllEmployeeProfile.pending, (state) => {

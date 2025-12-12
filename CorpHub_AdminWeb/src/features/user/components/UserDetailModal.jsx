@@ -11,11 +11,8 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 import { useUserDetail } from "../hooks/useUserDetail";
-import UserForm from "./UserForm";
-
-const UserDetailModal = ({ isOpen, onClose, userId, onSubmitEdit }) => {
+const UserDetailModal = ({ isOpen, onClose, userId }) => {
   const { currentUser, loading, error } = useUserDetail(userId, isOpen);
-  const [isEditing, setIsEditing] = useState(false);
 
   const displayUser = useMemo(() => {
     if (!currentUser) return null;
@@ -33,15 +30,7 @@ const UserDetailModal = ({ isOpen, onClose, userId, onSubmitEdit }) => {
   }, [currentUser]);
 
   const handleClose = () => {
-    setIsEditing(false);
     onClose();
-  };
-
-  const handleEditSubmit = (form) => {
-    if (typeof onSubmitEdit === "function") {
-      onSubmitEdit({ id: userId, data: form });
-    }
-    setIsEditing(false);
   };
 
   const initials = useMemo(() => {
@@ -115,22 +104,6 @@ const UserDetailModal = ({ isOpen, onClose, userId, onSubmitEdit }) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {!isEditing && (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
-              >
-                Chỉnh sửa
-              </button>
-            )}
-            {isEditing && (
-              <button
-                onClick={() => setIsEditing(false)}
-                className="px-4 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100"
-              >
-                Hủy
-              </button>
-            )}
             <button
               onClick={handleClose}
               className="px-3 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100"
@@ -147,61 +120,53 @@ const UserDetailModal = ({ isOpen, onClose, userId, onSubmitEdit }) => {
           )}
           {error && <p className="text-sm text-red-500">Lỗi: {error}</p>}
           {!loading && !error && displayUser && (
-            <>
-              {isEditing ? (
-                <UserForm user={displayUser} onSubmit={handleEditSubmit} />
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm text-slate-700">
-                  <InfoCard
-                    icon={<Mail size={16} className="text-blue-600" />}
-                    label="Tài khoản"
-                    value={displayUser.username || "-"}
-                  />
-                  <InfoCard
-                    icon={<ShieldCheck size={16} className="text-indigo-600" />}
-                    label="Vai trò"
-                    value={displayUser.roleName || "-"}
-                  />
-                  <InfoCard
-                    icon={<Circle size={12} className="text-emerald-600" />}
-                    label="Trạng thái"
-                    value={displayUser.active ? "Hoạt động" : "Ngưng"}
-                  />
-                  <InfoCard
-                    icon={<UserRound size={16} className="text-slate-600" />}
-                    label="Họ tên"
-                    value={displayUser.fullName || "-"}
-                  />
-                  <InfoCard
-                    icon={<UserRound size={16} className="text-slate-600" />}
-                    label="Giới tính"
-                    value={displayUser.gender || "Chưa có"}
-                  />
-                  <InfoCard
-                    icon={<Building2 size={16} className="text-slate-600" />}
-                    label="Phòng ban"
-                    value={displayUser.departmentName || "Chưa có"}
-                  />
-                  <InfoCard
-                    icon={<Briefcase size={16} className="text-slate-600" />}
-                    label="Chức danh"
-                    value={displayUser.positionName || "Chưa có"}
-                  />
-                  <InfoCard
-                    icon={<Phone size={16} className="text-blue-500" />}
-                    label="Số điện thoại"
-                    value={displayUser.employee?.phone || "-"}
-                  />
-                  <InfoCard
-                    icon={<Mail size={16} className="text-blue-500" />}
-                    label="Email"
-                    value={
-                      displayUser.employee?.email || displayUser.email || "-"
-                    }
-                  />
-                </div>
-              )}
-            </>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm text-slate-700">
+              <InfoCard
+                icon={<Mail size={16} className="text-blue-600" />}
+                label="Tài khoản"
+                value={displayUser.username || "-"}
+              />
+              <InfoCard
+                icon={<ShieldCheck size={16} className="text-indigo-600" />}
+                label="Vai trò"
+                value={displayUser.roleName || "-"}
+              />
+              <InfoCard
+                icon={<Circle size={12} className="text-emerald-600" />}
+                label="Trạng thái"
+                value={displayUser.active ? "Hoạt động" : "Ngưng"}
+              />
+              <InfoCard
+                icon={<UserRound size={16} className="text-slate-600" />}
+                label="Họ tên"
+                value={displayUser.fullName || "-"}
+              />
+              <InfoCard
+                icon={<UserRound size={16} className="text-slate-600" />}
+                label="Giới tính"
+                value={displayUser.gender || "Chưa có"}
+              />
+              <InfoCard
+                icon={<Building2 size={16} className="text-slate-600" />}
+                label="Phòng ban"
+                value={displayUser.departmentName || "Chưa có"}
+              />
+              <InfoCard
+                icon={<Briefcase size={16} className="text-slate-600" />}
+                label="Chức danh"
+                value={displayUser.positionName || "Chưa có"}
+              />
+              <InfoCard
+                icon={<Phone size={16} className="text-blue-500" />}
+                label="Số điện thoại"
+                value={displayUser.employee?.phone || "-"}
+              />
+              <InfoCard
+                icon={<Mail size={16} className="text-blue-500" />}
+                label="Email"
+                value={displayUser.employee?.email || displayUser.email || "-"}
+              />
+            </div>
           )}
         </div>
       </div>

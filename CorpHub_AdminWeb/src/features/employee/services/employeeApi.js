@@ -1,9 +1,7 @@
 import api from "../../../services/api";
 
-export const createEmployeeProfileApi = (formData) =>
-  api.post("/api/employee/create", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+export const createEmployeeProfileApi = (payload) =>
+  api.post("/api/employee", payload);
 
 export const getAllEmployeeProfileApi = ({ page, size, keyword }) => {
   return api.get("/api/employee", {
@@ -12,6 +10,7 @@ export const getAllEmployeeProfileApi = ({ page, size, keyword }) => {
 };
 
 export const createEmployeeProfileTicketApi = (employeeIds) => {
+  console.log(employeeIds);
   return api.post("/api/tickets/create-user-ticket", employeeIds);
 };
 

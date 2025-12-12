@@ -1,7 +1,8 @@
-import { useEffect } from "react";
-import { useUserForm } from "../hooks/useUserForm";
+import { useEffect, useMemo, useState } from "react";
+import { Info } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTickets } from "../../ticket/store/ticketSlice";
+import useRoles from "../hooks/useRoles";
 
 // 🧩 Hàm tiện ích: bỏ dấu tiếng Việt
 const removeVietnameseTones = (str) => {
@@ -20,124 +21,281 @@ const generateRandomPassword = (fullName = "") => {
   return `${cleanName}@${year}${random}`;
 };
 
-// 🧩 Hàm tạo email công ty
-const generateCompanyEmail = (fullName = "", domain = "company.com") => {
-  if (!fullName) return "";
-  const parts = removeVietnameseTones(fullName.trim().toLowerCase()).split(" ");
-  const first = parts[parts.length - 1]; // tên
-  const last = parts[0]; // họ
-  return `${first}.${last}@${domain}`;
+// 🧩 Hàm tạo email công ty từ mã nhân viên
+const generateCompanyEmail = (empCode = "", domain = "company.com") => {
+  if (!empCode) return "";
+  return `${empCode}@${domain}`;
 };
 
-const UserForm = ({ onSubmit, user, ticketId }) => {
+const UserForm = ({ onSubmit, ticketId }) => {
   const dispatch = useDispatch();
-  const { form, setForm, handleChange, handleSubmit, departments, roles } =
-    useUserForm(true, user, onSubmit);
+  const { roles, rolesLoading, rolesError, reloadRoles } = useRoles();
 
   const { selectedTicket } = useSelector((state) => state.tickets);
+  const [userRows, setUserRows] = useState([
+    { email: "", role: "", password: "", employeeId: "", fullName: "" },
+  ]);
+  const [prefilled, setPrefilled] = useState(false);
+  const [rowErrors, setRowErrors] = useState([]);
 
-  // ✅ Load ticket khi có ticketId
+  // ✅ Load ticket khi có ticketId (không phụ thuộc chế độ)
   useEffect(() => {
     if (ticketId) {
       dispatch(fetchTickets({ ticketId }));
     }
+    // Cho phép fill lại khi ticket thay đổi
+    setPrefilled(false);
   }, [dispatch, ticketId]);
 
-  // ✅ Khi ticket đã load → fill form
+  // ✅ Khi ticket đã load → trích xuất meta rồi gán vào form/rows
   useEffect(() => {
-    if (!selectedTicket || !selectedTicket.meta) return;
+    if (!selectedTicket || !selectedTicket.meta || prefilled) return;
 
     try {
-      console.log("TicketId: ", ticketId);
-      console.log(selectedTicket.meta);
       const meta = JSON.parse(selectedTicket.meta);
-      const emp = Array.isArray(meta) ? meta[0] : meta;
+      const employees = Array.isArray(meta) ? meta : [meta];
 
-      const autoEmail = generateCompanyEmail(emp.fullName, "company.com");
-      const autoPassword = generateRandomPassword(emp.fullName);
-
-      setForm((prev) => ({
-        ...prev,
+      // Bản đồ nhân viên → dòng nhập liệu
+      const mappedRows = employees.map((emp) => ({
+        email: generateCompanyEmail(emp.code, "company.com"),
+        role: "",
+        password: generateRandomPassword(emp.fullName),
         employeeId: emp.employeeProfileId || "",
-        email: autoEmail || "",
-        password: autoPassword,
+        fullName: emp.fullName || "",
       }));
+
+      if (mappedRows.length > 0) {
+        setUserRows(mappedRows);
+        setRowErrors(new Array(mappedRows.length).fill({}));
+        setPrefilled(true);
+      }
     } catch (err) {
       console.error("Không thể parse meta:", err);
     }
-  }, [selectedTicket, setForm]);
+  }, [selectedTicket, prefilled]);
 
   const inputClass =
-    "w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-300 transition-colors";
+    "w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-300 transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
 
+  const emailRegex = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/, []);
+
+  const validateRows = (list) => {
+    const errs = list.map((u) => {
+      const e = {};
+      if (!u.email.trim()) e.email = "Email bắt buộc";
+      else if (!emailRegex.test(u.email)) e.email = "Email không hợp lệ";
+      if (!u.role) e.role = "Chọn role";
+      if (!u.password.trim()) e.password = "Nhập mật khẩu";
+      return e;
+    });
+    const hasErr = errs.some((e) => Object.keys(e).length > 0);
+    return { errs, hasErr };
+  };
+
+  const handleRowChange = (index, field, value) => {
+    setUserRows((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
+  };
+
+  const handleRowsSubmit = async (e) => {
+    e.preventDefault();
+    const { errs, hasErr } = validateRows(userRows);
+    setRowErrors(errs);
+    if (hasErr) return;
+
+    try {
+      for (const entry of userRows) {
+        await Promise.resolve(onSubmit(entry));
+      }
+      // Clear fields sau khi tạo xong tất cả tài khoản
+      setUserRows([
+        {
+          email: "",
+          role: "",
+          password: "",
+          employeeId: "",
+          fullName: "",
+        },
+      ]);
+      setRowErrors([]);
+      setPrefilled(true);
+    } catch (err) {
+      console.error("Tạo tài khoản thất bại:", err);
+    }
+  };
+
+  console.log(userRows);
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-gray-900 dark:text-gray-100 transition-colors">
-      <h2 className="text-xl font-bold mb-4">
-        {user ? "Chỉnh sửa tài khoản" : "Thêm tài khoản mới"}
-      </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Email công ty */}
-        <div>
-          <label className="block mb-1 font-medium">Email công ty</label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Nhập email công ty"
-            value={form.email}
-            onChange={handleChange}
-            className={inputClass}
-            required
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Gợi ý: email tự tạo theo mẫu tên nhân viên.
+    <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-lg text-gray-900 dark:text-gray-100 transition-colors space-y-4 border border-gray-100 dark:border-gray-700">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-xs uppercase tracking-[0.18em] text-blue-600 font-semibold">
+            Tạo tài khoản
           </p>
-        </div>
-
-        {/* Role */}
-        <div>
-          <label className="block mb-1 font-medium">Role</label>
-          <select
-            name="role"
-            value={form.role}
-            onChange={handleChange}
-            className={inputClass}
-            required
-          >
-            <option value="">Chọn role</option>
-            {roles.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Mật khẩu tự sinh */}
-        {!user && (
-          <div>
-            <label className="block mb-1 font-medium">Mật khẩu mặc định</label>
-            <input
-              type="text"
-              name="password"
-              placeholder="Mật khẩu sẽ được tự sinh"
-              value={form.password}
-              onChange={handleChange}
-              className={inputClass}
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Mật khẩu tự sinh, có thể chỉnh sửa nếu cần.
+          <h2 className="text-xl font-bold leading-tight">Thêm mới</h2>
+          {ticketId && (
+            <p className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 mt-1">
+              Ticket: {ticketId}
             </p>
-          </div>
-        )}
+          )}
+        </div>
+      </div>
 
-        <div className="text-right">
+      <form onSubmit={handleRowsSubmit} className="space-y-4">
+        {userRows.map((u, idx) => (
+          <div
+            key={idx}
+            className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-3 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800/80 dark:to-gray-800 shadow-sm"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <p className="text-sm font-semibold">Tài khoản #{idx + 1}</p>
+                <p className="text-xs text-gray-500 flex items-center gap-2">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200 border border-gray-200 dark:border-gray-600">
+                    Email công ty
+                  </span>
+                  {u.fullName && <span>{u.fullName}</span>}
+                </p>
+              </div>
+              {userRows.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setUserRows((prev) => prev.filter((_, i) => i !== idx))
+                  }
+                  className="text-xs text-red-600 hover:underline"
+                >
+                  Xóa
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-1 mb-1 font-medium">
+                  <span>Email công ty</span>
+                  <span
+                    className="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200"
+                    title="Sinh từ mã nhân viên; chỉnh nếu cần"
+                  >
+                    <Info className="w-4 h-4" />
+                  </span>
+                </label>
+                <input
+                  type="email"
+                  value={u.email}
+                  onChange={(e) =>
+                    handleRowChange(idx, "email", e.target.value)
+                  }
+                  className={inputClass}
+                  placeholder="email@company.com"
+                  required
+                />
+                {rowErrors[idx]?.email && (
+                  <p className="text-xs text-red-600 mt-1">
+                    {rowErrors[idx].email}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block mb-1 font-medium">Role</label>
+                <select
+                  value={u.role}
+                  onChange={(e) => handleRowChange(idx, "role", e.target.value)}
+                  className={inputClass}
+                  required
+                >
+                  <option value="">Chọn role</option>
+                  {rolesLoading && <option disabled>Đang tải role...</option>}
+                  {!rolesLoading && rolesError && (
+                    <option disabled>Không tải được role</option>
+                  )}
+                  {!rolesLoading && !rolesError && roles.length === 0 && (
+                    <option disabled>Chưa có role khả dụng</option>
+                  )}
+                  {roles.map((r) => (
+                    <option key={r.id || r.name} value={r.name}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+                {rowErrors[idx]?.role && (
+                  <p className="text-xs text-red-600 mt-1">
+                    {rowErrors[idx].role}
+                  </p>
+                )}
+                {rolesError && (
+                  <div className="text-xs text-amber-600 mt-1 flex items-center gap-2">
+                    <span>Không tải được danh sách role.</span>
+                    <button
+                      type="button"
+                      onClick={reloadRoles}
+                      className="underline font-semibold"
+                    >
+                      Thử lại
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <label className="flex items-center gap-1 mb-1 font-medium">
+                <span>Mật khẩu mặc định</span>
+                <span
+                  className="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200"
+                  title="Sinh ngẫu nhiên theo tên; có thể chỉnh"
+                >
+                  <Info className="w-4 h-4" />
+                </span>
+              </label>
+              <input
+                type="text"
+                value={u.password}
+                onChange={(e) =>
+                  handleRowChange(idx, "password", e.target.value)
+                }
+                className={inputClass}
+                placeholder="Mật khẩu tùy chọn"
+                required
+              />
+              {rowErrors[idx]?.password && (
+                <p className="text-xs text-red-600 mt-1">
+                  {rowErrors[idx].password}
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
+
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() =>
+              setUserRows((prev) => [
+                ...prev,
+                {
+                  email: "",
+                  role: "",
+                  password: "",
+                  employeeId: "",
+                  fullName: "",
+                },
+              ])
+            }
+            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+          >
+            + Thêm dòng
+          </button>
+
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded"
+            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow-md hover:shadow-lg transition font-semibold"
           >
-            {user ? "Cập nhật" : "Tạo tài khoản"}
+            Tạo tất cả
           </button>
         </div>
       </form>

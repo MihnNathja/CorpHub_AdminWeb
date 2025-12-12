@@ -109,6 +109,7 @@ export const fetchSentTickets = createAsyncThunk(
         to,
         keyword,
       });
+      console.log(res);
       return res; // { data, meta }
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message);

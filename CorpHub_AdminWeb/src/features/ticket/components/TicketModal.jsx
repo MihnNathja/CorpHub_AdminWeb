@@ -61,7 +61,7 @@ const TicketModal = ({
   const navigate = useNavigate();
 
   const handleCreateUser = () => {
-    navigate(`/users?tab=add&ticketId=${ticket.id}`);
+    navigate(`/users?tab=add&ticketId=${ticket.id}&bulk=true`);
   };
 
   useEffect(() => {
@@ -75,9 +75,12 @@ const TicketModal = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 p-4">
       <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-
         {/* Header */}
-        <div className={`flex justify-between items-start p-6 border-b border-gray-200 dark:border-gray-800 ${statusColors[ticket.status]}`}>
+        <div
+          className={`flex justify-between items-start p-6 border-b border-gray-200 dark:border-gray-800 ${
+            statusColors[ticket.status]
+          }`}
+        >
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
               <Info className="w-5 h-5" />
@@ -110,7 +113,6 @@ const TicketModal = ({
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
             {/* Left Column - Details */}
             <div className="lg:col-span-1 space-y-4">
               {/* Ticket Info Card */}
@@ -123,7 +125,9 @@ const TicketModal = ({
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2">
                     <Tag className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-gray-400">ID:</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      ID:
+                    </span>
                     <code className="font-mono text-xs bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
                       {ticket.id}
                     </code>
@@ -131,27 +135,44 @@ const TicketModal = ({
 
                   <div className="flex items-center gap-2">
                     <Building2 className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-gray-400">Department:</span>
-                    <span className="font-medium">{ticket.department?.name || "N/A"}</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Department:
+                    </span>
+                    <span className="font-medium">
+                      {ticket.department?.name || "N/A"}
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Layers className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-gray-400">Category:</span>
-                    <span className="font-medium">{ticket.category?.categoryName || "N/A"}</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Category:
+                    </span>
+                    <span className="font-medium">
+                      {ticket.category?.categoryName || "N/A"}
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <User className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-gray-400">Requester:</span>
-                    <span className="font-medium">{ticket.requester?.fullName || "Anonymous"}</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Requester:
+                    </span>
+                    <span className="font-medium">
+                      {ticket.requester?.fullName || "Anonymous"}
+                    </span>
                   </div>
 
                   {ticket.requester?.phone && (
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600 dark:text-gray-400">Contact:</span>
-                      <a href={`tel:${ticket.requester.phone}`} className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Contact:
+                      </span>
+                      <a
+                        href={`tel:${ticket.requester.phone}`}
+                        className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                      >
                         {ticket.requester.phone}
                       </a>
                     </div>
@@ -159,14 +180,22 @@ const TicketModal = ({
 
                   <div className="flex items-center gap-2">
                     <CalendarClock className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-gray-400">Created:</span>
-                    <span className="text-xs">{new Date(ticket.createdAt).toLocaleString()}</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Created:
+                    </span>
+                    <span className="text-xs">
+                      {new Date(ticket.createdAt).toLocaleString()}
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <CalendarCheck className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-gray-400">Updated:</span>
-                    <span className="text-xs">{new Date(ticket.updatedAt).toLocaleString()}</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Updated:
+                    </span>
+                    <span className="text-xs">
+                      {new Date(ticket.updatedAt).toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -183,13 +212,16 @@ const TicketModal = ({
                     handleAssign(ticket.id, e.target.value);
                     onClose();
                   }}
-                  disabled={!(mode === "received" && ticket.status === "WAITING")}
+                  disabled={
+                    !(mode === "received" && ticket.status === "WAITING")
+                  }
                   className={`w-full border rounded-lg px-3 py-2 text-sm transition-colors
                     dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100
                     focus:ring-2 focus:ring-blue-500 focus:outline-none
-                    ${!(mode === "received" && ticket.status === "WAITING")
-                      ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed opacity-60"
-                      : "bg-white hover:border-blue-400 dark:hover:border-blue-500"
+                    ${
+                      !(mode === "received" && ticket.status === "WAITING")
+                        ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed opacity-60"
+                        : "bg-white hover:border-blue-400 dark:hover:border-blue-500"
                     }`}
                 >
                   <option value="">Not Assigned</option>
@@ -244,7 +276,9 @@ const TicketModal = ({
                 <CommentSection
                   comments={comments}
                   onAddComment={(text) => addComment(text)}
-                  onReplyComment={(parentId, text) => addComment(text, parentId)}
+                  onReplyComment={(parentId, text) =>
+                    addComment(text, parentId)
+                  }
                 />
               </div>
             </div>
@@ -269,7 +303,9 @@ const TicketModal = ({
             )}
 
             {(isCurrentUserAssignee && ticket.status === "IN_PROGRESS") ||
-              (isOwner && ticket.status !== "REJECTED" && ticket.status !== "DONE") ? (
+            (isOwner &&
+              ticket.status !== "REJECTED" &&
+              ticket.status !== "DONE") ? (
               <button
                 onClick={() => {
                   handleComplete(ticket.id);
@@ -286,7 +322,8 @@ const TicketModal = ({
                 onAccept={() => handleAccept(ticket.id)}
                 onReject={() => setIsReasonFormOpen(true)}
               />
-            ) : (user?.role === "ROLE_MANAGER" || user?.role === "ROLE_ADMIN") &&
+            ) : (user?.role === "ROLE_MANAGER" ||
+                user?.role === "ROLE_ADMIN") &&
               ticket.status === "WAITING" ? (
               <button
                 onClick={() => setIsReasonFormOpen(true)}
