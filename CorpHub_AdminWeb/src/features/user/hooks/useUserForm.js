@@ -2,10 +2,12 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDepartments } from "../store/userSlice";
+import useRoles from "./useRoles";
 
 export const useUserForm = (isOpen, user, onSubmit) => {
   const dispatch = useDispatch();
   const { departments } = useSelector((state) => state.user);
+  const { roles, rolesLoading } = useRoles();
 
   const [form, setForm] = useState({
     id: "",
@@ -14,8 +16,6 @@ export const useUserForm = (isOpen, user, onSubmit) => {
     role: "",
     password: "",
   });
-
-  const roles = ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR", "ROLE_USER"];
 
   useEffect(() => {
     if (!isOpen) return;
@@ -51,5 +51,13 @@ export const useUserForm = (isOpen, user, onSubmit) => {
     onSubmit(form, !!user);
   };
 
-  return { form, setForm, handleChange, handleSubmit, departments, roles };
+  return {
+    form,
+    setForm,
+    handleChange,
+    handleSubmit,
+    departments,
+    roles,
+    rolesLoading,
+  };
 };

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Info } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTickets } from "../../ticket/store/ticketSlice";
+import useRoles from "../hooks/useRoles";
 
 // 🧩 Hàm tiện ích: bỏ dấu tiếng Việt
 const removeVietnameseTones = (str) => {
@@ -28,7 +29,7 @@ const generateCompanyEmail = (empCode = "", domain = "company.com") => {
 
 const UserForm = ({ onSubmit, ticketId }) => {
   const dispatch = useDispatch();
-  const roles = ["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_HR", "ROLE_USER"];
+  const { roles, rolesLoading, rolesError, reloadRoles } = useRoles();
 
   const { selectedTicket } = useSelector((state) => state.tickets);
   const [userRows, setUserRows] = useState([
@@ -208,9 +209,16 @@ const UserForm = ({ onSubmit, ticketId }) => {
                   required
                 >
                   <option value="">Chọn role</option>
+                  {rolesLoading && <option disabled>Đang tải role...</option>}
+                  {!rolesLoading && rolesError && (
+                    <option disabled>Không tải được role</option>
+                  )}
+                  {!rolesLoading && !rolesError && roles.length === 0 && (
+                    <option disabled>Chưa có role khả dụng</option>
+                  )}
                   {roles.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
+                    <option key={r.id || r.name} value={r.name}>
+                      {r.name}
                     </option>
                   ))}
                 </select>
@@ -218,6 +226,18 @@ const UserForm = ({ onSubmit, ticketId }) => {
                   <p className="text-xs text-red-600 mt-1">
                     {rowErrors[idx].role}
                   </p>
+                )}
+                {rolesError && (
+                  <div className="text-xs text-amber-600 mt-1 flex items-center gap-2">
+                    <span>Không tải được danh sách role.</span>
+                    <button
+                      type="button"
+                      onClick={reloadRoles}
+                      className="underline font-semibold"
+                    >
+                      Thử lại
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

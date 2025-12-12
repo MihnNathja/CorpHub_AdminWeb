@@ -5,6 +5,7 @@ import {
   getUserByIdApi,
   getUsersApi,
   getUsersBySearch,
+  getAllRoles,
   resetPassword,
   toggleUserActive,
 } from "../services/userApi";
@@ -95,17 +96,17 @@ export const fetchDepartments = createAsyncThunk(
 );
 
 // ✅ Lấy danh sách vai trò
-// export const fetchRoles = createAsyncThunk(
-//   "user/fetchRoles",
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const res = await getAllRoles();
-//       return res;
-//     } catch (err) {
-//       return rejectWithValue(err.response?.data || err.message);
-//     }
-//   }
-// );
+export const fetchRoles = createAsyncThunk(
+  "user/fetchRoles",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await getAllRoles();
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
 
 // ✅ Tìm kiếm người dùng
 export const fetchUsersBySearch = createAsyncThunk(
@@ -158,6 +159,8 @@ const userSlice = createSlice({
     searchResults: [],
     departments: [],
     roles: [],
+    rolesLoading: false,
+    rolesError: null,
     loading: false,
     error: null,
   },
@@ -225,6 +228,20 @@ const userSlice = createSlice({
       .addCase(fetchUsersBySearch.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Search failed";
+      })
+
+      // ===== FETCH ROLES =====
+      .addCase(fetchRoles.pending, (state) => {
+        state.rolesLoading = true;
+        state.rolesError = null;
+      })
+      .addCase(fetchRoles.fulfilled, (state, action) => {
+        state.rolesLoading = false;
+        state.roles = action.payload?.data || action.payload || [];
+      })
+      .addCase(fetchRoles.rejected, (state, action) => {
+        state.rolesLoading = false;
+        state.rolesError = action.payload || "Failed to load roles";
       })
       // Toggle active
       .addCase(changeUserActive.fulfilled, (state, action) => {
