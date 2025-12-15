@@ -11,14 +11,14 @@ const CompetencySection = ({
     <section className="p-6 border rounded-xl shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-          Năng lực / Kỹ năng
+          Competencies / Skills
         </h3>
         <button
           type="button"
           onClick={addCompetency}
           className="flex items-center gap-2 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700"
         >
-          <PlusCircleIcon className="h-5 w-5" /> Thêm
+          <PlusCircleIcon className="h-5 w-5" /> Add
         </button>
       </div>
 
@@ -35,15 +35,15 @@ const CompetencySection = ({
               }
               className="border rounded-lg p-2"
             >
-              <option value="">-- Loại --</option>
-              <option value="SKILL">Kỹ năng</option>
-              <option value="DEGREE">Bằng cấp</option>
-              <option value="CERTIFICATION">Chứng chỉ</option>
-              <option value="LANGUAGE">Ngoại ngữ</option>
+              <option value="">-- Type --</option>
+              <option value="SKILL">Skill</option>
+              <option value="DEGREE">Degree</option>
+              <option value="CERTIFICATION">Certification</option>
+              <option value="LANGUAGE">Language</option>
             </select>
             <input
               type="text"
-              placeholder="Tên"
+              placeholder="Name"
               value={c.name}
               onChange={(e) =>
                 handleCompetencyChange(index, "name", e.target.value)
@@ -52,7 +52,7 @@ const CompetencySection = ({
             />
             <input
               type="text"
-              placeholder="Trình độ"
+              placeholder="Level"
               value={c.level}
               onChange={(e) =>
                 handleCompetencyChange(index, "level", e.target.value)
@@ -61,7 +61,7 @@ const CompetencySection = ({
             />
             <input
               type="text"
-              placeholder="Đơn vị cấp"
+              placeholder="Issued by"
               value={c.issuedBy}
               onChange={(e) =>
                 handleCompetencyChange(index, "issuedBy", e.target.value)
@@ -78,7 +78,7 @@ const CompetencySection = ({
             />
             <input
               type="text"
-              placeholder="Ghi chú"
+              placeholder="Notes"
               value={c.note}
               onChange={(e) =>
                 handleCompetencyChange(index, "note", e.target.value)

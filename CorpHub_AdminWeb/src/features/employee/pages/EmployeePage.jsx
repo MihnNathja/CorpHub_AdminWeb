@@ -15,31 +15,31 @@ const EmployeePage = () => {
     {
       key: "list",
       label: "Employees list",
-      description: "Danh sách và trạng thái nhân viên",
+      description: "Employee list and status",
       icon: Users,
     },
     {
       key: "add",
       label: "Add new employee profile",
-      description: "Tạo hồ sơ mới và upload avatar",
+      description: "Create a new profile and upload avatar",
       icon: UserPlus,
     },
     {
       key: "pendingCompetency",
       label: "Pending Competency",
-      description: "Duyệt năng lực/ chứng chỉ chờ xử lý",
+      description: "Approve pending competencies/certifications",
       icon: BadgeCheck,
     },
     {
       key: "positionRequests",
       label: "Position Requests",
-      description: "Xử lý yêu cầu thay đổi chức danh/phòng ban",
+      description: "Handle role/department change requests",
       icon: Shuffle,
     },
     {
       key: "hrFinalization",
       label: "HR Finalization",
-      description: "Chốt hồ sơ và tài liệu nhân sự",
+      description: "Finalize HR records and documents",
       icon: FileCheck2,
     },
   ];
@@ -51,8 +51,7 @@ const EmployeePage = () => {
           Employee Management
         </h2>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Quản lý hồ sơ, phê duyệt yêu cầu và theo dõi trạng thái nhân viên
-          trong một nơi thống nhất.
+          Manage employee records, approvals, and status tracking in one place.
         </p>
       </div>
 

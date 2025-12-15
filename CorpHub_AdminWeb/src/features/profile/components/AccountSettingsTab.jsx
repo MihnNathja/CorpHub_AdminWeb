@@ -46,7 +46,7 @@ const AccountSettingsTab = ({ profile }) => {
     }));
 
   const handleSave = () => {
-    showSuccess("Lưu thay đổi thành công!");
+    showSuccess("Changes saved successfully!");
   };
 
   // ✅ Gọi API đổi mật khẩu
@@ -54,7 +54,7 @@ const AccountSettingsTab = ({ profile }) => {
     e.preventDefault();
 
     if (form.newPassword !== form.confirmNewPassword) {
-      showError("Mật khẩu xác nhận không khớp!");
+      showError("Confirmation password does not match!");
       return;
     }
 
@@ -64,7 +64,7 @@ const AccountSettingsTab = ({ profile }) => {
   // ✅ Theo dõi kết quả đổi mật khẩu
   useEffect(() => {
     if (success) {
-      showSuccess("Đổi mật khẩu thành công!");
+      showSuccess("Password changed successfully!");
       reset();
       setShowChangePassword(false);
     }
@@ -79,11 +79,11 @@ const AccountSettingsTab = ({ profile }) => {
 
   return (
     <div className="space-y-6">
-      {/* ==================== Thông tin đăng nhập ==================== */}
-      <Section title="Thông tin đăng nhập">
+      {/* ==================== Login information ==================== */}
+      <Section title="Login information">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-sm text-gray-600">Email đăng nhập</label>
+            <label className="text-sm text-gray-600">Login email</label>
             <input
               name="email"
               type="email"
@@ -96,7 +96,7 @@ const AccountSettingsTab = ({ profile }) => {
             />
           </div>
           <div>
-            <label className="text-sm text-gray-600">Số điện thoại</label>
+            <label className="text-sm text-gray-600">Phone number</label>
             <input
               name="phone"
               type="text"
@@ -115,7 +115,7 @@ const AccountSettingsTab = ({ profile }) => {
           className="mt-4 flex items-center gap-2 px-3 py-2 border rounded-lg hover:bg-gray-50 text-sm"
         >
           <KeyRound className="w-4 h-4" />
-          {showChangePassword ? "Hủy đổi mật khẩu" : "Đổi mật khẩu"}
+          {showChangePassword ? "Cancel password change" : "Change password"}
         </button>
 
         {/* Form đổi mật khẩu */}
@@ -125,7 +125,7 @@ const AccountSettingsTab = ({ profile }) => {
             className="mt-4 space-y-3 border-t pt-4"
           >
             <div className="relative">
-              <label className="text-sm text-gray-600">Mật khẩu cũ</label>
+              <label className="text-sm text-gray-600">Current password</label>
               <div className="relative mt-1">
                 <input
                   name="oldPassword"
@@ -144,7 +144,7 @@ const AccountSettingsTab = ({ profile }) => {
               </div>
             </div>
             <div className="relative">
-              <label className="text-sm text-gray-600">Mật khẩu mới</label>
+              <label className="text-sm text-gray-600">New password</label>
               <div className="relative mt-1">
                 <input
                   name="newPassword"
@@ -164,7 +164,7 @@ const AccountSettingsTab = ({ profile }) => {
             </div>
             <div className="relative">
               <label className="text-sm text-gray-600">
-                Xác nhận mật khẩu mới
+                Confirm new password
               </label>
               <div className="relative mt-1">
                 <input
@@ -189,29 +189,29 @@ const AccountSettingsTab = ({ profile }) => {
                 onClick={() => setShowChangePassword(false)}
                 className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
               >
-                Hủy
+                Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
                 className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-70"
               >
-                {loading ? "Đang xử lý..." : "Xác nhận đổi"}
+                {loading ? "Processing..." : "Confirm change"}
               </button>
             </div>
           </form>
         )}
       </Section>
 
-      {/* ==================== Bảo mật ==================== */}
-      <Section title="Bảo mật">
+      {/* ==================== Security ==================== */}
+      <Section title="Security">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-5 h-5 text-gray-500" />
             <div>
-              <div className="font-medium">Xác thực 2 bước</div>
+              <div className="font-medium">Two-factor authentication</div>
               <div className="text-sm text-gray-500">
-                Tăng cường bảo mật tài khoản
+                Enhance account security
               </div>
             </div>
           </div>
@@ -219,16 +219,16 @@ const AccountSettingsTab = ({ profile }) => {
         </div>
       </Section>
 
-      {/* ==================== Thông báo ==================== */}
-      <Section title="Thông báo">
+      {/* ==================== Notifications ==================== */}
+      <Section title="Notifications">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Mail className="w-5 h-5 text-gray-500" />
               <div>
-                <div className="font-medium">Nhận qua Email</div>
+                <div className="font-medium">Receive via email</div>
                 <div className="text-sm text-gray-500">
-                  Thông báo khi có yêu cầu mới
+                  Notify when new requests arrive
                 </div>
               </div>
             </div>
@@ -242,10 +242,8 @@ const AccountSettingsTab = ({ profile }) => {
             <div className="flex items-center gap-3">
               <Bell className="w-5 h-5 text-gray-500" />
               <div>
-                <div className="font-medium">Thông báo nội bộ</div>
-                <div className="text-sm text-gray-500">
-                  Hiển thị trên hệ thống
-                </div>
+                <div className="font-medium">Internal notifications</div>
+                <div className="text-sm text-gray-500">Show in system</div>
               </div>
             </div>
             <ToggleSwitch
@@ -262,7 +260,7 @@ const AccountSettingsTab = ({ profile }) => {
           onClick={handleSave}
           className="px-5 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"
         >
-          Lưu thay đổi
+          Save changes
         </button>
       </div>
     </div>

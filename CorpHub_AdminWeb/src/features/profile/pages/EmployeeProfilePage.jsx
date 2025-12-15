@@ -8,7 +8,7 @@ import AccountSettingsTab from "../components/AccountSettingsTab";
 import { useProfile } from "../hooks/useProfile";
 
 const EmployeeProfilePage = () => {
-  const [tab, setTab] = useState("Tổng quan");
+  const [tab, setTab] = useState("Overview");
 
   const {
     profile,
@@ -19,30 +19,30 @@ const EmployeeProfilePage = () => {
     fetchBasicInfo,
   } = useProfile();
 
-  // Gọi API lấy thông tin cá nhân khi mount
+  // Fetch basic profile on mount
   useEffect(() => {
     fetchBasicInfo();
   }, []);
 
-  // Khi chưa có profile thật thì dùng dữ liệu giả để tránh crash
+  // Use mock data when real profile is unavailable
   const currentProfile = mockEmployee;
 
   const toggleActive = () => {
     console.log("Gọi API kích hoạt / vô hiệu hóa tài khoản ở đây");
   };
 
-  console.log("Profile load từ database:", profile);
+  console.log("Profile loaded from database:", profile);
 
   // ================== Render Tab ==================
   const renderTab = () => {
     switch (tab) {
-      case "Tổng quan":
+      case "Overview":
         return <OverviewTab profile={profile} />;
-      case "Hồ sơ công việc":
+      case "Job profile":
         return <JobProfileTab profiles={profile} />;
-      case "Tài liệu":
+      case "Documents":
         return <DocumentsTab profile={profile} />;
-      case "Cài đặt tài khoản":
+      case "Account settings":
         return <AccountSettingsTab profile={profile} />;
       default:
         return null;
@@ -50,12 +50,12 @@ const EmployeeProfilePage = () => {
   };
 
   if (!profile) {
-    return <p className="text-gray-500">Đang tải dữ liệu nhân viên...</p>;
+    return <p className="text-gray-500">Loading employee data...</p>;
   }
   // ================== Render Page ==================
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      {/* Header thông tin nhân viên */}
+      {/* Employee info header */}
       <div className="space-y-2">
         <ProfileHeader
           profile={profile}
@@ -64,39 +64,36 @@ const EmployeeProfilePage = () => {
         />
 
         {uploading && (
-          <p className="text-sm text-gray-500">Đang tải ảnh lên...</p>
+          <p className="text-sm text-gray-500">Uploading image...</p>
         )}
         {uploadSuccess && (
-          <p className="text-green-600 text-sm">Cập nhật ảnh thành công!</p>
+          <p className="text-green-600 text-sm">Avatar updated successfully!</p>
         )}
         {error && (
           <p className="text-red-500 text-sm">
-            Lỗi khi tải ảnh: {error.message || error}
+            Error uploading image: {error.message || error}
           </p>
         )}
       </div>
 
-      {/* Tabs điều hướng */}
+      {/* Navigation tabs */}
       <div className="bg-white rounded-2xl shadow-sm p-4">
         <div className="flex border-b mb-4 overflow-x-auto">
-          {[
-            "Tổng quan",
-            "Hồ sơ công việc",
-            "Tài liệu",
-            "Cài đặt tài khoản",
-          ].map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`px-4 py-2 whitespace-nowrap ${
-                tab === t
-                  ? "border-b-2 border-indigo-500 font-semibold text-indigo-600"
-                  : "text-gray-500 hover:text-gray-900"
-              }`}
-            >
-              {t}
-            </button>
-          ))}
+          {["Overview", "Job profile", "Documents", "Account settings"].map(
+            (t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`px-4 py-2 whitespace-nowrap ${
+                  tab === t
+                    ? "border-b-2 border-indigo-500 font-semibold text-indigo-600"
+                    : "text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                {t}
+              </button>
+            )
+          )}
         </div>
 
         {/* Nội dung tab */}

@@ -35,21 +35,21 @@ const BasicInfoSection = ({
       <div className="flex items-start justify-between gap-2 mb-5">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-            <User className="w-5 h-5 text-indigo-500" /> Thông tin cơ bản
+            <User className="w-5 h-5 text-indigo-500" /> Basic information
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Các trường có dấu * là bắt buộc để tạo hồ sơ.
+            Fields marked * are required to create a profile.
           </p>
         </div>
         <span className="text-xs px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-200 dark:border-indigo-700">
-          Bắt buộc
+          Required
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label className="flex items-center gap-2 text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
-            <User className="w-4 h-4 text-indigo-500" /> Họ và tên *
+            <User className="w-4 h-4 text-indigo-500" /> Full name *
           </label>
           <div className="relative">
             <User className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
@@ -61,7 +61,7 @@ const BasicInfoSection = ({
               className={`${baseInput} ${
                 errors.fullName ? ringError : ringDefault
               }`}
-              placeholder="VD: Nguyễn Văn A"
+              placeholder="e.g. John Doe"
             />
           </div>
           {renderError(errors.fullName)}
@@ -69,7 +69,7 @@ const BasicInfoSection = ({
 
         <div>
           <label className="flex items-center gap-2 text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
-            <Mail className="w-4 h-4 text-indigo-500" /> Email cá nhân *
+            <Mail className="w-4 h-4 text-indigo-500" /> Personal email *
           </label>
           <div className="relative">
             <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
@@ -89,7 +89,7 @@ const BasicInfoSection = ({
 
         <div>
           <label className="flex items-center gap-2 text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
-            <Phone className="w-4 h-4 text-indigo-500" /> Số điện thoại *
+            <Phone className="w-4 h-4 text-indigo-500" /> Phone number *
           </label>
           <div className="relative">
             <Phone className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
@@ -109,7 +109,7 @@ const BasicInfoSection = ({
 
         <div>
           <label className="flex items-center gap-2 text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
-            <VenusAndMars className="w-4 h-4 text-indigo-500" /> Giới tính *
+            <VenusAndMars className="w-4 h-4 text-indigo-500" /> Gender *
           </label>
           <div className="relative">
             <VenusAndMars className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
@@ -121,10 +121,10 @@ const BasicInfoSection = ({
                 errors.gender ? ringError : ringDefault
               }`}
             >
-              <option value="">-- Chọn --</option>
-              <option value="Male">Nam</option>
-              <option value="Female">Nữ</option>
-              <option value="Other">Khác</option>
+              <option value="">-- Select --</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           {renderError(errors.gender)}
@@ -132,7 +132,7 @@ const BasicInfoSection = ({
 
         <div>
           <label className="flex items-center gap-2 text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
-            <Calendar className="w-4 h-4 text-indigo-500" /> Ngày sinh
+            <Calendar className="w-4 h-4 text-indigo-500" /> Date of birth
           </label>
           <div className="relative">
             <Calendar className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
@@ -148,7 +148,7 @@ const BasicInfoSection = ({
 
         <div>
           <label className="flex items-center gap-2 text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
-            <Calendar className="w-4 h-4 text-indigo-500" /> Ngày vào làm *
+            <Calendar className="w-4 h-4 text-indigo-500" /> Join date *
           </label>
           <div className="relative">
             <Calendar className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
@@ -167,7 +167,7 @@ const BasicInfoSection = ({
 
         <div>
           <label className="flex items-center gap-2 text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
-            <Building2 className="w-4 h-4 text-indigo-500" /> Phòng ban *
+            <Building2 className="w-4 h-4 text-indigo-500" /> Department *
           </label>
           <div className="relative">
             <Building2 className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
@@ -179,7 +179,7 @@ const BasicInfoSection = ({
                 errors.departmentId ? ringError : ringDefault
               }`}
             >
-              <option value="">-- Chọn phòng ban --</option>
+              <option value="">-- Select department --</option>
               {departments?.map((dept) => (
                 <option key={dept.id} value={dept.id}>
                   {dept.name}
@@ -192,7 +192,7 @@ const BasicInfoSection = ({
 
         <div>
           <label className="flex items-center gap-2 text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
-            <Briefcase className="w-4 h-4 text-indigo-500" /> Chức danh *
+            <Briefcase className="w-4 h-4 text-indigo-500" /> Position *
           </label>
           <div className="relative">
             <Briefcase className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
@@ -207,12 +207,12 @@ const BasicInfoSection = ({
             >
               <option value="">
                 {!profile.departmentId
-                  ? "Chọn phòng ban trước"
+                  ? "Select a department first"
                   : positionsLoading
-                  ? "Đang tải chức danh..."
+                  ? "Loading positions..."
                   : safePositions.length
-                  ? "-- Chọn chức danh --"
-                  : "Không có chức danh"}
+                  ? "-- Select position --"
+                  : "No positions available"}
               </option>
               {safePositions.map((pos) => (
                 <option key={pos.id} value={pos.id}>
