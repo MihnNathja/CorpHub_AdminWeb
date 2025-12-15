@@ -14,7 +14,7 @@ import { showSuccess, showError } from "../../../utils/toastUtils";
 export const useRoomRequirements = () => {
     const dispatch = useDispatch();
 
-    // ✅ Lấy state mới có thêm loadingSuitable
+    // ✅ Get new state with loadingSuitable
     const {
         items,
         suitableRooms,
@@ -36,19 +36,19 @@ export const useRoomRequirements = () => {
         dispatch(fetchRoomRequirements());
     }, [dispatch, page, size]);
 
-    /* -------------------- HÀNH ĐỘNG -------------------- */
+    /* -------------------- ACTIONS -------------------- */
     const approve = useCallback(
         async (id, roomId) => {
             try {
                 const res = await dispatch(approveRoomRequirement({ id, roomId })).unwrap();
                 if (res?.data === true)
-                    showSuccess("Đã phê duyệt yêu cầu phòng");
+                    showSuccess("Room requirement approved");
                 else
-                    showError("Phê duyệt thất bại");
+                    showError("Approval failed");
 
                 dispatch(fetchRoomRequirements());
             } catch (err) {
-                showError("Phê duyệt thất bại");
+                showError("Approval failed");
                 console.error(err);
             }
         },
@@ -60,12 +60,12 @@ export const useRoomRequirements = () => {
             try {
                 const res = await dispatch(rejectRoomRequirement(id)).unwrap();
                 if (res?.data?.success === true)
-                    showSuccess("Đã từ chối yêu cầu phòng");
+                    showSuccess("Room requirement rejected");
                 else
-                    showError("Từ chối thất bại");
+                    showError("Rejection failed");
                 dispatch(fetchRoomRequirements());
             } catch (err) {
-                showError("Từ chối thất bại");
+                showError("Rejection failed");
                 console.error(err);
             }
         },
@@ -77,7 +77,7 @@ export const useRoomRequirements = () => {
             try {
                 const res = await dispatch(fetchAllocationSuggestion(ids)).unwrap();
             } catch (err) {
-                showError("Có lỗi xảy ra");
+                showError("An error occurred");
                 console.error(err);
             }
         },
@@ -92,20 +92,20 @@ export const useRoomRequirements = () => {
     );
 
 
-    /* -------------------- LOAD PHÒNG PHÙ HỢP -------------------- */
+    /* -------------------- LOAD SUITABLE ROOMS -------------------- */
     const loadSuitableRooms = useCallback(
         async (selected) => {
             if (!selected) return;
             try {
                 await dispatch(fetchSuitableRooms(selected.id)).unwrap();
             } catch (err) {
-                console.error("❌ Lỗi khi tải danh sách phòng phù hợp:", err);
+                console.error("❌ Error loading suitable rooms:", err);
             }
         },
         [dispatch]
     );
 
-    // ✅ Tự động load phòng phù hợp khi selected thay đổi
+    // ✅ Automatically load suitable rooms when selected changes
     useEffect(() => {
         if (selected) {
             loadSuitableRooms(selected);
@@ -123,23 +123,23 @@ export const useRoomRequirements = () => {
     );
 
 
-    /* -------------------- TRẢ VỀ -------------------- */
+    /* -------------------- RETURN -------------------- */
     return {
-        // dữ liệu
-        requirements: items,       // tất cả yêu cầu
-        roomRequirements: roomReqsByRoom, // yêu cầu theo phòng
+        // data
+        requirements: items,       // all requirements
+        roomRequirements: roomReqsByRoom, // requirements by room
         suitableRooms,
         allocationSuggestion,
         page,
         size,
         selected,
-        // trạng thái
+        // status
         loading,
         loadingSuitable,
         loadingRoomReqsByRoom,
         error,
-        // hành động
-        loadRoomRequirements,   // ✅ thay thế handleFetchRoomRequirements
+        // actions
+        loadRoomRequirements,   // ✅ replaces handleFetchRoomRequirements
         loadSuitableRooms,
         approve,
         reject,

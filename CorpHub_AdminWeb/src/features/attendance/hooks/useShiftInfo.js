@@ -10,15 +10,15 @@ const toMinutes = (t) => {
 const extractHM = (iso) => (iso ? iso.match(/\d{2}:\d{2}/)?.[0] : null);
 
 /**
- * useShiftInfo (phiên bản mới)
- * Hook TỰ QUẢN selectedShift
+ * useShiftInfo (new version)
+ * Hook that manages selectedShift internally
  */
 export const useShiftInfo = (schedules = []) => {
 
-    /* 0) selectedShift do user chọn */
+    /* 0) selectedShift chosen by user */
     const [selectedShift, setSelectedShift] = useState(null);
 
-    /* 1) Đồng hồ giờ */
+    /* 1) Current time (HH:MM) */
     const [nowHM, setNowHM] = useState(
         new Date().toTimeString().substring(0, 5)
     );
@@ -30,7 +30,7 @@ export const useShiftInfo = (schedules = []) => {
         return () => clearInterval(timer);
     }, []);
 
-    /* 2) suggestedShift (tự động đoán ca) */
+    /* 2) suggestedShift (auto infer shift) */
     let suggestedShift = null;
     let status = "none";
 
@@ -63,10 +63,10 @@ export const useShiftInfo = (schedules = []) => {
         }
     }
 
-    /* 3) finalShift (ưu tiên selectedShift) */
+    /* 3) finalShift (prefer selectedShift) */
     const finalShift = selectedShift || suggestedShift;
 
-    /* 4) Đồng hồ timeline */
+    /* 4) Timeline clock */
     const [now, setNow] = useState(nowHM);
 
     useEffect(() => {
@@ -77,7 +77,7 @@ export const useShiftInfo = (schedules = []) => {
         return () => clearInterval(timer);
     }, []);
 
-    /* 5) Tính timeline */
+    /* 5) Build timeline */
     const timeline = useMemo(() => {
         if (!schedules || schedules.length === 0) return [];
 
@@ -91,19 +91,19 @@ export const useShiftInfo = (schedules = []) => {
             const checkIn = extractHM(ws.checkInTime);
             const checkOut = extractHM(ws.checkOutTime);
 
-            events.push({ label: `Giờ vào (${shift.name})`, time: start, type: "shift_start" });
+            events.push({ label: `Start (${shift.name})`, time: start, type: "shift_start" });
             events.push({ label: `Check-in (${shift.name})`, time: checkIn || "--:--", type: "checkin" });
             events.push({ label: `Check-out (${shift.name})`, time: checkOut || "--:--", type: "checkout" });
-            events.push({ label: `Giờ ra (${shift.name})`, time: end, type: "shift_end" });
+            events.push({ label: `End (${shift.name})`, time: end, type: "shift_end" });
         });
 
         return events.sort((a, b) => toMinutes(a.time) - toMinutes(b.time));
     }, [schedules, now]);
 
-    /* 6) Expose API cho UI */
+    /* 6) Expose API to UI */
     return {
         selectedShift,
-        setSelectedShift, // ⭐ trả ra hàm setState để UI dùng
+        setSelectedShift, // ⭐ expose setState for UI usage
         suggestedShift,
         finalShift,
         status,

@@ -22,39 +22,39 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
     const [errors, setErrors] = useState({});
     const isDirtyRef = useRef(false);
 
-    // 🔹 Hàm tính số giờ làm giữa hai mốc
+    // 🔹 Calculate working hours between two time points
     const calculateHours = (start, end) => {
         const [sh, sm] = start.split(":").map(Number);
         const [eh, em] = end.split(":").map(Number);
         let startMins = sh * 60 + sm;
         let endMins = eh * 60 + em;
 
-        // Ca qua đêm → cộng thêm 24h
+        // Night shift → add 24 hours
         if (endMins < startMins) endMins += 24 * 60;
 
         const totalHours = (endMins - startMins) / 60;
         return Math.round(totalHours * 100) / 100;
     };
 
-    // 🔹 Cập nhật giờ công và isNightShift mỗi khi thay đổi start hoặc end
+    // 🔹 Update working hours and isNightShift whenever start or end time changes
     useEffect(() => {
         if (!isDirtyRef.current) return;
 
         const newHours = calculateHours(form.startTime, form.endTime);
-        const isNightShift = form.endTime < form.startTime; // ✅ Tự động xác định ca đêm
+        const isNightShift = form.endTime < form.startTime; // ✅ Automatically determine night shift
 
         setForm((prev) => ({
             ...prev,
             workingHours: newHours,
-            isNightShift: isNightShift, // ✅ Tự động cập nhật
+            isNightShift: isNightShift, // ✅ Auto update
         }));
     }, [form.startTime, form.endTime]);
 
-    // Xử lý input
+    // Handle input
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
-        // Khi user thay đổi giờ → bật cờ
+        // When user changes time → enable flag
         if (name === "startTime" || name === "endTime") {
             isDirtyRef.current = true;
         }
@@ -72,10 +72,10 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
 
     const validate = () => {
         const newErrors = {};
-        if (!form.name.trim()) newErrors.name = "Tên ca là bắt buộc";
-        if (!form.startTime) newErrors.startTime = "Giờ bắt đầu là bắt buộc";
-        if (!form.endTime) newErrors.endTime = "Giờ kết thúc là bắt buộc";
-        if (!form.workingHours || form.workingHours <= 0) newErrors.workingHours = "Giờ công phải lớn hơn 0";
+        if (!form.name.trim()) newErrors.name = "Shift name is required";
+        if (!form.startTime) newErrors.startTime = "Start time is required";
+        if (!form.endTime) newErrors.endTime = "End time is required";
+        if (!form.workingHours || form.workingHours <= 0) newErrors.workingHours = "Working hours must be greater than 0";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -134,10 +134,10 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-bold">
-                                        {shift ? "Chỉnh sửa Ca làm" : "Thêm Ca làm mới"}
+                                        {shift ? "Edit Shift" : "Add New Shift"}
                                     </h2>
                                     <p className="text-xs text-white/80">
-                                        {shift ? "Cập nhật thông tin ca làm" : "Tạo ca làm mới trong hệ thống"}
+                                        {shift ? "Update shift information" : "Create a new shift in the system"}
                                     </p>
                                 </div>
                             </div>
@@ -156,16 +156,16 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                     {/* Form Content */}
                     <div className="p-6 space-y-4">
 
-                        {/* Tên ca */}
+                        {/* Shift Name */}
                         <div>
                             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                 <ClockIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                                Tên ca <span className="text-red-500">*</span>
+                                Shift Name <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
                                 name="name"
-                                placeholder="VD: Ca sáng, Ca chiều, Ca đêm..."
+                                placeholder="e.g., Morning shift, Afternoon shift, Night shift..."
                                 value={form.name}
                                 onChange={handleChange}
                                 className={`w-full px-4 py-2.5 rounded-xl border-2 transition-all
@@ -189,13 +189,13 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                             )}
                         </div>
 
-                        {/* Giờ bắt đầu - kết thúc */}
+                        {/* Start Time - End Time */}
                         <div className="grid grid-cols-2 gap-4">
-                            {/* Giờ bắt đầu */}
+                            {/* Start Time */}
                             <div>
                                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                     <ClockIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                                    Bắt đầu <span className="text-red-500">*</span>
+                                    Start <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="time"
@@ -221,11 +221,11 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                                 )}
                             </div>
 
-                            {/* Giờ kết thúc */}
+                            {/* End Time */}
                             <div>
                                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                     <ClockIcon className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                                    Kết thúc <span className="text-red-500">*</span>
+                                    End <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="time"
@@ -252,7 +252,7 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                             </div>
                         </div>
 
-                        {/* Info box cho ca đêm */}
+                        {/* Info box for night shift */}
                         {isNightShift && (
                             <motion.div
                                 initial={{ opacity: 0, y: -10 }}
@@ -263,28 +263,28 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                                     <MoonIcon className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                                     <div>
                                         <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
-                                            Đây là ca đêm
+                                            This is a night shift
                                         </p>
                                         <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
-                                            Ca này kéo dài qua nửa đêm (giờ kết thúc &lt; giờ bắt đầu)
+                                            This shift extends past midnight (end time &lt; start time)
                                         </p>
                                     </div>
                                 </div>
                             </motion.div>
                         )}
 
-                        {/* Giờ công */}
+                        {/* Working Hours */}
                         <div>
                             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                 <CheckCircleIcon className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                                Giờ công <span className="text-red-500">*</span>
+                                Working Hours <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
                                 <input
                                     type="number"
                                     step="0.25"
                                     name="workingHours"
-                                    placeholder="Giờ công"
+                                    placeholder="Working hours"
                                     value={form.workingHours}
                                     onChange={handleChange}
                                     className={`w-full px-4 py-2.5 rounded-xl border-2 transition-all
@@ -309,11 +309,11 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                                 </motion.p>
                             )}
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                💡 Tự động tính theo giờ bắt đầu-kết thúc, nhưng có thể chỉnh lại thủ công
+                                💡 Automatically calculated from start and end times, but can be manually adjusted
                             </p>
                         </div>
 
-                        {/* Ca đêm - Checkbox (Read-only) */}
+                        {/* Night Shift - Checkbox (Read-only) */}
                         <motion.div
                             whileHover={{ scale: 1.01 }}
                             className="flex items-center gap-3 p-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/30 cursor-default"
@@ -323,7 +323,7 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                                     type="checkbox"
                                     name="isNightShift"
                                     checked={form.isNightShift}
-                                    readOnly // ✅ Chỉ đọc, không cho chỉnh thủ công
+                                    readOnly // ✅ Read-only, cannot be manually edited
                                     className="w-5 h-5 rounded-lg border-2 border-gray-300 dark:border-gray-600 cursor-default appearance-none bg-white dark:bg-gray-800 checked:bg-amber-600 checked:border-amber-600 transition-all"
                                 />
                                 <motion.div
@@ -334,9 +334,9 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                                 </motion.div>
                             </div>
                             <div className="flex-1">
-                                <p className="font-semibold text-gray-700 dark:text-gray-300">Là ca đêm</p>
+                                <p className="font-semibold text-gray-700 dark:text-gray-300">Night shift</p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                    Ca làm việc vào ban đêm
+                                    A shift that works during nighttime hours
                                 </p>
                             </div>
                             <MoonIcon className={`w-5 h-5 transition-all ${form.isNightShift ? "text-amber-600" : "text-gray-400"}`} />
@@ -352,7 +352,7 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                             onClick={onClose}
                             className="px-5 py-2.5 rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                         >
-                            Hủy
+                            Cancel
                         </motion.button>
                         <motion.button
                             whileHover={{ scale: 1.02 }}
@@ -360,7 +360,7 @@ const ShiftModal = ({ shift, onClose, onSubmit }) => {
                             onClick={handleSubmit}
                             className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-blue-500/30 transition-all"
                         >
-                            {shift ? "Cập nhật" : "Thêm mới"}
+                            {shift ? "Update" : "Add"}
                         </motion.button>
                     </div>
 

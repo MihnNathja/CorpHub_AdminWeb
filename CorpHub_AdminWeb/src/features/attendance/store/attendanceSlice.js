@@ -8,7 +8,8 @@ export const submitAttendance = createAsyncThunk(
             const res = await doAttendance(wsId, data);
             return res;
         } catch (err) {
-            return rejectWithValue(err.response?.data || err.message);
+            console.error("Error in submitAttendance thunk:", err);
+            return rejectWithValue(err.data || err.message);
         }
     }
 );
@@ -47,6 +48,7 @@ const attendanceSlice = createSlice({
             .addCase(submitAttendance.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+
             });
     },
 });

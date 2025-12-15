@@ -47,7 +47,7 @@ export const assignAssetsToRoom = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const res = await assignAssetsToRoomApi(data);
-            showSuccess("Chuyển tài sản thành công.");
+            showSuccess("Assets moved successfully.");
             return res;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
@@ -58,9 +58,9 @@ export const assignAssetsToRoom = createAsyncThunk(
 const roomSlice = createSlice({
     name: "rooms",
     initialState: {
-        rooms: [], // danh sách phòng
+        rooms: [], // list of rooms
         suitableRooms: [],
-        meta: {}, // chứa thông tin phân trang
+        meta: {}, // contains pagination info
         loading: false,
         error: null,
         selectedRoom: null,

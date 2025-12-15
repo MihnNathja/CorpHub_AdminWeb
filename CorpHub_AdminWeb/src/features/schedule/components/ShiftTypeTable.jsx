@@ -55,14 +55,14 @@ const ShiftTypeTable = () => {
 
     return (
         <div className="space-y-5">
-            {/* 🔹 Floating button thêm ca */}
+            {/* 🔹 Floating button to add shift */}
             <FloatingButton
                 onClick={() => {
                     setEditingShift(null);
                     setIsModalOpen(true);
                 }}
                 icon={PlusIcon}
-                tooltip="Thêm ca làm"
+                tooltip="Add new shift"
                 color="blue"
             />
 
@@ -74,9 +74,9 @@ const ShiftTypeTable = () => {
                             <ClockIcon className="w-7 h-7 text-white" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-white">Quản lý ca làm việc</h2>
+                            <h2 className="text-2xl font-bold text-white">Shift Management</h2>
                             <p className="text-blue-100 text-sm mt-1">
-                                Tổng cộng: <span className="font-semibold">{meta?.totalElements || shifts.length}</span> ca làm việc
+                                Total: <span className="font-semibold">{meta?.totalElements || shifts.length}</span> shifts
                             </p>
                         </div>
                     </div>
@@ -86,7 +86,7 @@ const ShiftTypeTable = () => {
                         className="px-4 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-lg transition-all flex items-center gap-2 border border-white/20 font-medium"
                     >
                         <FunnelIcon className="w-5 h-5" />
-                        <span>{showFilters ? "Ẩn" : "Hiện"} bộ lọc</span>
+                        <span>{showFilters ? "Hide" : "Show"} filters</span>
                     </button>
                 </div>
             </div>
@@ -98,7 +98,7 @@ const ShiftTypeTable = () => {
                         <div className="flex items-center justify-between">
                             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
                                 <FunnelIcon className="w-4 h-4" />
-                                Bộ lọc tìm kiếm
+                                Search filters
                             </h3>
                             {hasActiveFilters && (
                                 <button
@@ -106,7 +106,7 @@ const ShiftTypeTable = () => {
                                     className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium flex items-center gap-1"
                                 >
                                     <XMarkIcon className="w-4 h-4" />
-                                    Xóa bộ lọc
+                                    Clear filters
                                 </button>
                             )}
                         </div>
@@ -117,14 +117,14 @@ const ShiftTypeTable = () => {
                             {/* Search Input */}
                             <div className="md:col-span-3">
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Tìm kiếm tên ca
+                                    Search shift name
                                 </label>
                                 <div className="relative">
                                     <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                                     <input
                                         type="text"
                                         name="keywords"
-                                        placeholder="Nhập tên ca làm việc..."
+                                        placeholder="Enter shift name..."
                                         value={filters.keywords}
                                         onChange={handleFilterChange}
                                         className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
@@ -135,7 +135,7 @@ const ShiftTypeTable = () => {
                             {/* Start Time */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Giờ bắt đầu từ
+                                    Start time from
                                 </label>
                                 <div className="relative">
                                     <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -152,7 +152,7 @@ const ShiftTypeTable = () => {
                             {/* End Time */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Giờ kết thúc đến
+                                    End time to
                                 </label>
                                 <div className="relative">
                                     <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -172,12 +172,12 @@ const ShiftTypeTable = () => {
                                     onClick={clearFilters}
                                     className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium transition-all"
                                 >
-                                    Đặt lại
+                                    Reset
                                 </button>
                                 <button
                                     className="flex-1 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all shadow-sm"
                                 >
-                                    Áp dụng
+                                    Apply
                                 </button>
                             </div>
                         </div>
@@ -191,7 +191,7 @@ const ShiftTypeTable = () => {
                 {/* Table Header */}
                 <div className="bg-gray-50 dark:bg-gray-900/50 px-5 py-3 border-b border-gray-200 dark:border-gray-700">
                     <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                        Danh sách ca làm việc
+                        Shift list
                     </h3>
                 </div>
 
@@ -204,22 +204,22 @@ const ShiftTypeTable = () => {
                                     #
                                 </th>
                                 <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                    Tên ca
+                                    Shift name
                                 </th>
                                 <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                    Giờ bắt đầu
+                                    Start time
                                 </th>
                                 <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                    Giờ kết thúc
+                                    End time
                                 </th>
                                 <th className="px-5 py-3.5 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                    Giờ công
+                                    Working hours
                                 </th>
                                 <th className="px-5 py-3.5 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                    Loại ca
+                                    Shift type
                                 </th>
                                 <th className="px-5 py-3.5 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                    Hành động
+                                    Actions
                                 </th>
                             </tr>
                         </thead>
@@ -264,12 +264,12 @@ const ShiftTypeTable = () => {
                                             {s.isNightShift ? (
                                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium">
                                                     <MoonIcon className="w-4 h-4" />
-                                                    Ca đêm
+                                                    Night shift
                                                 </span>
                                             ) : (
                                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-lg text-sm font-medium">
                                                     <SunIcon className="w-4 h-4" />
-                                                    Ca ngày
+                                                    Day shift
                                                 </span>
                                             )}
                                         </td>
@@ -281,7 +281,7 @@ const ShiftTypeTable = () => {
                                                         setIsModalOpen(true);
                                                     }}
                                                     className="p-2 rounded-lg hover:bg-yellow-50 dark:hover:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400 transition-colors group"
-                                                    title="Chỉnh sửa"
+                                                    title="Edit"
                                                 >
                                                     <PencilIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
                                                 </button>
@@ -291,7 +291,7 @@ const ShiftTypeTable = () => {
                                                         setIsConfirmDialogOpen(true);
                                                     }}
                                                     className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-colors group"
-                                                    title="Xóa ca"
+                                                    title="Delete"
                                                 >
                                                     <TrashIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
                                                 </button>
@@ -310,10 +310,10 @@ const ShiftTypeTable = () => {
                                                 <ClockIcon className="w-8 h-8 text-gray-400" />
                                             </div>
                                             <p className="text-gray-500 dark:text-gray-400 font-medium">
-                                                Không có ca làm việc nào
+                                                No shifts available
                                             </p>
                                             <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                                                Thêm ca làm việc mới để bắt đầu
+                                                Add a new shift to get started
                                             </p>
                                         </div>
                                     </td>
@@ -335,7 +335,7 @@ const ShiftTypeTable = () => {
                 )}
             </div>
 
-            {/* 🔹 Modal thêm/sửa */}
+            {/* 🔹 Modal for add/edit */}
             {isModalOpen && (
                 <ShiftModal
                     shift={editingShift}
@@ -347,12 +347,12 @@ const ShiftTypeTable = () => {
                 />
             )}
 
-            {/* 🔹 Xác nhận xóa */}
+            {/* 🔹 Delete confirmation */}
             {isConfirmDialogOpen && (
                 <ConfirmDialog
                     open={isConfirmDialogOpen}
-                    title="Xác nhận xóa"
-                    message={`Bạn có chắc muốn xóa ca "${selected?.name}"?`}
+                    title="Confirm delete"
+                    message={`Are you sure you want to delete the shift "${selected?.name}"?`}
                     onConfirm={() => {
                         handleDelete(selected.id);
                         setIsConfirmDialogOpen(false);

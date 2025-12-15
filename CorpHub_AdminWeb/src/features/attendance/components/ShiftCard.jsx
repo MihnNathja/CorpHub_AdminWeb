@@ -15,26 +15,26 @@ export default function ShiftCard({
     let bg = "bg-white dark:bg-gray-800";
     let titleColor = "text-gray-900 dark:text-gray-100";
 
-    // ⭐ Final shift (màu mạnh nhất)
+    // ⭐ Final shift (strongest color)
     if (isFinal) {
         borderColor = "border-blue-500";
         borderStyle = "border-solid";
         bg = "bg-blue-50 dark:bg-blue-900/20";
         titleColor = "text-blue-700 dark:text-blue-300";
     }
-    // ⭐ Selected shift (vàng)
+    // ⭐ Selected shift (yellow)
     else if (isSelected) {
         borderColor = "border-yellow-500";
         borderStyle = "border-solid";
         bg = "bg-yellow-50 dark:bg-yellow-900/20";
         titleColor = "text-yellow-800 dark:text-yellow-300";
     }
-    // ⭐ Suggested shift → NHẸ, không gây nhầm
+    // ⭐ Suggested shift → subtle, avoid confusion
     else if (isSuggested) {
         borderColor = "border-purple-300";
-        borderStyle = "border-dashed"; // 🔥 Dùng dashed border
-        bg = "bg-white dark:bg-gray-800"; // giữ nền
-        titleColor = "text-purple-600 dark:text-purple-300"; // chỉ đổi text
+        borderStyle = "border-dashed"; // 🔥 Use dashed border
+        bg = "bg-white dark:bg-gray-800"; // keep background
+        titleColor = "text-purple-600 dark:text-purple-300"; // change text only
     }
 
     return (
@@ -57,7 +57,7 @@ export default function ShiftCard({
                     {shift.name}
                 </h3>
 
-                {/* ⭐ Suggested icon rất nhỏ, tinh tế */}
+                {/* ⭐ Suggested icon, small and subtle */}
                 {isSuggested && !isSelected && !isFinal && (
                     <LightBulbIcon className="w-4 h-4 text-purple-400 ml-1" />
                 )}
@@ -81,20 +81,20 @@ export default function ShiftCard({
             <div className="text-xs mt-1">
                 {isFinal && (
                     <div className="text-blue-600 dark:text-blue-300 font-medium">
-                        (Ca đang dùng)
+                        (In use)
                     </div>
                 )}
 
                 {!isFinal && isSelected && (
                     <div className="text-yellow-600 font-medium">
-                        (Đã chọn)
+                        (Selected)
                     </div>
                 )}
 
                 {!isFinal && !isSelected && isSuggested && (
                     <div className="text-purple-500 opacity-80 italic flex items-center gap-1">
                         <LightBulbIcon className="w-3 h-3" />
-                        <span>Gợi ý</span>
+                        <span>Suggested</span>
                     </div>
                 )}
             </div>

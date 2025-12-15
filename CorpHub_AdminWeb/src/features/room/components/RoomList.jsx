@@ -9,10 +9,10 @@ import { useRooms } from "../hooks/useRooms";
 import { useAssets } from "../../asset/hooks/useAssets";
 
 const statusQuick = [
-    { value: "", label: "Tất cả" },
-    { value: "AVAILABLE", label: "Sẵn sàng" },
-    { value: "RESERVED", label: "Đang dùng" },
-    { value: "MAINTENANCE", label: "Bảo trì" },
+    { value: "", label: "All" },
+    { value: "AVAILABLE", label: "Available" },
+    { value: "RESERVED", label: "In use" },
+    { value: "MAINTENANCE", label: "Maintenance" },
 ];
 
 const RoomList = ({ departments, roomTypes }) => {
@@ -43,7 +43,7 @@ const RoomList = ({ departments, roomTypes }) => {
     const activeFilters = [
         filters.typeId && roomTypes.find((t) => t.id === filters.typeId)?.name,
         filters.departmentId && departments.find((d) => d.id === filters.departmentId)?.name,
-        filters.minCapacity && `≥ ${filters.minCapacity} chỗ`,
+        filters.minCapacity && `≥ ${filters.minCapacity} people`,
         filters.minArea && `≥ ${filters.minArea} m²`,
         filters.status && statusQuick.find((s) => s.value === filters.status)?.label,
     ].filter(Boolean);
@@ -53,7 +53,7 @@ const RoomList = ({ departments, roomTypes }) => {
             <FloatingButton
                 onClick={() => setIsAddModalOpen(true)}
                 icon={PlusIcon}
-                tooltip="New room"
+                tooltip="Add new room"
                 color="blue"
             />
 
@@ -65,24 +65,24 @@ const RoomList = ({ departments, roomTypes }) => {
                             <Sparkles className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="text-sm text-white/80">Quản lý phòng</p>
+                            <p className="text-sm text-white/80">Room management</p>
                             <h2 className="text-xl font-semibold">
-                                {meta?.totalElements ?? 0} phòng được tìm thấy
+                                {meta?.totalElements ?? 0} rooms found
                             </h2>
                         </div>
                     </div>
                     <div className="flex gap-3 text-sm">
                         <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-xl">
                             <Building2 className="w-4 h-4" />
-                            <span>{roomTypes.length} loại phòng</span>
+                            <span>{roomTypes.length} room types</span>
                         </div>
                         <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-xl">
                             <Users className="w-4 h-4" />
-                            <span>{departments.length} khoa/phòng ban</span>
+                            <span>{departments.length} departments</span>
                         </div>
                         <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-xl">
                             <Square className="w-4 h-4" />
-                            <span>Phân loại & diện tích</span>
+                            <span>Classification & area</span>
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@ const RoomList = ({ departments, roomTypes }) => {
                             type="text"
                             value={keywords}
                             onChange={(e) => setKeywords(e.target.value)}
-                            placeholder="Tìm phòng theo tên..."
+                            placeholder="Search room by name..."
                             className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                         />
                     </div>
@@ -109,7 +109,7 @@ const RoomList = ({ departments, roomTypes }) => {
                             onChange={(e) => handleFilterChange("typeId", e.target.value)}
                             className="w-full sm:w-auto max-w-[180px] h-[40px] px-3 py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none truncate"
                         >
-                            <option value="">Tất cả loại phòng</option>
+                            <option value="">All room types</option>
                             {roomTypes.map((type) => (
                                 <option key={type.id} value={type.id}>
                                     {type.name}
@@ -119,11 +119,11 @@ const RoomList = ({ departments, roomTypes }) => {
 
                         <select
                             name="departmentId"
-                            value={filters.id}
+                            value={filters.departmentId}
                             onChange={(e) => handleFilterChange("departmentId", e.target.value)}
                             className="w-full sm:w-auto max-w-[200px] h-[40px] px-3 py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none truncate"
                         >
-                            <option value="">Tất cả khoa/phòng</option>
+                            <option value="">All departments</option>
                             {departments.map((department) => (
                                 <option key={department.id} value={department.id}>
                                     {department.name}
@@ -136,7 +136,7 @@ const RoomList = ({ departments, roomTypes }) => {
                             name="minCapacity"
                             value={filters.minCapacity}
                             onChange={(e) => handleFilterChange("minCapacity", e.target.value)}
-                            placeholder="Sức chứa tối thiểu"
+                            placeholder="Min capacity"
                             className="w-full sm:w-auto max-w-[140px] h-[40px] px-3 py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                         />
 
@@ -146,7 +146,7 @@ const RoomList = ({ departments, roomTypes }) => {
                             name="minArea"
                             value={filters.minArea}
                             onChange={(e) => handleFilterChange("minArea", e.target.value)}
-                            placeholder="Diện tích tối thiểu (m²)"
+                            placeholder="Min area (m²)"
                             className="w-full sm:w-auto max-w-[160px] h-[40px] px-3 py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                         />
 
@@ -156,7 +156,7 @@ const RoomList = ({ departments, roomTypes }) => {
                             onChange={(e) => handleFilterChange("status", e.target.value)}
                             className="w-full sm:w-auto max-w-[160px] h-[40px] px-3 py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none truncate"
                         >
-                            <option value="">Trạng thái</option>
+                            <option value="">Status</option>
                             {statusQuick
                                 .filter((s) => s.value !== "")
                                 .map((s) => (
@@ -171,7 +171,7 @@ const RoomList = ({ departments, roomTypes }) => {
                             className="w-full sm:w-auto max-w-[120px] h-[40px] flex items-center justify-center gap-1 text-sm rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                         >
                             <Filter className="w-4 h-4" />
-                            Xóa lọc
+                            Clear filters
                         </button>
                     </div>
                 </div>
@@ -198,7 +198,7 @@ const RoomList = ({ departments, roomTypes }) => {
                 {/* Active filters */}
                 {activeFilters.length > 0 && (
                     <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
-                        <span className="font-semibold">Đang lọc:</span>
+                        <span className="font-semibold">Filtering:</span>
                         {activeFilters.map((f, idx) => (
                             <span
                                 key={idx}
@@ -221,17 +221,17 @@ const RoomList = ({ departments, roomTypes }) => {
             ) : (
                 <div className="text-center border border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-10 bg-gray-50 dark:bg-gray-800">
                     <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                        Không tìm thấy phòng phù hợp
+                        No suitable rooms found
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Hãy điều chỉnh bộ lọc hoặc thêm phòng mới.
+                        Please adjust the filters or add a new room.
                     </p>
                     <button
                         onClick={() => setIsAddModalOpen(true)}
                         className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-medium shadow hover:bg-blue-700"
                     >
                         <PlusIcon className="w-4 h-4" />
-                        Thêm phòng
+                        Add room
                     </button>
                 </div>
             )}

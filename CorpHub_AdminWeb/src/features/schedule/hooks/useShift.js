@@ -30,7 +30,7 @@ export const useShift = () => {
     });
 
     /**
-     * Gọi API khi có thay đổi page/size hoặc filter
+     * Call API when page/size or filter changes
      */
     useEffect(() => {
         dispatch(
@@ -51,7 +51,7 @@ export const useShift = () => {
             try {
                 const res = await dispatch(createShift(data));
                 if (res.meta.requestStatus === "fulfilled") {
-                    showSuccess("Thêm ca làm thành công!");
+                    showSuccess("Shift added successfully!");
                     dispatch(
                         fetchShifts({
                             page,
@@ -60,12 +60,12 @@ export const useShift = () => {
                         })
                     );
                 } else {
-                    showError(res.payload?.message || "Không thể tạo ca làm!");
+                    showError(res.payload?.message || "Cannot create shift!");
                 }
                 return res;
             } catch (err) {
                 console.error(err);
-                showError("Lỗi khi tạo ca làm!");
+                showError("Error creating shift!");
             }
         },
         [dispatch, page, size, filters]
@@ -79,15 +79,15 @@ export const useShift = () => {
             try {
                 const res = await dispatch(updateShift({ id, data }));
                 if (res.meta.requestStatus === "fulfilled") {
-                    showSuccess("Cập nhật ca làm thành công!");
+                    showSuccess("Shift updated successfully!");
                     dispatch(fetchShifts({ page, size, ...filters }));
                 } else {
-                    showError(res.payload?.message || "Không thể cập nhật ca làm!");
+                    showError(res.payload?.message || "Cannot update shift!");
                 }
                 return res;
             } catch (err) {
                 console.error(err);
-                showError("Lỗi khi cập nhật ca làm!");
+                showError("Error updating shift!");
             }
         },
         [dispatch, page, size, filters]
@@ -101,15 +101,15 @@ export const useShift = () => {
             try {
                 const res = await dispatch(deleteShift(id));
                 if (res.meta.requestStatus === "fulfilled") {
-                    showSuccess("Xóa ca làm thành công!");
+                    showSuccess("Shift deleted successfully!");
                     dispatch(fetchShifts({ page, size, ...filters }));
                 } else {
-                    showError(res.payload?.message || "Không thể xóa ca làm!");
+                    showError(res.payload?.message || "Cannot delete shift!");
                 }
                 return res;
             } catch (err) {
                 console.error(err);
-                showError("Lỗi khi xóa ca làm!");
+                showError("Error deleting shift!");
             }
         },
         [dispatch, page, size, filters]

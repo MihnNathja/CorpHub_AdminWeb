@@ -82,13 +82,13 @@ const ExportScheduleModal = ({
 
   const validate = () => {
     const newErrors = {};
-    if (!form.fromDate) newErrors.fromDate = "Chọn ngày bắt đầu";
-    if (!form.toDate) newErrors.toDate = "Chọn ngày kết thúc";
+    if (!form.fromDate) newErrors.fromDate = "Select start date";
+    if (!form.toDate) newErrors.toDate = "Select end date";
     if (form.fromDate && form.toDate && form.toDate < form.fromDate) {
-      newErrors.toDate = "Ngày kết thúc phải sau ngày bắt đầu";
+      newErrors.toDate = "End date must be after start date";
     }
-    if (!form.format) newErrors.format = "Chọn định dạng";
-    if (!form.layout) newErrors.layout = "Chọn bố cục";
+    if (!form.format) newErrors.format = "Select format";
+    if (!form.layout) newErrors.layout = "Select layout";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -138,7 +138,7 @@ const ExportScheduleModal = ({
                 <p className="text-xs text-white/80 uppercase tracking-wide">
                   Export
                 </p>
-                <h2 className="text-xl font-bold">Xuất lịch làm việc</h2>
+                <h2 className="text-xl font-bold">Export work schedule</h2>
               </div>
             </div>
             <motion.button
@@ -160,7 +160,7 @@ const ExportScheduleModal = ({
                 <div>
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     <FileText className="w-4 h-4" />
-                    Tên file
+                    File name
                   </label>
                   <input
                     type="text"
@@ -172,16 +172,15 @@ const ExportScheduleModal = ({
                 <div>
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     <SlidersHorizontal className="w-4 h-4" />
-                    Định dạng
+                    Format
                   </label>
                   <select
                     value={form.format}
                     onChange={(e) => updateField("format", e.target.value)}
-                    className={`w-full px-3 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none ${
-                      errors.format
+                    className={`w-full px-3 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none ${errors.format
                         ? "border-red-500"
                         : "border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
-                    }`}
+                      }`}
                   >
                     <option value="EXCEL">Excel (.xlsx)</option>
                     <option value="CSV">CSV</option>
@@ -196,17 +195,16 @@ const ExportScheduleModal = ({
                 <div>
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     <Calendar className="w-4 h-4" />
-                    Từ ngày
+                    From date
                   </label>
                   <input
                     type="date"
                     value={form.fromDate}
                     onChange={(e) => updateField("fromDate", e.target.value)}
-                    className={`w-full px-3 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none ${
-                      errors.fromDate
+                    className={`w-full px-3 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none ${errors.fromDate
                         ? "border-red-500"
                         : "border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
-                    }`}
+                      }`}
                   />
                   {errors.fromDate && (
                     <p className="text-xs text-red-600 mt-1">
@@ -217,17 +215,16 @@ const ExportScheduleModal = ({
                 <div>
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     <Calendar className="w-4 h-4" />
-                    Đến ngày
+                    To date
                   </label>
                   <input
                     type="date"
                     value={form.toDate}
                     onChange={(e) => updateField("toDate", e.target.value)}
-                    className={`w-full px-3 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none ${
-                      errors.toDate
+                    className={`w-full px-3 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none ${errors.toDate
                         ? "border-red-500"
                         : "border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
-                    }`}
+                      }`}
                   />
                   {errors.toDate && (
                     <p className="text-xs text-red-600 mt-1">{errors.toDate}</p>
@@ -238,7 +235,7 @@ const ExportScheduleModal = ({
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   <Layers className="w-4 h-4" />
-                  Bố cục
+                  Layout
                 </label>
                 <div className="grid grid-cols-3 gap-3">
                   {["CALENDAR", "ROW", "BOTH"].map((layout) => (
@@ -246,15 +243,14 @@ const ExportScheduleModal = ({
                       key={layout}
                       type="button"
                       onClick={() => updateField("layout", layout)}
-                      className={`p-3 rounded-xl border-2 text-sm font-semibold transition-all ${
-                        form.layout === layout
+                      className={`p-3 rounded-xl border-2 text-sm font-semibold transition-all ${form.layout === layout
                           ? "border-blue-500 bg-blue-50 text-blue-700"
                           : "border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-300"
-                      }`}
+                        }`}
                     >
                       {layout === "CALENDAR" && "Calendar"}
-                      {layout === "ROW" && "Dòng"}
-                      {layout === "BOTH" && "Cả hai"}
+                      {layout === "ROW" && "Row"}
+                      {layout === "BOTH" && "Both"}
                     </button>
                   ))}
                 </div>
@@ -274,7 +270,7 @@ const ExportScheduleModal = ({
                     className="w-4 h-4 accent-blue-600"
                   />
                   <span className="text-gray-700 dark:text-gray-200">
-                    Kèm sheet chi tiết ca
+                    Include shift details sheet
                   </span>
                 </label>
                 <label className="flex items-center gap-3 p-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-800/60 text-sm cursor-pointer">
@@ -287,7 +283,7 @@ const ExportScheduleModal = ({
                     className="w-4 h-4 accent-blue-600"
                   />
                   <span className="text-gray-700 dark:text-gray-200">
-                    Kèm sheet dữ liệu thô
+                    Include raw data sheet
                   </span>
                 </label>
               </div>
@@ -297,14 +293,14 @@ const ExportScheduleModal = ({
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   <ListChecks className="w-4 h-4" />
-                  Phòng ban
+                  Department
                 </label>
                 <select
                   value={form.departmentId}
                   onChange={(e) => updateField("departmentId", e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none"
                 >
-                  <option value="">Tất cả</option>
+                  <option value="">All</option>
                   {departments.map((dept) => (
                     <option key={dept.id} value={dept.id}>
                       {dept.name}
@@ -317,14 +313,14 @@ const ExportScheduleModal = ({
                 <div className="flex items-center gap-2 mb-3">
                   <Users className="w-4 h-4 text-blue-600" />
                   <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                    Nhân viên (tùy chọn)
+                    Employees (optional)
                   </p>
                 </div>
                 <div className="relative mb-3">
                   <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
                   <input
                     type="text"
-                    placeholder="Tìm kiếm nhân viên..."
+                    placeholder="Search employees..."
                     value={userKeyword}
                     onChange={(e) => setUserKeyword(e.target.value)}
                     className="w-full pl-9 pr-3 py-2.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none"
@@ -377,7 +373,7 @@ const ExportScheduleModal = ({
                   onClick={onClose}
                   className="px-4 py-2.5 rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="submit"
@@ -387,12 +383,12 @@ const ExportScheduleModal = ({
                   {exporting ? (
                     <>
                       <Download className="w-5 h-5 animate-bounce" />
-                      <span>Đang xuất ({progress}%)</span>
+                      <span>Exporting ({progress}%)</span>
                     </>
                   ) : (
                     <>
                       <Download className="w-5 h-5" />
-                      <span>Xuất file</span>
+                      <span>Export file</span>
                     </>
                   )}
                 </button>

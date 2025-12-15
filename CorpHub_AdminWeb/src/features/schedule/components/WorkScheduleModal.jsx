@@ -80,9 +80,9 @@ const WorkScheduleModal = ({
 
     const validate = () => {
         const newErrors = {};
-        if (!form.userId) newErrors.userId = "Vui lòng chọn nhân viên";
-        if (!form.shiftId) newErrors.shiftId = "Vui lòng chọn ca làm";
-        if (!form.workDate) newErrors.workDate = "Vui lòng chọn ngày làm việc";
+        if (!form.userId) newErrors.userId = "Please select an employee";
+        if (!form.shiftId) newErrors.shiftId = "Please select a shift";
+        if (!form.workDate) newErrors.workDate = "Please select a work date";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -103,44 +103,44 @@ const WorkScheduleModal = ({
 
     const handleDelete = () => {
         if (!schedule?.id) return;
-        if (window.confirm("Bạn có chắc muốn xóa lịch làm việc này không?")) {
+        if (window.confirm("Are you sure you want to delete this schedule?")) {
             onDelete(schedule.id);
         }
     };
 
     const statusConfig = {
         SCHEDULED: {
-            label: "Đã lên lịch",
+            label: "Scheduled",
             color: "text-blue-600 dark:text-blue-400",
             bg: "bg-blue-50 dark:bg-blue-900/20",
             icon: Calendar,
         },
         IN_PROGRESS: {
-            label: "Đang diễn ra",
+            label: "In progress",
             color: "text-purple-600 dark:text-purple-400",
             bg: "bg-purple-50 dark:bg-purple-900/20",
             icon: Clock,
         },
         COMPLETED: {
-            label: "Đã hoàn thành",
+            label: "Completed",
             color: "text-emerald-600 dark:text-emerald-400",
             bg: "bg-emerald-50 dark:bg-emerald-900/20",
             icon: CheckCircle,
         },
         MISSED: {
-            label: "Vắng mặt",
+            label: "Missed",
             color: "text-red-600 dark:text-red-400",
             bg: "bg-red-50 dark:bg-red-900/20",
             icon: AlertTriangle,
         },
         CANCELLED: {
-            label: "Đã hủy",
+            label: "Cancelled",
             color: "text-gray-600 dark:text-gray-400",
             bg: "bg-gray-50 dark:bg-gray-900/20",
             icon: X,
         },
         ABSENCE: {
-            label: "Nghỉ phép",
+            label: "On leave",
             color: "text-amber-600 dark:text-amber-400",
             bg: "bg-amber-50 dark:bg-amber-900/20",
             icon: AlertTriangle,
@@ -186,10 +186,10 @@ const WorkScheduleModal = ({
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-bold">
-                                        {schedule ? "Chỉnh sửa lịch làm việc" : "Thêm lịch làm việc"}
+                                        {schedule ? "Edit work schedule" : "Add work schedule"}
                                     </h2>
                                     <p className="text-xs text-white/80">
-                                        {schedule ? "Cập nhật thông tin lịch làm việc" : "Tạo lịch làm việc mới"}
+                                        {schedule ? "Update schedule information" : "Create a new work schedule"}
                                     </p>
                                 </div>
                             </div>
@@ -211,14 +211,14 @@ const WorkScheduleModal = ({
                         <div>
                             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                 <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                                Nhân viên <span className="text-red-500">*</span>
+                                Employee <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
                                 <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3.5 pointer-events-none" />
                                 <input
                                     type="text"
                                     required
-                                    placeholder="Tìm kiếm nhân viên..."
+                                    placeholder="Search employee..."
                                     value={userKeyword || users.find((u) => u.id === form.userId)?.fullName || ""}
                                     onChange={handleInputChange}
                                     onFocus={() => setShowUserDropdown(userKeyword.trim() !== "")}
@@ -279,7 +279,7 @@ const WorkScheduleModal = ({
                         <div>
                             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                 <Clock className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                                Ca làm <span className="text-red-500">*</span>
+                                Shift <span className="text-red-500">*</span>
                             </label>
                             <select
                                 name="shiftId"
@@ -297,7 +297,7 @@ const WorkScheduleModal = ({
                                 <option value="">
                                     {currentShift
                                         ? `${currentShift.name} (${currentShift.startTime} - ${currentShift.endTime})`
-                                        : "-- Chọn ca làm --"}
+                                        : "-- Select a shift --"}
                                 </option>
                                 {shifts.map((s) => (
                                     <option key={s.id} value={s.id}>
@@ -321,7 +321,7 @@ const WorkScheduleModal = ({
                         <div>
                             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                 <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                                Ngày làm việc <span className="text-red-500">*</span>
+                                Work date <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="date"
@@ -353,7 +353,7 @@ const WorkScheduleModal = ({
                         <div>
                             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                 <CheckCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                                Trạng thái
+                                Status
                             </label>
                             <div className="grid grid-cols-2 gap-2">
                                 {Object.entries(statusConfig).map(([key, config]) => {
@@ -400,7 +400,7 @@ const WorkScheduleModal = ({
                                 className="px-4 py-2.5 rounded-xl border-2 border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 font-semibold hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2"
                             >
                                 <Trash2 className="w-4 h-4" />
-                                Xóa
+                                Delete
                             </motion.button>
                         ) : (
                             <div />
@@ -413,7 +413,7 @@ const WorkScheduleModal = ({
                                 onClick={onClose}
                                 className="px-5 py-2.5 rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                             >
-                                Hủy
+                                Cancel
                             </motion.button>
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
@@ -422,7 +422,7 @@ const WorkScheduleModal = ({
                                 className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2"
                             >
                                 <CheckCircle className="w-4 h-4" />
-                                {schedule ? "Cập nhật" : "Thêm mới"}
+                                {schedule ? "Update" : "Add new"}
                             </motion.button>
                         </div>
                     </div>

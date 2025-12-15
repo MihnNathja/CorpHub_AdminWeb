@@ -6,8 +6,8 @@ import { showError, showSuccess } from "../../../utils/toastUtils";
 
 const AssetSidePanel = ({ roomId, existedAssetIds, onClose, onAssignAssets }) => {
     const [loading, setLoading] = useState(false);
-    const [selectedAssets, setSelectedAssets] = useState([]); // 🔹 danh sách đã chọn
-    const [moving, setMoving] = useState(false); // trạng thái khi gọi API
+    const [selectedAssets, setSelectedAssets] = useState([]); // 🔹 selected list
+    const [moving, setMoving] = useState(false); // status when calling API
 
     const { assets, keywords, setKeywords } = useAssets();
 
@@ -16,7 +16,7 @@ const AssetSidePanel = ({ roomId, existedAssetIds, onClose, onAssignAssets }) =>
     );
 
 
-    // 🟦 Chọn / Bỏ chọn asset
+    // 🟦 Select / deselect asset
     const toggleSelect = (asset) => {
         setSelectedAssets((prev) => {
             const exists = prev.find((a) => a.id === asset.id);
@@ -41,7 +41,7 @@ const AssetSidePanel = ({ roomId, existedAssetIds, onClose, onAssignAssets }) =>
 
         } catch (err) {
             console.error(err);
-            showError(err || "Có lỗi khi chuyển tài sản.");
+            showError(err || "Error moving assets.");
         } finally {
             setMoving(false);
         }
@@ -56,18 +56,18 @@ const AssetSidePanel = ({ roomId, existedAssetIds, onClose, onAssignAssets }) =>
             <div className="flex justify-between items-center px-5 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 shadow-sm sticky top-0 z-10">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                     <Package className="w-5 h-5 text-blue-500" />
-                    Thêm tài sản vào phòng
+                    Add assets to room
                 </h3>
                 <button
                     onClick={onClose}
                     className="text-gray-500 hover:text-red-500 transition"
-                    title="Đóng"
+                    title="Close"
                 >
                     <X className="w-5 h-5" />
                 </button>
             </div>
 
-            {/* 🔍 Ô tìm kiếm */}
+            {/* 🔍 Search box */}
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="relative">
                     <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
@@ -75,7 +75,7 @@ const AssetSidePanel = ({ roomId, existedAssetIds, onClose, onAssignAssets }) =>
                         type="text"
                         value={keywords}
                         onChange={(e) => setKeywords(e.target.value)}
-                        placeholder="Tìm kiếm tài sản..."
+                        placeholder="Search equipment..."
                         className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
              bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white 
              focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none 
@@ -84,12 +84,12 @@ const AssetSidePanel = ({ roomId, existedAssetIds, onClose, onAssignAssets }) =>
                 </div>
             </div>
 
-            {/* 🔸 Danh sách chip đã chọn */}
+            {/* 🔸 Selected chips list */}
             {selectedAssets.length > 0 && (
                 <div
                     className="px-4 pt-3 pb-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
                 >
-                    {/* vùng chứa chip */}
+                    {/* chips container */}
                     <div
                         className="flex flex-wrap gap-2 max-h-24 overflow-y-auto pr-1 custom-scroll"
                     >
@@ -123,11 +123,11 @@ const AssetSidePanel = ({ roomId, existedAssetIds, onClose, onAssignAssets }) =>
                         >
                             {moving ? (
                                 <>
-                                    <Loader2 className="w-4 h-4 animate-spin" /> Moving...
+                                    <Loader2 className="w-4 h-4 animate-spin" /> Assigning...
                                 </>
                             ) : (
                                 <>
-                                    <ArrowRight className="w-4 h-4" /> Move
+                                    <ArrowRight className="w-4 h-4" /> Assign
                                 </>
                             )}
                         </button>
@@ -136,12 +136,12 @@ const AssetSidePanel = ({ roomId, existedAssetIds, onClose, onAssignAssets }) =>
             )}
 
 
-            {/* 📦 Danh sách tài sản */}
+            {/* 📦 Equipment list */}
             <div className="flex-1 overflow-y-auto p-4 space-y-2">
                 {loading ? (
                     <div className="flex justify-center items-center h-32 text-gray-500 dark:text-gray-400">
                         <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                        Đang tải danh sách...
+                        Loading equipment...
                     </div>
                 ) : availableAssets.length > 0 ? (
                     availableAssets.map((asset) => {
@@ -199,14 +199,14 @@ const AssetSidePanel = ({ roomId, existedAssetIds, onClose, onAssignAssets }) =>
                     })
                 ) : (
                     <div className="text-center py-6 text-gray-500 dark:text-gray-400">
-                        Không có tài sản nào phù hợp.
+                        No matching assets found.
                     </div>
                 )}
             </div>
 
             {/* Footer */}
             <div className="px-5 py-3 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
-                Chọn một hoặc nhiều tài sản để thêm vào phòng.
+                Select one or more assets to add to the room.
             </div>
         </div>
     );

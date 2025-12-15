@@ -40,14 +40,14 @@ const AbsenceRequestTable = () => {
   };
 
   const tabs = [
-    { key: "pending", label: "Chờ duyệt", icon: Clock3, color: "amber" },
+    { key: "pending", label: "Pending", icon: Clock3, color: "amber" },
     {
       key: "approved",
-      label: "Chấp nhận",
+      label: "Approved",
       icon: CheckCircle,
       color: "emerald",
     },
-    { key: "rejected", label: "Từ chối", icon: XCircle, color: "rose" },
+    { key: "rejected", label: "Rejected", icon: XCircle, color: "rose" },
   ];
 
   if (error) {
@@ -57,7 +57,7 @@ const AbsenceRequestTable = () => {
           <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
           <div>
             <h3 className="text-lg font-semibold text-red-900 dark:text-red-100 mb-1">
-              Lỗi khi tải dữ liệu
+              Error Loading Absence Requests
             </h3>
             <p className="text-red-800 dark:text-red-200 text-sm">
               {error.message ||
@@ -102,9 +102,8 @@ const AbsenceRequestTable = () => {
               <button
                 key={tab.key}
                 onClick={() => handleTabChange(tab.key)}
-                className={`flex items-center gap-2 px-6 py-4 font-medium transition-all duration-200 border-b-2 text-sm whitespace-nowrap ${
-                  colorClasses[tab.color]
-                }`}
+                className={`flex items-center gap-2 px-6 py-4 font-medium transition-all duration-200 border-b-2 text-sm whitespace-nowrap ${colorClasses[tab.color]
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 <span>{tab.label}</span>

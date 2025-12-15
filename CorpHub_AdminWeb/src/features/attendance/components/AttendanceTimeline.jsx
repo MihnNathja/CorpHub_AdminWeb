@@ -148,6 +148,7 @@ export default function AttendanceTimeline({ events = [] }) {
                                                 }`}
                                         />
 
+
                                         {/* Current Indicator Pulse */}
                                         {isCurrent && (
                                             <motion.div
@@ -193,8 +194,8 @@ export default function AttendanceTimeline({ events = [] }) {
                                         <div className="flex items-start justify-between gap-2 mb-1">
                                             <p
                                                 className={`text-xs font-semibold uppercase tracking-wide ${isPast
-                                                        ? "text-gray-700 dark:text-gray-300"
-                                                        : "text-gray-500 dark:text-gray-500"
+                                                    ? "text-gray-700 dark:text-gray-300"
+                                                    : "text-gray-500 dark:text-gray-500"
                                                     }`}
                                             >
                                                 {e.label}
@@ -206,11 +207,11 @@ export default function AttendanceTimeline({ events = [] }) {
                                                     initial={{ scale: 0 }}
                                                     animate={{ scale: 1 }}
                                                     className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${isCurrent
-                                                            ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
-                                                            : "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300"
+                                                        ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
+                                                        : "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300"
                                                         }`}
                                                 >
-                                                    {isCurrent ? "HIỆN TẠI" : "HOÀN THÀNH"}
+                                                    {isCurrent ? "CURRENT" : "COMPLETED"}
                                                 </motion.div>
                                             )}
                                         </div>
@@ -218,8 +219,8 @@ export default function AttendanceTimeline({ events = [] }) {
                                         <div className="flex items-baseline gap-2">
                                             <p
                                                 className={`text-xl font-bold ${isPast
-                                                        ? "text-gray-900 dark:text-white"
-                                                        : "text-gray-400 dark:text-gray-600"
+                                                    ? "text-gray-900 dark:text-white"
+                                                    : "text-gray-400 dark:text-gray-600"
                                                     }`}
                                             >
                                                 {e.time || "--:--"}
@@ -235,7 +236,7 @@ export default function AttendanceTimeline({ events = [] }) {
                                                     className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 font-semibold"
                                                 >
                                                     <div className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
-                                                    Đang diễn ra
+                                                    In progress
                                                 </motion.div>
                                             )}
                                         </div>

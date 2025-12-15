@@ -10,7 +10,7 @@ export default function TodayShiftList({
     finalShift = null,
     onSelect
 }) {
-    const today = new Date().toLocaleDateString("vi-VN", {
+    const today = new Date().toLocaleDateString("en-US", {
         weekday: "long",
         year: "numeric",
         month: "long",
@@ -28,7 +28,7 @@ export default function TodayShiftList({
                         </div>
                         <div>
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
-                                Ca làm hôm nay
+                                Today's Shifts
                             </h2>
                             <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                                 {today}
@@ -39,7 +39,7 @@ export default function TodayShiftList({
                     {/* Shift Count Badge */}
                     <div className="px-3 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800">
                         <span className="text-sm font-bold text-indigo-700 dark:text-indigo-300">
-                            {schedules.length} ca
+                            {schedules.length} shifts
                         </span>
                     </div>
                 </div>
@@ -54,10 +54,10 @@ export default function TodayShiftList({
                         <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                         <div>
                             <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
-                                💡 Gợi ý ca làm phù hợp
+                                💡 Suggested shift
                             </p>
                             <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
-                                Ca <span className="font-semibold">{suggestedShift.shift?.name}</span> được đề xuất dựa trên thời gian hiện tại
+                                Shift <span className="font-semibold">{suggestedShift.shift?.name}</span> is suggested based on the current time
                             </p>
                         </div>
                     </motion.div>
@@ -107,10 +107,10 @@ export default function TodayShiftList({
                     <Clock className="w-12 h-12 text-gray-300 dark:text-gray-700 mx-auto" />
                     <div>
                         <p className="font-semibold text-gray-700 dark:text-gray-300">
-                            Không có ca làm hôm nay
+                            No shifts today
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            Bạn không được phân công ca làm việc trong ngày
+                            You are not scheduled to work today
                         </p>
                     </div>
                 </motion.div>
@@ -125,25 +125,25 @@ export default function TodayShiftList({
                     className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700"
                 >
                     <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-3">
-                        Chú thích
+                        Legend
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full bg-amber-500 ring-2 ring-amber-200 dark:ring-amber-800" />
                             <span className="text-xs text-gray-700 dark:text-gray-300">
-                                Ca được gợi ý
+                                Suggested shift
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full bg-blue-500 ring-2 ring-blue-200 dark:ring-blue-800" />
                             <span className="text-xs text-gray-700 dark:text-gray-300">
-                                Ca đã chọn
+                                Selected shift
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-emerald-200 dark:ring-emerald-800" />
                             <span className="text-xs text-gray-700 dark:text-gray-300">
-                                Ca đang làm
+                                Current shift
                             </span>
                         </div>
                     </div>
@@ -159,7 +159,7 @@ export default function TodayShiftList({
                     className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 justify-center"
                 >
                     <AlertCircle className="w-4 h-4" />
-                    <span>Nhấn vào ca làm để chọn</span>
+                    <span>Click a shift to select</span>
                 </motion.div>
             )}
         </div>

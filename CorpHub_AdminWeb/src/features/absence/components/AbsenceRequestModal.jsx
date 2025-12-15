@@ -66,7 +66,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
         const payload = {
           objectKey: editingItem.attachmentId || null,
           url: editingItem.attachmentUrl,
-          fileName: editingItem.attachmentName || "Tệp đính kèm",
+          fileName: editingItem.attachmentName || "Attachment",
         };
         dispatch(setDraftAttachment(payload));
       } else {
@@ -94,17 +94,17 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
   const validate = () => {
     const newErrors = {};
     if (!form.absenceTypeId)
-      newErrors.absenceTypeId = "Vui lòng chọn loại nghỉ";
-    if (!form.startDate) newErrors.startDate = "Vui lòng chọn ngày bắt đầu";
-    if (!form.endDate) newErrors.endDate = "Vui lòng chọn ngày kết thúc";
+      newErrors.absenceTypeId = "Please select absence type";
+    if (!form.startDate) newErrors.startDate = "Please select start date";
+    if (!form.endDate) newErrors.endDate = "Please select end date";
     if (
       form.startDate &&
       form.endDate &&
       dayjs(form.endDate).isBefore(dayjs(form.startDate))
     ) {
-      newErrors.endDate = "Ngày kết thúc phải sau ngày bắt đầu";
+      newErrors.endDate = "End date must be after start date";
     }
-    if (!form.reason.trim()) newErrors.reason = "Vui lòng nhập lý do";
+    if (!form.reason.trim()) newErrors.reason = "Please enter reason";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -176,7 +176,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error(err);
-      showError("Không thể tải tệp xuống");
+      showError("Cannot download file");
     }
   };
 
@@ -219,12 +219,12 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold">
-                    {editingItem ? "Chỉnh sửa đơn nghỉ" : "Tạo đơn nghỉ mới"}
+                    {editingItem ? "Edit Absence Request" : "Create New Absence Request"}
                   </h2>
                   <p className="text-xs text-white/80">
                     {editingItem
-                      ? "Cập nhật thông tin đơn nghỉ"
-                      : "Điền thông tin đơn xin nghỉ phép"}
+                      ? "Update absence request information"
+                      : "Fill in absence request information"}
                   </p>
                 </div>
               </div>
@@ -246,22 +246,21 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
             <div>
               <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                Loại nghỉ phép
+                Absence Type
               </label>
               <select
                 name="absenceTypeId"
                 value={form.absenceTypeId}
                 onChange={handleChange}
                 className={`w-full px-4 py-3 rounded-xl border-2 transition-all
-                                    ${
-                                      errors.absenceTypeId
-                                        ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
-                                        : "border-gray-200 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20"
-                                    }
+                                    ${errors.absenceTypeId
+                    ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
+                    : "border-gray-200 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20"
+                  }
                                     bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
                                     focus:outline-none cursor-pointer`}
               >
-                <option value="">-- Chọn loại nghỉ --</option>
+                <option value="">-- Select absence type --</option>
                 {absenceTypes.map((type) => (
                   <option key={type.id} value={type.id}>
                     {type.name}
@@ -290,11 +289,11 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                     <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
                       <p className="text-xs font-semibold text-amber-800 dark:text-amber-300">
-                        Yêu cầu minh chứng
+                        Proof Required
                       </p>
                       <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
-                        Loại nghỉ này cần có giấy tờ chứng minh. Vui lòng tải
-                        lên tệp liên quan.
+                        This absence type requires supporting documents. Please
+                        upload related files.
                       </p>
 
                       {/* Upload area */}
@@ -311,7 +310,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                               await uploadAttachment(file);
                             } catch (err) {
                               console.error(err);
-                              showError("Upload thất bại");
+                              showError("Upload failed");
                             } finally {
                               // clear the input so same file can be picked again if needed
                               e.target.value = null;
@@ -326,17 +325,17 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                               onClick={() => fileInputRef.current?.click()}
                               className="px-3 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm font-semibold hover:bg-gray-100 transition-colors"
                             >
-                              Chọn tệp
+                              Choose File
                             </button>
                             <p className="text-xs text-gray-600 dark:text-gray-400">
-                              PDF, ảnh (tối đa 10MB)
+                              PDF, Image (max 10MB)
                             </p>
                           </div>
                         )}
 
                         {uploading && (
                           <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
-                            Đang tải lên...
+                            Uploading...
                           </p>
                         )}
 
@@ -358,7 +357,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                                   {(draftAttachment &&
                                     draftAttachment.fileName) ||
                                     editingItem?.attachmentName ||
-                                    "Tệp đính kèm"}
+                                    "Attachment"}
                                 </a>
                               </div>
                               <button
@@ -367,7 +366,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                                 className="inline-flex items-center gap-1 ml-2 text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 px-2 py-1 rounded border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors flex-shrink-0"
                               >
                                 <Download className="w-3.5 h-3.5" />
-                                Tải
+                                Download
                               </button>
                             </div>
 
@@ -404,12 +403,12 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                                     }
                                   } catch (err) {
                                     console.error(err);
-                                    showError("Thay thế tệp thất bại");
+                                    showError("Failed to replace file");
                                   }
                                 }}
                                 className="text-xs px-3 py-1.5 rounded border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors font-semibold"
                               >
-                                Thay đổi
+                                Change
                               </button>
                               <button
                                 type="button"
@@ -428,12 +427,12 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                                     }
                                   } catch (err) {
                                     console.error(err);
-                                    showError("Xóa tệp thất bại");
+                                    showError("Failed to delete file");
                                   }
                                 }}
                                 className="text-xs px-3 py-1.5 rounded border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-300 bg-rose-50 dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/30 transition-colors font-semibold"
                               >
-                                Xóa
+                                Delete
                               </button>
                             </div>
                           </div>
@@ -451,7 +450,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  Từ ngày
+                  From date
                 </label>
                 <input
                   type="date"
@@ -459,11 +458,10 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                   value={form.startDate}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-xl border-2 transition-all
-                                        ${
-                                          errors.startDate
-                                            ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
-                                            : "border-gray-200 dark:border-gray-700 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20"
-                                        }
+                                        ${errors.startDate
+                      ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
+                      : "border-gray-200 dark:border-gray-700 focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20"
+                    }
                                         bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
                                         focus:outline-none cursor-pointer`}
                 />
@@ -483,7 +481,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                  Đến ngày
+                  To date
                 </label>
                 <input
                   type="date"
@@ -491,11 +489,10 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                   value={form.endDate}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-xl border-2 transition-all
-                                        ${
-                                          errors.endDate
-                                            ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
-                                            : "border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-4 focus:ring-purple-500/20"
-                                        }
+                                        ${errors.endDate
+                      ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
+                      : "border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-4 focus:ring-purple-500/20"
+                    }
                                         bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
                                         focus:outline-none cursor-pointer`}
                 />
@@ -525,10 +522,10 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                      Tổng số ngày nghỉ
+                      Total absence days
                     </p>
                     <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                      {days} ngày
+                      {days} days
                     </p>
                   </div>
                 </div>
@@ -539,20 +536,19 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
             <div>
               <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 <FileText className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                Lý do nghỉ phép
+                Absence Reason
               </label>
               <textarea
                 name="reason"
                 value={form.reason}
                 onChange={handleChange}
-                placeholder="Vui lòng mô tả rõ lý do xin nghỉ phép..."
+                placeholder="Please describe the reason for your absence request..."
                 rows={4}
                 className={`w-full px-4 py-3 rounded-xl border-2 transition-all
-                                    ${
-                                      errors.reason
-                                        ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
-                                        : "border-gray-200 dark:border-gray-700 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/20"
-                                    }
+                                    ${errors.reason
+                    ? "border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
+                    : "border-gray-200 dark:border-gray-700 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/20"
+                  }
                                     bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
                                     placeholder:text-gray-400 dark:placeholder:text-gray-500
                                     focus:outline-none resize-none`}
@@ -591,7 +587,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
               }}
               className="px-5 py-2.5 rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
-              Hủy bỏ
+              Cancel
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -600,7 +596,7 @@ const AbsenceRequestModal = ({ onClose, onSubmit, editingItem }) => {
               className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2"
             >
               <CheckCircle className="w-4 h-4" />
-              {editingItem ? "Cập nhật" : "Gửi đơn"}
+              {editingItem ? "Update" : "Submit"}
             </motion.button>
           </div>
         </motion.div>
