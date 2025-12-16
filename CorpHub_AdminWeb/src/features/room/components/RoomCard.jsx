@@ -6,19 +6,19 @@ const statusConfigs = {
         className:
             "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-100 dark:border-emerald-800",
         dot: "bg-emerald-500",
-        label: "Sẵn sàng",
+        label: "Available",
     },
     RESERVED: {
         className:
             "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-100 dark:border-amber-800",
         dot: "bg-amber-500",
-        label: "Đang dùng",
+        label: "In use",
     },
     MAINTENANCE: {
         className:
             "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-900/30 dark:text-rose-100 dark:border-rose-800",
         dot: "bg-rose-500",
-        label: "Bảo trì",
+        label: "Maintenance",
     },
 };
 
@@ -46,7 +46,7 @@ const RoomCard = ({ room, onClick }) => {
         className:
             "bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800/60 dark:text-gray-200 dark:border-gray-700",
         dot: "bg-gray-400",
-        label: room.status || "Không rõ",
+        label: room.status || "Unknown",
     };
 
     const assets = room.assets || [];
@@ -66,7 +66,7 @@ const RoomCard = ({ room, onClick }) => {
                         {room.name}
                     </h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {room.department?.name || "Phòng chung"}
+                        {room.department?.name || "Common room"}
                     </p>
                 </div>
                 <span
@@ -81,19 +81,19 @@ const RoomCard = ({ room, onClick }) => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                 <StatItem
                     icon={Building2}
-                    label="Loại phòng"
+                    label="Room type"
                     value={room.type?.name || "—"}
                     color="blue"
                 />
                 <StatItem
                     icon={Users}
-                    label="Sức chứa"
-                    value={`${room.capacity ?? "—"} chỗ`}
+                    label="Capacity"
+                    value={`${room.capacity ?? "—"} people`}
                     color="indigo"
                 />
                 <StatItem
                     icon={Square}
-                    label="Diện tích"
+                    label="Area"
                     value={`${room.area ?? "—"} m²`}
                     color="teal"
                 />
@@ -114,12 +114,12 @@ const RoomCard = ({ room, onClick }) => {
                     {remainingAssets.length > 0 && (
                         <div className="relative group">
                             <span className="px-3 py-1 text-xs rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-100 dark:border-blue-800">
-                                +{remainingAssets.length} thiết bị
+                                +{remainingAssets.length} equipment
                             </span>
                             <div className="absolute z-20 hidden group-hover:block top-full left-0 mt-2 w-60 p-3 rounded-xl bg-gray-900 text-white text-xs shadow-2xl border border-gray-700">
                                 <div className="flex items-center gap-2 mb-2 text-gray-200">
                                     <Info className="w-4 h-4" />
-                                    <span>Thiết bị khác</span>
+                                    <span>Other equipment</span>
                                 </div>
                                 <div className="space-y-1 max-h-40 overflow-auto pr-1">
                                     {remainingAssets.map((asset) => (
@@ -134,7 +134,7 @@ const RoomCard = ({ room, onClick }) => {
                 </div>
             ) : (
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Không có thiết bị được khai báo.
+                    No equipment registered.
                 </p>
             )}
         </div>

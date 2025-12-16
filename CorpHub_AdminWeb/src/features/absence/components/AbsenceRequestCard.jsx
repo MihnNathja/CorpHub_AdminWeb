@@ -100,7 +100,7 @@ const AbsenceRequestCard = ({
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Download failed", err);
-      showError("Không thể tải tệp xuống");
+      showError("Unable to download file");
     }
   };
 
@@ -148,9 +148,8 @@ const AbsenceRequestCard = ({
 
             {/* Status Badge */}
             <span
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex-shrink-0 ${
-                statusColors[item.status]
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap flex-shrink-0 ${statusColors[item.status]
+                }`}
             >
               {item.status}
             </span>
@@ -161,7 +160,7 @@ const AbsenceRequestCard = ({
             {/* Type */}
             <div>
               <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-1">
-                Loại
+                Type
               </p>
               <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">
                 {item.absenceType?.name}
@@ -171,17 +170,17 @@ const AbsenceRequestCard = ({
             {/* Duration */}
             <div>
               <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-1">
-                Kỳ hạn
+                Duration
               </p>
               <p className="font-semibold text-gray-900 dark:text-gray-100">
-                {item.durationDays} ngày
+                {item.durationDays} days
               </p>
             </div>
 
             {/* From */}
             <div>
               <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-1">
-                Từ
+                From
               </p>
               <p className="font-semibold text-gray-900 dark:text-gray-100">
                 {dayjs(item.startDate).format("DD/MM")}
@@ -191,7 +190,7 @@ const AbsenceRequestCard = ({
             {/* To */}
             <div>
               <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wide mb-1">
-                Đến
+                To
               </p>
               <p className="font-semibold text-gray-900 dark:text-gray-100">
                 {dayjs(item.endDate).format("DD/MM")}
@@ -210,7 +209,7 @@ const AbsenceRequestCard = ({
                 {item.reason && (
                   <div>
                     <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5 uppercase tracking-wide">
-                      Lý do
+                      Reason
                     </p>
                     <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-3 leading-relaxed">
                       {item.reason}
@@ -226,7 +225,7 @@ const AbsenceRequestCard = ({
                       className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
                     >
                       <Paperclip className="w-4 h-4" />
-                      Tệp đính kèm
+                      Attachment
                     </a>
                     <button
                       type="button"
@@ -234,7 +233,7 @@ const AbsenceRequestCard = ({
                       className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 px-2 py-1 rounded border border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      Tải
+                      Download
                     </button>
                   </div>
                 )}
@@ -244,7 +243,7 @@ const AbsenceRequestCard = ({
             {!item.reason && !item.attachmentUrl && (
               <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg px-3.5 py-3 border border-gray-200 dark:border-gray-700">
                 <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                  Không có lý do hoặc tệp đính kèm
+                  No reason or attachment
                 </p>
               </div>
             )}
@@ -259,7 +258,7 @@ const AbsenceRequestCard = ({
                   onClick={() => setOpenHistory(!openHistory)}
                 >
                   <span className="truncate">
-                    Lịch sử ({item.workflowActions.length})
+                    History ({item.workflowActions.length})
                   </span>
                   {openHistory ? (
                     <ChevronUp className="w-4 h-4 flex-shrink-0" />
@@ -276,11 +275,10 @@ const AbsenceRequestCard = ({
                         className="flex gap-2 items-start pb-2 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
                       >
                         <div
-                          className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${
-                            a.action === "APPROVE"
+                          className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${a.action === "APPROVE"
                               ? "bg-emerald-500"
                               : "bg-rose-500"
-                          }`}
+                            }`}
                         />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-1.5 mb-1">
@@ -288,11 +286,10 @@ const AbsenceRequestCard = ({
                               {a.actorName}
                             </p>
                             <span
-                              className={`text-[10px] font-semibold px-1.5 py-0.5 rounded whitespace-nowrap flex-shrink-0 ${
-                                a.action === "APPROVE"
+                              className={`text-[10px] font-semibold px-1.5 py-0.5 rounded whitespace-nowrap flex-shrink-0 ${a.action === "APPROVE"
                                   ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
                                   : "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300"
-                              }`}
+                                }`}
                             >
                               {a.action === "APPROVE" ? "✓" : "✕"}
                             </span>
@@ -314,7 +311,7 @@ const AbsenceRequestCard = ({
             ) : (
               <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg px-3.5 py-3 border border-gray-200 dark:border-gray-700 text-center">
                 <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                  Không có lịch sử
+                  No history
                 </p>
               </div>
             )}
@@ -356,7 +353,7 @@ const AbsenceRequestCard = ({
         onAction={handleReasonSubmit}
         isAcceptDialog={dialogMode === "approve"}
         title={
-          dialogMode === "approve" ? "Phê duyệt đơn nghỉ" : "Từ chối đơn nghỉ"
+          dialogMode === "approve" ? "Approve absence request" : "Reject absence request"
         }
       />
     </>

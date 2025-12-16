@@ -41,6 +41,7 @@ const TicketTableBase = ({
 
   // Actions / handlers
   handleReject,
+  handleRemove,
   modalProps = {},
   reasonFormProps = {},
 
@@ -198,6 +199,7 @@ const TicketTableBase = ({
           setSelectedTicket(null);
           setIsModalOpen(false);
         }}
+        handleRemove={handleRemove}
         {...modalProps}
       />
 

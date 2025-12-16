@@ -21,8 +21,8 @@ export const RoomRequestList = () => {
                             <CalendarCheck className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="text-sm text-white/80">Yêu cầu đặt phòng</p>
-                            <h2 className="text-xl font-semibold">0 yêu cầu</h2>
+                            <p className="text-sm text-white/80">Room booking requests</p>
+                            <h2 className="text-xl font-semibold">0 requests</h2>
                         </div>
                     </div>
                 </div>
@@ -30,16 +30,16 @@ export const RoomRequestList = () => {
                 <div className="text-center border border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-10 bg-gray-50 dark:bg-gray-800">
                     <AlertCircle className="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500 mb-3" />
                     <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                        Hiện chưa có yêu cầu đặt phòng nào
+                        No room booking requests yet
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Các yêu cầu mới sẽ hiển thị ở đây.
+                        New requests will appear here.
                     </p>
                 </div>
             </div>
         );
 
-    /* -------------------- UI Chính -------------------- */
+    /* -------------------- Main UI -------------------- */
     return (
         <div className="animate-fade-in space-y-5">
             {/* Header summary */}
@@ -50,20 +50,20 @@ export const RoomRequestList = () => {
                             <CalendarCheck className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="text-sm text-white/80">Yêu cầu đặt phòng</p>
+                            <p className="text-sm text-white/80">Room booking requests</p>
                             <h2 className="text-xl font-semibold">
-                                {requirements.length} yêu cầu
+                                {requirements.length} requests
                             </h2>
                         </div>
                     </div>
                     <div className="flex gap-3 text-sm">
                         <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-xl">
                             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                            <span>{pendingCount} chờ phân bổ</span>
+                            <span>{pendingCount} pending allocation</span>
                         </div>
                         <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-xl">
                             <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                            <span>{requirements.length - pendingCount} đã gán</span>
+                            <span>{requirements.length - pendingCount} assigned</span>
                         </div>
                     </div>
                 </div>
@@ -81,12 +81,12 @@ export const RoomRequestList = () => {
                         className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm transition"
                     >
                         <Sparkles className="w-4 h-4" />
-                        Gợi ý phân bổ phòng
+                        Suggest room allocation
                     </button>
                 </div>
             )}
 
-            {/* Danh sách yêu cầu */}
+            {/* Request list */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {requirements.map((req) => {
                     const suggestion = allocationSuggestion?.find(

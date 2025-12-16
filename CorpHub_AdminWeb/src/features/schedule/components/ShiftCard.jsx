@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import "dayjs/locale/vi";
+import "dayjs/locale/en";
 import { motion } from "framer-motion";
 import {
     Clock,
@@ -91,12 +91,12 @@ const ShiftCard = ({ shift }) => {
                         {shift.title}
                     </div>
                     <div className="text-[10px] opacity-75 mt-0.5">
-                        {shift.status === "SCHEDULED" && "Đã lên lịch"}
-                        {shift.status === "IN_PROGRESS" && "Đang diễn ra"}
-                        {shift.status === "COMPLETED" && "Đã hoàn thành"}
-                        {shift.status === "MISSED" && "Vắng mặt"}
-                        {shift.status === "CANCELLED" && "Đã hủy"}
-                        {shift.status === "ABSENCE" && "Nghỉ phép"}
+                        {shift.status === "SCHEDULED" && "Scheduled"}
+                        {shift.status === "IN_PROGRESS" && "In progress"}
+                        {shift.status === "COMPLETED" && "Completed"}
+                        {shift.status === "MISSED" && "Missed"}
+                        {shift.status === "CANCELLED" && "Cancelled"}
+                        {shift.status === "ABSENCE" && "On leave"}
                     </div>
                 </div>
             </div>
@@ -118,8 +118,8 @@ const ShiftCard = ({ shift }) => {
                 >
                     {checkIn && (
                         <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg ${isLate
-                                ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
-                                : "bg-white/40 dark:bg-black/20"
+                            ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                            : "bg-white/40 dark:bg-black/20"
                             }`}>
                             <LogIn className="w-3 h-3 flex-shrink-0" />
                             <span className="font-semibold">Check-in:</span>
@@ -140,8 +140,8 @@ const ShiftCard = ({ shift }) => {
 
                     {checkOut && (
                         <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg ${isEarly
-                                ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
-                                : "bg-white/40 dark:bg-black/20"
+                            ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                            : "bg-white/40 dark:bg-black/20"
                             }`}>
                             <LogOut className="w-3 h-3 flex-shrink-0" />
                             <span className="font-semibold">Check-out:</span>

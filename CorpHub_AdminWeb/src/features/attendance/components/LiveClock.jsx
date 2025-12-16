@@ -31,14 +31,14 @@ export default function LiveClock({
     const startMinutes = toMinutes(shiftStartTime);
     const endMinutes = toMinutes(shiftEndTime);
 
-    // --- LOGIC TRẠNG THÁI ---
+    // --- STATE LOGIC ---
     let state = "before"; // before shift
     if (checkOutTime) state = "checked_out";
     else if (checkInTime) state = "checked_in";
     else if (startMinutes != null && nowMinutes >= startMinutes)
         state = "need_checkin";
 
-    // ✅ Late logic (phút)
+    // ✅ Late logic (minutes)
     const isLate =
         !checkInTime && startMinutes != null && nowMinutes > startMinutes;
     const lateMinutes = isLate ? nowMinutes - startMinutes : 0;
@@ -52,8 +52,8 @@ export default function LiveClock({
             badge:
                 "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800",
             icon: Clock,
-            label: "Chưa đến giờ làm",
-            subtitle: "Đợi giờ bắt đầu ca làm",
+            label: "Not time yet",
+            subtitle: "Waiting for shift start time",
         },
         need_checkin: {
             gradient: isLate
@@ -72,10 +72,10 @@ export default function LiveClock({
                 ? "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800"
                 : "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800",
             icon: isLate ? AlertCircle : Clock,
-            label: isLate ? "⚠️ Đang trễ!" : "✓ Đã đến giờ",
+            label: isLate ? "⚠️ Late!" : "✓ Time to check in",
             subtitle: isLate
-                ? "Bạn đã trễ, hãy check-in ngay"
-                : "Hãy check-in để bắt đầu ca",
+                ? "You are late, please check in now"
+                : "Check in to start your shift",
         },
         checked_in: {
             gradient: "from-emerald-500 to-teal-500",
@@ -85,8 +85,8 @@ export default function LiveClock({
             badge:
                 "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
             icon: CheckCircle2,
-            label: "✓ Đã check-in",
-            subtitle: "Bạn đang trong ca làm",
+            label: "✓ Checked in",
+            subtitle: "You are on shift",
         },
         checked_out: {
             gradient: "from-gray-400 to-slate-500",
@@ -96,14 +96,14 @@ export default function LiveClock({
             badge:
                 "bg-gray-100 dark:bg-gray-900/40 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800",
             icon: XCircle,
-            label: "✓ Đã check-out",
-            subtitle: "Ca làm đã kết thúc",
+            label: "✓ Checked out",
+            subtitle: "Shift has ended",
         },
     }[state];
 
     const StateIcon = stateConfig.icon;
 
-    // ✅ Time Remaining chuẩn theo phút
+    // ✅ Time Remaining in minutes
     let timeRemaining = null;
     if (endMinutes != null && nowMinutes < endMinutes) {
         const diff = endMinutes - nowMinutes;
@@ -145,7 +145,7 @@ export default function LiveClock({
                                 <p
                                     className={`text-xs font-semibold uppercase tracking-wider ${stateConfig.text} opacity-75`}
                                 >
-                                    Trạng thái
+                                    Status
                                 </p>
                                 <p className={`text-lg font-bold ${stateConfig.text}`}>
                                     {stateConfig.label}
@@ -157,10 +157,10 @@ export default function LiveClock({
                             className={`px-3 py-1.5 rounded-lg border text-xs font-semibold ${stateConfig.badge}`}
                         >
                             {state === "checked_in"
-                                ? "Đang làm việc"
+                                ? "Working"
                                 : state === "checked_out"
-                                    ? "Kết thúc"
-                                    : "Chờ"}
+                                    ? "Ended"
+                                    : "Waiting"}
                         </div>
                     </div>
 
@@ -192,7 +192,7 @@ export default function LiveClock({
             <div className="grid grid-cols-2 gap-3">
                 <div className={`p-4 rounded-xl border-2 text-center ${stateConfig.bg} ${stateConfig.border}`}>
                     <p className={`text-xs font-semibold ${stateConfig.text} opacity-75`}>
-                        Giờ vào
+                        Check-in time
                     </p>
                     <p className={`text-2xl font-bold ${stateConfig.text}`}>
                         {shiftStartTime || "--:--"}
@@ -206,7 +206,7 @@ export default function LiveClock({
 
                 <div className={`p-4 rounded-xl border-2 text-center ${stateConfig.bg} ${stateConfig.border}`}>
                     <p className={`text-xs font-semibold ${stateConfig.text} opacity-75`}>
-                        Giờ ra
+                        Check-out time
                     </p>
                     <p className={`text-2xl font-bold ${stateConfig.text}`}>
                         {shiftEndTime || "--:--"}
@@ -227,7 +227,7 @@ export default function LiveClock({
                     className="p-3 rounded-lg bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 border border-blue-200 dark:border-blue-800 text-center"
                 >
                     <p className="text-xs text-blue-700 dark:text-blue-300 font-semibold">
-                        ⏱️ Thời gian còn lại: <span className="font-bold text-sm">{timeRemaining}</span>
+                        ⏱️ Time remaining: <span className="font-bold text-sm">{timeRemaining}</span>
                     </p>
                 </motion.div>
             )}
@@ -235,7 +235,7 @@ export default function LiveClock({
             {/* ✅ Late Warning */}
             {isLate && state === "need_checkin" && (
                 <div className="p-3 rounded-lg bg-gradient-to-r from-red-100 to-orange-100 text-center border">
-                    ⚠️ Bạn đã trễ {lateMinutes} phút
+                    ⚠️ You are late by {lateMinutes} minutes
                 </div>
             )}
         </div>

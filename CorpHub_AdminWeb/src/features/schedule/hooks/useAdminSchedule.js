@@ -20,7 +20,7 @@ export const useAdminSchedule = () => {
   const { items, meta } = useSelector((state) => state.schedule.admin);
   const { loading, error } = useSelector((state) => state.schedule);
 
-  // ✅ Default date range: tuần hiện tại
+  // ✅ Default date range: current week
   const today = dayjs();
   const defaultFrom = today.startOf("week").add(1, "day").format("YYYY-MM-DD"); // Monday
   const defaultTo = today.endOf("week").add(1, "day").format("YYYY-MM-DD"); // Sunday
@@ -29,7 +29,7 @@ export const useAdminSchedule = () => {
   const [page, setPage] = useState(meta.page ?? 0);
   const [size, setSize] = useState(meta.size ?? 10);
 
-  // ✅ Use ISO date string, không dùng Date.now()
+  // ✅ Use ISO date string, not Date.now()
   const [from, setFrom] = useState(meta.from ?? defaultFrom);
   const [to, setTo] = useState(meta.to ?? defaultTo);
 
@@ -56,7 +56,7 @@ export const useAdminSchedule = () => {
       try {
         const res = await dispatch(autoAssignSchedules(data));
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Phân ca tự động thành công!");
+          showSuccess("Auto-assign schedules successfully!");
           dispatch(
             fetchSchedules({
               page,
@@ -67,12 +67,12 @@ export const useAdminSchedule = () => {
             })
           );
         } else {
-          showError(res.payload?.message || "Không thể phân ca!");
+          showError(res.payload?.message || "Cannot assign schedules!");
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi phân ca!");
+        showError("Error assigning schedules!");
       }
     },
     [dispatch, page, size, from, to, filters]
@@ -83,7 +83,7 @@ export const useAdminSchedule = () => {
       try {
         const res = await dispatch(createSchedule(data));
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Thêm lịch làm việc thành công!");
+          showSuccess("Work schedule added successfully!");
           dispatch(
             fetchSchedules({
               page,
@@ -94,12 +94,12 @@ export const useAdminSchedule = () => {
             })
           );
         } else {
-          showError(res.payload?.message || "Không thể thêm lịch làm việc!");
+          showError(res.payload?.message || "Cannot add work schedule!");
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi thêm lịch làm việc!");
+        showError("Error adding work schedule!");
       }
     },
     [dispatch, page, size, from, to, filters]
@@ -110,7 +110,7 @@ export const useAdminSchedule = () => {
       try {
         const res = await dispatch(updateSchedule({ id, data }));
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Cập nhật lịch làm việc thành công!");
+          showSuccess("Work schedule updated successfully!");
           dispatch(
             fetchSchedules({
               page,
@@ -122,13 +122,13 @@ export const useAdminSchedule = () => {
           );
         } else {
           showError(
-            res.payload?.message || "Không thể cập nhật lịch làm việc!"
+            res.payload?.message || "Cannot update work schedule!"
           );
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi cập nhật lịch làm việc!");
+        showError("Error updating work schedule!");
       }
     },
     [dispatch, page, size, from, to, filters]
@@ -138,7 +138,7 @@ export const useAdminSchedule = () => {
       try {
         const res = await dispatch(deleteSchedule(id));
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Xóa lịch làm việc thành công!");
+          showSuccess("Work schedule deleted successfully!");
           dispatch(
             fetchSchedules({
               page,
@@ -149,12 +149,12 @@ export const useAdminSchedule = () => {
             })
           );
         } else {
-          showError(res.payload?.message || "Không thể xóa lịch làm việc!");
+          showError(res.payload?.message || "Cannot delete work schedule!");
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi xóa lịch làm việc!");
+        showError("Error deleting work schedule!");
       }
     },
     [dispatch, page, size, from, to, filters]
@@ -211,11 +211,11 @@ export const useAdminSchedule = () => {
         link.remove();
         window.URL.revokeObjectURL(url);
 
-        showSuccess("Đã bắt đầu tải file lịch làm việc.");
+        showSuccess("Started downloading work schedule file.");
         return { success: true };
       } catch (err) {
         const message =
-          err?.data?.message || err?.message || "Xuất file thất bại";
+          err?.data?.message || err?.message || "Export file failed";
         showError(message);
         return { success: false, error: message };
       }

@@ -30,9 +30,6 @@ import { useAttachments } from "../hooks/useAttachment";
 import TicketAttachments from "./TicketAttachments";
 import { useUser } from "../../user/hooks/useUser";
 import { useNavigate } from "react-router-dom";
-import EditButton from "../../global/components/button/EditButton";
-import RejectButton from "../../global/components/button/RejectButton";
-import CompleteButton from "../../global/components/button/CompleteButton";
 
 const TicketModal = ({
   ticket,
@@ -57,7 +54,7 @@ const TicketModal = ({
   const { comments, addComment } = useComment(ticket.id);
   const { items: attachments, load, remove, download } = useAttachments();
 
-  const { employees: users } = useUser();
+  const { list: users } = useUser();
   const navigate = useNavigate();
 
   const handleCreateUser = () => {
@@ -77,9 +74,8 @@ const TicketModal = ({
       <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div
-          className={`flex justify-between items-start p-6 border-b border-gray-200 dark:border-gray-800 ${
-            statusColors[ticket.status]
-          }`}
+          className={`flex justify-between items-start p-6 border-b border-gray-200 dark:border-gray-800 ${statusColors[ticket.status]
+            }`}
         >
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
@@ -218,15 +214,14 @@ const TicketModal = ({
                   className={`w-full border rounded-lg px-3 py-2 text-sm transition-colors
                     dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100
                     focus:ring-2 focus:ring-blue-500 focus:outline-none
-                    ${
-                      !(mode === "received" && ticket.status === "WAITING")
-                        ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed opacity-60"
-                        : "bg-white hover:border-blue-400 dark:hover:border-blue-500"
+                    ${!(mode === "received" && ticket.status === "WAITING")
+                      ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed opacity-60"
+                      : "bg-white hover:border-blue-400 dark:hover:border-blue-500"
                     }`}
                 >
                   <option value="">Not Assigned</option>
                   {ticket.assignee &&
-                    !users.some((u) => u.id === ticket.assignee.id) && (
+                    !users?.some((u) => u.id === ticket.assignee.id) && (
                       <option value={ticket.assignee.id}>
                         {ticket.assignee.fullName}
                       </option>
@@ -303,9 +298,9 @@ const TicketModal = ({
             )}
 
             {(isCurrentUserAssignee && ticket.status === "IN_PROGRESS") ||
-            (isOwner &&
-              ticket.status !== "REJECTED" &&
-              ticket.status !== "DONE") ? (
+              (isOwner &&
+                ticket.status !== "REJECTED" &&
+                ticket.status !== "DONE") ? (
               <button
                 onClick={() => {
                   handleComplete(ticket.id);
@@ -323,7 +318,7 @@ const TicketModal = ({
                 onReject={() => setIsReasonFormOpen(true)}
               />
             ) : (user?.role === "ROLE_MANAGER" ||
-                user?.role === "ROLE_ADMIN") &&
+              user?.role === "ROLE_ADMIN") &&
               ticket.status === "WAITING" ? (
               <button
                 onClick={() => setIsReasonFormOpen(true)}

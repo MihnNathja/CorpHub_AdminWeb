@@ -8,11 +8,11 @@ import { useClientInfo } from "../hooks/useClientInfo";
 
 export default function LocationInfo() {
     const { lat, lng, ip, loading } = useClientInfo();
-    const [address, setAddress] = useState("Đang lấy vị trí...");
+    const [address, setAddress] = useState("Fetching location...");
     const [addressLoading, setAddressLoading] = useState(false);
     const [addressError, setAddressError] = useState(false);
 
-    // Reverse geocoding dựa trên lat/lng
+    // Reverse geocoding based on lat/lng
     useEffect(() => {
         if (!lat || !lng) return;
 
@@ -24,9 +24,9 @@ export default function LocationInfo() {
                     `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
                 );
                 const data = await res.json();
-                setAddress(data.display_name || "Không tìm thấy địa chỉ");
+                setAddress(data.display_name || "Address not found");
             } catch (err) {
-                setAddress("Lỗi khi lấy địa chỉ từ tọa độ");
+                setAddress("Failed to fetch address from coordinates");
                 setAddressError(true);
             } finally {
                 setAddressLoading(false);
@@ -57,10 +57,10 @@ export default function LocationInfo() {
                     <Loader className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-spin" />
                     <div>
                         <p className="font-semibold text-blue-900 dark:text-blue-100">
-                            Đang lấy vị trí...
+                            Fetching location...
                         </p>
                         <p className="text-xs text-blue-700 dark:text-blue-300 mt-0.5">
-                            Vui lòng cấp quyền truy cập vị trí
+                            Please allow location access
                         </p>
                     </div>
                 </motion.div>
@@ -73,10 +73,10 @@ export default function LocationInfo() {
                     <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     <div>
                         <p className="font-semibold text-emerald-900 dark:text-emerald-100">
-                            Vị trí đã được xác định
+                            Location acquired
                         </p>
                         <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">
-                            Tọa độ: {lat.toFixed(6)}, {lng.toFixed(6)}
+                            Coordinates: {lat.toFixed(6)}, {lng.toFixed(6)}
                         </p>
                     </div>
                 </motion.div>
@@ -89,10 +89,10 @@ export default function LocationInfo() {
                     <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                     <div>
                         <p className="font-semibold text-amber-900 dark:text-amber-100">
-                            Không thể lấy vị trí
+                            Unable to fetch location
                         </p>
                         <p className="text-xs text-amber-700 dark:text-amber-300 mt-0.5">
-                            Vui lòng kiểm tra cài đặt quyền truy cập
+                            Please check location permission settings
                         </p>
                     </div>
                 </motion.div>
@@ -105,7 +105,7 @@ export default function LocationInfo() {
                     <div className="flex items-center gap-2 mb-2">
                         <Navigation className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                         <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                            Tọa độ
+                            Coordinates
                         </p>
                     </div>
                     {lat && lng ? (
@@ -131,7 +131,7 @@ export default function LocationInfo() {
                         </p>
                     </div>
                     <p className="text-sm font-mono text-gray-900 dark:text-white">
-                        {ip || "Đang lấy..."}
+                        {ip || "Fetching..."}
                     </p>
                 </div>
             </div>
@@ -141,13 +141,13 @@ export default function LocationInfo() {
                 <div className="flex items-center gap-2 mb-2">
                     <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                        Địa chỉ
+                        Address
                     </p>
                 </div>
                 {addressLoading ? (
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                         <Loader className="w-3.5 h-3.5 animate-spin" />
-                        <span>Đang tìm địa chỉ...</span>
+                        <span>Fetching address...</span>
                     </div>
                 ) : addressError ? (
                     <p className="text-sm text-rose-600 dark:text-rose-400 flex items-center gap-2">
@@ -172,7 +172,7 @@ export default function LocationInfo() {
                     {/* Map Header */}
                     <div className="absolute top-0 left-0 right-0 z-[500] bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 flex items-center gap-2 shadow-lg">
                         <MapPin className="w-4 h-4" />
-                        <span className="text-sm font-semibold">Vị trí của bạn</span>
+                        <span className="text-sm font-semibold">Your location</span>
                     </div>
 
                     {/* Map Container */}
@@ -192,7 +192,7 @@ export default function LocationInfo() {
                             <Marker position={[lat, lng]} icon={markerIcon}>
                                 <Popup>
                                     <div className="text-center space-y-1">
-                                        <p className="font-semibold text-sm">📍 Bạn đang ở đây</p>
+                                        <p className="font-semibold text-sm">📍 You are here</p>
                                         <p className="text-xs text-gray-600">
                                             {lat.toFixed(6)}, {lng.toFixed(6)}
                                         </p>
@@ -205,7 +205,7 @@ export default function LocationInfo() {
                     {/* Map Footer Info */}
                     <div className="absolute bottom-0 left-0 right-0 z-[500] bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 px-4 py-2">
                         <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
-                            ℹ️ Nhấn vào marker để xem thông tin chi tiết
+                            ℹ️ Click the marker to see details
                         </p>
                     </div>
                 </motion.div>
@@ -221,10 +221,10 @@ export default function LocationInfo() {
                     <MapPin className="w-12 h-12 text-gray-300 dark:text-gray-700 mx-auto" />
                     <div>
                         <p className="font-semibold text-gray-700 dark:text-gray-300">
-                            Không có dữ liệu vị trí
+                            No location data
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            Vui lòng cho phép truy cập vị trí trong trình duyệt
+                            Please allow location access in your browser
                         </p>
                     </div>
                 </motion.div>

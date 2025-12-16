@@ -39,16 +39,16 @@ export const useAbsenceRequest = () => {
         console.log(data);
         const res = await dispatch(createAbsenceRequest(data));
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Tạo đơn nghỉ thành công!");
+          showSuccess("Absence request created successfully!");
           dispatch(fetchMyAbsenceRequests({ page, size }));
         } else {
           console.error(res);
-          showError(res.payload?.message || "Không thể tạo đơn nghỉ!");
+          showError(res.payload?.message || "Cannot create absence request!");
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi tạo đơn nghỉ!");
+        showError("Error creating absence request!");
       }
     },
     [dispatch, page, size]
@@ -59,15 +59,15 @@ export const useAbsenceRequest = () => {
       try {
         const res = await dispatch(updateAbsenceRequest({ id, data }));
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Cập nhật đơn nghỉ thành công!");
+          showSuccess("Absence request updated successfully!");
           dispatch(fetchMyAbsenceRequests({ page, size }));
         } else {
-          showError(res.payload?.message || "Không thể cập nhật đơn nghỉ!");
+          showError(res.payload?.message || "Cannot update absence request!");
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi cập nhật đơn nghỉ!");
+        showError("Error updating absence request!");
       }
     },
     [dispatch, page, size]
@@ -78,16 +78,16 @@ export const useAbsenceRequest = () => {
       try {
         const res = await dispatch(deleteAbsenceRequest(id));
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Xóa đơn nghỉ thành công!");
+          showSuccess("Absence request deleted successfully!");
           dispatch(fetchMyAbsenceRequests({ page, size }));
         } else {
           console.log(error);
-          showError(error || "Không thể xóa đơn nghỉ!");
+          showError(error || "Cannot delete absence request!");
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi xóa đơn nghỉ!");
+        showError("Error deleting absence request!");
       }
     },
     [dispatch, page, size]
@@ -98,14 +98,14 @@ export const useAbsenceRequest = () => {
       try {
         const res = await dispatch(uploadAbsenceProof(file));
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Tải lên thành công");
+          showSuccess("Uploaded successfully");
         } else {
-          showError(res.payload?.message || "Không thể tải file lên");
+          showError(res.payload?.message || "Cannot upload file");
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi tải file lên");
+        showError("Error uploading file");
       }
     },
     [dispatch]
@@ -124,14 +124,14 @@ export const useAbsenceRequest = () => {
       try {
         const res = await dispatch(deleteTempAttachment(objectKey));
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Xóa tệp thành công");
+          showSuccess("File deleted successfully");
         } else {
-          showError(res.payload?.message || "Không thể xóa tệp");
+          showError(res.payload?.message || "Cannot delete file");
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi xóa tệp");
+        showError("Error deleting file");
       }
     },
     [dispatch]
@@ -146,14 +146,14 @@ export const useAbsenceRequest = () => {
       try {
         const res = await dispatch(deleteAbsenceAttachment(requestId));
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Xóa tệp thành công");
+          showSuccess("File deleted successfully");
         } else {
-          showError(res.payload?.message || "Không thể xóa tệp");
+          showError(res.payload?.message || "Cannot delete file");
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi xóa tệp");
+        showError("Error deleting file");
       }
     },
     [dispatch]
@@ -170,14 +170,14 @@ export const useAbsenceRequest = () => {
           replaceAbsenceAttachment({ requestId, newFile })
         );
         if (res.meta.requestStatus === "fulfilled") {
-          showSuccess("Thay thế tệp thành công");
+          showSuccess("File replaced successfully");
         } else {
-          showError(res.payload?.message || "Không thể thay thế tệp");
+          showError(res.payload?.message || "Cannot replace file");
         }
         return res;
       } catch (err) {
         console.error(err);
-        showError("Lỗi khi thay thế tệp");
+        showError("Error replacing file");
       }
     },
     [dispatch]

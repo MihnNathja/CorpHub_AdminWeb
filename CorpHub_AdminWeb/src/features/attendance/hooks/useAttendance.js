@@ -25,9 +25,7 @@ export const useAttendance = () => {
 
             return res;
         } catch (err) {
-            const msg =
-                err?.message ||
-                err?.data?.message ||
+            const msg = err.message ||
                 "Không thể chấm công. Vui lòng thử lại!";
 
             showError(msg);

@@ -39,15 +39,15 @@ export const useAbsenceRequest = () => {
 
                 // ✅ Kiểm tra requestStatus
                 if (result.meta.requestStatus === "fulfilled") {
-                    showSuccess("Phê duyệt yêu cầu thành công!");
+                    showSuccess("Request approved successfully!");
                     dispatch(fetchMyApprovals());
                 } else {
-                    showError(result.payload?.message || "Không thể phê duyệt yêu cầu!");
+                    showError(result.payload?.message || "Cannot approve request!");
                 }
                 return result;
             } catch (err) {
                 console.error(err);
-                showError("Lỗi khi phê duyệt yêu cầu!");
+                showError("Error approving request!");
             }
         },
         [dispatch]
@@ -66,15 +66,15 @@ export const useAbsenceRequest = () => {
 
                 // ✅ Kiểm tra requestStatus
                 if (result.meta.requestStatus === "fulfilled") {
-                    showSuccess("Từ chối yêu cầu thành công!");
+                    showSuccess("Request rejected successfully!");
                     dispatch(fetchMyApprovals());
                 } else {
-                    showError(result.payload?.message || "Không thể từ chối yêu cầu!");
+                    showError(result.payload?.message || "Cannot reject request!");
                 }
                 return result;
             } catch (err) {
                 console.error(err);
-                showError("Lỗi khi từ chối yêu cầu!");
+                showError("Error rejecting request!");
             }
         },
         [dispatch]

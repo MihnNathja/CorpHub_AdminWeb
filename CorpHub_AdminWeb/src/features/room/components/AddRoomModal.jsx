@@ -48,11 +48,11 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
 
     const validate = () => {
         const newErrors = {};
-        if (!formData.name.trim()) newErrors.name = "Tên phòng là bắt buộc";
-        if (!formData.typeId) newErrors.typeId = "Loại phòng là bắt buộc";
-        if (!formData.capacity || formData.capacity <= 0) newErrors.capacity = "Sức chứa phải lớn hơn 0";
-        if (!formData.area || formData.area <= 0) newErrors.area = "Diện tích phải lớn hơn 0";
-        if (!formData.departmentId) newErrors.departmentId = "Phòng ban là bắt buộc";
+        if (!formData.name.trim()) newErrors.name = "Room name is required";
+        if (!formData.typeId) newErrors.typeId = "Room type is required";
+        if (!formData.capacity || formData.capacity <= 0) newErrors.capacity = "Capacity must be greater than 0";
+        if (!formData.area || formData.area <= 0) newErrors.area = "Area must be greater than 0";
+        if (!formData.departmentId) newErrors.departmentId = "Department is required";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -66,19 +66,19 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
 
     const statusConfig = {
         AVAILABLE: {
-            label: "Có sẵn",
+            label: "Available",
             color: "text-emerald-600 dark:text-emerald-400",
             bg: "bg-emerald-50 dark:bg-emerald-900/20",
             icon: CheckCircle,
         },
         RESERVED: {
-            label: "Đang sử dụng",
+            label: "In use",
             color: "text-amber-600 dark:text-amber-400",
             bg: "bg-amber-50 dark:bg-amber-900/20",
             icon: AlertCircle,
         },
         MAINTENANCE: {
-            label: "Bảo trì",
+            label: "Maintenance",
             color: "text-red-600 dark:text-red-400",
             bg: "bg-red-50 dark:bg-red-900/20",
             icon: AlertCircle,
@@ -130,10 +130,10 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                         </div>
                                         <div>
                                             <h2 className="text-xl font-bold">
-                                                {room ? "Cập nhật phòng" : "Thêm phòng mới"}
+                                                {room ? "Edit room" : "Add new room"}
                                             </h2>
                                             <p className="text-xs text-white/80">
-                                                {room ? "Chỉnh sửa thông tin phòng" : "Tạo phòng mới trong hệ thống"}
+                                                {room ? "Update room information" : "Create a new room in the system"}
                                             </p>
                                         </div>
                                     </div>
@@ -155,12 +155,12 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                 <div>
                                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                         <Building2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                                        Tên phòng <span className="text-red-500">*</span>
+                                        Room name <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         name="name"
-                                        placeholder="Nhập tên phòng..."
+                                        placeholder="Enter room name..."
                                         value={formData.name}
                                         onChange={handleChange}
                                         className={`w-full px-4 py-2.5 rounded-xl border-2 transition-all
@@ -190,7 +190,7 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                     <div>
                                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                             <Building2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                                            Loại phòng <span className="text-red-500">*</span>
+                                            Room type <span className="text-red-500">*</span>
                                         </label>
                                         <select
                                             name="typeId"
@@ -204,7 +204,7 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                                 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
                                                 focus:outline-none cursor-pointer`}
                                         >
-                                            <option value="">-- Chọn loại phòng --</option>
+                                            <option value="">-- Select room type --</option>
                                             {roomTypes?.map((type) => (
                                                 <option key={type.id} value={type.id}>
                                                     {type.name}
@@ -227,7 +227,7 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                     <div>
                                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                             <Building className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                                            Phòng ban <span className="text-red-500">*</span>
+                                            Department <span className="text-red-500">*</span>
                                         </label>
                                         <select
                                             name="departmentId"
@@ -241,7 +241,7 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                                 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
                                                 focus:outline-none cursor-pointer`}
                                         >
-                                            <option value="">-- Chọn phòng ban --</option>
+                                            <option value="">-- Select department --</option>
                                             {departments?.map((dept) => (
                                                 <option key={dept.id} value={dept.id}>
                                                     {dept.name}
@@ -267,7 +267,7 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                     <div>
                                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                             <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                                            Sức chứa <span className="text-red-500">*</span>
+                                            Capacity <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="number"
@@ -301,7 +301,7 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                     <div>
                                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                             <Maximize2 className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                                            Diện tích (m²) <span className="text-red-500">*</span>
+                                            Area (m²) <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="number"
@@ -337,7 +337,7 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                 <div>
                                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                         <CheckCircle className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                                        Trạng thái
+                                        Status
                                     </label>
                                     <div className="grid grid-cols-3 gap-2">
                                         {Object.entries(statusConfig).map(([key, config]) => {
@@ -380,7 +380,7 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                     onClick={onClose}
                                     className="px-5 py-2.5 rounded-xl border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                                 >
-                                    Hủy
+                                    Cancel
                                 </motion.button>
                                 <motion.button
                                     whileHover={{ scale: 1.02 }}
@@ -388,7 +388,7 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
                                     onClick={handleSubmit}
                                     className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-blue-500/30 transition-all"
                                 >
-                                    {room ? "Cập nhật" : "Thêm mới"}
+                                    {room ? "Update" : "Add new"}
                                 </motion.button>
                             </div>
                         </motion.div>

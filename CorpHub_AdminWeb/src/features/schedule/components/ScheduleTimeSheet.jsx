@@ -29,7 +29,7 @@ import ShiftCard from "./ShiftCard";
 dayjs.extend(isoWeek);
 dayjs.extend(weekday);
 dayjs.extend(localizedFormat);
-dayjs.locale("vi");
+dayjs.locale("en"); // Changed from "vi"
 
 const sameDay = (dateStr, d) => dayjs(dateStr).isSame(d, "day");
 
@@ -184,7 +184,7 @@ export default function ScheduleTimesheet({ departments = [] }) {
               </h2>
               <p className="text-blue-100 text-sm flex items-center gap-2 mt-1">
                 <UserGroupIcon className="w-4 h-4" />
-                <span>{schedules.length} nhân viên</span>
+                <span>{schedules.length} employees</span>
               </p>
             </div>
           </div>
@@ -202,7 +202,7 @@ export default function ScheduleTimesheet({ departments = [] }) {
               className="px-4 py-2.5 bg-white hover:bg-gray-50 text-blue-600 rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
             >
               <PlusIcon className="w-5 h-5" />
-              <span>Phân ca tự động</span>
+              <span>Auto assign shifts</span>
             </button>
           </div>
         </div>
@@ -239,24 +239,22 @@ export default function ScheduleTimesheet({ departments = [] }) {
             <div className="flex bg-white dark:bg-gray-800 rounded-lg p-1 border border-gray-300 dark:border-gray-600">
               <button
                 onClick={switchToWeek}
-                className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${
-                  view === "week"
+                className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${view === "week"
                     ? "bg-blue-600 text-white shadow-sm"
                     : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                }`}
+                  }`}
               >
-                Tuần
+                Week
               </button>
 
               <button
                 onClick={switchToMonth}
-                className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${
-                  view === "month"
+                className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${view === "month"
                     ? "bg-blue-600 text-white shadow-sm"
                     : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                }`}
+                  }`}
               >
-                Tháng
+                Month
               </button>
             </div>
 
@@ -265,14 +263,13 @@ export default function ScheduleTimesheet({ departments = [] }) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowFilters(!showFilters)}
-              className={`relative px-4 py-2.5 rounded-lg border-2 transition-all flex items-center gap-2 font-medium ${
-                hasActiveFilters
+              className={`relative px-4 py-2.5 rounded-lg border-2 transition-all flex items-center gap-2 font-medium ${hasActiveFilters
                   ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
                   : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500"
-              }`}
+                }`}
             >
               <FunnelIcon className="w-5 h-5" />
-              <span>Bộ lọc</span>
+              <span>Filters</span>
               {hasActiveFilters && (
                 <span className="absolute top-0 right-0 w-3 h-3 bg-blue-500 rounded-full transform translate-x-1 -translate-y-1"></span>
               )}
@@ -291,11 +288,11 @@ export default function ScheduleTimesheet({ departments = [] }) {
             {/* Keywords Filter */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Tìm kiếm nhân viên
+                Search employee
               </label>
               <input
                 type="text"
-                placeholder="Nhập tên hoặc mã nhân viên..."
+                placeholder="Enter name or employee ID..."
                 value={filters.keywords}
                 onChange={handleKeywordsChange}
                 className="w-full px-3 py-2.5 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-all"
@@ -305,14 +302,14 @@ export default function ScheduleTimesheet({ departments = [] }) {
             {/* Department Filter */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Phòng ban
+                Department
               </label>
               <select
                 value={filters.departmentId}
                 onChange={handleDepartmentChange}
                 className="w-full px-3 py-2.5 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-all cursor-pointer"
               >
-                <option value="">-- Tất cả phòng ban --</option>
+                <option value="">-- All departments --</option>
                 {departments.map((dept) => (
                   <option key={dept.id} value={dept.id}>
                     {dept.name}
@@ -327,15 +324,14 @@ export default function ScheduleTimesheet({ departments = [] }) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleClearFilters}
-                className={`w-full px-4 py-2.5 rounded-lg border-2 font-medium transition-all flex items-center justify-center gap-2 ${
-                  hasActiveFilters
+                className={`w-full px-4 py-2.5 rounded-lg border-2 font-medium transition-all flex items-center justify-center gap-2 ${hasActiveFilters
                     ? "border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30"
                     : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 cursor-not-allowed opacity-50"
-                }`}
+                  }`}
                 disabled={!hasActiveFilters}
               >
                 <XMarkIcon className="w-4 h-4" />
-                <span>Xóa bộ lọc</span>
+                <span>Clear filters</span>
               </motion.button>
             </div>
           </motion.div>
@@ -407,7 +403,7 @@ export default function ScheduleTimesheet({ departments = [] }) {
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-              <p className="text-gray-500 dark:text-gray-400">Đang tải...</p>
+              <p className="text-gray-500 dark:text-gray-400">Loading...</p>
             </div>
           </div>
         ) : schedules.length === 0 ? (
@@ -415,11 +411,11 @@ export default function ScheduleTimesheet({ departments = [] }) {
             <div className="text-center">
               <UserGroupIcon className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
               <p className="text-gray-500 dark:text-gray-400">
-                Không có dữ liệu
+                No data available
               </p>
               {hasActiveFilters && (
                 <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                  Thử thay đổi bộ lọc
+                  Try changing the filters
                 </p>
               )}
             </div>
@@ -437,7 +433,7 @@ export default function ScheduleTimesheet({ departments = [] }) {
             </div>
 
             <div className="sticky top-0 left-[60px] z-50 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 border-b-2 border-gray-300 dark:border-gray-600 border-l border-gray-300 dark:border-gray-600 px-4 py-3 font-semibold text-gray-700 dark:text-gray-200">
-              Nhân viên
+              Employee
             </div>
 
             {days.map((d) => {
@@ -445,18 +441,16 @@ export default function ScheduleTimesheet({ departments = [] }) {
               return (
                 <div
                   key={d.toString()}
-                  className={`sticky top-0 z-40 border-b-2 border-l border-gray-300 dark:border-gray-600 px-3 py-3 text-center ${
-                    today
+                  className={`sticky top-0 z-40 border-b-2 border-l border-gray-300 dark:border-gray-600 px-3 py-3 text-center ${today
                       ? "bg-blue-600 text-white font-bold"
                       : "bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 text-gray-700 dark:text-gray-200"
-                  }`}
+                    }`}
                 >
                   <div
-                    className={`text-xs uppercase ${
-                      today
+                    className={`text-xs uppercase ${today
                         ? "text-blue-100"
                         : "text-gray-500 dark:text-gray-400"
-                    }`}
+                      }`}
                   >
                     {d.format("dd")}
                   </div>
@@ -475,7 +469,7 @@ export default function ScheduleTimesheet({ departments = [] }) {
                   {i + 1}
                 </div>
 
-                {/* Col Nhân viên */}
+                {/* Col Employee */}
                 <div className="sticky left-[60px] z-40 bg-white dark:bg-gray-800 border-b border-l border-gray-200 dark:border-gray-700 px-4 py-4">
                   <div className="font-semibold text-gray-900 dark:text-gray-100 truncate">
                     {emp.name}
@@ -486,7 +480,7 @@ export default function ScheduleTimesheet({ departments = [] }) {
                   </div>
                 </div>
 
-                {/* Col ngày */}
+                {/* Col Date */}
                 {days.map((d) => {
                   const shifts = emp.shifts?.filter((s) =>
                     sameDay(s.workDate, d)
@@ -496,11 +490,10 @@ export default function ScheduleTimesheet({ departments = [] }) {
                   return (
                     <div
                       key={d.toString()}
-                      className={`border-b border-l border-gray-200 dark:border-gray-700 p-2 ${
-                        today
+                      className={`border-b border-l border-gray-200 dark:border-gray-700 p-2 ${today
                           ? "bg-blue-50/50 dark:bg-blue-900/10"
                           : "bg-white dark:bg-gray-800"
-                      }`}
+                        }`}
                     >
                       {!shifts || shifts.length === 0 ? (
                         <button
