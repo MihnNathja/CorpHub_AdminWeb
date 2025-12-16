@@ -13,7 +13,7 @@ import RejectModal from "./RejectModal";
 import AcceptButton from "../../global/components/button/AcceptButton";
 import RejectButton from "../../global/components/button/RejectButton";
 
-const fmtDate = (d) => (d ? new Date(d).toLocaleDateString("en-US") : "-");
+const fmtDate = (d) => (d ? new Date(d).toLocaleDateString("vi-VN") : "-");
 
 export default function PendingCompetencyPage() {
   const { pendingCompetencies, loading, error, loadPending, approve, reject } =

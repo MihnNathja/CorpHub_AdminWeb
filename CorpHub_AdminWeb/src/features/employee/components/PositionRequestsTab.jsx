@@ -91,9 +91,7 @@ export default function PositionRequestsTab() {
       ) : error ? (
         <div className="p-6 text-center text-red-500">Failed to load data</div>
       ) : items?.length === 0 ? (
-        <div className="p-6 text-center italic text-gray-500">
-          No requests
-        </div>
+        <div className="p-6 text-center italic text-gray-500">No requests</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
@@ -125,7 +123,7 @@ export default function PositionRequestsTab() {
                   <td className="px-4 py-3 border">{r.createdByName || "-"}</td>
                   <td className="px-4 py-3 border text-xs">
                     {r.createdAt
-                      ? new Date(r.createdAt).toLocaleString("en-US")
+                      ? new Date(r.createdAt).toLocaleString("vi-VN")
                       : "-"}
                   </td>
                   <td className="px-4 py-3 border">
@@ -140,7 +138,7 @@ export default function PositionRequestsTab() {
                   <td className="px-4 py-3 border">{r.type || "-"}</td>
                   <td className="px-4 py-3 border text-xs">
                     {r.effectDate
-                      ? new Date(r.effectDate).toLocaleDateString("en-US")
+                      ? new Date(r.effectDate).toLocaleDateString("vi-VN")
                       : "-"}
                   </td>
                   <td className="px-4 py-3 border">

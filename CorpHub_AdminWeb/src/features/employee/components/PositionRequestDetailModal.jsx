@@ -59,9 +59,9 @@ const InfoItem = ({ label, value, icon }) => (
 );
 
 const formatDateTime = (val) =>
-  val ? new Date(val).toLocaleString("en-US") : "-";
+  val ? new Date(val).toLocaleString("vi-VN") : "-";
 const formatDate = (val) =>
-  val ? new Date(val).toLocaleDateString("en-US") : "-";
+  val ? new Date(val).toLocaleDateString("vi-VN") : "-";
 
 export default function PositionRequestDetailModal({
   request,
@@ -289,7 +289,7 @@ export default function PositionRequestDetailModal({
                             <div className="flex items-start justify-between gap-3">
                               <div>
                                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                                  Step {step.stepOrder || idx + 1} - {" "}
+                                  Step {step.stepOrder || idx + 1} -{" "}
                                   {step.role || "Approval"}
                                 </p>
                                 <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
@@ -367,8 +367,9 @@ export default function PositionRequestDetailModal({
 
                             {step.decision === "PENDING" && (
                               <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 italic">
-                                Waiting for {step.approver?.fullName || "approver"}
-                                {" "}to decide
+                                Waiting for{" "}
+                                {step.approver?.fullName || "approver"} to
+                                decide
                               </p>
                             )}
                           </div>

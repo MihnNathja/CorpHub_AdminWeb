@@ -120,9 +120,7 @@ export default function HRUploadDecisionPanel({
             {request.oldPositionName} → {request.newPositionName}
           </p>
           <p className="text-xs text-blue-700 dark:text-blue-300">
-            Effective date: {new Date(request.effectDate).toLocaleDateString(
-              "en-US"
-            )}
+            Hiệu lực: {new Date(request.effectDate).toLocaleDateString("vi-VN")}
           </p>
         </div>
 
@@ -206,8 +204,8 @@ export default function HRUploadDecisionPanel({
         {/* File List */}
         {selectedFiles.length > 0 && (
           <div>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Selected files ({selectedFiles.length})
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Selected files ({selectedFiles.length})
             </label>
             <div className="mt-2 space-y-2">
               {selectedFiles.map((file, idx) => (
@@ -261,8 +259,8 @@ export default function HRUploadDecisionPanel({
             size={16}
             className="text-yellow-600 flex-shrink-0 mt-0.5"
           />
-            <p className="text-xs text-yellow-700 dark:text-yellow-200">
-              Once upload succeeds, the request will be completed.
+          <p className="text-xs text-yellow-700 dark:text-yellow-200">
+            Once upload succeeds, the request will be completed.
           </p>
         </div>
       </div>
@@ -289,9 +287,7 @@ export default function HRUploadDecisionPanel({
           disabled={uploading || selectedFiles.length === 0}
           className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition"
         >
-          {uploading
-            ? `Uploading ${Math.round(uploadProgress)}%...`
-            : "Upload"}
+          {uploading ? `Uploading ${Math.round(uploadProgress)}%...` : "Upload"}
         </button>
         <button
           onClick={onClose}

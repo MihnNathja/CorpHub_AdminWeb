@@ -62,9 +62,7 @@ export default function HRFinalizationTab() {
 
       {/* List */}
       {loading ? (
-        <div className="p-6 text-center text-gray-500">
-          Loading requests...
-        </div>
+        <div className="p-6 text-center text-gray-500">Loading requests...</div>
       ) : error ? (
         <div className="p-6 text-center text-red-500">Failed to load data</div>
       ) : items.length === 0 ? (
@@ -110,7 +108,7 @@ export default function HRFinalizationTab() {
                   </td>
                   <td className="px-4 py-3 border text-xs">
                     {req.effectDate
-                      ? new Date(req.effectDate).toLocaleDateString("en-US")
+                      ? new Date(req.effectDate).toLocaleDateString("vi-VN")
                       : "-"}
                   </td>
                   <td className="px-4 py-3 border text-xs">
@@ -151,8 +149,8 @@ export default function HRFinalizationTab() {
       {items.length > 0 && (
         <div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            Showing {startIdx + 1}-{Math.min(endIdx, items.length)} of {items.length}
-            {" "}requests
+            Showing {startIdx + 1}-{Math.min(endIdx, items.length)} of{" "}
+            {items.length} requests
           </p>
           <div className="flex items-center gap-2">
             <button

@@ -48,9 +48,7 @@ export default function PositionRequestList({ employeeId, onView }) {
                     {r.id?.slice ? r.id.slice(0, 8) : r.id}
                   </td>
                   <td className="py-2">
-                    {r.createdAt
-                      ? new Date(r.createdAt).toLocaleString("en-US")
-                      : "-"}
+                    {r.createdAt ? new Date(r.createdAt).toLocaleString() : "-"}
                   </td>
                   <td className="py-2">{r.createdByName || "-"}</td>
                   <td className="py-2">{r.oldPositionName || "-"}</td>
@@ -59,7 +57,7 @@ export default function PositionRequestList({ employeeId, onView }) {
                   <td className="py-2">{r.type || "-"}</td>
                   <td className="py-2">
                     {r.effectDate
-                      ? new Date(r.effectDate).toLocaleDateString("en-US")
+                      ? new Date(r.effectDate).toLocaleDateString()
                       : "-"}
                   </td>
                   <td className="py-2">{r.status || "-"}</td>
