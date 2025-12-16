@@ -45,18 +45,27 @@ const EmployeePage = () => {
   ];
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-inner p-6">
-      <div className="mb-4 flex flex-col gap-1">
-        <h2 className="text-2xl dark:text-gray-100 font-bold">
-          Employee Management
-        </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Manage employee records, approvals, and status tracking in one place.
+    <div className="space-y-6">
+      {/* Hero Header */}
+      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-2xl p-6 shadow-lg border border-white/10">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2.5 rounded-xl bg-white/15 backdrop-blur-sm">
+            <Users className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-sm text-white/80 uppercase tracking-wide">
+              Workforce
+            </p>
+            <h1 className="text-3xl font-bold">Employee Management</h1>
+          </div>
+        </div>
+        <p className="text-sm text-white/70 mt-2 ml-13">
+          Manage employee records, approvals, and position workflows
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm mb-3">
+      {/* Tabs Card */}
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
         <div className="flex border-b border-gray-200 dark:border-gray-800 overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -80,20 +89,18 @@ const EmployeePage = () => {
         </div>
 
         {tabs.find((t) => t.key === activeTab)?.description && (
-          <div className="px-4 py-3 bg-indigo-50/60 dark:bg-indigo-900/15 text-sm text-gray-700 dark:text-gray-200 flex items-center gap-2 border-t border-gray-200 dark:border-gray-800">
+          <div className="px-6 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2 border-t border-gray-200 dark:border-gray-800">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
             {tabs.find((t) => t.key === activeTab)?.description}
           </div>
         )}
-      </div>
-
-      {/* Content */}
-      <div className="mt-4 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 bg-white dark:bg-gray-800 shadow-sm">
-        {activeTab === "list" && <EmployeeTable />}
-        {activeTab === "add" && <EmployeeProfileForm />}
-        {activeTab === "pendingCompetency" && <PendingCompetencyPage />}
-        {activeTab === "positionRequests" && <PositionRequestsTab />}
-        {activeTab === "hrFinalization" && <HRFinalizationTab />}
+        <div className="p-6 animate-fade-in">
+          {activeTab === "list" && <EmployeeTable />}
+          {activeTab === "add" && <EmployeeProfileForm />}
+          {activeTab === "pendingCompetency" && <PendingCompetencyPage />}
+          {activeTab === "positionRequests" && <PositionRequestsTab />}
+          {activeTab === "hrFinalization" && <HRFinalizationTab />}
+        </div>
       </div>
     </div>
   );
