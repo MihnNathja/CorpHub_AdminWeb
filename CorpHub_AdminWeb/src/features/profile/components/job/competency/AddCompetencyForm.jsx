@@ -31,10 +31,10 @@ export default function AddCompetencyForm({ profile, onCancel, onAdded }) {
 
   const handleSubmit = () => {
     if (!form.name)
-      return setError("Vui lòng nhập tên chứng chỉ hoặc kỹ năng!");
-    if (!form.typeId) return setError("Vui lòng chọn loại năng lực!");
-    if (!form.levelName) return setError("Vui lòng chọn hoặc nhập cấp độ!");
-    if (!canSubmit) return setError("Vui lòng tải lên hoặc chọn file!");
+      return setError("Please enter a certificate or skill name!");
+    if (!form.typeId) return setError("Please select a competency type!");
+    if (!form.levelName) return setError("Please select or enter a level!");
+    if (!canSubmit) return setError("Please upload or select a file!");
 
     const payload = { ...form, verificationStatus: "PENDING" };
     onAdded?.(payload);
@@ -44,12 +44,10 @@ export default function AddCompetencyForm({ profile, onCancel, onAdded }) {
   return (
     <div className="border rounded-xl p-4 bg-white shadow-sm">
       <h4 className="font-medium mb-3 text-sm flex items-center gap-2">
-        ➕ Thêm chứng chỉ / kỹ năng
+        ➕ Add certificate / skill
       </h4>
 
-      {loading && (
-        <p className="text-xs text-gray-500 mb-2">Đang tải dữ liệu...</p>
-      )}
+      {loading && <p className="text-xs text-gray-500 mb-2">Loading data...</p>}
 
       <CompetencyBasicInfo
         form={form}
@@ -87,7 +85,7 @@ export default function AddCompetencyForm({ profile, onCancel, onAdded }) {
           onClick={onCancel}
           className="px-4 py-2 border rounded text-sm hover:bg-gray-50"
         >
-          Hủy
+          Cancel
         </button>
         <button
           disabled={!canSubmit}
@@ -98,7 +96,7 @@ export default function AddCompetencyForm({ profile, onCancel, onAdded }) {
               : "bg-gray-400 cursor-not-allowed"
           }`}
         >
-          Thêm năng lực
+          Add competency
         </button>
       </div>
     </div>

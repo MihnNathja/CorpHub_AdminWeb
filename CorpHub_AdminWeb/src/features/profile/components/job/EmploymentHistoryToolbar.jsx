@@ -20,7 +20,7 @@ const EmploymentHistoryToolbar = ({
       <input
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="🔍 Tìm phòng ban, chức vụ, ghi chú..."
+        placeholder="🔍 Search department, position, notes..."
         className="border rounded-xl px-3 py-1.5 text-sm w-full md:w-64"
       />
 
@@ -29,7 +29,7 @@ const EmploymentHistoryToolbar = ({
         onChange={(e) => setDept(e.target.value)}
         className="border rounded-xl px-3 py-1.5 text-sm"
       >
-        <option value="">Phòng ban (tất cả)</option>
+        <option value="">Department (all)</option>
         {deptOptions.map((d) => (
           <option key={d} value={d}>
             {d}
@@ -42,7 +42,7 @@ const EmploymentHistoryToolbar = ({
         onChange={(e) => setContract(e.target.value)}
         className="border rounded-xl px-3 py-1.5 text-sm"
       >
-        <option value="">Hợp đồng (tất cả)</option>
+        <option value="">Contract (all)</option>
         {contractOptions.map((c) => (
           <option key={c} value={c}>
             {c}
@@ -56,17 +56,17 @@ const EmploymentHistoryToolbar = ({
           onChange={(e) => setSortKey(e.target.value)}
           className="border rounded-xl px-3 py-1.5 text-sm"
         >
-          <option value="startDate">Sắp xếp theo ngày bắt đầu</option>
-          <option value="endDate">Sắp xếp theo ngày kết thúc</option>
+          <option value="startDate">Sort by start date</option>
+          <option value="endDate">Sort by end date</option>
         </select>
 
         <button
           onClick={() => setSortDir(sortDir === "asc" ? "desc" : "asc")}
           className="px-3 py-1.5 text-sm border rounded-xl hover:bg-gray-50 flex items-center gap-1"
-          title="Đảo chiều sắp xếp"
+          title="Toggle sort direction"
         >
           <ArrowUpDown size={14} />{" "}
-          {sortDir === "asc" ? "Tăng dần" : "Giảm dần"}
+          {sortDir === "asc" ? "Ascending" : "Descending"}
         </button>
       </div>
     </div>

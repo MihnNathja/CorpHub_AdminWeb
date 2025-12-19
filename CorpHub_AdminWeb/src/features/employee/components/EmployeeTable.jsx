@@ -127,9 +127,6 @@ const EmployeeTable = () => {
                       className="h-11 w-11 rounded-full object-cover border border-gray-200 dark:border-gray-700 shadow-sm"
                     />
                     <div className="flex flex-col text-xs text-gray-500 dark:text-gray-300">
-                      <span className="font-semibold text-gray-800 dark:text-gray-100">
-                        {emp.fullName}
-                      </span>
                       {emp.code && <span>Code: {emp.code}</span>}
                     </div>
                   </div>

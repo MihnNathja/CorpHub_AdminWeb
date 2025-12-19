@@ -110,13 +110,13 @@ const JobProfileTab = ({ profiles }) => {
   return (
     <div className="space-y-8">
       {/* TÓM TẮT HIỆN TẠI */}
-      <Section title="Thông tin công việc hiện tại">
+      <Section title="Current job information">
         <CurrentJobSummary current={current} />
       </Section>
 
       {/* LỊCH SỬ LÀM VIỆC */}
       <Section
-        title="Lịch sử làm việc nội bộ"
+        title="Internal work history"
         right={
           <EmploymentHistoryToolbar
             search={search}
@@ -136,7 +136,7 @@ const JobProfileTab = ({ profiles }) => {
       >
         {loading ? (
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            Đang tải dữ liệu...
+            Loading data...
           </div>
         ) : (
           <EmploymentHistoryTable
@@ -148,7 +148,7 @@ const JobProfileTab = ({ profiles }) => {
 
       {loadingRequestDetail && (
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Đang tải chi tiết yêu cầu...
+          Loading request details...
         </p>
       )}
 

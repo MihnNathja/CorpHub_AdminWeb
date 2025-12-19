@@ -204,7 +204,7 @@ const AccountSettingsTab = ({ profile }) => {
       </Section>
 
       {/* ==================== Security ==================== */}
-      <Section title="Security">
+      {/* <Section title="Security">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-5 h-5 text-gray-500" />
@@ -217,10 +217,10 @@ const AccountSettingsTab = ({ profile }) => {
           </div>
           <ToggleSwitch enabled={settings.twoFactor} onToggle={toggle2FA} />
         </div>
-      </Section>
+      </Section> */}
 
       {/* ==================== Notifications ==================== */}
-      <Section title="Notifications">
+      {/* <Section title="Notifications">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -252,17 +252,17 @@ const AccountSettingsTab = ({ profile }) => {
             />
           </div>
         </div>
-      </Section>
+      </Section> */}
 
       {/* ==================== Lưu thay đổi ==================== */}
-      <div className="flex justify-end">
+      {/* <div className="flex justify-end">
         <button
           onClick={handleSave}
           className="px-5 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"
         >
           Save changes
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

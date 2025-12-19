@@ -13,13 +13,13 @@ const DepartmentTreePage = ({
   const [selectedDept, setSelectedDept] = useState(null);
   const [managerModalOpen, setManagerModalOpen] = useState(false);
 
-  // mở modal chọn manager
+  // Open manager selection modal
   const handleOpenAssignManager = (dept) => {
     setSelectedDept(dept);
     setManagerModalOpen(true);
   };
 
-  // callback khi chọn manager
+  // Callback after selecting manager
   const handleSelectManager = async (user) => {
     console.log("Select Manager:", selectedDept);
     await onAssignManager(selectedDept.id, user.userId);
@@ -31,7 +31,7 @@ const DepartmentTreePage = ({
       {/* HEADER */}
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-          Cơ cấu tổ chức
+          Organization structure
         </h1>
       </div>
 
@@ -45,7 +45,7 @@ const DepartmentTreePage = ({
         onMoveDepartment={onMoveDepartment}
       />
 
-      {/* MODAL CHỌN MANAGER */}
+      {/* Manager selection modal */}
       <AssignManagerModal
         open={managerModalOpen}
         dept={selectedDept}

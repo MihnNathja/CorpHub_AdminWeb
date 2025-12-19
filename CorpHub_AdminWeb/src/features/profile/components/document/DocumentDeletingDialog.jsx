@@ -41,10 +41,10 @@ export default function DocumentDeleteDialog({
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-gray-800">
-                  Xóa tài liệu
+                  Delete document
                 </h2>
                 <p className="text-sm text-gray-500 truncate max-w-[250px]">
-                  {document?.title || "Không rõ tiêu đề"}
+                  {document?.title || "Untitled"}
                 </p>
               </div>
             </div>
@@ -54,14 +54,14 @@ export default function DocumentDeleteDialog({
               {checking ? (
                 <div className="flex flex-col items-center text-gray-500 py-4">
                   <Loader2 size={22} className="animate-spin mb-2" />
-                  <span>Đang kiểm tra liên kết...</span>
+                  <span>Checking relations...</span>
                 </div>
               ) : relationInfo?.hasRelations ? (
                 <div className="w-full bg-red-50 border border-red-200 rounded-lg p-3">
                   <div className="flex items-center gap-2 text-red-700 mb-1">
                     <AlertCircle size={18} />
                     <span className="font-medium">
-                      Không thể xóa — tài liệu đang được sử dụng trong:
+                      Cannot delete — this document is used in:
                     </span>
                   </div>
                   <div className="max-h-[150px] overflow-y-auto">
@@ -76,9 +76,9 @@ export default function DocumentDeleteDialog({
                 <div className="flex flex-col items-center text-gray-600 text-sm text-center py-3">
                   <CheckCircle2 size={22} className="text-green-500 mb-2" />
                   <p>
-                    Tài liệu này không được liên kết với chứng chỉ nào.
+                    This document is not linked to any competency.
                     <br />
-                    Bạn có thể xóa an toàn.
+                    It is safe to delete.
                   </p>
                 </div>
               )}
@@ -91,7 +91,7 @@ export default function DocumentDeleteDialog({
                 disabled={deleting}
                 className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-1"
               >
-                <X size={14} /> Hủy
+                <X size={14} /> Cancel
               </button>
 
               {!checking && !relationInfo?.hasRelations && (
@@ -105,12 +105,12 @@ export default function DocumentDeleteDialog({
                   {deleting ? (
                     <>
                       <Loader2 size={16} className="animate-spin" />
-                      Đang xóa...
+                      Deleting...
                     </>
                   ) : (
                     <>
                       <AlertCircle size={16} />
-                      Xóa tài liệu
+                      Delete document
                     </>
                   )}
                 </motion.button>

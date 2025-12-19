@@ -26,46 +26,47 @@ const typeConfig = {
 
 const getConfig = (type) => typeConfig[type] || typeConfig.DEFAULT;
 
-const formatDate = (d) => (d ? new Date(d).toLocaleDateString("vi-VN") : "-");
+const formatDate = (d) => (d ? new Date(d).toLocaleDateString("en-US") : "-");
 
 // ===== MOCK DỮ LIỆU =====
 const items = [
   {
     type: "JOIN",
-    title: "Gia nhập công ty",
+    title: "Joined the company",
     date: "2020-06-01",
-    description: "Bắt đầu làm việc tại Phòng Kỹ thuật - Dự án nội bộ HRM.",
-    confirmedBy: "Trần Thị B (Trưởng phòng)",
+    description:
+      "Started working in the Engineering Department on the internal HRM project.",
+    confirmedBy: "Ms. B, Department Head",
   },
   {
     type: "PROMOTION",
-    title: "Thăng chức Kỹ sư chính",
+    title: "Promoted to Senior Engineer",
     date: "2022-09-15",
-    description:
-      "Được bổ nhiệm chức danh Kỹ sư chính, phụ trách nhóm frontend.",
-    related: "Quyết định số 12/QĐ-2022",
-    confirmedBy: "Phòng Nhân sự",
+    description: "Appointed as Senior Engineer, leading the frontend group.",
+    related: "Decision No. 12/QD-2022",
+    confirmedBy: "Human Resources Department",
     fileUrl: "/docs/quyetdinh12.pdf",
   },
   {
     type: "AWARD",
-    title: "Nhân viên xuất sắc quý I/2023",
+    title: "Outstanding employee Q1 2023",
     date: "2023-03-30",
-    description: "Đạt thành tích cao trong dự án triển khai ERP.",
+    description: "Achieved top performance in the ERP rollout project.",
   },
   {
     type: "TRANSFER",
-    title: "Điều chuyển sang Phòng Giải pháp doanh nghiệp",
+    title: "Transferred to Enterprise Solutions Department",
     date: "2024-02-01",
-    description: "Phụ trách giải pháp kỹ thuật cho khách hàng doanh nghiệp.",
-    related: "QĐ số 03/QĐ-2024",
+    description:
+      "Responsible for technical solutions for enterprise customers.",
+    related: "Decision No. 03/QD-2024",
   },
   {
     type: "PROJECT",
-    title: "Tham gia dự án nâng cấp hệ thống nhân sự",
+    title: "Joined HR system upgrade project",
     date: "2025-04-01",
-    description: "Vai trò: Technical Lead. Dự án hoàn thành tháng 8/2025.",
-    confirmedBy: "Ban Giám đốc",
+    description: "Role: Technical Lead. Project completed August 2025.",
+    confirmedBy: "Board of Directors",
   },
 ];
 
@@ -82,13 +83,13 @@ const TimelineSection = () => {
   }, []);
 
   const typeOptions = [
-    { value: "", label: "Tất cả" },
-    { value: "JOIN", label: "Gia nhập" },
-    { value: "PROMOTION", label: "Thăng chức" },
-    { value: "AWARD", label: "Khen thưởng" },
-    { value: "TRANSFER", label: "Điều chuyển" },
-    { value: "PROJECT", label: "Dự án" },
-    { value: "CERTIFICATE", label: "Chứng chỉ" },
+    { value: "", label: "All" },
+    { value: "JOIN", label: "Join" },
+    { value: "PROMOTION", label: "Promotion" },
+    { value: "AWARD", label: "Award" },
+    { value: "TRANSFER", label: "Transfer" },
+    { value: "PROJECT", label: "Project" },
+    { value: "CERTIFICATE", label: "Certificate" },
   ];
 
   // Lọc dữ liệu
@@ -105,7 +106,7 @@ const TimelineSection = () => {
   const grouped = useMemo(() => {
     const result = {};
     filtered.forEach((i) => {
-      const y = i.date ? new Date(i.date).getFullYear() : "Khác";
+      const y = i.date ? new Date(i.date).getFullYear() : "Other";
       if (!result[y]) result[y] = [];
       result[y].push(i);
     });
@@ -118,7 +119,7 @@ const TimelineSection = () => {
 
   return (
     <Section
-      title="Dòng thời gian công việc"
+      title="Work timeline"
       right={
         <div className="flex items-center gap-2">
           <Filter size={16} className="text-gray-500" />
@@ -127,7 +128,7 @@ const TimelineSection = () => {
             onChange={(e) => setYearFilter(e.target.value)}
             className="border rounded-xl px-2 py-1 text-sm text-gray-700"
           >
-            <option value="">Tất cả năm</option>
+            <option value="">All years</option>
             {yearOptions.map((y) => (
               <option key={y} value={y}>
                 {y}
@@ -150,7 +151,7 @@ const TimelineSection = () => {
     >
       {filtered.length === 0 ? (
         <p className="text-sm text-gray-400 italic mt-2">
-          Không có sự kiện nào phù hợp với bộ lọc
+          No events match the filter
         </p>
       ) : (
         <div className="relative mt-5 ml-5 border-l-2 border-gray-200">
@@ -204,7 +205,7 @@ const TimelineSection = () => {
 
                       {event.related && (
                         <p className="text-xs text-gray-500 mt-1 italic">
-                          Liên quan: {event.related}
+                          Related: {event.related}
                         </p>
                       )}
 
@@ -215,13 +216,13 @@ const TimelineSection = () => {
                           rel="noopener noreferrer"
                           className="text-xs text-blue-600 hover:underline flex items-center gap-1 mt-1"
                         >
-                          <Paperclip size={12} /> Tệp đính kèm
+                          <Paperclip size={12} /> Attachment
                         </a>
                       )}
 
                       {event.confirmedBy && (
                         <p className="text-xs text-gray-500 mt-1 italic">
-                          Xác nhận bởi: {event.confirmedBy}
+                          Verified by: {event.confirmedBy}
                         </p>
                       )}
                     </motion.div>

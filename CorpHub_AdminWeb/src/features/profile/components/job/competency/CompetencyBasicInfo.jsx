@@ -13,15 +13,13 @@ export default function CompetencyBasicInfo({
 
   return (
     <div className="space-y-5 text-sm">
-      {/* === Nhóm 1: Thông tin cơ bản === */}
+      {/* === Group 1: Basic info === */}
       <div>
-        <h5 className="font-medium text-gray-700 mb-2">
-          🧩 Thông tin năng lực
-        </h5>
+        <h5 className="font-medium text-gray-700 mb-2">🧩 Competency info</h5>
         <div className="grid grid-cols-2 gap-3">
           <input
             name="name"
-            placeholder="Tên chứng chỉ / kỹ năng"
+            placeholder="Certificate / skill name"
             value={form.name}
             onChange={handleChange}
             className="border p-2 rounded"
@@ -33,7 +31,7 @@ export default function CompetencyBasicInfo({
             onChange={handleTypeChange}
             className="border p-2 rounded"
           >
-            <option value="">-- Chọn loại năng lực --</option>
+            <option value="">-- Select competency type --</option>
             {types.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
@@ -44,7 +42,7 @@ export default function CompetencyBasicInfo({
           {showCustomLevel ? (
             <input
               name="levelName"
-              placeholder="Nhập cấp độ tùy chỉnh"
+              placeholder="Enter custom level"
               value={form.levelName}
               onChange={handleChange}
               className="border p-2 rounded col-span-2"
@@ -57,7 +55,7 @@ export default function CompetencyBasicInfo({
               className="border p-2 rounded col-span-2"
               disabled={!form.typeId}
             >
-              <option value="">-- Chọn cấp độ --</option>
+              <option value="">-- Select level --</option>
               {levelOptions.length > 0 ? (
                 levelOptions.map((lv) => (
                   <option key={lv.id} value={lv.id}>
@@ -65,27 +63,27 @@ export default function CompetencyBasicInfo({
                   </option>
                 ))
               ) : (
-                <option value="CUSTOM">Không có cấp độ - Nhập tay</option>
+                <option value="CUSTOM">No level - Enter manually</option>
               )}
               {levelOptions.length > 0 && (
-                <option value="CUSTOM">Khác...</option>
+                <option value="CUSTOM">Other...</option>
               )}
             </select>
           )}
         </div>
       </div>
 
-      {/* === Nhóm 2: Thông tin chứng chỉ === */}
+      {/* === Group 2: Certificate info === */}
       <div>
         <h5 className="font-medium text-gray-700 mb-2">
-          📄 Thông tin chứng chỉ
+          📄 Certificate information
         </h5>
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">Tổ chức cấp</label>
+            <label className="text-xs text-gray-600 mb-1">Issuer</label>
             <input
               name="issuedBy"
-              placeholder="VD: ETS, Coursera..."
+              placeholder="e.g. ETS, Coursera..."
               value={form.issuedBy}
               onChange={handleChange}
               className="border p-2 rounded"
@@ -93,7 +91,7 @@ export default function CompetencyBasicInfo({
           </div>
 
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">Ngày cấp</label>
+            <label className="text-xs text-gray-600 mb-1">Issued date</label>
             <input
               type="date"
               name="issuedDate"
@@ -104,10 +102,12 @@ export default function CompetencyBasicInfo({
           </div>
 
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">Mã chứng chỉ</label>
+            <label className="text-xs text-gray-600 mb-1">
+              Certificate code
+            </label>
             <input
               name="certificateCode"
-              placeholder="Nhập mã / số hiệu"
+              placeholder="Enter code / number"
               value={form.certificateCode}
               onChange={handleChange}
               className="border p-2 rounded"
@@ -115,22 +115,22 @@ export default function CompetencyBasicInfo({
           </div>
         </div>
 
-        {/* 🔽 Nút mở rộng tùy chọn */}
+        {/* 🔽 Toggle advanced options */}
         <button
           type="button"
           onClick={() => setShowOptional((p) => !p)}
           className="text-xs text-blue-600 mt-3 hover:underline"
         >
-          {showOptional
-            ? "Ẩn tùy chọn nâng cao ▲"
-            : "Hiển thị tùy chọn nâng cao ▼"}
+          {showOptional ? "Hide advanced options ▲" : "Show advanced options ▼"}
         </button>
 
-        {/* 🧭 Khu vực tùy chọn nâng cao */}
+        {/* 🧭 Advanced options */}
         {showOptional && (
           <div className="mt-3 grid grid-cols-2 gap-3 border-t pt-3">
             <div className="flex flex-col">
-              <label className="text-xs text-gray-600 mb-1">Ngày hết hạn</label>
+              <label className="text-xs text-gray-600 mb-1">
+                Expiration date
+              </label>
               <input
                 type="date"
                 name="expireDate"
@@ -142,7 +142,7 @@ export default function CompetencyBasicInfo({
 
             <div className="flex flex-col col-span-2">
               <label className="text-xs text-gray-600 mb-1">
-                Liên kết xác thực
+                Verification link
               </label>
               <input
                 name="verifyUrl"
@@ -154,10 +154,10 @@ export default function CompetencyBasicInfo({
             </div>
 
             <div className="flex flex-col col-span-2">
-              <label className="text-xs text-gray-600 mb-1">Ghi chú</label>
+              <label className="text-xs text-gray-600 mb-1">Notes</label>
               <textarea
                 name="note"
-                placeholder="Thêm ghi chú nội bộ (không bắt buộc)"
+                placeholder="Add internal notes (optional)"
                 value={form.note}
                 onChange={handleChange}
                 className="border p-2 rounded min-h-[80px]"

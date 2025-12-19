@@ -11,7 +11,7 @@ export const fetchPositions = createAsyncThunk(
   "positions/fetch",
   async (departmentId) => {
     const res = await getPositionsApi(departmentId);
-    console.log("Position từ API: ", res.data);
+    console.log("Positions from API: ", res.data);
     return res.data;
   }
 );
@@ -120,11 +120,11 @@ const departmentPositionSlice = createSlice({
 
         const orderedIds = action.payload;
 
-        // Sắp lại thứ tự dựa trên ID
+        // Reorder based on the provided ID list
         state.list = orderedIds.map((id, index) => {
           const pos = state.list.find((p) => p.id === id);
           if (pos) {
-            pos.levelOrder = index; // <---- cập nhật levelOrder cho FE
+            pos.levelOrder = index; // update levelOrder for the UI
           }
           return pos;
         });

@@ -35,7 +35,7 @@ export const uploadDocumentsAsync = createAsyncThunk(
     try {
       const documentIds = await uploadEmployeeDocuments(formData);
       showSuccess("Upload successfully");
-      console.log("Kết quả gọi API upload: ", documentIds);
+      console.log("Upload API result: ", documentIds);
       return documentIds;
     } catch (err) {
       showError("Upload failed");
@@ -70,7 +70,9 @@ export const downloadDocumentAsync = createAsyncThunk(
 
       return { success: true, filename };
     } catch (err) {
-      return rejectWithValue(err.response?.data || "Không thể tải tài liệu.");
+      return rejectWithValue(
+        err.response?.data || "Unable to download document."
+      );
     }
   }
 );
@@ -82,7 +84,9 @@ export const checkDocumentRelationsAsync = createAsyncThunk(
       const data = await checkDocumentRelations(id);
       return data;
     } catch (err) {
-      return rejectWithValue(err.response?.data || "Lỗi kiểm tra tài liệu");
+      return rejectWithValue(
+        err.response?.data || "Document validation failed"
+      );
     }
   }
 );
@@ -92,12 +96,12 @@ export const deleteDocumentAsync = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const res = await deleteDocument(id);
-      showSuccess("Xóa tài liệu thành công");
+      showSuccess("Document deleted successfully");
       return id; // trả về id để filter khỏi state
     } catch (err) {
       const msg =
         err.response?.data?.message ||
-        "Không thể xóa tài liệu. Có thể tài liệu đang được sử dụng.";
+        "Unable to delete the document. It may be in use.";
       showError(msg);
       return rejectWithValue(msg);
     }

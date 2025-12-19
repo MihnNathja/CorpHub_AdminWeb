@@ -8,7 +8,7 @@ const DocumentFilterBar = ({
   <div className="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
     <input
       type="text"
-      placeholder="🔍 Tìm kiếm theo tên tài liệu..."
+      placeholder="🔍 Search by document name..."
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
       className="w-full sm:w-1/2 border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -20,7 +20,7 @@ const DocumentFilterBar = ({
         onChange={(e) => setFilterType(e.target.value)}
         className="border rounded-xl px-3 py-2 text-sm text-gray-700 bg-white"
       >
-        <option value="">-- Tất cả loại tài liệu --</option>
+        <option value="">-- All document types --</option>
         {types.map((t) => (
           <option key={t.id} value={t.name}>
             {t.name}
@@ -34,7 +34,7 @@ const DocumentFilterBar = ({
         }}
         className="px-3 py-2 text-sm border rounded-xl hover:bg-gray-50 transition"
       >
-        Làm mới
+        Reset
       </button>
     </div>
   </div>

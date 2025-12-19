@@ -10,6 +10,7 @@ import {
   setManager,
   moveDepartment,
 } from "../store/departmentSlice";
+import { showSuccess } from "../../../utils/toastUtils";
 
 export const useDepartmentManagement = () => {
   const dispatch = useDispatch();
@@ -17,24 +18,25 @@ export const useDepartmentManagement = () => {
     (state) => state.department
   );
 
-  // 🔄 Tải danh sách phòng ban khi mount
+  // 🔄 Load departments when the hook mounts
   useEffect(() => {
     dispatch(loadDepartmentsWithUsers());
   }, [dispatch]);
 
-  // 🧠 Memo hóa dữ liệu để tránh re-render thừa
+  // 🧠 Memoize data to prevent unnecessary re-renders
   const stableDepartments = useMemo(() => departments || [], [departments]);
 
-  // 🔁 Tải lại danh sách (dùng cho nút refresh)
+  // 🔁 Reload list (used by the refresh button)
   const reload = useCallback(() => {
     dispatch(loadDepartmentsWithUsers());
   }, [dispatch]);
 
-  // ➕ Thêm phòng ban
+  // ➕ Create department
   const handleCreate = useCallback(
     async (data) => {
       try {
         await dispatch(createDepartment(data)).unwrap();
+        showSuccess("Department created successfully");
         reload();
       } catch (err) {
         console.error("Create department failed:", err);
@@ -44,11 +46,12 @@ export const useDepartmentManagement = () => {
     [dispatch, reload]
   );
 
-  // ✏️ Cập nhật phòng ban
+  // ✏️ Update department
   const handleUpdate = useCallback(
     async (id, data) => {
       try {
         await dispatch(updateDepartment({ id, data })).unwrap();
+        showSuccess("Department updated successfully");
         reload();
       } catch (err) {
         console.error("Update department failed:", err);
@@ -58,11 +61,12 @@ export const useDepartmentManagement = () => {
     [dispatch, reload]
   );
 
-  // ❌ Xóa phòng ban
+  // ❌ Delete department
   const handleDelete = useCallback(
     async (id) => {
       try {
         await dispatch(deleteDepartment(id)).unwrap();
+        showSuccess("Department deleted successfully");
         reload();
       } catch (err) {
         console.error("Delete department failed:", err);
@@ -72,7 +76,7 @@ export const useDepartmentManagement = () => {
     [dispatch, reload]
   );
 
-  // 👤 Gán trưởng phòng (manager)
+  // 👤 Assign department manager
   const handleAssignManager = useCallback(
     async (departmentId, managerId) => {
       try {
@@ -82,6 +86,7 @@ export const useDepartmentManagement = () => {
             managerId,
           })
         ).unwrap();
+        showSuccess("Manager assigned successfully");
         reload();
       } catch (err) {
         console.error("Assign manager failed:", err);
@@ -91,12 +96,13 @@ export const useDepartmentManagement = () => {
     [dispatch, reload]
   );
 
-  // Di chuyển phòng ban
+  // Move department
   const handleMove = useCallback(
     async (dragId, newParentId) => {
       try {
         await dispatch(moveDepartment({ dragId, newParentId })).unwrap();
-        reload(); // Quan trọng – load lại cây phòng ban
+        showSuccess("Department moved successfully");
+        reload(); // Important — reload the department tree
       } catch (err) {
         console.error("Move department failed:", err);
         throw err;

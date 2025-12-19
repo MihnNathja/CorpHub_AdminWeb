@@ -32,11 +32,11 @@ const DocumentTableView = ({
       <table className="w-full text-sm border-collapse">
         <thead className="bg-gray-100 text-gray-700">
           <tr>
-            <th className="p-2 border">Tên tài liệu</th>
-            <th className="p-2 border">Loại</th>
-            <th className="p-2 border">Ngày tải lên</th>
-            <th className="p-2 border">Ghi chú</th>
-            <th className="p-2 border text-center">Thao tác</th>
+            <th className="p-2 border">Document name</th>
+            <th className="p-2 border">Type</th>
+            <th className="p-2 border">Uploaded on</th>
+            <th className="p-2 border">Notes</th>
+            <th className="p-2 border text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -58,7 +58,7 @@ const DocumentTableView = ({
                     <div className="flex justify-center gap-2">
                       <button
                         data-tooltip-id="doc-tip"
-                        data-tooltip-content="Tải xuống"
+                        data-tooltip-content="Download"
                         onClick={() => handleDownload(doc.id)}
                         disabled={isDownloading}
                         className={`p-2 rounded-full transition-all ${
@@ -76,7 +76,7 @@ const DocumentTableView = ({
 
                       <button
                         data-tooltip-id="doc-tip"
-                        data-tooltip-content="Xóa tài liệu"
+                        data-tooltip-content="Delete document"
                         onClick={() => handleOpenDelete(doc)}
                         className="p-2 rounded-full text-gray-500 hover:text-red-600 hover:scale-110 transition-all"
                       >
@@ -90,7 +90,7 @@ const DocumentTableView = ({
           ) : (
             <tr>
               <td colSpan="5" className="text-center p-4 text-gray-500 italic">
-                Chưa có tài liệu nào
+                No documents yet
               </td>
             </tr>
           )}

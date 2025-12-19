@@ -17,7 +17,9 @@ export const changePasswordAsync = createAsyncThunk(
       return response; // chứa message và status từ API
     } catch (err) {
       //console.log(err);
-      return rejectWithValue(err.data?.message || "Không thể đổi mật khẩu.");
+      return rejectWithValue(
+        err.data?.message || "Unable to change the password."
+      );
     }
   }
 );
@@ -91,12 +93,13 @@ const profileSlice = createSlice({
       .addCase(changePasswordAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        state.message = action.payload?.message || "Đổi mật khẩu thành công.";
+        state.message =
+          action.payload?.message || "Password changed successfully.";
       })
       .addCase(changePasswordAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.message = action.payload || "Đổi mật khẩu thất bại.";
+        state.message = action.payload || "Password change failed.";
         state.success = false;
       })
 
@@ -145,7 +148,7 @@ const profileSlice = createSlice({
       .addCase(updateMyContactInfoAsync.rejected, (state, action) => {
         state.updatingContact = false;
         state.error = action.payload;
-        showError(action.payload?.message || "Cập nhật liên hệ thất bại");
+        showError(action.payload?.message || "Contact update failed");
       });
   },
 });

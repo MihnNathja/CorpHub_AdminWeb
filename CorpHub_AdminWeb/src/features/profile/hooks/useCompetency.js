@@ -1,4 +1,4 @@
-// src/features/document/hooks/useDocument.js
+// src/features/profile/hooks/useCompetency.js
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useMemo, useState } from "react";
 import {
@@ -10,6 +10,19 @@ import {
 } from "../store/competencySlice";
 import { uploadDocumentsAsync } from "../store/documentSlice";
 import { showError, showSuccess } from "../../../utils/toastUtils";
+
+// Normalize date input from date/datetime-local to LocalDateTime string
+const normalizeDateTime = (value) => {
+  if (!value) return null;
+  if (value instanceof Date) return value.toISOString().slice(0, 19);
+  if (typeof value === "string") {
+    const v = value.trim();
+    if (!v) return null;
+    if (v.includes("T")) return v.length === 16 ? `${v}:00` : v;
+    return `${v}T00:00:00`;
+  }
+  return value;
+};
 
 export const useCompetency = () => {
   const dispatch = useDispatch();
@@ -53,6 +66,8 @@ export const useCompetency = () => {
       const payload = {
         ...formData,
         documentId,
+        issuedDate: normalizeDateTime(formData.issuedDate),
+        expireDate: normalizeDateTime(formData.expireDate),
       };
       delete payload.file;
 
@@ -104,6 +119,8 @@ export const useCompetency = () => {
       const payload = {
         ...formData,
         documentId,
+        issuedDate: normalizeDateTime(formData.issuedDate),
+        expireDate: normalizeDateTime(formData.expireDate),
       };
       delete payload.file;
 

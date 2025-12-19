@@ -1,12 +1,17 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pencil, Lock, Unlock } from "lucide-react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import Badge from "./Badge";
+import defaultAvatar from "../../../assets/defaultAvatar.jpg";
 
 const ProfileHeader = ({ profile, toggleActive, onUploadAvatar }) => {
   const fileInputRef = useRef(null);
-  const [preview, setPreview] = useState(profile.avatarUrl);
+  const [preview, setPreview] = useState(profile?.avatarUrl || defaultAvatar);
+
+  useEffect(() => {
+    setPreview(profile?.avatarUrl || defaultAvatar);
+  }, [profile?.avatarUrl]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -15,6 +20,10 @@ const ProfileHeader = ({ profile, toggleActive, onUploadAvatar }) => {
     reader.onload = () => setPreview(reader.result);
     reader.readAsDataURL(file);
     if (onUploadAvatar) onUploadAvatar(file);
+  };
+
+  const handleImgError = () => {
+    if (preview !== defaultAvatar) setPreview(defaultAvatar);
   };
 
   // Employment status badges
@@ -41,8 +50,9 @@ const ProfileHeader = ({ profile, toggleActive, onUploadAvatar }) => {
         <div className="relative group">
           <Zoom>
             <img
-              src={preview}
+              src={preview || defaultAvatar}
               alt="avatar"
+              onError={handleImgError}
               className="w-32 h-32 rounded-2xl border-4 border-white object-cover shadow cursor-zoom-in"
             />
           </Zoom>

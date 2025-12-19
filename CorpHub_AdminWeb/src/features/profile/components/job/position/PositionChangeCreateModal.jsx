@@ -44,14 +44,14 @@ const PositionChangeCreateModal = ({ employeeId, onClose, onCreated }) => {
       >
         {/* HEADER */}
         <h2 className="text-xl font-semibold text-gray-800 mb-5">
-          Tạo yêu cầu thay đổi chức danh
+          Create position change request
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* DEPARTMENT */}
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-600">
-              Phòng ban mới
+              New department
             </label>
             <select
               {...register("newDepartmentId")}
@@ -60,7 +60,7 @@ const PositionChangeCreateModal = ({ employeeId, onClose, onCreated }) => {
                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               onChange={(e) => setSelectedDeptId(e.target.value)}
             >
-              <option value="">-- Chọn phòng ban --</option>
+              <option value="">-- Select department --</option>
               {departments.map((d) => (
                 <option key={d.departmentId} value={d.departmentId}>
                   {d.departmentName}
@@ -72,7 +72,7 @@ const PositionChangeCreateModal = ({ employeeId, onClose, onCreated }) => {
           {/* POSITION */}
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-600">
-              Chức danh mới
+              New position
             </label>
             <select
               {...register("newPositionId")}
@@ -84,8 +84,8 @@ const PositionChangeCreateModal = ({ employeeId, onClose, onCreated }) => {
             >
               <option value="">
                 {selectedDeptId
-                  ? "-- Chọn chức danh --"
-                  : "Chọn phòng ban trước"}
+                  ? "-- Select position --"
+                  : "Select department first"}
               </option>
 
               {positions.map((p) => (
@@ -99,20 +99,20 @@ const PositionChangeCreateModal = ({ employeeId, onClose, onCreated }) => {
           {/* REASON */}
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-600">
-              Lý do
+              Reason
             </label>
             <textarea
               {...register("reason")}
               className="w-full border border-gray-300 rounded-lg p-2 h-24 
                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Nhập lý do thay đổi..."
+              placeholder="Enter the reason..."
             />
           </div>
 
           {/* FILE UPLOAD */}
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-600">
-              Tài liệu minh chứng
+              Supporting document
             </label>
 
             <input
@@ -156,7 +156,7 @@ const PositionChangeCreateModal = ({ employeeId, onClose, onCreated }) => {
               className="px-4 py-2 border border-gray-300 bg-gray-100 
                          rounded-lg text-gray-700 hover:bg-gray-200"
             >
-              Hủy
+              Cancel
             </button>
 
             <button
@@ -165,7 +165,7 @@ const PositionChangeCreateModal = ({ employeeId, onClose, onCreated }) => {
               className="px-4 py-2 bg-blue-600 text-white rounded-lg
                          hover:bg-blue-700 disabled:bg-blue-300"
             >
-              {loading ? "Đang tạo..." : "Tạo yêu cầu"}
+              {loading ? "Creating..." : "Create request"}
             </button>
           </div>
         </form>

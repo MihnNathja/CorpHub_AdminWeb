@@ -7,7 +7,9 @@ const AssignManagerModal = ({ open, onClose, dept, onSelect }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
       <div className="bg-white dark:bg-gray-900 p-6 rounded-md shadow-md w-[400px]">
-        <h2 className="text-lg font-bold mb-3">Chọn Manager cho {dept.name}</h2>
+        <h2 className="text-lg font-bold mb-3">
+          Select manager for {dept.name}
+        </h2>
 
         <div className="max-h-64 overflow-auto space-y-2">
           {dept.users?.map((u) => (
@@ -28,7 +30,7 @@ const AssignManagerModal = ({ open, onClose, dept, onSelect }) => {
 
           {dept.users?.length === 0 && (
             <div className="text-sm text-gray-500 italic">
-              Không có nhân viên.
+              No employees available.
             </div>
           )}
         </div>
@@ -38,7 +40,7 @@ const AssignManagerModal = ({ open, onClose, dept, onSelect }) => {
             className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
             onClick={onClose}
           >
-            Đóng
+            Close
           </button>
         </div>
       </div>

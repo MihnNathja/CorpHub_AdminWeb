@@ -25,9 +25,9 @@ const EmployeePage = () => {
       icon: UserPlus,
     },
     {
-      key: "pendingCompetency",
-      label: "Pending Competency",
-      description: "Approve pending competencies/certifications",
+      key: "competencyRequests",
+      label: "Competency Requests",
+      description: "Review and approve competency/certification submissions",
       icon: BadgeCheck,
     },
     {
@@ -43,6 +43,18 @@ const EmployeePage = () => {
       icon: FileCheck2,
     },
   ];
+
+  // Managers can only see list + position requests; admins/HR keep full access
+  const visibleTabs =
+    hasRole("ROLE_MANAGER") && !hasRole("ROLE_ADMIN") && !hasRole("ROLE_HR")
+      ? tabs.filter((t) => ["list", "positionRequests"].includes(t.key))
+      : tabs;
+
+  // Ensure active tab stays valid when visibility changes
+  const currentTabExists = visibleTabs.some((t) => t.key === activeTab);
+  const safeActiveTab = currentTabExists
+    ? activeTab
+    : visibleTabs[0]?.key ?? "list";
 
   return (
     <div className="space-y-6">
@@ -67,9 +79,9 @@ const EmployeePage = () => {
       {/* Tabs Card */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
         <div className="flex border-b border-gray-200 dark:border-gray-800 overflow-x-auto">
-          {tabs.map((tab) => {
+          {visibleTabs.map((tab) => {
             const Icon = tab.icon;
-            const isActive = activeTab === tab.key;
+            const isActive = safeActiveTab === tab.key;
             return (
               <button
                 key={tab.key}
@@ -88,18 +100,18 @@ const EmployeePage = () => {
           })}
         </div>
 
-        {tabs.find((t) => t.key === activeTab)?.description && (
+        {visibleTabs.find((t) => t.key === safeActiveTab)?.description && (
           <div className="px-6 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2 border-t border-gray-200 dark:border-gray-800">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-            {tabs.find((t) => t.key === activeTab)?.description}
+            {visibleTabs.find((t) => t.key === safeActiveTab)?.description}
           </div>
         )}
         <div className="p-6 animate-fade-in">
-          {activeTab === "list" && <EmployeeTable />}
-          {activeTab === "add" && <EmployeeProfileForm />}
-          {activeTab === "pendingCompetency" && <PendingCompetencyPage />}
-          {activeTab === "positionRequests" && <PositionRequestsTab />}
-          {activeTab === "hrFinalization" && <HRFinalizationTab />}
+          {safeActiveTab === "list" && <EmployeeTable />}
+          {safeActiveTab === "add" && <EmployeeProfileForm />}
+          {safeActiveTab === "competencyRequests" && <PendingCompetencyPage />}
+          {safeActiveTab === "positionRequests" && <PositionRequestsTab />}
+          {safeActiveTab === "hrFinalization" && <HRFinalizationTab />}
         </div>
       </div>
     </div>

@@ -36,7 +36,7 @@ const AppRoutes = () => {
       {/* ✅ Private routes — chỉ 1 lớp PrivateRoute */}
       <Route element={<PrivateRoute />}>
         <Route path="/" element={<HomePageLayout />}>
-          <Route index element={<Dashboard />} />
+          <Route index element={<FeatureComingSoonPage />} />
           <Route path="attendance" element={<AttendancePage />} />
           <Route path="rooms" element={<RoomPage />} />
           <Route path="assets" element={<AssetPage />} />

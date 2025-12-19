@@ -11,6 +11,8 @@ export default function PositionRequestsTab() {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
 
+  console.log(items);
+
   useEffect(() => {
     // Load all requests initially (no filter)
     loadAll("");

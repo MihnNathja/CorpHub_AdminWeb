@@ -29,7 +29,7 @@ const formatUsers = (users) => {
 };
 
 /* ======================================================
-    ROOT DROP ZONE — Kéo vào để biến thành phòng ban gốc
+  ROOT DROP ZONE — Drag here to make it the root department
    ====================================================== */
 const RootDropZone = ({ onDropToRoot }) => {
   const [{ isOver }, drop] = useDrop({
@@ -52,7 +52,7 @@ const RootDropZone = ({ onDropToRoot }) => {
       }`}
     >
       <span className="text-gray-600 dark:text-gray-300 text-sm">
-        ⬆ Kéo phòng ban vào đây để đưa lên cấp gốc (root)
+        ⬆ Drag a department here to move it to the root level
       </span>
     </div>
   );
@@ -237,7 +237,7 @@ const DepartmentTreeView = ({
           ))
         ) : (
           <div className="text-sm text-gray-500 italic">
-            Không có phòng ban nào.
+            No departments available.
           </div>
         )}
       </div>

@@ -51,7 +51,7 @@ export default function ParameterConfigPage() {
       )}
 
       {/* Form thêm mới */}
-      <form
+      {/* <form
         onSubmit={handleSubmit}
         className="p-4 border rounded-xl bg-gray-50 shadow-sm space-y-3"
       >
@@ -107,7 +107,7 @@ export default function ParameterConfigPage() {
         {localError && (
           <p className="text-red-600 text-sm mt-2">{localError}</p>
         )}
-      </form>
+      </form> */}
 
       {/* Danh sách tham số */}
       <div className="space-y-6">
@@ -126,7 +126,7 @@ export default function ParameterConfigPage() {
                   <tr>
                     <th className="border p-2 w-40 text-left">Mã</th>
                     <th className="border p-2 text-left">Tên hiển thị</th>
-                    <th className="border p-2 w-20 text-center">Xóa</th>
+                    {/* <th className="border p-2 w-20 text-center">Xóa</th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -134,7 +134,7 @@ export default function ParameterConfigPage() {
                     <tr key={p.id} className="hover:bg-gray-50 transition">
                       <td className="border p-2">{p.code}</td>
                       <td className="border p-2">{p.name}</td>
-                      <td className="border p-2 text-center">
+                      {/* <td className="border p-2 text-center">
                         <button
                           className="text-red-600 hover:text-red-800"
                           title="Xóa"
@@ -142,7 +142,7 @@ export default function ParameterConfigPage() {
                         >
                           <Trash2 size={16} />
                         </button>
-                      </td>
+                      </td> */}
                     </tr>
                   ))}
                 </tbody>

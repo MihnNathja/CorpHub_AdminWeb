@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useDepartmentPositions } from "../hooks/useDepartmentPosition";
 
-// flatten cây phòng ban thành list để cho vào dropdown
+// Flatten the department tree into a dropdown-friendly list
 const flattenDepartments = (nodes) => {
   const res = [];
   const dfs = (list, prefix = "") => {
@@ -76,7 +76,7 @@ const PositionManagementPanel = ({ departments }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) {
-      alert("Tên chức danh không được để trống");
+      alert("Position name cannot be empty");
       return;
     }
     try {
@@ -111,7 +111,7 @@ const PositionManagementPanel = ({ departments }) => {
   };
 
   const onDeleteClick = async (pos) => {
-    if (window.confirm(`Xóa chức danh "${pos.name}"?`)) {
+    if (window.confirm(`Delete position "${pos.name}"?`)) {
       await handleDelete(pos.id);
     }
   };
@@ -130,26 +130,26 @@ const PositionManagementPanel = ({ departments }) => {
 
     const orderedIds = cloned.map((p) => p.id);
 
-    // cập nhật local FE (levelOrder)
+    // Update local levelOrder for the frontend
     handleReorderLocal(orderedIds);
   };
 
   return (
     <div className="space-y-4">
-      {/* Chọn phòng ban */}
+      {/* Select department */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-            Quản lý chức danh
+            Manage positions
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Thêm, chỉnh sửa và sắp xếp chức danh theo từng phòng ban.
+            Add, edit, and reorder positions by department.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-600 dark:text-gray-300">
-            Phòng ban:
+            Department:
           </span>
           <select
             className="border rounded-lg px-3 py-2 text-sm dark:bg-gray-900 dark:border-gray-700 dark:text-white"
@@ -168,21 +168,21 @@ const PositionManagementPanel = ({ departments }) => {
         </div>
       </div>
 
-      {/* Form thêm / sửa */}
+      {/* Add / edit form */}
       <form
         onSubmit={onSubmit}
         className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col md:flex-row gap-3"
       >
         <input
           type="text"
-          placeholder="Tên chức danh"
+          placeholder="Position name"
           className="flex-1 border rounded-lg px-3 py-2 text-sm dark:bg-gray-950 dark:border-gray-700 dark:text-white"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
         <input
           type="text"
-          placeholder="Mã chức danh (code)"
+          placeholder="Position code"
           className="flex-1 border rounded-lg px-3 py-2 text-sm dark:bg-gray-950 dark:border-gray-700 dark:text-white"
           value={form.code}
           onChange={(e) => setForm({ ...form, code: e.target.value })}
@@ -190,7 +190,7 @@ const PositionManagementPanel = ({ departments }) => {
 
         <input
           type="text"
-          placeholder="Mô tả (không bắt buộc)"
+          placeholder="Description (optional)"
           className="flex-1 border rounded-lg px-3 py-2 text-sm dark:bg-gray-950 dark:border-gray-700 dark:text-white"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -208,7 +208,7 @@ const PositionManagementPanel = ({ departments }) => {
             ) : (
               <PlusCircle size={16} />
             )}
-            {isEditing ? "Cập nhật" : "Thêm mới"}
+            {isEditing ? "Update" : "Add new"}
           </button>
 
           {isEditing && (
@@ -217,17 +217,17 @@ const PositionManagementPanel = ({ departments }) => {
               onClick={resetForm}
               className="px-4 py-2 rounded-lg border text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-              Hủy
+              Cancel
             </button>
           )}
         </div>
       </form>
 
-      {/* Danh sách chức danh */}
+      {/* Position list */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
         <div className="bg-gray-100 dark:bg-gray-900 px-4 py-2 flex items-center justify-between">
           <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-            Danh sách chức danh
+            Position list
           </span>
           <button
             type="button"
@@ -235,7 +235,7 @@ const PositionManagementPanel = ({ departments }) => {
             disabled={loading || !positions?.length}
             className="text-xs px-3 py-1 rounded-lg border text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 disabled:opacity-50"
           >
-            Lưu thứ tự
+            Save order
           </button>
         </div>
 
@@ -245,11 +245,11 @@ const PositionManagementPanel = ({ departments }) => {
           </div>
         ) : !selectedDeptId ? (
           <div className="p-4 text-sm text-gray-500">
-            Vui lòng chọn phòng ban để xem danh sách chức danh.
+            Please select a department to view positions.
           </div>
         ) : !positions.length ? (
           <div className="p-4 text-sm text-gray-500">
-            Chưa có chức danh nào cho phòng ban này.
+            No positions for this department yet.
           </div>
         ) : (
           <ul className="divide-y divide-gray-200 dark:divide-gray-800">
@@ -275,14 +275,14 @@ const PositionManagementPanel = ({ departments }) => {
                       {/* Lowest chip */}
                       {idx === 0 && (
                         <span className="px-2 py-[2px] text-xs rounded-md bg-green-200 dark:bg-green-900 text-green-800 dark:text-green-300">
-                          Thấp nhất • Mặc định
+                          Lowest • Default
                         </span>
                       )}
 
                       {/* Highest chip */}
                       {idx === positions.length - 1 && positions.length > 1 && (
                         <span className="px-2 py-[2px] text-xs rounded-md bg-blue-200 dark:bg-blue-900 text-blue-800 dark:text-blue-300">
-                          Cao nhất
+                          Highest
                         </span>
                       )}
                     </div>
@@ -337,7 +337,7 @@ const PositionManagementPanel = ({ departments }) => {
 
         {error && (
           <div className="px-4 py-2 text-xs text-red-500 border-t border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40">
-            {typeof error === "string" ? error : "Đã xảy ra lỗi."}
+            {typeof error === "string" ? error : "An error occurred."}
           </div>
         )}
       </div>

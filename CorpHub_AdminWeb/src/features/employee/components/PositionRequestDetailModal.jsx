@@ -116,6 +116,8 @@ export default function PositionRequestDetailModal({
 
   if (!request) return null;
 
+  console.log(request);
+
   const statusClass = statusTone[request.status] || statusTone.CANCELLED;
 
   return (

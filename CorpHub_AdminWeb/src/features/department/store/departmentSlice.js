@@ -16,7 +16,7 @@ export const fetchDepartments = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await getAllDepartments();
-      // Giả sử API trả về dạng ApiResponse { data: [...], message, status }
+      // Assume API returns ApiResponse { data: [...], message, status }
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -65,7 +65,7 @@ export const deleteDepartment = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       await deleteDepartmentApi(id);
-      return id; // chỉ trả về id để filter local list
+      return id; // only return id to filter the local list
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -78,7 +78,7 @@ export const setManager = createAsyncThunk(
     try {
       const res = await setManagerApi(departmentId, managerId);
       console.log(res);
-      return res.data; // API trả về DepartmentDetailDto đã cập nhật
+      return res.data; // API returns an updated DepartmentDetailDto
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -194,12 +194,12 @@ const departmentSlice = createSlice({
       .addCase(setManager.fulfilled, (state, action) => {
         state.loading = false;
         const updated = action.payload;
-        console.log("Cập nhật: ", updated);
+        console.log("Updated: ", updated);
 
-        // tìm department vừa update
+        // Find the department that was just updated
         const idx = state.departments.findIndex((d) => d.id === updated.id);
         if (idx >= 0) {
-          state.departments[idx] = updated; // cập nhật lại manager mới
+          state.departments[idx] = updated; // refresh manager details
         }
       })
       .addCase(setManager.rejected, (state, action) => {
@@ -211,7 +211,7 @@ const departmentSlice = createSlice({
       })
       .addCase(moveDepartment.fulfilled, (state, action) => {
         state.loading = false;
-        // Không cập nhật local vì tree thay đổi → reload bên hook
+        // Do not update locally because the tree changes; reload in the hook
       })
       .addCase(moveDepartment.rejected, (state, action) => {
         state.loading = false;

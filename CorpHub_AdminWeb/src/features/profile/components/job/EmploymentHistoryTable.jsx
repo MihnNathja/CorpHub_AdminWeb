@@ -14,10 +14,10 @@ const ChangeTypeBadge = ({ changeType }) => {
   };
 
   const labels = {
-    PROMOTION: "Thăng chức",
-    TRANSFER: "Chuyển đổi",
-    DEMOTION: "Giáng chức",
-    OTHER: "Khác",
+    PROMOTION: "Promotion",
+    TRANSFER: "Transfer",
+    DEMOTION: "Demotion",
+    OTHER: "Other",
   };
 
   return (
@@ -38,22 +38,22 @@ const EmploymentHistoryTable = ({ histories, onViewRequest }) => {
         <thead className="bg-gray-100 dark:bg-gray-800">
           <tr className="text-left">
             <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
-              Phòng ban
+              Department
             </th>
             <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
-              Chức vụ
+              Position
             </th>
             <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
-              Loại thay đổi
+              Change type
             </th>
             <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
-              Ngày hiệu lực
+              Effective date
             </th>
             <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
-              Lý do
+              Reason
             </th>
             <th className="p-3 border border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300 text-center">
-              Thao tác
+              Actions
             </th>
           </tr>
         </thead>
@@ -64,7 +64,7 @@ const EmploymentHistoryTable = ({ histories, onViewRequest }) => {
                 colSpan="6"
                 className="text-center p-8 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700"
               >
-                Chưa có dữ liệu lịch sử làm việc
+                No work history available
               </td>
             </tr>
           ) : (
@@ -98,7 +98,7 @@ const EmploymentHistoryTable = ({ histories, onViewRequest }) => {
                       title="Xem yêu cầu"
                     >
                       <Eye className="w-3.5 h-3.5" />
-                      Xem yêu cầu
+                      View request
                     </button>
                   ) : (
                     <span className="text-xs text-gray-400 dark:text-gray-600">
