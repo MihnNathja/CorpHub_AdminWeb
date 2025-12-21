@@ -176,14 +176,14 @@ const groupedMenu = [
         name: "Users",
         path: "users",
         icon: UsersIcon,
-        roles: ["ROLE_ADMIN", "ROLE_MANAGER"],
-      },
-      {
-        name: "Roles & Permissions",
-        path: "roles",
-        icon: ShieldCheckIcon,
         roles: ["ROLE_ADMIN"],
       },
+      // {
+      //   name: "Roles & Permissions",
+      //   path: "roles",
+      //   icon: ShieldCheckIcon,
+      //   roles: ["ROLE_ADMIN"],
+      // },
       {
         name: "Settings",
         path: "settings",

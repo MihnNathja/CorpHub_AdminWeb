@@ -15,53 +15,73 @@ const EmployeePage = () => {
     {
       key: "list",
       label: "Employees list",
-      description: "Danh sách và trạng thái nhân viên",
+      description: "Employee list and status",
       icon: Users,
     },
     {
       key: "add",
       label: "Add new employee profile",
-      description: "Tạo hồ sơ mới và upload avatar",
+      description: "Create a new profile and upload avatar",
       icon: UserPlus,
     },
     {
-      key: "pendingCompetency",
-      label: "Pending Competency",
-      description: "Duyệt năng lực/ chứng chỉ chờ xử lý",
+      key: "competencyRequests",
+      label: "Competency Requests",
+      description: "Review and approve competency/certification submissions",
       icon: BadgeCheck,
     },
     {
       key: "positionRequests",
       label: "Position Requests",
-      description: "Xử lý yêu cầu thay đổi chức danh/phòng ban",
+      description: "Handle role/department change requests",
       icon: Shuffle,
     },
     {
       key: "hrFinalization",
       label: "HR Finalization",
-      description: "Chốt hồ sơ và tài liệu nhân sự",
+      description: "Finalize HR records and documents",
       icon: FileCheck2,
     },
   ];
 
+  // Managers can only see list + position requests; admins/HR keep full access
+  const visibleTabs =
+    hasRole("ROLE_MANAGER") && !hasRole("ROLE_ADMIN") && !hasRole("ROLE_HR")
+      ? tabs.filter((t) => ["list", "positionRequests"].includes(t.key))
+      : tabs;
+
+  // Ensure active tab stays valid when visibility changes
+  const currentTabExists = visibleTabs.some((t) => t.key === activeTab);
+  const safeActiveTab = currentTabExists
+    ? activeTab
+    : visibleTabs[0]?.key ?? "list";
+
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-inner p-6">
-      <div className="mb-4 flex flex-col gap-1">
-        <h2 className="text-2xl dark:text-gray-100 font-bold">
-          Employee Management
-        </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Quản lý hồ sơ, phê duyệt yêu cầu và theo dõi trạng thái nhân viên
-          trong một nơi thống nhất.
+    <div className="space-y-6">
+      {/* Hero Header */}
+      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-2xl p-6 shadow-lg border border-white/10">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2.5 rounded-xl bg-white/15 backdrop-blur-sm">
+            <Users className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-sm text-white/80 uppercase tracking-wide">
+              Workforce
+            </p>
+            <h1 className="text-3xl font-bold">Employee Management</h1>
+          </div>
+        </div>
+        <p className="text-sm text-white/70 mt-2 ml-13">
+          Manage employee records, approvals, and position workflows
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm mb-3">
+      {/* Tabs Card */}
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
         <div className="flex border-b border-gray-200 dark:border-gray-800 overflow-x-auto">
-          {tabs.map((tab) => {
+          {visibleTabs.map((tab) => {
             const Icon = tab.icon;
-            const isActive = activeTab === tab.key;
+            const isActive = safeActiveTab === tab.key;
             return (
               <button
                 key={tab.key}
@@ -80,21 +100,19 @@ const EmployeePage = () => {
           })}
         </div>
 
-        {tabs.find((t) => t.key === activeTab)?.description && (
-          <div className="px-4 py-3 bg-indigo-50/60 dark:bg-indigo-900/15 text-sm text-gray-700 dark:text-gray-200 flex items-center gap-2 border-t border-gray-200 dark:border-gray-800">
+        {visibleTabs.find((t) => t.key === safeActiveTab)?.description && (
+          <div className="px-6 py-3 bg-blue-50/50 dark:bg-blue-900/10 text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2 border-t border-gray-200 dark:border-gray-800">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-            {tabs.find((t) => t.key === activeTab)?.description}
+            {visibleTabs.find((t) => t.key === safeActiveTab)?.description}
           </div>
         )}
-      </div>
-
-      {/* Content */}
-      <div className="mt-4 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 bg-white dark:bg-gray-800 shadow-sm">
-        {activeTab === "list" && <EmployeeTable />}
-        {activeTab === "add" && <EmployeeProfileForm />}
-        {activeTab === "pendingCompetency" && <PendingCompetencyPage />}
-        {activeTab === "positionRequests" && <PositionRequestsTab />}
-        {activeTab === "hrFinalization" && <HRFinalizationTab />}
+        <div className="p-6 animate-fade-in">
+          {safeActiveTab === "list" && <EmployeeTable />}
+          {safeActiveTab === "add" && <EmployeeProfileForm />}
+          {safeActiveTab === "competencyRequests" && <PendingCompetencyPage />}
+          {safeActiveTab === "positionRequests" && <PositionRequestsTab />}
+          {safeActiveTab === "hrFinalization" && <HRFinalizationTab />}
+        </div>
       </div>
     </div>
   );

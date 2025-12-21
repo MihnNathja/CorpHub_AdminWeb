@@ -27,7 +27,7 @@ export default function AdminSettingsPage() {
           <ListChecks size={16} /> Cấu hình tham số
         </button>
 
-        <button
+        {/* <button
           onClick={() => setActiveTab("backup")}
           className={`flex items-center gap-2 px-3 py-2 rounded-t-md border-b-2 transition-all ${
             activeTab === "backup"
@@ -36,13 +36,13 @@ export default function AdminSettingsPage() {
           }`}
         >
           <DatabaseBackup size={16} /> Sao lưu & khôi phục
-        </button>
+        </button> */}
       </div>
 
       {/* ===== Tab Content ===== */}
       <div className="mt-4">
         {activeTab === "parameters" && <ParameterConfigPage />}
-        {activeTab === "backup" && <BackupRestorePage />}
+        {/* {activeTab === "backup" && <BackupRestorePage />} */}
       </div>
     </div>
   );

@@ -33,9 +33,7 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
       const res = await getEmployeeFullDetail(selectedId);
       setDetail(res.data?.data || res.data);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Không thể tải thông tin nhân viên"
-      );
+      setError(err.response?.data?.message || "Unable to load employee info");
     } finally {
       setLoading(false);
     }
@@ -55,7 +53,7 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
   const positionRequests = profile.positionChangeRequests || [];
 
   const formatDate = (value, options) =>
-    value ? new Date(value).toLocaleDateString("vi-VN", options) : "—";
+    value ? new Date(value).toLocaleDateString("en-US", options) : "—";
 
   const avatarSrc = profile.avatarUrl
     ? profile.avatarUrl
@@ -86,7 +84,7 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                 <h3 className="text-2xl font-semibold">{profile.fullName}</h3>
                 {profile.code && (
                   <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold">
-                    Mã: {profile.code}
+                    Code: {profile.code}
                   </span>
                 )}
                 {profile.active !== undefined && (
@@ -98,17 +96,17 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                     }`}
                   >
                     <ShieldCheck size={14} />
-                    {profile.active ? "Đang làm" : "Ngưng"}
+                    {profile.active ? "Active" : "Inactive"}
                   </span>
                 )}
               </div>
               <p className="mt-2 text-sm text-white/90">
-                {profile.positionName || "Chưa có vị trí"} ·{" "}
-                {profile.departmentName || "Chưa có phòng ban"}
+                {profile.positionName || "No position"} ·{" "}
+                {profile.departmentName || "No department"}
               </p>
               {profile.managerName && (
                 <p className="text-xs text-white/80">
-                  Quản lý: {profile.managerName}
+                  Manager: {profile.managerName}
                 </p>
               )}
             </div>
@@ -122,7 +120,7 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                 <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 dark:bg-gray-900/70">
                   <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow dark:bg-gray-800 dark:text-gray-100">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Đang tải chi tiết...
+                    Loading details...
                   </div>
                 </div>
               )}
@@ -136,7 +134,7 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                     onClick={fetchDetail}
                     className="ml-auto text-xs font-semibold underline"
                   >
-                    Thử lại
+                    Retry
                   </button>
                 </div>
               )}
@@ -149,41 +147,41 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                   <div className="rounded-2xl bg-white p-5 shadow-sm dark:bg-gray-900">
                     <div className="flex items-center justify-between">
                       <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                        Thông tin cá nhân
+                        Personal information
                       </h4>
                       <span className="text-xs text-gray-500">
-                        Ngày vào: {formatDate(profile.joinDate)}
+                        Joined: {formatDate(profile.joinDate)}
                       </span>
                     </div>
                     <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                       <InfoItem
                         icon={<Mail size={16} />}
-                        label="Email cá nhân"
+                        label="Personal email"
                         value={profile.personalEmail}
                       />
                       <InfoItem
                         icon={<Phone size={16} />}
-                        label="Số điện thoại"
+                        label="Phone number"
                         value={profile.phone}
                       />
                       <InfoItem
                         icon={<UserRound size={16} />}
-                        label="Giới tính"
+                        label="Gender"
                         value={profile.gender}
                       />
                       <InfoItem
                         icon={<Calendar size={16} />}
-                        label="Ngày sinh"
+                        label="Date of birth"
                         value={formatDate(profile.dob)}
                       />
                       <InfoItem
                         icon={<MapPin size={16} />}
-                        label="Địa chỉ"
+                        label="Address"
                         value={profile.address}
                       />
                       <InfoItem
                         icon={<AtSign size={16} />}
-                        label="Email công ty"
+                        label="Work email"
                         value={profile.workEmail || profile.personalEmail}
                       />
                     </div>
@@ -199,27 +197,27 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                     id="job"
                   >
                     <div className="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100">
-                      <Building2 size={18} /> Thông tin công việc
+                      <Building2 size={18} /> Job information
                     </div>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <InfoItem
                         icon={<BadgeCheck size={16} />}
-                        label="Vị trí"
+                        label="Position"
                         value={profile.positionName}
                       />
                       <InfoItem
                         icon={<Building2 size={16} />}
-                        label="Phòng ban"
+                        label="Department"
                         value={profile.departmentName}
                       />
                       <InfoItem
                         icon={<ShieldCheck size={16} />}
-                        label="Quản lý"
+                        label="Manager"
                         value={profile.managerName}
                       />
                       <InfoItem
                         icon={<Calendar size={16} />}
-                        label="Ngày bắt đầu"
+                        label="Start date"
                         value={formatDate(profile.joinDate)}
                       />
                     </div>
@@ -230,10 +228,10 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                     id="competency"
                   >
                     <div className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100">
-                      <Award size={18} /> Năng lực
+                      <Award size={18} /> Competencies
                     </div>
                     {competencies.length === 0 ? (
-                      <EmptyState label="Chưa có năng lực" />
+                      <EmptyState label="No competencies yet" />
                     ) : (
                       <div className="grid gap-3 md:grid-cols-2">
                         {competencies.map((c) => (
@@ -246,18 +244,18 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                                 {c.name}
                               </div>
                               <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-900/40 dark:text-blue-200">
-                                {c.typeName || c.typeCode || "Khác"}
+                                {c.typeName || c.typeCode || "Other"}
                               </span>
                             </div>
                             <p className="mt-1 text-xs text-gray-500">
-                              Cấp độ: {c.levelName || "—"}
+                              Level: {c.levelName || "—"}
                             </p>
                             <p className="mt-1 text-xs text-gray-500">
-                              Cấp bởi: {c.issuedBy || "—"}
+                              Issued by: {c.issuedBy || "—"}
                             </p>
                             <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-gray-500">
-                              <span>Ngày cấp: {formatDate(c.issuedDate)}</span>
-                              <span>Hết hạn: {formatDate(c.expireDate)}</span>
+                              <span>Issued: {formatDate(c.issuedDate)}</span>
+                              <span>Expires: {formatDate(c.expireDate)}</span>
                             </div>
                             {c.note && (
                               <p className="mt-2 text-xs italic text-gray-500">
@@ -275,10 +273,10 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                     id="documents"
                   >
                     <div className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100">
-                      <FileText size={18} /> Tài liệu
+                      <FileText size={18} /> Documents
                     </div>
                     {documents.length === 0 ? (
-                      <EmptyState label="Chưa có tài liệu" />
+                      <EmptyState label="No documents yet" />
                     ) : (
                       <div className="grid gap-3 sm:grid-cols-2">
                         {documents.map((doc) => (
@@ -292,7 +290,7 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                                   {doc.title || doc.fileName}
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                  {doc.documentTypeName || "Tài liệu"}
+                                  {doc.documentTypeName || "Document"}
                                 </p>
                               </div>
                               <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-200">
@@ -300,7 +298,7 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                               </span>
                             </div>
                             <p className="text-xs text-gray-500">
-                              Ngày tải: {formatDate(doc.uploadDate)}
+                              Uploaded: {formatDate(doc.uploadDate)}
                             </p>
                             <a
                               href={doc.fileUrl}
@@ -308,7 +306,7 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                               rel="noreferrer"
                               className="text-sm font-semibold text-blue-600 hover:underline"
                             >
-                              Tải / mở
+                              Download / Open
                             </a>
                           </div>
                         ))}
@@ -320,36 +318,36 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                 <section className="space-y-6" id="admin">
                   <div className="rounded-2xl bg-white p-5 shadow-sm dark:bg-gray-900">
                     <div className="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100">
-                      <Banknote size={18} /> Thông tin hành chính
+                      <Banknote size={18} /> Administrative information
                     </div>
                     <div className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
                       <InfoRow
-                        label="CCCD/CMND"
+                        label="National ID"
                         value={adminInfo.identityNumber}
                       />
                       <InfoRow
-                        label="Ngày cấp"
+                        label="Issued date"
                         value={formatDate(adminInfo.identityIssuedDate)}
                       />
                       <InfoRow
-                        label="Nơi cấp"
+                        label="Place of issue"
                         value={adminInfo.identityIssuedPlace}
                       />
-                      <InfoRow label="MST" value={adminInfo.taxCode} />
+                      <InfoRow label="Tax code" value={adminInfo.taxCode} />
                       <InfoRow
-                        label="BHXH"
+                        label="Social insurance"
                         value={adminInfo.socialInsuranceNumber}
                       />
                       <InfoRow
-                        label="Số tài khoản"
+                        label="Bank account number"
                         value={adminInfo.bankAccountNumber}
                       />
-                      <InfoRow label="Ngân hàng" value={adminInfo.bankName} />
+                      <InfoRow label="Bank name" value={adminInfo.bankName} />
                       <InfoRow
-                        label="Hôn nhân"
+                        label="Marital status"
                         value={adminInfo.maritalStatus}
                       />
-                      <InfoRow label="Ghi chú" value={adminInfo.note} />
+                      <InfoRow label="Notes" value={adminInfo.note} />
                     </div>
                   </div>
 
@@ -358,10 +356,10 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                     id="history"
                   >
                     <div className="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100">
-                      <History size={18} /> Lịch sử nội bộ
+                      <History size={18} /> Internal history
                     </div>
                     {histories.length === 0 ? (
-                      <EmptyState label="Chưa có lịch sử" />
+                      <EmptyState label="No history yet" />
                     ) : (
                       <div className="space-y-4">
                         {histories.map((h) => (
@@ -378,7 +376,7 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                               </span>
                             </div>
                             <p className="mt-1 text-xs text-gray-500">
-                              Loại thay đổi: {h.changeType || "—"}
+                              Change type: {h.changeType || "—"}
                             </p>
                             {h.reason && (
                               <p className="mt-1 text-xs italic text-gray-500">
@@ -396,10 +394,10 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                     id="requests"
                   >
                     <div className="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100">
-                      <CheckCircle2 size={18} /> Yêu cầu thay đổi vị trí
+                      <CheckCircle2 size={18} /> Position change requests
                     </div>
                     {positionRequests.length === 0 ? (
-                      <EmptyState label="Chưa có yêu cầu" />
+                      <EmptyState label="No requests yet" />
                     ) : (
                       <div className="space-y-3 text-sm">
                         {positionRequests.map((r) => (
@@ -421,10 +419,10 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                               </span>
                             </div>
                             <div className="mt-2 flex flex-wrap gap-3 text-xs text-gray-500">
-                              <span>Loại: {r.type || "—"}</span>
-                              <span>Hiệu lực: {formatDate(r.effectDate)}</span>
-                              <span>Ngày tạo: {formatDate(r.createdAt)}</span>
-                              <span>Người tạo: {r.createdByName || "—"}</span>
+                              <span>Type: {r.type || "—"}</span>
+                              <span>Effective: {formatDate(r.effectDate)}</span>
+                              <span>Created: {formatDate(r.createdAt)}</span>
+                              <span>Created by: {r.createdByName || "—"}</span>
                             </div>
                             {r.reason && (
                               <p className="mt-1 text-xs italic text-gray-500">
@@ -441,7 +439,7 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
                                     rel="noreferrer"
                                     className="rounded-full bg-white px-3 py-1 text-blue-600 shadow hover:underline dark:bg-gray-800"
                                   >
-                                    {a.fileName || "Tệp đính kèm"}
+                                    {a.fileName || "Attachment"}
                                   </a>
                                 ))}
                               </div>
@@ -456,17 +454,17 @@ const EmployeeDetailModal = ({ selectedId, initialEmployee, onClose }) => {
             </div>
             <aside className="hidden w-56 flex-shrink-0 border-l border-gray-200 bg-white px-4 py-6 dark:border-gray-800 dark:bg-gray-900 lg:block">
               <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Mục lục nhanh
+                Quick links
               </p>
               <nav className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
                 {[
-                  { id: "personal", label: "Cá nhân" },
-                  { id: "job", label: "Công việc" },
-                  { id: "competency", label: "Năng lực" },
-                  { id: "documents", label: "Tài liệu" },
-                  { id: "admin", label: "Hành chính" },
-                  { id: "history", label: "Lịch sử" },
-                  { id: "requests", label: "Yêu cầu vị trí" },
+                  { id: "personal", label: "Personal" },
+                  { id: "job", label: "Job" },
+                  { id: "competency", label: "Competency" },
+                  { id: "documents", label: "Documents" },
+                  { id: "admin", label: "Administrative" },
+                  { id: "history", label: "History" },
+                  { id: "requests", label: "Position requests" },
                 ].map((item) => (
                   <button
                     key={item.id}

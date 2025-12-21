@@ -49,7 +49,7 @@ const DocumentSectionView = ({
                         <div className="font-medium text-sm">{doc.title}</div>
                         <div className="text-xs text-gray-500">
                           {new Date(doc.uploadDate).toLocaleDateString("vi-VN")}{" "}
-                          – {doc.description || "Không có ghi chú"}
+                          – {doc.description || "No notes"}
                         </div>
                       </div>
                       <button

@@ -14,27 +14,27 @@ import PositionChangeRequestDetailModal from "./PositionChangeRequestDetailModal
 
 const STATUS_STYLES = {
   PENDING: {
-    label: "Chờ duyệt",
+    label: "Pending",
     chip: "bg-amber-100 text-amber-700 border border-amber-200",
   },
   APPROVED: {
-    label: "Đã duyệt",
+    label: "Approved",
     chip: "bg-emerald-100 text-emerald-700 border border-emerald-200",
   },
   REJECTED: {
-    label: "Từ chối",
+    label: "Rejected",
     chip: "bg-rose-100 text-rose-700 border border-rose-200",
   },
   CANCELLED: {
-    label: "Đã hủy",
+    label: "Cancelled",
     chip: "bg-slate-100 text-slate-700 border border-slate-200",
   },
 };
 
 const TYPE_LABELS = {
-  PROMOTION: "Thăng chức",
-  TRANSFER: "Điều chuyển",
-  DEMOTION: "Giáng chức",
+  PROMOTION: "Promotion",
+  TRANSFER: "Transfer",
+  DEMOTION: "Demotion",
 };
 
 const formatDate = (value) =>
@@ -135,7 +135,7 @@ const PositionChangeList = ({ employeeId }) => {
             </span>
             {isPrimary && (
               <span className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[11px] font-semibold text-white">
-                Gần nhất
+                Latest
               </span>
             )}
           </div>
@@ -197,8 +197,8 @@ const PositionChangeList = ({ employeeId }) => {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-slate-600 line-clamp-2">
-            {req.reason || "Không có mô tả"}
+          <p className="text-sm text-slate-500 line-clamp-2">
+            {req.reason || "No description"}
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -221,9 +221,9 @@ const PositionChangeList = ({ employeeId }) => {
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-slate-500">Hồ sơ nhân sự</p>
+          <p className="text-sm font-semibold text-slate-500">HR profile</p>
           <h3 className="text-xl font-bold text-slate-900">
-            Yêu cầu thay đổi chức danh
+            Position change requests
           </h3>
         </div>
         <Button
@@ -247,9 +247,9 @@ const PositionChangeList = ({ employeeId }) => {
         {!loading && sortedList.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-slate-500">
             <Clock3 className="h-6 w-6" />
-            <p className="text-sm font-semibold">Chưa có yêu cầu nào</p>
+            <p className="text-sm font-semibold">No requests yet</p>
             <p className="text-xs text-slate-400">
-              Bấm "Tạo yêu cầu mới" để bắt đầu quy trình thay đổi chức danh.
+              Click "Create request" to start a new position change flow.
             </p>
           </div>
         )}
@@ -262,8 +262,8 @@ const PositionChangeList = ({ employeeId }) => {
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                 <Rows size={16} className="text-slate-500" />
                 {showAll
-                  ? "Các yêu cầu trước đó"
-                  : `Ẩn ${remaining.length} yêu cầu cũ hơn`}
+                  ? "Previous requests"
+                  : `Hide ${remaining.length} older requests`}
               </div>
               <Button
                 size="sm"
@@ -271,7 +271,7 @@ const PositionChangeList = ({ employeeId }) => {
                 color="gray"
                 onClick={() => setShowAll((prev) => !prev)}
               >
-                {showAll ? "Thu gọn" : "Hiển thị tất cả"}
+                {showAll ? "Collapse" : "Show all"}
               </Button>
             </div>
 

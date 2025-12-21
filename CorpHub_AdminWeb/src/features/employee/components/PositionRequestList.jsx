@@ -19,25 +19,25 @@ export default function PositionRequestList({ employeeId, onView }) {
     <div className="mt-6">
       <h4 className="text-lg font-semibold mb-3">Position Requests</h4>
       {loading ? (
-        <div className="p-4">Đang tải...</div>
+        <div className="p-4">Loading...</div>
       ) : error ? (
-        <div className="p-4 text-red-500">Lỗi khi tải dữ liệu</div>
+        <div className="p-4 text-red-500">Failed to load data</div>
       ) : items?.length === 0 ? (
-        <div className="p-4 italic text-gray-500">Không có yêu cầu</div>
+        <div className="p-4 italic text-gray-500">No requests</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-gray-600 dark:text-gray-300">
                 <th className="py-2">ID</th>
-                <th className="py-2">Ngày tạo</th>
-                <th className="py-2">Người tạo</th>
-                <th className="py-2">Vị trí hiện tại</th>
-                <th className="py-2">Vị trí yêu cầu</th>
-                <th className="py-2">Phòng ban mới</th>
-                <th className="py-2">Loại</th>
-                <th className="py-2">Ngày hiệu lực</th>
-                <th className="py-2">Trạng thái</th>
+                <th className="py-2">Created at</th>
+                <th className="py-2">Created by</th>
+                <th className="py-2">Current position</th>
+                <th className="py-2">Requested position</th>
+                <th className="py-2">New department</th>
+                <th className="py-2">Type</th>
+                <th className="py-2">Effective date</th>
+                <th className="py-2">Status</th>
                 <th className="py-2">Actions</th>
               </tr>
             </thead>
@@ -67,7 +67,7 @@ export default function PositionRequestList({ employeeId, onView }) {
                         onClick={() => onView && onView(r)}
                         className="px-3 py-1 bg-blue-600 text-white rounded-md text-xs"
                       >
-                        Xem
+                        View
                       </button>
                     </div>
                   </td>

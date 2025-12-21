@@ -10,7 +10,7 @@ import {
   ChevronDown,
   Mail,
   Shield,
-  Sparkles
+  Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import defaultAvatar from "../assets/defaultAvatar.jpg";
@@ -168,7 +168,7 @@ const UserProfile = ({ user }) => {
               </motion.button>
 
               {/* Account Settings (optional) */}
-              <motion.button
+              {/* <motion.button
                 whileHover={{ x: 4 }}
                 onClick={() => {
                   setOpen(false);
@@ -187,7 +187,7 @@ const UserProfile = ({ user }) => {
                     Privacy & security
                   </p>
                 </div>
-              </motion.button>
+              </motion.button> */}
 
               {/* Divider */}
               <div className="my-2 border-t border-gray-200 dark:border-gray-700"></div>

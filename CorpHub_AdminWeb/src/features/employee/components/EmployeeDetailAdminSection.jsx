@@ -15,7 +15,7 @@ const EmployeeDetailAdminSection = ({
   formatDate,
 }) => (
   <Card
-    title="Thông tin hành chính"
+    title="Administrative information"
     icon={<Banknote size={18} />}
     actions={
       editing ? (
@@ -28,14 +28,14 @@ const EmployeeDetailAdminSection = ({
               saving ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {saving ? "Đang lưu..." : "Lưu"}
+            {saving ? "Saving..." : "Save"}
           </button>
           <button
             type="button"
             onClick={onCancel}
             className="rounded-lg px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800"
           >
-            Hủy
+            Cancel
           </button>
         </>
       ) : (
@@ -44,7 +44,7 @@ const EmployeeDetailAdminSection = ({
           onClick={() => setEditing(true)}
           className="rounded-lg px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-blue-900/30"
         >
-          Chỉnh sửa
+          Edit
         </button>
       )
     }
@@ -52,7 +52,7 @@ const EmployeeDetailAdminSection = ({
     {editing ? (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <InputField
-          label="CCCD/CMND"
+          label="National ID"
           value={adminForm.identityNumber}
           onChange={(e) =>
             setAdminForm((p) => ({
@@ -62,7 +62,7 @@ const EmployeeDetailAdminSection = ({
           }
         />
         <InputField
-          label="Ngày cấp"
+          label="Issued date"
           type="date"
           value={
             adminForm.identityIssuedDate
@@ -77,7 +77,7 @@ const EmployeeDetailAdminSection = ({
           }
         />
         <InputField
-          label="Nơi cấp"
+          label="Place of issue"
           value={adminForm.identityIssuedPlace}
           onChange={(e) =>
             setAdminForm((p) => ({
@@ -87,14 +87,14 @@ const EmployeeDetailAdminSection = ({
           }
         />
         <InputField
-          label="MST"
+          label="Tax code"
           value={adminForm.taxCode}
           onChange={(e) =>
             setAdminForm((p) => ({ ...p, taxCode: e.target.value }))
           }
         />
         <InputField
-          label="BHXH"
+          label="Social insurance"
           value={adminForm.socialInsuranceNumber}
           onChange={(e) =>
             setAdminForm((p) => ({
@@ -104,7 +104,7 @@ const EmployeeDetailAdminSection = ({
           }
         />
         <InputField
-          label="Số tài khoản"
+          label="Bank account number"
           value={adminForm.bankAccountNumber}
           onChange={(e) =>
             setAdminForm((p) => ({
@@ -114,14 +114,14 @@ const EmployeeDetailAdminSection = ({
           }
         />
         <InputField
-          label="Ngân hàng"
+          label="Bank name"
           value={adminForm.bankName}
           onChange={(e) =>
             setAdminForm((p) => ({ ...p, bankName: e.target.value }))
           }
         />
         <InputField
-          label="Hôn nhân"
+          label="Marital status"
           value={adminForm.maritalStatus}
           onChange={(e) =>
             setAdminForm((p) => ({
@@ -131,7 +131,7 @@ const EmployeeDetailAdminSection = ({
           }
         />
         <TextAreaField
-          label="Ghi chú"
+          label="Notes"
           value={adminForm.note}
           onChange={(e) =>
             setAdminForm((p) => ({ ...p, note: e.target.value }))
@@ -142,18 +142,24 @@ const EmployeeDetailAdminSection = ({
       </div>
     ) : (
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <InfoRow label="CCCD/CMND" value={adminInfo.identityNumber} />
+        <InfoRow label="National ID" value={adminInfo.identityNumber} />
         <InfoRow
-          label="Ngày cấp"
+          label="Issued date"
           value={formatDate(adminInfo.identityIssuedDate)}
         />
-        <InfoRow label="Nơi cấp" value={adminInfo.identityIssuedPlace} />
-        <InfoRow label="MST" value={adminInfo.taxCode} />
-        <InfoRow label="BHXH" value={adminInfo.socialInsuranceNumber} />
-        <InfoRow label="Số tài khoản" value={adminInfo.bankAccountNumber} />
-        <InfoRow label="Ngân hàng" value={adminInfo.bankName} />
-        <InfoRow label="Hôn nhân" value={adminInfo.maritalStatus} />
-        <InfoRow label="Ghi chú" value={adminInfo.note} />
+        <InfoRow label="Place of issue" value={adminInfo.identityIssuedPlace} />
+        <InfoRow label="Tax code" value={adminInfo.taxCode} />
+        <InfoRow
+          label="Social insurance"
+          value={adminInfo.socialInsuranceNumber}
+        />
+        <InfoRow
+          label="Bank account number"
+          value={adminInfo.bankAccountNumber}
+        />
+        <InfoRow label="Bank name" value={adminInfo.bankName} />
+        <InfoRow label="Marital status" value={adminInfo.maritalStatus} />
+        <InfoRow label="Notes" value={adminInfo.note} />
       </div>
     )}
   </Card>

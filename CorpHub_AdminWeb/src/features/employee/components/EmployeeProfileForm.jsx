@@ -52,36 +52,36 @@ const EmployeeProfileForm = () => {
   const validateProfile = () => {
     const nextErrors = {};
 
-    if (!profile.fullName.trim()) nextErrors.fullName = "Họ và tên là bắt buộc";
-    if (!profile.phone.trim()) nextErrors.phone = "Số điện thoại là bắt buộc";
+    if (!profile.fullName.trim()) nextErrors.fullName = "Full name is required";
+    if (!profile.phone.trim()) nextErrors.phone = "Phone number is required";
 
     if (!profile.personalEmail.trim()) {
-      nextErrors.personalEmail = "Email là bắt buộc";
+      nextErrors.personalEmail = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.personalEmail)) {
-      nextErrors.personalEmail = "Email không hợp lệ";
+      nextErrors.personalEmail = "Invalid email";
     }
 
-    if (!profile.gender) nextErrors.gender = "Chọn giới tính";
+    if (!profile.gender) nextErrors.gender = "Select gender";
     if (!profile.joinDate) {
-      nextErrors.joinDate = "Chọn ngày vào làm";
+      nextErrors.joinDate = "Select join date";
     } else {
       const joinDateObj = new Date(profile.joinDate);
       if (Number.isNaN(joinDateObj.getTime())) {
-        nextErrors.joinDate = "Ngày vào làm không hợp lệ";
+        nextErrors.joinDate = "Invalid join date";
       } else {
         const minDate = new Date("2000-01-01");
         const maxFuture = new Date();
         maxFuture.setMonth(maxFuture.getMonth() + 6); // cho phép tạo trước 6 tháng
 
         if (joinDateObj < minDate) {
-          nextErrors.joinDate = "Ngày vào làm quá xa trong quá khứ";
+          nextErrors.joinDate = "Join date is too far in the past";
         } else if (joinDateObj > maxFuture) {
-          nextErrors.joinDate = "Ngày vào làm không nên vượt quá 6 tháng tới";
+          nextErrors.joinDate = "Join date should not exceed 6 months ahead";
         }
       }
     }
-    if (!profile.departmentId) nextErrors.departmentId = "Chọn phòng ban";
-    if (!profile.positionId) nextErrors.positionId = "Chọn chức danh";
+    if (!profile.departmentId) nextErrors.departmentId = "Select department";
+    if (!profile.positionId) nextErrors.positionId = "Select position";
 
     return nextErrors;
   };
@@ -113,18 +113,18 @@ const EmployeeProfileForm = () => {
           <UserPlus className="w-6 h-6" />
         </div>
         <div className="flex-1">
-          <h2 className="text-2xl font-semibold">Thêm hồ sơ nhân viên</h2>
+          <h2 className="text-2xl font-semibold">Add employee profile</h2>
           <p className="text-sm opacity-90 mt-1">
-            Nhập thông tin bắt buộc, chọn phòng ban và chức danh. Bạn có thể bổ
-            sung thông tin mở rộng sau khi tạo xong.
+            Enter required info, select department and position. You can add
+            more details after creation.
           </p>
         </div>
         <div className="hidden md:flex gap-2 text-xs text-white/90">
           <span className="px-3 py-1 rounded-full bg-white/15 border border-white/20 flex items-center gap-1">
-            <ShieldCheck className="w-4 h-4" /> Bắt buộc
+            <ShieldCheck className="w-4 h-4" /> Required
           </span>
           <span className="px-3 py-1 rounded-full bg-white/15 border border-white/20 flex items-center gap-1">
-            <Sparkles className="w-4 h-4" /> 5 phút hoàn tất
+            <Sparkles className="w-4 h-4" /> 5 minutes to finish
           </span>
         </div>
       </div>
@@ -135,24 +135,19 @@ const EmployeeProfileForm = () => {
             Checklist
           </p>
           <ul className="space-y-2 text-sm">
-            <li>• Đủ 6 trường bắt buộc</li>
-            <li>• Email hợp lệ, không trùng</li>
-            <li>• Phòng ban & chức danh đã chọn</li>
+            <li>• Complete all 6 required fields</li>
+            <li>• Valid, non-duplicate email</li>
+            <li>• Department & position selected</li>
           </ul>
         </div>
         <div className="col-span-1 md:col-span-2 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/70 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
           <p className="text-xs font-semibold uppercase tracking-wide mb-1">
-            Lưu ý dữ liệu
+            Data notes
           </p>
           <ul className="text-sm space-y-1">
-            <li>• Họ tên tối đa 150 ký tự, không ký tự đặc biệt.</li>
-            <li>
-              • Ngày vào làm phải từ hôm nay trở về trước theo quy định hiện
-              hành.
-            </li>
-            <li>
-              • Chức danh phụ thuộc phòng ban, vui lòng chọn phòng ban trước.
-            </li>
+            <li>• Full name max 150 characters, no special characters.</li>
+            <li>• Join date must be today or earlier per current policy.</li>
+            <li>• Position depends on department; select department first.</li>
           </ul>
         </div>
       </div>
@@ -178,11 +173,11 @@ const EmployeeProfileForm = () => {
             <span className="absolute -inset-x-10 -bottom-14 h-24 bg-indigo-300/40 blur-3xl opacity-0 group-hover:opacity-60 transition duration-500" />
             <span className="relative flex items-center justify-center gap-2 text-sm">
               <Save className="w-4 h-4" />
-              {loading ? "Đang lưu..." : "Lưu hồ sơ"}
+              {loading ? "Saving..." : "Save profile"}
             </span>
           </button>
           <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-            Kiểm tra lại thông tin trước khi lưu để tránh chỉnh sửa sau này.
+            Review information before saving to avoid later edits.
           </p>
         </div>
       </form>

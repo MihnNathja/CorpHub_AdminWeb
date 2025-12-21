@@ -47,10 +47,10 @@ export default function PendingCompetencyPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-semibold">Competency chờ duyệt</h1>
+          <h1 className="text-2xl font-semibold">Pending competencies</h1>
           <p className="text-gray-500 text-sm">
-            Danh sách các chứng chỉ / năng lực nhân viên gửi lên, đang chờ Admin
-            / HR duyệt.
+            Employee-submitted certificates/competencies awaiting Admin/HR
+            approval.
           </p>
         </div>
 
@@ -62,7 +62,7 @@ export default function PendingCompetencyPage() {
             size={16}
             className={loading ? "animate-spin" : "opacity-0"}
           />
-          <span>Làm mới</span>
+          <span>Refresh</span>
         </button>
       </div>
 
@@ -84,7 +84,7 @@ export default function PendingCompetencyPage() {
       {/* Empty state */}
       {!loading && pendingCompetencies?.length === 0 && (
         <div className="mt-6 border border-dashed border-gray-300 rounded-2xl p-6 text-center text-gray-500">
-          Hiện chưa có competency nào đang chờ duyệt.
+          There are currently no pending competencies.
         </div>
       )}
 
@@ -94,13 +94,13 @@ export default function PendingCompetencyPage() {
           <table className="min-w-full text-sm border border-gray-200 rounded-2xl overflow-hidden">
             <thead className="bg-gray-100">
               <tr className="text-left">
-                <th className="p-2 border">Nhân viên</th>
-                <th className="p-2 border">Tên competency</th>
-                <th className="p-2 border">Loại</th>
-                <th className="p-2 border">Cấp bởi</th>
-                <th className="p-2 border">Ngày cấp</th>
-                <th className="p-2 border">Tài liệu</th>
-                <th className="p-2 border text-center">Hành động</th>
+                <th className="p-2 border">Employee</th>
+                <th className="p-2 border">Competency name</th>
+                <th className="p-2 border">Type</th>
+                <th className="p-2 border">Issued by</th>
+                <th className="p-2 border">Issued date</th>
+                <th className="p-2 border">Document</th>
+                <th className="p-2 border text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -115,17 +115,17 @@ export default function PendingCompetencyPage() {
                         <div className="space-y-0.5">
                           {/* Tên nhân viên */}
                           <div className="font-medium text-gray-800">
-                            {item.employeeName || "Không rõ"}
+                            {item.employeeName || "Unknown"}
                           </div>
 
                           {/* Mã nhân viên */}
                           <div className="text-xs text-gray-500">
-                            Mã: {item.employeeCode || "—"}
+                            Code: {item.employeeCode || "—"}
                           </div>
 
                           {/* Phòng ban */}
                           <div className="text-xs text-blue-600">
-                            {item.departmentName || "Không có phòng ban"}
+                            {item.departmentName || "No department"}
                           </div>
                         </div>
                       </div>
@@ -157,10 +157,10 @@ export default function PendingCompetencyPage() {
                           onClick={() => downloadDocument(item.documentId)}
                         >
                           <FileText size={14} />
-                          Xem
+                          View
                         </button>
                       ) : (
-                        <span className="text-xs text-gray-400">Không có</span>
+                        <span className="text-xs text-gray-400">None</span>
                       )}
                     </td>
 

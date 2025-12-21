@@ -22,7 +22,7 @@ const EmployeeTable = () => {
 
   const openCreateForm = () => {
     if (selectedUsers.length === 0)
-      return alert("Hãy chọn ít nhất 1 nhân viên!");
+      return alert("Please select at least one employee!");
     setShowCreateForm(true);
   };
   const handleSendRequest = () => {
@@ -36,17 +36,17 @@ const EmployeeTable = () => {
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-4">
         <div>
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-            Danh sách nhân viên
+            Employee list
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Xem, chọn và gửi yêu cầu tạo tài khoản cho các nhân viên chưa có tài
-            khoản.
+            View, select, and send account creation requests for employees
+            without accounts.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="hidden md:inline-flex items-center gap-2 rounded-full bg-gray-100 dark:bg-gray-700 px-3 py-1 text-xs font-semibold text-gray-600 dark:text-gray-200 border border-gray-200 dark:border-gray-600">
-            Đã chọn {selectedUsers.length} /{" "}
-            {employees.filter((e) => !e.user).length} chưa có tài khoản
+            Selected {selectedUsers.length} /{" "}
+            {employees.filter((e) => !e.user).length} without account
           </span>
           <button
             onClick={openCreateForm}
@@ -57,7 +57,7 @@ const EmployeeTable = () => {
             }`}
             disabled={selectedUsers.length === 0}
           >
-            Gửi yêu cầu tạo tài khoản
+            Send account creation request
           </button>
         </div>
       </div>
@@ -85,21 +85,21 @@ const EmployeeTable = () => {
                   }
                 />
               </th>
-              <th className="p-3">Ảnh</th>
-              <th className="p-3">Họ và tên</th>
-              <th className="p-3">Phòng ban</th>
+              <th className="p-3">Avatar</th>
+              <th className="p-3">Full name</th>
+              <th className="p-3">Department</th>
               <th className="p-3">Role</th>
               <th className="p-3">Email</th>
-              <th className="p-3">SĐT</th>
-              <th className="p-3 text-center">Trạng thái</th>
-              <th className="p-3 text-center">Hành động</th>
+              <th className="p-3">Phone</th>
+              <th className="p-3 text-center">Status</th>
+              <th className="p-3 text-center">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
             {employees.length === 0 && (
               <tr>
                 <td colSpan={9} className="p-6 text-center text-gray-500">
-                  Chưa có dữ liệu nhân viên.
+                  No employee data.
                 </td>
               </tr>
             )}
@@ -127,10 +127,7 @@ const EmployeeTable = () => {
                       className="h-11 w-11 rounded-full object-cover border border-gray-200 dark:border-gray-700 shadow-sm"
                     />
                     <div className="flex flex-col text-xs text-gray-500 dark:text-gray-300">
-                      <span className="font-semibold text-gray-800 dark:text-gray-100">
-                        {emp.fullName}
-                      </span>
-                      {emp.code && <span>Mã: {emp.code}</span>}
+                      {emp.code && <span>Code: {emp.code}</span>}
                     </div>
                   </div>
                 </td>
@@ -160,7 +157,7 @@ const EmployeeTable = () => {
                     />
                   ) : (
                     <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">
-                      Chưa có tài khoản
+                      No account
                     </span>
                   )}
                 </td>
@@ -170,7 +167,7 @@ const EmployeeTable = () => {
                     onClick={() => navigate(`/employees/${emp.id}`)}
                     className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-full border border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-500/40 dark:text-indigo-200 dark:hover:bg-indigo-900/30 transition"
                   >
-                    <EyeIcon className="h-4 w-4" /> Xem
+                    <EyeIcon className="h-4 w-4" /> View
                   </button>
                 </td>
               </tr>
@@ -183,16 +180,17 @@ const EmployeeTable = () => {
         <Pagination setPage={setPage} totalPages={totalPages} page={page} />
       </div>
 
-      {/* Modal tạo tài khoản */}
+      {/* Account creation modal */}
       {showCreateForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl w-full max-w-lg shadow-2xl border border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-bold mb-3 text-gray-900 dark:text-gray-100">
-              Gửi yêu cầu tạo tài khoản
+              Send account creation request
             </h3>
 
             <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
-              Sẽ gửi yêu cầu tạo tài khoản cho {selectedUsers.length} nhân viên:
+              This will send an account creation request for{" "}
+              {selectedUsers.length} employees:
             </p>
             <ul className="list-disc ml-6 mb-4 text-sm text-gray-800 dark:text-gray-100 space-y-1">
               {employees
@@ -207,13 +205,13 @@ const EmployeeTable = () => {
                 onClick={() => setShowCreateForm(false)}
                 className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
-                Hủy
+                Cancel
               </button>
               <button
                 onClick={handleSendRequest}
                 className="px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 shadow-sm"
               >
-                Gửi yêu cầu
+                Send request
               </button>
             </div>
           </div>

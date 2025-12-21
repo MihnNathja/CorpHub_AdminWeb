@@ -70,7 +70,7 @@ export default function CompetencyFileUpload({
     <div className="mt-4 space-y-3">
       {!form.documentId ? (
         <>
-          {/* Lựa chọn chế độ */}
+          {/* Mode selection */}
           <div className="flex gap-3 items-center">
             <label className="text-sm text-gray-700">Tài liệu:</label>
             <div className="flex gap-2">
@@ -83,7 +83,7 @@ export default function CompetencyFileUpload({
                     : "bg-white text-gray-600 hover:bg-gray-50"
                 }`}
               >
-                Chọn tài liệu có sẵn
+                Choose existing document
               </button>
               <button
                 type="button"
@@ -94,15 +94,15 @@ export default function CompetencyFileUpload({
                     : "bg-white text-gray-600 hover:bg-gray-50"
                 }`}
               >
-                Tải lên mới
+                Upload new
               </button>
             </div>
           </div>
 
-          {/* ===================== CHẾ ĐỘ CHỌN CÓ SẴN ===================== */}
+          {/* ===================== SELECT EXISTING MODE ===================== */}
           {mode === "select" && (
             <div className="mt-3">
-              {/* 🔹 Thanh tìm kiếm & lọc */}
+              {/* 🔹 Search & filter */}
               <DocumentFilterBar
                 types={docTypes}
                 searchTerm={searchTerm}
@@ -111,12 +111,11 @@ export default function CompetencyFileUpload({
                 setFilterType={setFilterType}
               />
 
-              {/* 🔹 Danh sách tài liệu */}
+              {/* 🔹 Document list */}
               <div className="mt-3">
                 {filteredDocuments.length === 0 ? (
                   <p className="text-xs text-gray-500">
-                    ⚠️ Không tìm thấy tài liệu nào. Hãy kiểm tra bộ lọc hoặc tải
-                    lên mới.
+                    ⚠️ No documents found. Check filters or upload a new one.
                   </p>
                 ) : (
                   <div className="border rounded-md divide-y max-h-60 overflow-y-auto">
@@ -166,7 +165,7 @@ export default function CompetencyFileUpload({
                               </p>
                               <p className="text-xs text-gray-500">
                                 {doc.fileType?.split("/")[1]?.toUpperCase() ||
-                                  "Tài liệu"}
+                                  "Document"}
                                 {doc.createdAt && (
                                   <>
                                     {" "}
@@ -181,7 +180,7 @@ export default function CompetencyFileUpload({
                           </div>
                           {isSelected && (
                             <span className="text-blue-600 text-xs font-medium">
-                              Đã chọn
+                              Selected
                             </span>
                           )}
                         </div>
@@ -190,7 +189,7 @@ export default function CompetencyFileUpload({
                   </div>
                 )}
 
-                {/* 🔹 Nút xác nhận */}
+                {/* 🔹 Confirm button */}
                 {form.documentId && (
                   <div className="flex justify-end mt-2">
                     <button
@@ -199,7 +198,7 @@ export default function CompetencyFileUpload({
                       }}
                       className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
                     >
-                      Xác nhận chọn
+                      Confirm selection
                     </button>
                   </div>
                 )}
@@ -207,7 +206,7 @@ export default function CompetencyFileUpload({
             </div>
           )}
 
-          {/* ===================== CHẾ ĐỘ TẢI LÊN MỚI ===================== */}
+          {/* ===================== UPLOAD NEW MODE ===================== */}
           {mode === "upload" && (
             <>
               <div className="flex items-center gap-3 mt-2">
@@ -226,11 +225,12 @@ export default function CompetencyFileUpload({
                 >
                   {uploading ? (
                     <>
-                      <Loader2 size={16} className="animate-spin" /> Đang tải...
+                      <Loader2 size={16} className="animate-spin" />{" "}
+                      Uploading...
                     </>
                   ) : (
                     <>
-                      <Upload size={16} /> Chọn file chứng chỉ
+                      <Upload size={16} /> Choose certificate file
                     </>
                   )}
                 </button>
@@ -256,15 +256,15 @@ export default function CompetencyFileUpload({
           )}
         </>
       ) : (
-        // ===================== HIỂN THỊ KHI ĐÃ CHỌN =====================
+        // ===================== DISPLAY WHEN SELECTED =====================
         <div className="border rounded-lg bg-green-50 p-3 flex items-center justify-between text-sm">
           <div className="flex items-center gap-3">
             <CheckCircle size={18} className="text-green-600" />
             <div>
               <p className="font-medium text-gray-800">
-                {form.fileName || "Tài liệu đã chọn"}
+                {form.fileName || "Selected document"}
               </p>
-              <p className="text-xs text-gray-500">Đã lưu thành công</p>
+              <p className="text-xs text-gray-500">Saved successfully</p>
             </div>
           </div>
 
@@ -275,13 +275,13 @@ export default function CompetencyFileUpload({
               }
               className="text-blue-600 hover:underline text-xs"
             >
-              Xem / tải lại
+              View / download again
             </button>
             <button
               onClick={handleRemove}
               className="text-gray-500 hover:text-red-500 text-xs"
             >
-              ✕ Xóa
+              ✕ Remove
             </button>
           </div>
         </div>

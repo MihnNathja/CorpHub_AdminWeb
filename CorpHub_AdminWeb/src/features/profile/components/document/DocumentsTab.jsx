@@ -74,7 +74,7 @@ const DocumentsTab = ({ profile }) => {
   // ================== RENDER ==================
   return (
     <Section
-      title="Tài liệu nhân sự"
+      title="HR documents"
       right={
         <div className="flex items-center gap-3">
           {/* Toggle dạng hiển thị */}
@@ -86,11 +86,11 @@ const DocumentsTab = ({ profile }) => {
           >
             {viewMode === "table" ? (
               <>
-                <LayoutList size={16} /> Dạng section
+                <LayoutList size={16} /> Section view
               </>
             ) : (
               <>
-                <List size={16} /> Dạng bảng
+                <List size={16} /> Table view
               </>
             )}
           </button>
@@ -105,11 +105,11 @@ const DocumentsTab = ({ profile }) => {
           >
             {uploading ? (
               <>
-                <Loader2 size={16} className="animate-spin" /> Đang tải...
+                <Loader2 size={16} className="animate-spin" /> Uploading...
               </>
             ) : (
               <>
-                <Upload size={16} /> Tải lên
+                <Upload size={16} /> Upload
               </>
             )}
           </button>
@@ -119,7 +119,7 @@ const DocumentsTab = ({ profile }) => {
       <div className="mb-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-200">
         <span className="mt-0.5 text-amber-500">⚠️</span>
         <p className="leading-snug">
-          Lưu ý: tài liệu thuộc nhóm chính sách công ty không thể xóa.
+          Note: documents under company policy cannot be deleted.
         </p>
       </div>
 

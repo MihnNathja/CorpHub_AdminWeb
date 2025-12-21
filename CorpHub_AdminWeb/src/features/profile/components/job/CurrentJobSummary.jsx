@@ -1,7 +1,7 @@
 // src/features/profile/components/job/CurrentJobSummary.jsx
 import { Briefcase, Building2, CalendarDays, ShieldCheck } from "lucide-react";
 
-const fmt = (d) => (d ? new Date(d).toLocaleDateString("vi-VN") : "Hiện tại");
+const fmt = (d) => (d ? new Date(d).toLocaleDateString("vi-VN") : "Present");
 
 const Badge = ({ color = "blue", children }) => (
   <span
@@ -24,9 +24,9 @@ const CurrentJobSummary = ({ current }) => {
   }
 
   const status = !current.endDate ? (
-    <Badge color="green">Đang làm việc</Badge>
+    <Badge color="green">Working</Badge>
   ) : (
-    <Badge color="gray">Đã kết thúc</Badge>
+    <Badge color="gray">Ended</Badge>
   );
 
   return (
@@ -34,7 +34,7 @@ const CurrentJobSummary = ({ current }) => {
       <div className="p-4 border rounded-xl">
         <div className="flex items-center gap-2 text-gray-600 mb-1">
           <Briefcase size={16} />
-          <span className="text-xs uppercase">Chức vụ</span>
+          <span className="text-xs uppercase">Position</span>
         </div>
         <div className="font-medium">{current.positionName || "-"}</div>
       </div>
@@ -42,7 +42,7 @@ const CurrentJobSummary = ({ current }) => {
       <div className="p-4 border rounded-xl">
         <div className="flex items-center gap-2 text-gray-600 mb-1">
           <Building2 size={16} />
-          <span className="text-xs uppercase">Phòng ban</span>
+          <span className="text-xs uppercase">Department</span>
         </div>
         <div className="font-medium">{current.departmentName || "-"}</div>
       </div>
@@ -50,7 +50,7 @@ const CurrentJobSummary = ({ current }) => {
       <div className="p-4 border rounded-xl">
         <div className="flex items-center gap-2 text-gray-600 mb-1">
           <ShieldCheck size={16} />
-          <span className="text-xs uppercase">Loại hợp đồng</span>
+          <span className="text-xs uppercase">Contract type</span>
         </div>
         <div className="font-medium">{current.contractType || "-"}</div>
       </div>
@@ -62,18 +62,16 @@ const CurrentJobSummary = ({ current }) => {
         </div>
         <div className="flex items-center gap-3 text-sm">
           <span>
-            Bắt đầu: <b>{fmt(current.startDate)}</b>
+            Start: <b>{fmt(current.startDate)}</b>
           </span>
           <span className="text-gray-400">•</span>
           <span>
-            Kết thúc: <b>{fmt(current.endDate)}</b>
+            End: <b>{fmt(current.endDate)}</b>
           </span>
           <span className="ml-3">{status}</span>
         </div>
         {current.note && (
-          <div className="text-sm text-gray-600 mt-2">
-            Ghi chú: {current.note}
-          </div>
+          <div className="text-sm text-gray-600 mt-2">Note: {current.note}</div>
         )}
       </div>
     </div>

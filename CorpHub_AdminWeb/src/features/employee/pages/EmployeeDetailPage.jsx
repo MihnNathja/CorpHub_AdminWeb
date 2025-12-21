@@ -81,9 +81,7 @@ const EmployeeDetailPage = () => {
       const res = await getEmployeeFullDetail(id);
       setDetail(res.data?.data || res.data);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Không thể tải thông tin nhân viên"
-      );
+      setError(err.response?.data?.message || "Unable to load employee info");
     } finally {
       setLoading(false);
     }
@@ -147,11 +145,11 @@ const EmployeeDetailPage = () => {
         ...prev,
         ...basic,
       }));
-      showSuccess("Cập nhật thông tin cơ bản thành công");
+      showSuccess("Basic information updated successfully");
       setEditingBasic(false);
     } catch (e) {
       showError(
-        e.response?.data?.message || "Cập nhật thông tin cơ bản thất bại"
+        e.response?.data?.message || "Failed to update basic information"
       );
     } finally {
       setSavingBasic(false);
@@ -171,10 +169,10 @@ const EmployeeDetailPage = () => {
         ...prev,
         ...contact,
       }));
-      showSuccess("Cập nhật liên hệ thành công");
+      showSuccess("Contact updated successfully");
       setEditingContact(false);
     } catch (e) {
-      showError(e.response?.data?.message || "Cập nhật liên hệ thất bại");
+      showError(e.response?.data?.message || "Failed to update contact");
     } finally {
       setSavingContact(false);
     }
@@ -192,17 +190,19 @@ const EmployeeDetailPage = () => {
           ...admin,
         },
       }));
-      showSuccess("Cập nhật hành chính thành công");
+      showSuccess("Administrative info updated successfully");
       setEditingAdmin(false);
     } catch (e) {
-      showError(e.response?.data?.message || "Cập nhật hành chính thất bại");
+      showError(
+        e.response?.data?.message || "Failed to update administrative info"
+      );
     } finally {
       setSavingAdmin(false);
     }
   };
 
   const formatDate = (value, options) =>
-    value ? new Date(value).toLocaleDateString("vi-VN", options) : "—";
+    value ? new Date(value).toLocaleDateString("en-US", options) : "—";
 
   const avatarSrc = profile.avatarUrl
     ? profile.avatarUrl
@@ -219,7 +219,7 @@ const EmployeeDetailPage = () => {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
         >
-          <ArrowLeft size={16} /> Quay lại
+          <ArrowLeft size={16} /> Back
         </button>
         <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
           Employee Detail
@@ -239,7 +239,7 @@ const EmployeeDetailPage = () => {
                 <h3 className="text-2xl font-semibold">{profile.fullName}</h3>
                 {profile.code && (
                   <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold">
-                    Mã: {profile.code}
+                    Code: {profile.code}
                   </span>
                 )}
                 {profile.active !== undefined && (
@@ -251,18 +251,18 @@ const EmployeeDetailPage = () => {
                     }`}
                   >
                     <ShieldCheck size={14} />
-                    {profile.active ? "Đang làm" : "Ngưng"}
+                    {profile.active ? "Active" : "Inactive"}
                   </span>
                 )}
               </div>
               <p className="mt-2 text-sm text-white/90">
-                {profile.positionName || "Chưa có vị trí"} ·{" "}
-                {profile.departmentName || "Chưa có phòng ban"}
+                {profile.positionName || "No position"} ·{" "}
+                {profile.departmentName || "No department"}
               </p>
 
               {profile.managerName && (
                 <p className="text-xs text-white/80">
-                  Quản lý: {profile.managerName}
+                  Manager: {profile.managerName}
                 </p>
               )}
             </div>
@@ -272,7 +272,7 @@ const EmployeeDetailPage = () => {
         <div className="relative bg-gray-50 p-6 dark:bg-gray-950">
           {loading && (
             <div className="mb-4 flex items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow dark:bg-gray-800 dark:text-gray-100">
-              <Loader2 className="h-4 w-4 animate-spin" /> Đang tải chi tiết...
+              <Loader2 className="h-4 w-4 animate-spin" /> Loading details...
             </div>
           )}
 
@@ -285,7 +285,7 @@ const EmployeeDetailPage = () => {
                 onClick={fetchDetail}
                 className="ml-auto text-xs font-semibold underline"
               >
-                Thử lại
+                Retry
               </button>
             </div>
           )}
@@ -327,9 +327,13 @@ const EmployeeDetailPage = () => {
                 }}
               />
 
-              <Card title="Năng lực" icon={<Award size={18} />} id="competency">
+              <Card
+                title="Competencies"
+                icon={<Award size={18} />}
+                id="competency"
+              >
                 {competencies.length === 0 ? (
-                  <EmptyState label="Chưa có năng lực" />
+                  <EmptyState label="No competencies yet" />
                 ) : (
                   <div className="grid gap-3 md:grid-cols-2">
                     {competencies.map((c) => (
@@ -342,18 +346,18 @@ const EmployeeDetailPage = () => {
                             {c.name}
                           </div>
                           <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-900/40 dark:text-blue-200">
-                            {c.typeName || c.typeCode || "Khác"}
+                            {c.typeName || c.typeCode || "Other"}
                           </span>
                         </div>
                         <p className="mt-1 text-xs text-gray-500">
-                          Cấp độ: {c.levelName || "—"}
+                          Level: {c.levelName || "—"}
                         </p>
                         <p className="mt-1 text-xs text-gray-500">
-                          Cấp bởi: {c.issuedBy || "—"}
+                          Issued by: {c.issuedBy || "—"}
                         </p>
                         <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-gray-500">
-                          <span>Ngày cấp: {formatDate(c.issuedDate)}</span>
-                          <span>Hết hạn: {formatDate(c.expireDate)}</span>
+                          <span>Issued: {formatDate(c.issuedDate)}</span>
+                          <span>Expires: {formatDate(c.expireDate)}</span>
                         </div>
                         {c.note && (
                           <p className="mt-2 text-xs italic text-gray-500">
@@ -367,12 +371,12 @@ const EmployeeDetailPage = () => {
               </Card>
 
               <Card
-                title="Tài liệu"
+                title="Documents"
                 icon={<FileText size={18} />}
                 id="documents"
               >
                 {documents.length === 0 ? (
-                  <EmptyState label="Chưa có tài liệu" />
+                  <EmptyState label="No documents yet" />
                 ) : (
                   <div className="grid gap-3 sm:grid-cols-2">
                     {documents.map((doc) => (
@@ -386,7 +390,7 @@ const EmployeeDetailPage = () => {
                               {doc.title || doc.fileName}
                             </p>
                             <p className="text-xs text-gray-500">
-                              {doc.documentTypeName || "Tài liệu"}
+                              {doc.documentTypeName || "Document"}
                             </p>
                           </div>
                           <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-200">
@@ -394,7 +398,7 @@ const EmployeeDetailPage = () => {
                           </span>
                         </div>
                         <p className="text-xs text-gray-500">
-                          Ngày tải: {formatDate(doc.uploadDate)}
+                          Uploaded: {formatDate(doc.uploadDate)}
                         </p>
                         <button
                           type="button"
@@ -408,8 +412,8 @@ const EmployeeDetailPage = () => {
                           className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:underline disabled:cursor-not-allowed disabled:text-gray-400"
                         >
                           {downloadingIds?.includes(doc.id || doc.documentId)
-                            ? "Đang tải..."
-                            : "Tải / mở"}
+                            ? "Downloading..."
+                            : "Download / Open"}
                         </button>
                       </div>
                     ))}
@@ -435,12 +439,12 @@ const EmployeeDetailPage = () => {
               />
 
               <Card
-                title="Lịch sử nội bộ"
+                title="Internal history"
                 icon={<History size={18} />}
                 id="history"
               >
                 {histories.length === 0 ? (
-                  <EmptyState label="Chưa có lịch sử" />
+                  <EmptyState label="No history yet" />
                 ) : (
                   <div className="space-y-4">
                     {histories.map((h) => (
@@ -457,7 +461,7 @@ const EmployeeDetailPage = () => {
                           </span>
                         </div>
                         <p className="mt-1 text-xs text-gray-500">
-                          Loại thay đổi: {h.changeType || "—"}
+                          Change type: {h.changeType || "—"}
                         </p>
                         {h.reason && (
                           <p className="mt-1 text-xs italic text-gray-500">
@@ -471,12 +475,12 @@ const EmployeeDetailPage = () => {
               </Card>
 
               <Card
-                title="Yêu cầu thay đổi vị trí"
+                title="Position change requests"
                 icon={<CheckCircle2 size={18} />}
                 id="requests"
               >
                 {positionRequests.length === 0 ? (
-                  <EmptyState label="Chưa có yêu cầu" />
+                  <EmptyState label="No requests yet" />
                 ) : (
                   <div className="space-y-3 text-sm">
                     {positionRequests.map((r) => (
@@ -498,10 +502,10 @@ const EmployeeDetailPage = () => {
                           </span>
                         </div>
                         <div className="mt-2 flex flex-wrap gap-3 text-xs text-gray-500">
-                          <span>Loại: {r.type || "—"}</span>
-                          <span>Hiệu lực: {formatDate(r.effectDate)}</span>
-                          <span>Ngày tạo: {formatDate(r.createdAt)}</span>
-                          <span>Người tạo: {r.createdByName || "—"}</span>
+                          <span>Type: {r.type || "—"}</span>
+                          <span>Effective: {formatDate(r.effectDate)}</span>
+                          <span>Created: {formatDate(r.createdAt)}</span>
+                          <span>Created by: {r.createdByName || "—"}</span>
                         </div>
                         {r.reason && (
                           <p className="mt-1 text-xs italic text-gray-500">
@@ -518,7 +522,7 @@ const EmployeeDetailPage = () => {
                                 rel="noreferrer"
                                 className="rounded-full bg-white px-3 py-1 text-blue-600 shadow hover:underline dark:bg-gray-800"
                               >
-                                {a.fileName || "Tệp đính kèm"}
+                                {a.fileName || "Attachment"}
                               </a>
                             ))}
                           </div>

@@ -128,7 +128,7 @@ const CompetencySection = ({ profile }) => {
       if (isSelected) return prev.filter((s) => s !== id);
       if (prev.length >= MAX_SKILLS) {
         setWarning(
-          `⚠️ Chỉ được chọn tối đa ${MAX_SKILLS} kỹ năng để hiển thị trên biểu đồ.`
+          `⚠️ You can select up to ${MAX_SKILLS} skills to display on the chart.`
         );
         return prev;
       }
@@ -143,7 +143,7 @@ const CompetencySection = ({ profile }) => {
 
   return (
     <Section
-      title="Chứng chỉ & Kỹ năng"
+      title="Certificates & Skills"
       right={
         <div className="flex gap-2">
           <button
@@ -160,11 +160,11 @@ const CompetencySection = ({ profile }) => {
           >
             {viewMode === "table" ? (
               <>
-                <BarChart3 size={16} /> Dạng biểu đồ
+                <BarChart3 size={16} /> Chart view
               </>
             ) : (
               <>
-                <LayoutList size={16} /> Dạng bảng
+                <LayoutList size={16} /> Table view
               </>
             )}
           </button>
@@ -184,9 +184,7 @@ const CompetencySection = ({ profile }) => {
 
       {/* 🔹 Loading indicator */}
       {loading && (
-        <div className="text-sm text-blue-600 italic mb-2">
-          Đang tải dữ liệu...
-        </div>
+        <div className="text-sm text-blue-600 italic mb-2">Loading data...</div>
       )}
 
       {/* 🔹 Nội dung chính */}
@@ -204,11 +202,11 @@ const CompetencySection = ({ profile }) => {
           {/* Chọn kỹ năng hiển thị */}
           <div>
             <h4 className="font-medium text-sm mb-2">
-              Chọn kỹ năng hiển thị trên biểu đồ
+              Select skills to display on chart
             </h4>
             {items.length === 0 ? (
               <div className="text-sm text-gray-500 italic">
-                Không có kỹ năng nào để chọn
+                No skills to select
               </div>
             ) : (
               <>
@@ -229,7 +227,7 @@ const CompetencySection = ({ profile }) => {
                   ))}
                 </div>
                 <div className="mt-1 text-xs text-gray-500">
-                  Đã chọn: {selectedSkills.length}/{MAX_SKILLS}
+                  Selected: {selectedSkills.length}/{MAX_SKILLS}
                 </div>
                 {warning && (
                   <div className="flex items-center gap-1 text-yellow-600 text-sm mt-1">
@@ -244,11 +242,11 @@ const CompetencySection = ({ profile }) => {
           {/* Radar + Progress */}
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h4 className="font-medium text-sm mb-2">Biểu đồ kỹ năng</h4>
+              <h4 className="font-medium text-sm mb-2">Skills chart</h4>
               <CompetencyRadar competencies={filteredCompetencies} />
             </div>
             <div>
-              <h4 className="font-medium text-sm mb-2">Mức độ chi tiết</h4>
+              <h4 className="font-medium text-sm mb-2">Detailed levels</h4>
               <div className="space-y-3 max-h-72 overflow-y-auto pr-2">
                 {filteredCompetencies.length > 0 ? (
                   filteredCompetencies.map((c) => (
@@ -260,7 +258,7 @@ const CompetencySection = ({ profile }) => {
                   ))
                 ) : (
                   <div className="text-sm text-gray-500 italic">
-                    Chưa chọn kỹ năng nào để hiển thị
+                    No skills selected to display
                   </div>
                 )}
               </div>

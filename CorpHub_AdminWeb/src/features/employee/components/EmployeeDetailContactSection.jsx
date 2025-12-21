@@ -14,7 +14,7 @@ const EmployeeDetailContactSection = ({
   onCancel,
 }) => (
   <Card
-    title="Thông tin liên hệ"
+    title="Contact information"
     icon={<Mail size={18} />}
     id="contact"
     actions={
@@ -28,14 +28,14 @@ const EmployeeDetailContactSection = ({
               saving ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {saving ? "Đang lưu..." : "Lưu"}
+            {saving ? "Saving..." : "Save"}
           </button>
           <button
             type="button"
             onClick={onCancel}
             className="rounded-lg px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800"
           >
-            Hủy
+            Cancel
           </button>
         </>
       ) : (
@@ -44,7 +44,7 @@ const EmployeeDetailContactSection = ({
           onClick={() => setEditing(true)}
           className="rounded-lg px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-blue-900/30"
         >
-          Chỉnh sửa
+          Edit
         </button>
       )
     }
@@ -52,7 +52,7 @@ const EmployeeDetailContactSection = ({
     {editing ? (
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <InputField
-          label="Email cá nhân"
+          label="Personal email"
           value={contactForm.personalEmail}
           onChange={(e) =>
             setContactForm((p) => ({
@@ -62,14 +62,14 @@ const EmployeeDetailContactSection = ({
           }
         />
         <InputField
-          label="Số điện thoại"
+          label="Phone number"
           value={contactForm.phone}
           onChange={(e) =>
             setContactForm((p) => ({ ...p, phone: e.target.value }))
           }
         />
         <InputField
-          label="Địa chỉ"
+          label="Address"
           value={contactForm.address}
           onChange={(e) =>
             setContactForm((p) => ({
@@ -79,7 +79,7 @@ const EmployeeDetailContactSection = ({
           }
         />
         <TextAreaField
-          label="Giới thiệu"
+          label="About"
           value={contactForm.about}
           onChange={(e) =>
             setContactForm((p) => ({ ...p, about: e.target.value }))
@@ -90,10 +90,10 @@ const EmployeeDetailContactSection = ({
       </div>
     ) : (
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <InfoRow label="Email cá nhân" value={profile.personalEmail} />
-        <InfoRow label="Số điện thoại" value={profile.phone} />
-        <InfoRow label="Địa chỉ" value={profile.address} />
-        <InfoRow label="Giới thiệu" value={profile.about} />
+        <InfoRow label="Personal email" value={profile.personalEmail} />
+        <InfoRow label="Phone number" value={profile.phone} />
+        <InfoRow label="Address" value={profile.address} />
+        <InfoRow label="About" value={profile.about} />
       </div>
     )}
   </Card>

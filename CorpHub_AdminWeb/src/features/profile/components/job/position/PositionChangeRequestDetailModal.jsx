@@ -71,13 +71,13 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
           <div className="relative flex items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.12em] text-white/80">
-                Yêu cầu thay đổi vị trí
+                Position change request
               </p>
               <h2 className="mt-1 text-2xl font-semibold leading-tight">
-                {request?.newPositionName || "Chi tiết yêu cầu"}
+                {request?.newPositionName || "Request details"}
               </h2>
               <p className="text-sm text-white/80">
-                Mã yêu cầu: {request.id?.slice(0, 10) || "-"}
+                Request ID: {request.id?.slice(0, 10) || "-"}
               </p>
             </div>
 
@@ -91,7 +91,7 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
               <button
                 onClick={onClose}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
-                aria-label="Đóng"
+                aria-label="Close"
               >
                 <X size={18} />
               </button>
@@ -104,26 +104,26 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
           <div className="lg:col-span-2 space-y-4">
             <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-800/60">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                Tổng quan
+                Overview
               </p>
               <div className="mt-3 grid gap-4 md:grid-cols-2">
                 <InfoItem
-                  label="Nhân viên"
+                  label="Employee"
                   value={request.employeeName}
                   icon={<UserRound size={16} />}
                 />
                 <InfoItem
-                  label="Người tạo"
+                  label="Created by"
                   value={request.createdByName}
                   icon={<UserRound size={16} />}
                 />
                 <InfoItem
-                  label="Ngày tạo"
+                  label="Created at"
                   value={formatDateTime(request.createdAt)}
                   icon={<Clock size={16} />}
                 />
                 <InfoItem
-                  label="Ngày hiệu lực"
+                  label="Effective date"
                   value={formatDate(request.effectDate)}
                   icon={<CalendarClock size={16} />}
                 />
@@ -132,14 +132,13 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
 
             <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-800/70">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
-                <FileText size={18} className="text-blue-600" /> Thông tin vị
-                trí
+                <FileText size={18} className="text-blue-600" /> Position info
               </div>
 
               <div className="mt-4 grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-center">
                 <div className="rounded-lg border border-slate-200 bg-blue-50 px-4 py-3 dark:border-blue-900/40 dark:bg-blue-900/30">
                   <p className="text-xs uppercase tracking-wide text-blue-600 dark:text-blue-300">
-                    Vị trí hiện tại
+                    Current position
                   </p>
                   <p className="text-base font-semibold text-slate-900 dark:text-slate-50">
                     {request.oldPositionName || "-"}
@@ -155,7 +154,7 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
 
                 <div className="rounded-lg border border-slate-200 bg-emerald-50 px-4 py-3 dark:border-emerald-900/40 dark:bg-emerald-900/30">
                   <p className="text-xs uppercase tracking-wide text-emerald-600 dark:text-emerald-300">
-                    Vị trí đề xuất
+                    Proposed position
                   </p>
                   <p className="text-base font-semibold text-slate-900 dark:text-slate-50">
                     {request.newPositionName || "-"}
@@ -168,17 +167,17 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
 
               <div className="mt-4 grid gap-3 md:grid-cols-3">
                 <InfoItem
-                  label="Loại"
+                  label="Type"
                   value={request.type}
                   icon={<SparklesIcon />}
                 />
                 <InfoItem
-                  label="Ngày hiệu lực"
+                  label="Effective date"
                   value={formatDate(request.effectDate)}
                   icon={<CalendarClock size={16} />}
                 />
                 <InfoItem
-                  label="Mã yêu cầu"
+                  label="Request ID"
                   value={request.id?.slice(0, 10) || "-"}
                   icon={<FileText size={16} />}
                 />
@@ -186,10 +185,10 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
 
               <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                  Lý do
+                  Reason
                 </p>
                 <p className="mt-2 whitespace-pre-wrap leading-relaxed">
-                  {request.reason || "Không có mô tả"}
+                  {request.reason || "No description"}
                 </p>
               </div>
             </div>
@@ -202,12 +201,12 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
             <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-800/70">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
                 <Clock size={18} className="text-purple-600" />
-                Tiến trình phê duyệt
+                Approval steps
               </div>
 
               {!request.approvalSteps?.length ? (
                 <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
-                  Chưa có bước phê duyệt.
+                  No approval steps yet.
                 </p>
               ) : (
                 <div className="relative mt-4">
@@ -223,8 +222,8 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                                Bước {step.stepOrder || idx + 1} -{" "}
-                                {step.role || "Phê duyệt"}
+                                Step {step.stepOrder || idx + 1} -{" "}
+                                {step.role || "Approval"}
                               </p>
                               <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
                                 {step.approver?.fullName || "-"}
@@ -235,7 +234,7 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
                                   step.approver?.departmentName,
                                 ]
                                   .filter(Boolean)
-                                  .join(" | ") || "Không rõ vị trí"}
+                                  .join(" | ") || "Unknown position"}
                               </p>
                             </div>
 
@@ -251,7 +250,7 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
 
                           {step.decidedAt && (
                             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                              Quyết định: {formatDateTime(step.decidedAt)}
+                              Decision: {formatDateTime(step.decidedAt)}
                             </p>
                           )}
 
@@ -272,14 +271,13 @@ export default function PositionChangeRequestDetailModal({ request, onClose }) {
 
         <div className="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-6 py-4 dark:border-slate-800 dark:bg-slate-900/70">
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            Chi tiết chỉ mang tính tham khảo, không thể thao tác duyệt ở màn
-            này.
+            Details are read-only; approval actions are not available here.
           </div>
           <button
             onClick={onClose}
             className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600"
           >
-            Đóng
+            Close
           </button>
         </div>
       </div>
@@ -308,7 +306,7 @@ const AttachmentsSection = ({ attachments }) => {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-800/70">
       <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
-        <Paperclip size={18} className="text-orange-500" /> Tài liệu đính kèm
+        <Paperclip size={18} className="text-orange-500" /> Attachments
       </div>
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         {attachments.map((att, idx) => (
@@ -324,10 +322,10 @@ const AttachmentsSection = ({ attachments }) => {
             </div>
             <div>
               <p className="font-semibold leading-snug">
-                {att.fileName || "Tài liệu"}
+                {att.fileName || "Document"}
               </p>
               <p className="text-xs text-orange-700/80 dark:text-orange-100/80">
-                Nhấn để mở
+                Click to open
               </p>
             </div>
           </a>

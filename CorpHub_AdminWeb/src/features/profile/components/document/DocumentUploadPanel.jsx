@@ -21,14 +21,12 @@ const DocumentUploadPanel = ({
   };
 
   const handleSubmit = () => {
-    // 🔹 Kiểm tra kích thước file
+    // 🔹 Validate file size
     const tooLarge = pendingFiles.find(
       (f) => f.file && f.file.size > MAX_FILE_SIZE
     );
     if (tooLarge) {
-      setError(
-        `❌ File "${tooLarge.file.name}" vượt quá dung lượng cho phép (tối đa 50MB).`
-      );
+      setError(`❌ File "${tooLarge.file.name}" exceeds the 50MB limit.`);
       return;
     }
 
@@ -46,14 +44,13 @@ const DocumentUploadPanel = ({
     <div className="p-4 border rounded-2xl bg-gray-50 mt-3 space-y-3">
       <div className="flex justify-between items-center">
         <h3 className="font-semibold">
-          Thông tin tài liệu tải lên ({pendingFiles.length})
+          Upload details ({pendingFiles.length})
         </h3>
         <button onClick={() => setPendingFiles([])}>
           <X size={16} className="text-gray-500 hover:text-red-600" />
         </button>
       </div>
 
-      {/* ⚠️ Cảnh báo lỗi nếu có */}
       {error && (
         <div className="flex items-center gap-2 bg-red-100 text-red-700 text-sm p-2 rounded-xl">
           <AlertTriangle size={16} />
@@ -70,7 +67,7 @@ const DocumentUploadPanel = ({
             type="text"
             value={item.title}
             onChange={(e) => handleMetaChange(idx, "title", e.target.value)}
-            placeholder="Tên tài liệu"
+            placeholder="Document title"
             className="border rounded-lg px-2 py-1 text-sm"
           />
           <select
@@ -78,7 +75,7 @@ const DocumentUploadPanel = ({
             onChange={(e) => handleMetaChange(idx, "typeId", e.target.value)}
             className="border rounded-lg px-2 py-1 text-sm"
           >
-            <option value="">-- Loại tài liệu --</option>
+            <option value="">-- Document type --</option>
             {types.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
@@ -91,7 +88,7 @@ const DocumentUploadPanel = ({
             onChange={(e) =>
               handleMetaChange(idx, "description", e.target.value)
             }
-            placeholder="Ghi chú"
+            placeholder="Notes"
             className="border rounded-lg px-2 py-1 text-sm"
           />
         </div>
@@ -109,11 +106,11 @@ const DocumentUploadPanel = ({
             }`}
           >
             {uploading && <Loader2 size={16} className="animate-spin" />}
-            {uploading ? "Đang tải lên..." : "Xác nhận tải lên"}
+            {uploading ? "Uploading..." : "Confirm upload"}
           </button>
         ) : (
           <div className="text-sm text-red-500 mt-1">
-            ⚠️ Vui lòng chọn loại tài liệu cho tất cả file trước khi tải lên.
+            ⚠️ Please select a document type for every file before uploading.
           </div>
         )}
       </div>

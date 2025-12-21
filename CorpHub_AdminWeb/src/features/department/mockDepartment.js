@@ -1,23 +1,23 @@
 export const mockDepartments = [
   {
     id: 1,
-    name: "Phòng Công Nghệ",
+    name: "Technology Department",
     manager: {
       id: 10,
-      fullName: "Nguyễn Văn A",
+      fullName: "Nguyen Van A",
       email: "a@company.com",
       avatar: "",
     },
     users: [
       {
         id: 101,
-        fullName: "Trần Thị B",
+        fullName: "Tran Thi B",
         email: "b@company.com",
         avatar: "",
       },
       {
         id: 102,
-        fullName: "Lê C",
+        fullName: "Le C",
         email: "c@company.com",
         avatar: "",
       },
@@ -30,7 +30,7 @@ export const mockDepartments = [
         users: [
           {
             id: 103,
-            fullName: "Phạm D",
+            fullName: "Pham D",
             email: "d@company.com",
             avatar: "",
           },
@@ -42,7 +42,7 @@ export const mockDepartments = [
         name: "Team Frontend",
         manager: {
           id: 11,
-          fullName: "Nguyễn E",
+          fullName: "Nguyen E",
           email: "e@company.com",
         },
         users: [],
@@ -52,7 +52,7 @@ export const mockDepartments = [
   },
   {
     id: 4,
-    name: "Phòng Kinh Doanh",
+    name: "Business Department",
     manager: null,
     users: [],
     children: [],

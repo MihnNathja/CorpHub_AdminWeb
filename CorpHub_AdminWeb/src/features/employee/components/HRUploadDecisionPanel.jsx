@@ -31,14 +31,14 @@ export default function HRUploadDecisionPanel({
 
       if (!ALLOWED_EXTENSIONS.includes(ext)) {
         showError(
-          `File ${file.name} không được hỗ trợ. Chỉ chấp nhận: PDF, Word, Excel`
+          `File ${file.name} is not supported. Allowed: PDF, Word, Excel`
         );
         return;
       }
 
       if (file.size > MAX_FILE_SIZE) {
         showError(
-          `File ${file.name} vượt quá 10MB. Vui lòng chọn file nhỏ hơn.`
+          `File ${file.name} exceeds 10MB. Please choose a smaller file.`
         );
         return;
       }
@@ -77,7 +77,7 @@ export default function HRUploadDecisionPanel({
 
   const handleUpload = async () => {
     if (selectedFiles.length === 0) {
-      showError("Vui lòng chọn ít nhất 1 file");
+      showError("Please select at least one file");
       return;
     }
 
@@ -99,7 +99,7 @@ export default function HRUploadDecisionPanel({
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Upload Quyết Định
+          Upload Decision
         </h2>
         <button
           onClick={onClose}
@@ -128,7 +128,7 @@ export default function HRUploadDecisionPanel({
         {request.approvalSteps?.length > 0 && (
           <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
             <p className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-2">
-              Các bước duyệt:
+              Approval steps:
             </p>
             <div className="space-y-1">
               {request.approvalSteps.map((step) => (
@@ -158,7 +158,7 @@ export default function HRUploadDecisionPanel({
         {/* File Upload Zone */}
         <div>
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Tải lên file quyết định
+            Upload decision files
           </label>
           <div
             onDragOver={(e) => {
@@ -179,10 +179,10 @@ export default function HRUploadDecisionPanel({
           >
             <Upload className="mx-auto mb-2 text-gray-400" size={24} />
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Kéo thả file hoặc click để chọn
+              Drag and drop files or click to choose
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-              PDF, Word, Excel. Tối đa 10MB
+              PDF, Word, Excel. Max 10MB
             </p>
             <input
               ref={fileInputRef}
@@ -196,7 +196,7 @@ export default function HRUploadDecisionPanel({
               onClick={() => fileInputRef.current?.click()}
               className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded"
             >
-              Chọn file
+              Choose files
             </button>
           </div>
         </div>
@@ -205,7 +205,7 @@ export default function HRUploadDecisionPanel({
         {selectedFiles.length > 0 && (
           <div>
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Các file được chọn ({selectedFiles.length})
+              Selected files ({selectedFiles.length})
             </label>
             <div className="mt-2 space-y-2">
               {selectedFiles.map((file, idx) => (
@@ -242,12 +242,12 @@ export default function HRUploadDecisionPanel({
         {/* Notes */}
         <div>
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Ghi chú (tùy chọn)
+            Notes (optional)
           </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Thêm bất kỳ ghi chú nào về quyết định này"
+            placeholder="Add any notes about this decision"
             className="mt-1 w-full p-2 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
             rows="3"
           />
@@ -260,7 +260,7 @@ export default function HRUploadDecisionPanel({
             className="text-yellow-600 flex-shrink-0 mt-0.5"
           />
           <p className="text-xs text-yellow-700 dark:text-yellow-200">
-            Khi upload thành công, request sẽ được hoàn thành.
+            Once upload succeeds, the request will be completed.
           </p>
         </div>
       </div>
@@ -287,16 +287,14 @@ export default function HRUploadDecisionPanel({
           disabled={uploading || selectedFiles.length === 0}
           className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition"
         >
-          {uploading
-            ? `Đang upload ${Math.round(uploadProgress)}%...`
-            : "Upload"}
+          {uploading ? `Uploading ${Math.round(uploadProgress)}%...` : "Upload"}
         </button>
         <button
           onClick={onClose}
           disabled={uploading}
           className="w-full px-4 py-2 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white rounded-lg font-medium transition"
         >
-          Đóng
+          Close
         </button>
       </div>
     </div>

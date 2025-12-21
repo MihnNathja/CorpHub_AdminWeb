@@ -39,7 +39,7 @@ export default function HRFinalizationTab() {
       setCurrentPage(1);
       await loadFinalizationRequests();
     } catch (err) {
-      showError("Upload thất bại");
+      showError("Upload failed");
       console.error(err);
     }
   };
@@ -49,27 +49,25 @@ export default function HRFinalizationTab() {
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Hoàn thành quyết định thay đổi chức danh
+          Finalize title change decisions
         </h3>
         <button
           onClick={loadFinalizationRequests}
           disabled={loading}
           className="px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded text-sm font-medium"
         >
-          {loading ? "Đang tải..." : "Tải lại"}
+          {loading ? "Loading..." : "Refresh"}
         </button>
       </div>
 
       {/* List */}
       {loading ? (
-        <div className="p-6 text-center text-gray-500">
-          Đang tải danh sách...
-        </div>
+        <div className="p-6 text-center text-gray-500">Loading requests...</div>
       ) : error ? (
-        <div className="p-6 text-center text-red-500">Lỗi khi tải dữ liệu</div>
+        <div className="p-6 text-center text-red-500">Failed to load data</div>
       ) : items.length === 0 ? (
         <div className="p-6 text-center italic text-gray-500">
-          Không có yêu cầu cần hoàn thành
+          No requests to finalize
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -77,11 +75,11 @@ export default function HRFinalizationTab() {
             <thead className="bg-gray-200 dark:bg-gray-700">
               <tr className="text-left text-gray-700 dark:text-gray-200 font-semibold">
                 <th className="px-4 py-3 border">ID</th>
-                <th className="px-4 py-3 border">Nhân viên</th>
-                <th className="px-4 py-3 border">Vị trí cũ → mới</th>
-                <th className="px-4 py-3 border">Phòng ban mới</th>
-                <th className="px-4 py-3 border">Ngày hiệu lực</th>
-                <th className="px-4 py-3 border">Duyệt bởi</th>
+                <th className="px-4 py-3 border">Employee</th>
+                <th className="px-4 py-3 border">Old → new position</th>
+                <th className="px-4 py-3 border">New department</th>
+                <th className="px-4 py-3 border">Effective date</th>
+                <th className="px-4 py-3 border">Approved by</th>
                 <th className="px-4 py-3 border">Actions</th>
               </tr>
             </thead>
@@ -151,8 +149,8 @@ export default function HRFinalizationTab() {
       {items.length > 0 && (
         <div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            Hiển thị {startIdx + 1}-{Math.min(endIdx, items.length)} trong{" "}
-            {items.length} yêu cầu
+            Showing {startIdx + 1}-{Math.min(endIdx, items.length)} of{" "}
+            {items.length} requests
           </p>
           <div className="flex items-center gap-2">
             <button
@@ -163,7 +161,7 @@ export default function HRFinalizationTab() {
               <ChevronLeft size={18} />
             </button>
             <span className="text-sm text-gray-700 dark:text-gray-300">
-              Trang {currentPage} / {totalPages}
+              Page {currentPage} / {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}

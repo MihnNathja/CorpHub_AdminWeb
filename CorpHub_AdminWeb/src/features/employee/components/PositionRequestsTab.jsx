@@ -11,6 +11,8 @@ export default function PositionRequestsTab() {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
 
+  console.log(items);
+
   useEffect(() => {
     // Load all requests initially (no filter)
     loadAll("");
@@ -30,7 +32,7 @@ export default function PositionRequestsTab() {
         approvalSteps: steps,
       });
     } catch (err) {
-      showError("Không thể tải chi tiết request");
+      showError("Unable to load request details");
       console.error(err);
     }
   };
@@ -53,7 +55,7 @@ export default function PositionRequestsTab() {
     <div className="space-y-4">
       {/* Filter Bar */}
       <div className="flex items-center gap-3 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-        <span className="text-sm font-medium">Lọc theo trạng thái:</span>
+        <span className="text-sm font-medium">Filter by status:</span>
         <button
           onClick={() => handleStatusFilter("")}
           className={`px-3 py-2 rounded text-sm font-medium transition ${
@@ -62,7 +64,7 @@ export default function PositionRequestsTab() {
               : "bg-white dark:bg-gray-600 text-gray-800 dark:text-gray-200"
           }`}
         >
-          Tất cả
+          All
         </button>
         {STATUS_OPTIONS.map((status) => (
           <button
@@ -81,34 +83,32 @@ export default function PositionRequestsTab() {
           onClick={handleRefresh}
           className="ml-auto px-3 py-2 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700"
         >
-          Tải lại
+          Refresh
         </button>
       </div>
 
       {/* List */}
       {loading ? (
-        <div className="p-6 text-center">Đang tải...</div>
+        <div className="p-6 text-center">Loading...</div>
       ) : error ? (
-        <div className="p-6 text-center text-red-500">Lỗi khi tải dữ liệu</div>
+        <div className="p-6 text-center text-red-500">Failed to load data</div>
       ) : items?.length === 0 ? (
-        <div className="p-6 text-center italic text-gray-500">
-          Không có yêu cầu
-        </div>
+        <div className="p-6 text-center italic text-gray-500">No requests</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
             <thead className="bg-gray-200 dark:bg-gray-700">
               <tr className="text-left text-gray-700 dark:text-gray-200 font-semibold">
                 <th className="px-4 py-3 border">ID</th>
-                <th className="px-4 py-3 border">Nhân viên</th>
-                <th className="px-4 py-3 border">Người tạo</th>
-                <th className="px-4 py-3 border">Ngày tạo</th>
-                <th className="px-4 py-3 border">Vị trí hiện tại</th>
-                <th className="px-4 py-3 border">Vị trí yêu cầu</th>
-                <th className="px-4 py-3 border">Phòng ban mới</th>
-                <th className="px-4 py-3 border">Loại</th>
-                <th className="px-4 py-3 border">Ngày hiệu lực</th>
-                <th className="px-4 py-3 border">Trạng thái</th>
+                <th className="px-4 py-3 border">Employee</th>
+                <th className="px-4 py-3 border">Created by</th>
+                <th className="px-4 py-3 border">Created at</th>
+                <th className="px-4 py-3 border">Current position</th>
+                <th className="px-4 py-3 border">Requested position</th>
+                <th className="px-4 py-3 border">New department</th>
+                <th className="px-4 py-3 border">Type</th>
+                <th className="px-4 py-3 border">Effective date</th>
+                <th className="px-4 py-3 border">Status</th>
                 <th className="px-4 py-3 border">Actions</th>
               </tr>
             </thead>
@@ -163,7 +163,7 @@ export default function PositionRequestsTab() {
                       onClick={() => handleViewDetail(r)}
                       className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-medium"
                     >
-                      Xem chi tiết
+                      View details
                     </button>
                   </td>
                 </tr>

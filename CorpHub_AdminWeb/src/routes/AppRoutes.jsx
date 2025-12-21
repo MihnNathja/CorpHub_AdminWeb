@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "../features/auth/pages/LoginPage";
-import HomePage from "../pages/HomePage";
 import Dashboard from "../pages/Dashboard";
+import HomePageLayout from "../pages/HomePageLayout";
 import TicketsPage from "../features/ticket/pages/TicketPage";
 import CalendarPage from "../features/calendar/pages/CalendarPage";
 import PrivateRoute from "../routes/PrivateRoute";
@@ -35,8 +35,8 @@ const AppRoutes = () => {
 
       {/* ✅ Private routes — chỉ 1 lớp PrivateRoute */}
       <Route element={<PrivateRoute />}>
-        <Route path="/" element={<Dashboard />}>
-          <Route index element={<HomePage />} />
+        <Route path="/" element={<HomePageLayout />}>
+          <Route index element={<FeatureComingSoonPage />} />
           <Route path="attendance" element={<AttendancePage />} />
           <Route path="rooms" element={<RoomPage />} />
           <Route path="assets" element={<AssetPage />} />
