@@ -3,13 +3,20 @@ import { useRoomRequirements } from "../hooks/useRoomRequirement";
 import RoomRequirementCard from "../components/RoomRequirementCard";
 import RoomRequirementModal from "../components/RoomRequirementModal";
 import { useAssets } from "../../asset/hooks/useAssets";
+import Pagination from "../../global/components/Pagination";
 import { Sparkles, CalendarCheck, AlertCircle } from "lucide-react";
 
 export const RoomRequestList = () => {
-    const { requirements, page, size, approve, reject, suggest, clearSuggestion, selected, setSelected, allocationSuggestion } = useRoomRequirements();
+    const { requirements, meta, page, status, setStatus, totalPages, setPage, approve, reject, suggest, clearSuggestion, selected, setSelected, allocationSuggestion, suitableRooms, loadingSuitable } = useRoomRequirements();
     const { categories = [] } = useAssets();
 
-    const pendingCount = requirements?.filter(r => !r.roomId).length || 0;
+    const statusOptions = [
+        { value: null, label: "All Status" },
+        { value: "PENDING", label: "Pending" },
+        { value: "ACCEPTED", label: "Accepted" },
+        { value: "REJECTED", label: "Rejected" },
+        { value: "CLOSED", label: "Closed" },
+    ];
 
     /* -------------------- UI Empty -------------------- */
     if (!requirements || requirements.length === 0)
@@ -25,6 +32,21 @@ export const RoomRequestList = () => {
                             <h2 className="text-xl font-semibold">0 requests</h2>
                         </div>
                     </div>
+                </div>
+
+                {/* Status filter */}
+                <div className="flex justify-end gap-3 mb-5">
+                    <select
+                        value={status || ""}
+                        onChange={(e) => setStatus(e.target.value || null)}
+                        className="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm font-medium rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition"
+                    >
+                        {statusOptions.map((option) => (
+                            <option key={option.value || "all"} value={option.value || ""}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="text-center border border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-10 bg-gray-50 dark:bg-gray-800">
@@ -52,26 +74,27 @@ export const RoomRequestList = () => {
                         <div>
                             <p className="text-sm text-white/80">Room booking requests</p>
                             <h2 className="text-xl font-semibold">
-                                {requirements.length} requests
+                                {meta.totalElements} requests
                             </h2>
-                        </div>
-                    </div>
-                    <div className="flex gap-3 text-sm">
-                        <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-xl">
-                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                            <span>{pendingCount} pending allocation</span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-xl">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                            <span>{requirements.length - pendingCount} assigned</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Suggest button */}
-            {pendingCount > 0 && (
-                <div className="flex justify-end">
+            {/* Status filter and Suggest button */}
+            <div className="flex justify-end gap-3">
+                <select
+                    value={status || ""}
+                    onChange={(e) => setStatus(e.target.value || null)}
+                    className="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm font-medium rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition"
+                >
+                    {statusOptions.map((option) => (
+                        <option key={option.value || "all"} value={option.value || ""}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+                {(
                     <button
                         onClick={() =>
                             suggest(requirements
@@ -83,8 +106,8 @@ export const RoomRequestList = () => {
                         <Sparkles className="w-4 h-4" />
                         Suggest room allocation
                     </button>
-                </div>
-            )}
+                )}
+            </div>
 
             {/* Request list */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -106,11 +129,20 @@ export const RoomRequestList = () => {
                     );
                 })}
             </div>
-
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <Pagination
+                    page={page}
+                    setPage={setPage}
+                    totalPages={totalPages}
+                />
+            )}
             {selected && (
                 <RoomRequirementModal
                     requirement={selected}
                     allCategories={categories}
+                    suitableRooms={suitableRooms}
+                    loadingSuitable={loadingSuitable}
                     onApprove={approve}
                     onClose={() => setSelected(null)}
                 />

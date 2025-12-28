@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../auth/hooks/useAuth";
 import TicketActionGroupEmp from "./TicketActionGroupEmp";
-import ReasonForm from "./ReasonForm";
+import ReasonDialog from "../../../components/ReasonDialog";
 import CommentSection from "./comment/CommentSection";
 import { useComment } from "../hooks/useComment";
 import ConfirmDialog from "../../global/components/ConfirmDialog";
@@ -351,29 +351,17 @@ const TicketModal = ({
           </div>
         </div>
 
-        {/* Reject Reason Modal */}
-        {isReasonFormOpen && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
-              <ReasonForm
-                ticket={ticket}
-                mode="reject"
-                title="Reject Ticket"
-                quickReasons={[
-                  "Insufficient information",
-                  "Not enough evidence",
-                  "Out of scope",
-                  "Duplicate request",
-                ]}
-                onSubmit={(reason) => {
-                  handleReject(ticket.id, reason);
-                  setIsReasonFormOpen(false);
-                }}
-                onCancel={() => setIsReasonFormOpen(false)}
-              />
-            </div>
-          </div>
-        )}
+        {/* Reject Reason Dialog */}
+        <ReasonDialog
+          open={isReasonFormOpen}
+          onClose={() => setIsReasonFormOpen(false)}
+          onAction={(reason) => {
+            handleReject(ticket.id, reason);
+            setIsReasonFormOpen(false);
+          }}
+          isAcceptDialog={false}
+          title="Rejection confirmation"
+        />
 
         {/* Confirm Delete Dialog */}
         <ConfirmDialog

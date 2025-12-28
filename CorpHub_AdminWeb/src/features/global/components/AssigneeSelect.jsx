@@ -33,7 +33,7 @@ const AssigneeSelect = ({
                    text-gray-800 dark:text-gray-100 transition-colors"
       >
         <option value="">Chưa phân công</option>
-        {users.map((user) => (
+        {users?.map((user) => (
           <option key={user.id} value={user.id}>
             {user.fullName}
           </option>

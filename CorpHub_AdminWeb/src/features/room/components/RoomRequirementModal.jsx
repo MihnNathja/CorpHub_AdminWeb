@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import dayjs from "dayjs";
 import { useRoomRequirements } from "../hooks/useRoomRequirement";
+import { useSuitableRooms } from "../hooks/useSuitableRooms";
 
 const statusColors = {
     PENDING: {
@@ -43,7 +44,7 @@ const statusColors = {
 };
 
 const RoomRequirementModal = ({ onClose, onApprove, requirement, allCategories = [] }) => {
-    const { suitableRooms, loadingSuitable } = useRoomRequirements();
+    const { suitableRooms, loadingSuitable } = useSuitableRooms(requirement?.id);
     const [expandedRoomId, setExpandedRoomId] = useState(null);
 
     if (!requirement) return null;
