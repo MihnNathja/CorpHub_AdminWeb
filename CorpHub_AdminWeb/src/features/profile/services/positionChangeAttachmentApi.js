@@ -12,6 +12,7 @@ export const uploadPositionChangeAttachment = async (file, uploadedById) => {
     formData,
     { headers: { "Content-Type": "multipart/form-data" } }
   );
+  console.log(res);
 
-  return res.data.data; // { fileName, fileUrl, uploadedById, fileKey }
+  return res.data; // { fileName, fileUrl, uploadedById, fileKey }
 };

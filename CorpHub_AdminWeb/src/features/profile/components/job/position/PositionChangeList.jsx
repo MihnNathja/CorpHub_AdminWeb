@@ -103,7 +103,7 @@ const PositionChangeList = ({ employeeId }) => {
       setSelectedRequest({ ...detail, approvalSteps });
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.error("Không thể tải chi tiết yêu cầu", err);
+      console.error("Unable to load request details", err);
     } finally {
       setDetailLoadingId(null);
     }
@@ -112,7 +112,7 @@ const PositionChangeList = ({ employeeId }) => {
   const renderCard = (req, { isPrimary = false } = {}) => {
     const statusKey = (req.status || "PENDING").toUpperCase();
     const statusMeta = STATUS_STYLES[statusKey] || STATUS_STYLES.CANCELLED;
-    const typeLabel = TYPE_LABELS[req.type] || req.type || "Khác";
+    const typeLabel = TYPE_LABELS[req.type] || req.type || "Other";
 
     return (
       <div
@@ -140,7 +140,7 @@ const PositionChangeList = ({ employeeId }) => {
             )}
           </div>
           <div className="flex items-center gap-2 text-xs text-slate-500">
-            <span>Mã yêu cầu:</span>
+            <span>Request ID:</span>
             <span className="font-semibold text-slate-700">
               {req.id?.slice(0, 10) || "-"}
             </span>
@@ -150,7 +150,7 @@ const PositionChangeList = ({ employeeId }) => {
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center">
           <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Vị trí hiện tại
+              Current Position
             </p>
             <p className="text-base font-semibold text-slate-900">
               {req.oldPositionName || "-"}
@@ -166,7 +166,7 @@ const PositionChangeList = ({ employeeId }) => {
 
           <div className="rounded-lg border border-slate-200 bg-emerald-50 px-4 py-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">
-              Vị trí đề xuất
+              Proposed Position
             </p>
             <p className="text-base font-semibold text-slate-900">
               {req.newPositionName || "-"}
@@ -180,17 +180,17 @@ const PositionChangeList = ({ employeeId }) => {
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-600">
           <div className="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1">
             <CalendarClock size={16} className="text-blue-600" />
-            <span>Hiệu lực: {formatDate(req.effectDate)}</span>
+            <span>Effective: {formatDate(req.effectDate)}</span>
           </div>
           {req.createdAt && (
             <div className="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1">
               <Clock3 size={16} className="text-slate-500" />
-              <span>Tạo lúc: {formatDate(req.createdAt)}</span>
+              <span>Created at: {formatDate(req.createdAt)}</span>
             </div>
           )}
           {req.createdByName && (
             <div className="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1">
-              <span className="font-semibold text-slate-800">Người tạo:</span>
+              <span className="font-semibold text-slate-800">Created by:</span>
               <span>{req.createdByName}</span>
             </div>
           )}
@@ -209,7 +209,7 @@ const PositionChangeList = ({ employeeId }) => {
               loading={detailLoadingId === req.id}
               icon={<Eye size={16} />}
             >
-              Xem chi tiết
+              View details
             </Button>
           </div>
         </div>
@@ -231,7 +231,7 @@ const PositionChangeList = ({ employeeId }) => {
           icon={<Plus size={16} />}
           color="blue"
         >
-          Tạo yêu cầu mới
+          Create new request
         </Button>
       </div>
 

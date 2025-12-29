@@ -39,17 +39,17 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
       <table className="min-w-full text-sm border border-gray-200">
         <thead className="bg-gray-100">
           <tr className="text-left">
-            <th className="p-2 border">Loại</th>
-            <th className="p-2 border">Tên</th>
-            <th className="p-2 border">Trình độ</th>
-            <th className="p-2 border">Cấp bởi</th>
-            <th className="p-2 border">Ngày cấp</th>
-            <th className="p-2 border">Ngày hết hạn</th>
-            <th className="p-2 border">Tài liệu</th>
-            <th className="p-2 border">Ngày upload</th>
-            <th className="p-2 border">Trạng thái</th>
-            <th className="p-2 border">Người tải lên</th>
-            <th className="p-2 border text-center">Thao tác</th>
+            <th className="p-2 border">Type</th>
+            <th className="p-2 border">Name</th>
+            <th className="p-2 border">Level</th>
+            <th className="p-2 border">Issued By</th>
+            <th className="p-2 border">Issued Date</th>
+            <th className="p-2 border">Expiry Date</th>
+            <th className="p-2 border">Document</th>
+            <th className="p-2 border">Upload Date</th>
+            <th className="p-2 border">Status</th>
+            <th className="p-2 border">Uploaded By</th>
+            <th className="p-2 border text-center">Actions</th>
           </tr>
         </thead>
 
@@ -71,7 +71,7 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
                       onClick={() => onDownload?.(c.documentId)}
                       className="flex items-center gap-1 hover:underline"
                     >
-                      <FileText size={16} /> {c.fileName || "Tải xuống"}
+                      <FileText size={16} /> {c.fileName || "Download"}
                     </button>
                   ) : (
                     "-"
@@ -122,7 +122,7 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
                   <button
                     onClick={() => toggleMenu(c.id)}
                     className="p-1 rounded hover:bg-gray-100"
-                    title="Thao tác"
+                    title="Actions"
                   >
                     <MoreVertical size={16} />
                   </button>
@@ -137,7 +137,7 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
                         }}
                         className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-50 text-left"
                       >
-                        <Edit size={14} /> Chỉnh sửa
+                        <Edit size={14} /> Edit
                       </button>
 
                       <button
@@ -148,7 +148,7 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
                         }}
                         className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-50 text-left text-red-600"
                       >
-                        <Trash2 size={14} /> Xóa
+                        <Trash2 size={14} /> Delete
                       </button>
                     </div>
                   )}
@@ -158,7 +158,7 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
           ) : (
             <tr>
               <td colSpan="11" className="text-center p-4 text-gray-500">
-                Chưa có chứng chỉ nào
+                No certificates yet
               </td>
             </tr>
           )}
@@ -167,8 +167,8 @@ const CompetencyTable = ({ items, onDownload, onDelete, onEdit }) => {
       {selectedCompetency && (
         <ConfirmDeleteModal
           open={openConfirm}
-          title="Xác nhận xóa chứng chỉ"
-          message={`Bạn có chắc muốn xóa chứng chỉ "${selectedCompetency.name}" không?`}
+          title="Confirm delete certificate"
+          message={`Are you sure you want to delete the certificate "${selectedCompetency.name}"?`}
           isDeletedFile={isDeletedFile}
           setIsDeletedFile={setIsDeletedFile}
           onClose={() => {

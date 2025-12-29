@@ -37,6 +37,7 @@ const UserForm = ({ onSubmit, ticketId }) => {
   ]);
   const [prefilled, setPrefilled] = useState(false);
   const [rowErrors, setRowErrors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // ✅ Load ticket khi có ticketId (không phụ thuộc chế độ)
   useEffect(() => {
@@ -70,7 +71,7 @@ const UserForm = ({ onSubmit, ticketId }) => {
         setPrefilled(true);
       }
     } catch (err) {
-      console.error("Không thể parse meta:", err);
+      console.error("Cannot parse meta:", err);
     }
   }, [selectedTicket, prefilled]);
 
@@ -82,10 +83,10 @@ const UserForm = ({ onSubmit, ticketId }) => {
   const validateRows = (list) => {
     const errs = list.map((u) => {
       const e = {};
-      if (!u.email.trim()) e.email = "Email bắt buộc";
-      else if (!emailRegex.test(u.email)) e.email = "Email không hợp lệ";
-      if (!u.role) e.role = "Chọn role";
-      if (!u.password.trim()) e.password = "Nhập mật khẩu";
+      if (!u.email.trim()) e.email = "Email is required";
+      else if (!emailRegex.test(u.email)) e.email = "Invalid email";
+      if (!u.role) e.role = "Select role";
+      if (!u.password.trim()) e.password = "Enter password";
       return e;
     });
     const hasErr = errs.some((e) => Object.keys(e).length > 0);
@@ -106,6 +107,7 @@ const UserForm = ({ onSubmit, ticketId }) => {
     setRowErrors(errs);
     if (hasErr) return;
 
+    setIsLoading(true);
     try {
       for (const entry of userRows) {
         await Promise.resolve(onSubmit(entry));
@@ -123,7 +125,9 @@ const UserForm = ({ onSubmit, ticketId }) => {
       setRowErrors([]);
       setPrefilled(true);
     } catch (err) {
-      console.error("Tạo tài khoản thất bại:", err);
+      console.error("Failed to create account:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -133,9 +137,9 @@ const UserForm = ({ onSubmit, ticketId }) => {
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
           <p className="text-xs uppercase tracking-[0.18em] text-blue-600 font-semibold">
-            Tạo tài khoản
+            Create Account
           </p>
-          <h2 className="text-xl font-bold leading-tight">Thêm mới</h2>
+          <h2 className="text-xl font-bold leading-tight">Add New</h2>
           {ticketId && (
             <p className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 mt-1">
               Ticket: {ticketId}
@@ -152,10 +156,10 @@ const UserForm = ({ onSubmit, ticketId }) => {
           >
             <div className="flex items-center justify-between gap-2">
               <div>
-                <p className="text-sm font-semibold">Tài khoản #{idx + 1}</p>
+                <p className="text-sm font-semibold">Account #{idx + 1}</p>
                 <p className="text-xs text-gray-500 flex items-center gap-2">
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200 border border-gray-200 dark:border-gray-600">
-                    Email công ty
+                    Company Email
                   </span>
                   {u.fullName && <span>{u.fullName}</span>}
                 </p>
@@ -166,9 +170,10 @@ const UserForm = ({ onSubmit, ticketId }) => {
                   onClick={() =>
                     setUserRows((prev) => prev.filter((_, i) => i !== idx))
                   }
-                  className="text-xs text-red-600 hover:underline"
+                  disabled={isLoading}
+                  className="text-xs text-red-600 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Xóa
+                  Delete
                 </button>
               )}
             </div>
@@ -176,10 +181,10 @@ const UserForm = ({ onSubmit, ticketId }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="md:col-span-2">
                 <label className="flex items-center gap-1 mb-1 font-medium">
-                  <span>Email công ty</span>
+                  <span>Company Email</span>
                   <span
                     className="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200"
-                    title="Sinh từ mã nhân viên; chỉnh nếu cần"
+                    title="Generated from employee code; edit if needed"
                   >
                     <Info className="w-4 h-4" />
                   </span>
@@ -190,7 +195,8 @@ const UserForm = ({ onSubmit, ticketId }) => {
                   onChange={(e) =>
                     handleRowChange(idx, "email", e.target.value)
                   }
-                  className={inputClass}
+                  disabled={isLoading}
+                  className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`}
                   placeholder="email@company.com"
                   required
                 />
@@ -205,16 +211,17 @@ const UserForm = ({ onSubmit, ticketId }) => {
                 <select
                   value={u.role}
                   onChange={(e) => handleRowChange(idx, "role", e.target.value)}
-                  className={inputClass}
+                  disabled={isLoading}
+                  className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`}
                   required
                 >
-                  <option value="">Chọn role</option>
-                  {rolesLoading && <option disabled>Đang tải role...</option>}
+                  <option value="">Select role</option>
+                  {rolesLoading && <option disabled>Loading roles...</option>}
                   {!rolesLoading && rolesError && (
-                    <option disabled>Không tải được role</option>
+                    <option disabled>Failed to load roles</option>
                   )}
                   {!rolesLoading && !rolesError && roles.length === 0 && (
-                    <option disabled>Chưa có role khả dụng</option>
+                    <option disabled>No roles available</option>
                   )}
                   {roles.map((r) => (
                     <option key={r.id || r.name} value={r.name}>
@@ -229,13 +236,13 @@ const UserForm = ({ onSubmit, ticketId }) => {
                 )}
                 {rolesError && (
                   <div className="text-xs text-amber-600 mt-1 flex items-center gap-2">
-                    <span>Không tải được danh sách role.</span>
+                    <span>Failed to load role list.</span>
                     <button
                       type="button"
                       onClick={reloadRoles}
                       className="underline font-semibold"
                     >
-                      Thử lại
+                      Retry
                     </button>
                   </div>
                 )}
@@ -244,10 +251,10 @@ const UserForm = ({ onSubmit, ticketId }) => {
 
             <div>
               <label className="flex items-center gap-1 mb-1 font-medium">
-                <span>Mật khẩu mặc định</span>
+                <span>Default Password</span>
                 <span
                   className="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200"
-                  title="Sinh ngẫu nhiên theo tên; có thể chỉnh"
+                  title="Randomly generated from name; editable"
                 >
                   <Info className="w-4 h-4" />
                 </span>
@@ -258,8 +265,9 @@ const UserForm = ({ onSubmit, ticketId }) => {
                 onChange={(e) =>
                   handleRowChange(idx, "password", e.target.value)
                 }
-                className={inputClass}
-                placeholder="Mật khẩu tùy chọn"
+                disabled={isLoading}
+                className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`}
+                placeholder="Optional password"
                 required
               />
               {rowErrors[idx]?.password && (
@@ -286,16 +294,21 @@ const UserForm = ({ onSubmit, ticketId }) => {
                 },
               ])
             }
-            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+            disabled={isLoading}
+            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            + Thêm dòng
+            + Add Row
           </button>
 
           <button
             type="submit"
-            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow-md hover:shadow-lg transition font-semibold"
+            disabled={isLoading}
+            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow-md hover:shadow-lg transition font-semibold disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            Tạo tất cả
+            {isLoading && (
+              <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            )}
+            {isLoading ? "Creating..." : "Create All"}
           </button>
         </div>
       </form>

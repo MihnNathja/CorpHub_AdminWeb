@@ -25,12 +25,12 @@ const UserPage = () => {
     () => [
       {
         key: "list",
-        label: "Danh sách",
+        label: "List",
         icon: Users,
       },
       {
         key: "add",
-        label: "Tạo mới",
+        label: "Create",
         icon: UserPlus,
       },
     ],
@@ -45,9 +45,9 @@ const UserPage = () => {
     return dispatch(addUser({ userData, ticketId })).unwrap();
   };
 
-  // Khi có API update sẽ nối vào đây
+  // When update API is available, connect it here
   const handleEditUser = ({ id, data }) => {
-    console.log("Edit user payload (chờ API)", { id, data });
+    console.log("Edit user payload (awaiting API)", { id, data });
   };
 
   return (
@@ -66,7 +66,7 @@ const UserPage = () => {
           </div>
         </div>
         <p className="text-sm text-white/70 mt-2 ml-13">
-          Quản lý người dùng, tạo mới tài khoản và thao tác nhanh
+          Manage users, create new accounts and quick actions
         </p>
       </div>
 

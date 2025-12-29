@@ -53,7 +53,7 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
     // Nếu có file mới đang chờ
     if (pendingFiles.length > 0) {
       const uploaded = await handleUpload();
-      console.log("Khi ấn submit xong, kết quả:", uploaded);
+      console.log("After submit, result:", uploaded);
       if (uploaded?.id) updated.documentId = uploaded.id;
     }
 
@@ -72,13 +72,13 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
         </button>
 
         <h2 className="text-lg font-semibold mb-4 text-gray-800">
-          ✏️ Chỉnh sửa chứng chỉ
+          ✏️ Edit Certificate
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm text-gray-600">Tên chứng chỉ</label>
+              <label className="text-sm text-gray-600">Certificate Name</label>
               <input
                 name="name"
                 type="text"
@@ -89,7 +89,7 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
             </div>
 
             <div>
-              <label className="text-sm text-gray-600">Cấp bởi</label>
+              <label className="text-sm text-gray-600">Issued By</label>
               <input
                 name="issuedBy"
                 type="text"
@@ -100,13 +100,13 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
             </div>
 
             <div>
-              <label className="text-sm text-gray-600">Loại năng lực</label>
+              <label className="text-sm text-gray-600">Competency Type</label>
               <select
                 value={form.typeId || ""}
                 onChange={handleTypeChange} // ✅ dùng handler chuyên dụng
                 className="w-full border rounded-lg px-3 py-2 text-sm"
               >
-                <option value="">-- Chọn loại --</option>
+                <option value="">-- Select Type --</option>
                 {types.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name}
@@ -116,13 +116,13 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
             </div>
 
             <div>
-              <label className="text-sm text-gray-600">Trình độ</label>
+              <label className="text-sm text-gray-600">Level</label>
               <select
                 value={form.levelId || ""}
                 onChange={handleLevelChange} // ✅ dùng handler chuyên dụng
                 className="w-full border rounded-lg px-3 py-2 text-sm"
               >
-                <option value="">-- Chọn cấp độ --</option>
+                <option value="">-- Select Level --</option>
                 {levelOptions.map((lv) => (
                   <option key={lv.id} value={lv.id}>
                     {lv.name}
@@ -132,7 +132,7 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
             </div>
 
             <div>
-              <label className="text-sm text-gray-600">Ngày cấp</label>
+              <label className="text-sm text-gray-600">Issued Date</label>
               <input
                 name="issuedDate"
                 type="datetime-local"
@@ -143,7 +143,7 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
             </div>
 
             <div>
-              <label className="text-sm text-gray-600">Ngày hết hạn</label>
+              <label className="text-sm text-gray-600">Expiry Date</label>
               <input
                 name="expireDate"
                 type="datetime-local"
@@ -155,7 +155,7 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
           </div>
 
           <div>
-            <label className="text-sm text-gray-600">Ghi chú</label>
+            <label className="text-sm text-gray-600">Note</label>
             <textarea
               name="note"
               rows={2}
@@ -166,7 +166,7 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
           </div>
 
           <div className="border-t pt-3">
-            <label className="text-sm text-gray-600">Tệp đính kèm</label>
+            <label className="text-sm text-gray-600">Attachment</label>
             <div className="flex items-center gap-3 mt-1">
               <CompetencyFileUpload
                 form={form}
@@ -194,13 +194,13 @@ export default function EditCompetencyModal({ open, data, onClose, onSubmit }) {
               onClick={onClose}
               className="px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
             >
-              Hủy
+              Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
             >
-              Lưu thay đổi
+              Save Changes
             </button>
           </div>
         </form>

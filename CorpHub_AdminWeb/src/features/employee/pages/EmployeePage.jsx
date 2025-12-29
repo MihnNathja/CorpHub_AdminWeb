@@ -44,11 +44,25 @@ const EmployeePage = () => {
     },
   ];
 
-  // Managers can only see list + position requests; admins/HR keep full access
-  const visibleTabs =
-    hasRole("ROLE_MANAGER") && !hasRole("ROLE_ADMIN") && !hasRole("ROLE_HR")
-      ? tabs.filter((t) => ["list", "positionRequests"].includes(t.key))
-      : tabs;
+  // Managers can only see list + position requests
+  // HR Finalization tab must be visible ONLY to ROLE_HR
+  let visibleTabs = tabs;
+
+  // Restrict managers (who aren't admin/HR)
+  if (
+    hasRole("ROLE_MANAGER") &&
+    !hasRole("ROLE_ADMIN") &&
+    !hasRole("ROLE_HR")
+  ) {
+    visibleTabs = tabs.filter((t) =>
+      ["list", "positionRequests"].includes(t.key)
+    );
+  }
+
+  // Enforce HR-only visibility for HR Finalization
+  if (!hasRole("ROLE_HR")) {
+    visibleTabs = visibleTabs.filter((t) => t.key !== "hrFinalization");
+  }
 
   // Ensure active tab stays valid when visibility changes
   const currentTabExists = visibleTabs.some((t) => t.key === activeTab);

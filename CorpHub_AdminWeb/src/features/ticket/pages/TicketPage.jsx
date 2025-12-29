@@ -29,14 +29,14 @@ const TicketsPage = () => {
     ];
 
     // Nếu là IT, thêm tab "Account Requests"
-    if (canViewAccountRequests) {
-      baseTabs.push({
-        key: "account_request",
-        label: "Account Requests",
-        icon: UserCheck,
-        description: "Manage user account requests",
-      });
-    }
+    // if (canViewAccountRequests) {
+    //   baseTabs.push({
+    //     key: "account_request",
+    //     label: "Account Requests",
+    //     icon: UserCheck,
+    //     description: "Manage user account requests",
+    //   });
+    // }
 
     return baseTabs;
   }, [canViewAccountRequests, user]);
@@ -52,7 +52,9 @@ const TicketsPage = () => {
             <Zap className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-white/80 uppercase tracking-wide">Management</p>
+            <p className="text-sm text-white/80 uppercase tracking-wide">
+              Management
+            </p>
             <h1 className="text-3xl font-bold">Tickets Management</h1>
           </div>
         </div>
@@ -72,10 +74,11 @@ const TicketsPage = () => {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-1 px-6 py-4 font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm border-b-2 ${isActive
-                  ? "text-blue-600 dark:text-blue-400 border-b-blue-600 dark:border-b-blue-400 bg-blue-50/40 dark:bg-blue-900/20"
-                  : "text-gray-600 dark:text-gray-400 border-b-transparent hover:text-gray-900 dark:hover:text-gray-200"
-                  }`}
+                className={`flex-1 px-6 py-4 font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm border-b-2 ${
+                  isActive
+                    ? "text-blue-600 dark:text-blue-400 border-b-blue-600 dark:border-b-blue-400 bg-blue-50/40 dark:bg-blue-900/20"
+                    : "text-gray-600 dark:text-gray-400 border-b-transparent hover:text-gray-900 dark:hover:text-gray-200"
+                }`}
               >
                 <Icon className="w-4 h-4" />
                 <span>{tab.label}</span>
