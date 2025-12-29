@@ -13,7 +13,7 @@ const statusColors = {
         border: "border-emerald-200 dark:border-emerald-800",
         dot: "bg-emerald-500",
     },
-    RESERVED: {
+    BUSY: {
         bg: "bg-amber-100 dark:bg-amber-900/30",
         text: "text-amber-700 dark:text-amber-300",
         border: "border-amber-200 dark:border-amber-800",

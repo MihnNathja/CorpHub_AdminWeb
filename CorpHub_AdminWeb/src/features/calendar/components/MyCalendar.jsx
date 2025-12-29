@@ -134,6 +134,7 @@ export default function MyCalendar({
                         }, 0);
                     }}
                     onDelete={(id) => {
+                        console.log("Deleting event with id:", id);
                         onDelete?.(id);
                         setPopup(null);
                     }}

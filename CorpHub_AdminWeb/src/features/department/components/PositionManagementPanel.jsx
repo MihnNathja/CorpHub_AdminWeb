@@ -9,6 +9,7 @@ import {
   ArrowDown,
 } from "lucide-react";
 import { useDepartmentPositions } from "../hooks/useDepartmentPosition";
+import ConfirmDialog from "../../global/components/ConfirmDialog";
 
 // Flatten the department tree into a dropdown-friendly list
 const flattenDepartments = (nodes) => {
@@ -67,6 +68,7 @@ const PositionManagementPanel = ({ departments }) => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState({ open: false, position: null });
 
   const resetForm = () => {
     setForm({ id: null, name: "", code: "", description: "" });
@@ -110,10 +112,15 @@ const PositionManagementPanel = ({ departments }) => {
     setIsEditing(true);
   };
 
-  const onDeleteClick = async (pos) => {
-    if (window.confirm(`Delete position "${pos.name}"?`)) {
-      await handleDelete(pos.id);
+  const onDeleteClick = (pos) => {
+    setConfirmDelete({ open: true, position: pos });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (confirmDelete.position?.id) {
+      await handleDelete(confirmDelete.position.id);
     }
+    setConfirmDelete({ open: false, position: null });
   };
 
   // reorder UI: move up/down (local)
@@ -341,6 +348,14 @@ const PositionManagementPanel = ({ departments }) => {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={confirmDelete.open}
+        title="Xác nhận xóa"
+        message={`Bạn có chắc chắn muốn xóa vị trí "${confirmDelete.position?.name}" không?`}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDelete({ open: false, position: null })}
+      />
     </div>
   );
 };

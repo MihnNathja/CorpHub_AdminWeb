@@ -11,6 +11,7 @@ import {
     Search,
     User,
 } from "lucide-react";
+import ConfirmDialog from "../../global/components/ConfirmDialog";
 
 const WorkScheduleModal = ({
     schedule,
@@ -33,6 +34,7 @@ const WorkScheduleModal = ({
     );
     const [errors, setErrors] = useState({});
     const [showUserDropdown, setShowUserDropdown] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     useEffect(() => {
         if (schedule) {
@@ -103,9 +105,12 @@ const WorkScheduleModal = ({
 
     const handleDelete = () => {
         if (!schedule?.id) return;
-        if (window.confirm("Are you sure you want to delete this schedule?")) {
-            onDelete(schedule.id);
-        }
+        setConfirmDelete(true);
+    };
+
+    const handleConfirmDelete = () => {
+        onDelete(schedule.id);
+        setConfirmDelete(false);
     };
 
     const statusConfig = {
@@ -428,6 +433,14 @@ const WorkScheduleModal = ({
                     </div>
                 </motion.div>
             </motion.div>
+
+            <ConfirmDialog
+                open={confirmDelete}
+                title="Xác nhận xóa"
+                message="Bạn có chắc chắn muốn xóa lịch làm việc này không?"
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setConfirmDelete(false)}
+            />
         </AnimatePresence>
     );
 };

@@ -11,6 +11,8 @@ const EventPopup = ({ event, position, onClose, onEdit, onDelete }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
+    console.log("EventPopup props:", { event, onDelete: typeof onDelete });
+
     // Handle drag start
     const handleMouseDown = (e) => {
         // Only drag from header area
@@ -50,6 +52,9 @@ const EventPopup = ({ event, position, onClose, onEdit, onDelete }) => {
     // Auto close when clicking outside
     useEffect(() => {
         function handleClickOutside(e) {
+            // Không close nếu đang mở confirm dialog
+            if (isConfirmOpen) return;
+            
             if (popupRef.current && !popupRef.current.contains(e.target)) {
                 onClose();
             }
@@ -59,7 +64,7 @@ const EventPopup = ({ event, position, onClose, onEdit, onDelete }) => {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [onClose]);
+    }, [onClose, isConfirmOpen]);
 
     // Add drag listeners
     useEffect(() => {
@@ -241,7 +246,11 @@ const EventPopup = ({ event, position, onClose, onEdit, onDelete }) => {
                     </button>
 
                     <button
-                        onClick={() => setIsConfirmOpen(true)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            console.log("Delete button clicked, opening confirm dialog");
+                            setIsConfirmOpen(true);
+                        }}
                         className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold transition-colors"
                     >
                         <Trash2 className="w-4 h-4" />
@@ -261,17 +270,24 @@ const EventPopup = ({ event, position, onClose, onEdit, onDelete }) => {
             {/* Confirm Dialog */}
             <ConfirmDialog
                 open={isConfirmOpen}
-                title="Delete this event?"
-                message="Are you sure you want to delete this meeting? This action cannot be undone."
-                confirmText="Delete"
-                cancelText="Cancel"
-                confirmColor="danger"
+                title="Xác nhận xóa"
+                message="Bạn có chắc chắn muốn xóa cuộc họp này không? Hành động này không thể hoàn tác."
                 onConfirm={() => {
-                    onDelete?.(event.id);
+                    console.log("ConfirmDialog onConfirm called");
+                    console.log("Deleting event with ID:", event.id);
+                    console.log("onDelete function:", onDelete);
+                    if (onDelete) {
+                        onDelete(event.id);
+                    } else {
+                        console.error("onDelete is not defined!");
+                    }
                     setIsConfirmOpen(false);
                     onClose();
                 }}
-                onCancel={() => setIsConfirmOpen(false)}
+                onCancel={() => {
+                    console.log("ConfirmDialog onCancel called");
+                    setIsConfirmOpen(false);
+                }}
             />
         </>
     );

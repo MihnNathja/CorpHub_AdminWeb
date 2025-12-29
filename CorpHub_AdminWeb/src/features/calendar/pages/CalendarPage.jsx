@@ -144,7 +144,15 @@ const CalendarPage = () => {
                   });
                   setIsModalOpen(true);
                 }}
-                onDelete={!hasRole('ROLE_USER') ? (id) => handleDeleteEvent(id) : undefined}
+                onEditEvent={(event) => {
+                  setSlotInfo({
+                    ...event,
+                    start: toLocal(event.start),
+                    end: toLocal(event.end),
+                  });
+                  setIsModalOpen(true);
+                }}
+                onDelete={(id) => handleDeleteEvent(id)}
                 theme={isDark ? "dark" : "light"}
               />
           </div>

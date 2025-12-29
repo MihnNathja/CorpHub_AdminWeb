@@ -202,7 +202,7 @@ export default function ScheduleTimesheet({ departments = [] }) {
               className="px-4 py-2.5 bg-white hover:bg-gray-50 text-blue-600 rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
             >
               <PlusIcon className="w-5 h-5" />
-              <span>Auto assign shifts</span>
+              <span>Assign shifts</span>
             </button>
           </div>
         </div>

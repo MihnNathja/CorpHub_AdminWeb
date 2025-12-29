@@ -11,7 +11,7 @@ import { useAssets } from "../../asset/hooks/useAssets";
 const statusQuick = [
     { value: "", label: "All" },
     { value: "AVAILABLE", label: "Available" },
-    { value: "RESERVED", label: "In use" },
+    { value: "BUSY", label: "Busy" },
     { value: "MAINTENANCE", label: "Maintenance" },
 ];
 

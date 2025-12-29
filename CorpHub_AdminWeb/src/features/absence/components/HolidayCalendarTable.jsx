@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useHolidayCalendar } from "../hooks/useHolidayCalendar";
 import HolidayCalendarModal from "./HolidayCalendarModal";
+import ConfirmDialog from "../../global/components/ConfirmDialog";
 import { Plus, Calendar, Edit2, Trash2, AlertCircle, Repeat } from "lucide-react";
 
 const HolidayCalendarTable = () => {
     const { holidays, create, update, remove } = useHolidayCalendar();
     const [showModal, setShowModal] = useState(false);
     const [selectedHoliday, setSelectedHoliday] = useState(null);
+    const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null, name: "" });
 
     /* =============================
        HANDLERS
@@ -21,10 +23,15 @@ const HolidayCalendarTable = () => {
         setShowModal(true);
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this holiday?")) {
-            await remove(id);
+    const handleDelete = (holiday) => {
+        setConfirmDelete({ open: true, id: holiday.id, name: holiday.name });
+    };
+
+    const handleConfirmDelete = async () => {
+        if (confirmDelete.id) {
+            await remove(confirmDelete.id);
         }
+        setConfirmDelete({ open: false, id: null, name: "" });
     };
 
     const handleSubmit = async (formData) => {
@@ -148,7 +155,7 @@ const HolidayCalendarTable = () => {
                                                     <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDelete(h.id)}
+                                                    onClick={() => handleDelete(h)}
                                                     className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-red-200 dark:border-red-800/50 bg-red-50/70 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 hover:border-red-300 dark:hover:border-red-700 transition-all duration-150 shadow-sm hover:shadow"
                                                     title="Delete"
                                                 >
@@ -173,6 +180,14 @@ const HolidayCalendarTable = () => {
                     initialData={selectedHoliday}
                 />
             )}
+
+            <ConfirmDialog
+                open={confirmDelete.open}
+                title="Xác nhận xóa"
+                message={`Bạn có chắc chắn muốn xóa ngày lễ "${confirmDelete.name}" không?`}
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setConfirmDelete({ open: false, id: null, name: "" })}
+            />
         </div>
     );
 };

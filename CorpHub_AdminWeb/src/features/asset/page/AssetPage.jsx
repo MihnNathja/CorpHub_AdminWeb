@@ -253,7 +253,7 @@ const AssetPage = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 font-medium">
-                                                    {asset.value ? `${asset.value.toLocaleString()} ₫` : "-"}
+                                                    {asset.value ? `${asset.value.toLocaleString()} $` : "-"}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                                                     <span className={`inline-block px-3 py-1.5 rounded-lg text-xs font-semibold ${asset.roomName

@@ -125,18 +125,22 @@ export const useEventForm = (isOpen, slotInfo) => {
   };
 
   const handleConfirmMeetingReady = async (id) => {
-    setConfirmLoading(true);
-    try {
-      await dispatch(confirmMeetingReady(id)).unwrap();
-      setForm((prev) => ({ ...prev, ready: true })); // ✅ update UI ngay
-      showSuccess("Confirm ready successfully");
-    } catch (err) {
-      showError("Confirm ready Error");
-    } finally {
-      setConfirmLoading(false);
-    }
-  };
+  setConfirmLoading(true);
+  try {
+    const ok = await dispatch(confirmMeetingReady(id)).unwrap(); // ok = true/false
 
+    if (ok === true) {
+      setForm((prev) => ({ ...prev, ready: true }));
+      showSuccess("Confirm ready successfully");
+    } else {
+      showError("Confirm ready failed");
+    }
+  } catch (err) {
+    showError("Confirm ready Error");
+  } finally {
+    setConfirmLoading(false);
+  }
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
