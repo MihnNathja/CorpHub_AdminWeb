@@ -13,7 +13,7 @@ const LoginForm = ({ loading, error }) => {
     <div className="text-gray-800">
       {/* Heading */}
       <div className="mb-6 text-center md:text-left">
-        <h2 className="text-2xl font-bold">CorpHub Admin</h2>
+        <h2 className="text-2xl font-bold">CorpHub</h2>
         <p className="text-gray-500 text-sm">
           Quản lý hoạt động nội bộ công ty
         </p>

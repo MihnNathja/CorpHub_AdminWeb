@@ -69,7 +69,7 @@ export default function AutoAssignModal({ onClose, departments = [], shifts, shi
                             <CheckCircleIcon className="w-6 h-6" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold">Auto assign shifts</h2>
+                            <h2 className="text-xl font-bold">Assign shifts</h2>
                             <p className="text-xs text-white/80">Automatically generate work schedules for employees</p>
                         </div>
                     </div>

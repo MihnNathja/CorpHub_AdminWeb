@@ -47,6 +47,13 @@ export const useTickets = (mode = "my") => {
 
   const totalPages = meta.totalPages ?? 1;
 
+  console.log('meta:', meta);
+
+  // Reset page to 0 when mode changes (switching tabs)
+  useEffect(() => {
+    setPage(0);
+  }, [mode]);
+
   // ====================== FETCH FUNCTION ======================
   const fetchTickets = useCallback(() => {
     const params = {

@@ -81,13 +81,13 @@ const EventPopup = ({ event, position, onClose, onEdit, onDelete }) => {
     // Determine status color
     const getStatusColor = () => {
         switch (event.status?.toUpperCase()) {
-            case "ORGANIZER":
+            case "PENDING":
                 return "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800";
             case "ACCEPTED":
                 return "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
             case "DECLINED":
                 return "bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800";
-            case "PENDING":
+            case "ORGANIZER":
             default:
                 return "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800";
         }

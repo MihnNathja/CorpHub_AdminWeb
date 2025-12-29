@@ -49,17 +49,6 @@ export default function MyCalendar({
         <div className={`calendar-wrapper ${theme === "dark" ? "calendar-dark" : "calendar-light"}`}>
             {/* Calendar Container */}
             <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden transition-all duration-200 hover:shadow-md">
-                {/* Calendar Header Info */}
-                <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-gray-200 dark:border-gray-800">
-                    <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
-                        📅 Calendar View
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Click to create • Double-click to edit • Drag to reschedule
-                    </p>
-                </div>
-
-                {/* Calendar Content */}
                 <div className="p-6">
                     <DnDCalendar
                         date={date}
@@ -105,7 +94,7 @@ export default function MyCalendar({
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full bg-blue-500" />
-                            <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Pending</span>
+                            <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Organizer</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full bg-emerald-500" />
@@ -117,7 +106,7 @@ export default function MyCalendar({
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full bg-amber-500" />
-                            <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Organizer</span>
+                            <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Pending</span>
                         </div>
                     </div>
 

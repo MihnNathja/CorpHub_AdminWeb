@@ -6,6 +6,9 @@ import {
   Loader2,
   AlertCircle,
   Inbox,
+  Search,
+  Filter,
+  Calendar,
 } from "lucide-react";
 import { useTickets } from "../hooks/useTickets";
 import TicketCard from "../components/TicketCard";
@@ -14,6 +17,8 @@ import AddTicketModal from "../components/AddTicketModal";
 import FloatingButton from "../../global/components/FloatingButton";
 import Pagination from "../../global/components/Pagination";
 import { statusColors } from "../../global/const/statusColors";
+import { priorityColors } from "../../global/const/priorityColors";
+import TicketFilter from "../components/AdminTicketFilter";
 import { useAttachments } from "../hooks/useAttachment";
 
 const TicketsPage = () => {
@@ -31,8 +36,18 @@ const TicketsPage = () => {
     totalPages,
     status,
     setStatus,
+    size,
+    setSize,
     isRequester,
     setIsRequester,
+    priority,
+    setPriority,
+    from,
+    setFrom,
+    to,
+    setTo,
+    keyword,
+    setKeyword,
     selectedTicket,
     setSelectedTicket,
     isReasonFormOpen,
@@ -52,6 +67,10 @@ const TicketsPage = () => {
     setIsRequester(tab === "sent");
     setPage(0);
     setStatus("");
+    setKeyword("");
+    setPriority("");
+    setFrom("");
+    setTo("");
   };
 
   const mainTabs = [
@@ -59,15 +78,7 @@ const TicketsPage = () => {
     { key: "assigned", label: "My tasks", icon: ClipboardList },
   ];
 
-  const statusTabs = [
-    "ALL",
-    "OPEN",
-    "WAITING",
-    "ASSIGNING",
-    "IN_PROGRESS",
-    "DONE",
-    "REJECTED",
-  ];
+  // Filters panel similar to TicketTableBase
 
   if (error) {
     return (
@@ -123,29 +134,68 @@ const TicketsPage = () => {
           })}
         </div>
 
-        <div className="flex flex-wrap gap-2 px-4 py-4 border-b border-gray-200 dark:border-gray-800">
-          {statusTabs.map((s) => {
-            const key = s.toUpperCase();
-            const active = status === key || (s === "ALL" && status === "");
-            const statusClass = statusColors[key] || "bg-gray-200 text-gray-700";
+        {/* Filter Panel */}
+        <div className="border-b border-gray-200 dark:border-gray-800 p-5 space-y-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Filter className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            <h3 className="font-semibold text-gray-900 dark:text-white text-sm">Filters</h3>
+          </div>
 
-            return (
-              <button
-                key={s}
-                onClick={() => {
-                  setStatus(s === "ALL" ? "" : key);
-                  setPage(0);
-                }}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all flex items-center gap-1
-                  ${active
-                    ? `${statusClass} border-transparent shadow-sm`
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
-                  }`}
-              >
-                <span>{s}</span>
-              </button>
-            );
-          })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search tickets..."
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+              />
+            </div>
+
+            {/* Status Filter */}
+            <div>
+              <TicketFilter
+                name="Status"
+                filter={status}
+                setFilter={setStatus}
+                colors={statusColors}
+              />
+            </div>
+
+            {/* Priority Filter */}
+            <div>
+              <TicketFilter
+                name="Priority"
+                filter={priority}
+                setFilter={setPriority}
+                colors={priorityColors}
+              />
+            </div>
+
+            {/* From Date */}
+            <div className="relative">
+              <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
+              <input
+                type="date"
+                value={from}
+                onChange={(e) => setFrom(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+              />
+            </div>
+
+            {/* To Date */}
+            <div className="relative">
+              <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
+              <input
+                type="date"
+                value={to}
+                onChange={(e) => setTo(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="p-4">
@@ -170,8 +220,24 @@ const TicketsPage = () => {
           )}
         </div>
 
-        <div className="px-4 pb-4">
+        <div className="border-t border-gray-200 dark:border-gray-800 p-4 flex items-center justify-between flex-wrap gap-3">
           <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-medium text-gray-700 dark:text-gray-300">
+              Rows per page:
+            </label>
+            <select
+              value={size}
+              onChange={(e) => setSize(Number(e.target.value))}
+              className="rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1 text-xs focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+            >
+              {[5, 10, 20, 50].map((v) => (
+                <option key={v} value={v}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 

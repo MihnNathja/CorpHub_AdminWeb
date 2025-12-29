@@ -1,6 +1,6 @@
 import React from "react";
 import TicketModal from "./TicketModal";
-import ReasonForm from "./ReasonForm";
+import ReasonDialog from "../../../components/ReasonDialog";
 import { statusColors } from "../../global/const/statusColors";
 import { priorityColors } from "../../global/const/priorityColors";
 import Pagination from "../../global/components/Pagination";
@@ -41,6 +41,7 @@ const TicketTableBase = ({
 
   // Actions / handlers
   handleReject,
+  handleAccept,
   handleRemove,
   modalProps = {},
   reasonFormProps = {},
@@ -199,34 +200,22 @@ const TicketTableBase = ({
           setSelectedTicket(null);
           setIsModalOpen(false);
         }}
+        handleAccept={handleAccept}
         handleRemove={handleRemove}
         {...modalProps}
       />
 
-      {/* Reject Reason Modal */}
-      {isReasonFormOpen && selectedTicket && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-            <ReasonForm
-              ticket={selectedTicket}
-              mode="reject"
-              title="Reject Ticket"
-              quickReasons={[
-                "Insufficient information",
-                "Not enough evidence",
-                "Out of scope",
-                "Duplicate request",
-              ]}
-              onSubmit={(reason) => {
-                handleReject?.(selectedTicket.id, reason);
-                setIsReasonFormOpen(false);
-              }}
-              onCancel={() => setIsReasonFormOpen(false)}
-              {...reasonFormProps}
-            />
-          </div>
-        </div>
-      )}
+      {/* Reject Reason Dialog */}
+      <ReasonDialog
+        open={isReasonFormOpen && !!selectedTicket}
+        onClose={() => setIsReasonFormOpen(false)}
+        onAction={(reason) => {
+          handleReject?.(selectedTicket.id, reason);
+          setIsReasonFormOpen(false);
+        }}
+        isAcceptDialog={false}
+        title="Rejection confirmation"
+      />
     </div>
   );
 };

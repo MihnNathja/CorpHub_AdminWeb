@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getRooms, saveRoom, deleteRoom, assignAssetsToRoom as assignAssetsToRoomApi } from "../services/roomApi";
+import { getRooms, saveRoom, deleteRoom, assignAssetsToRoom as assignAssetsToRoomApi, suitableRooms } from "../services/roomApi";
 import { showSuccess } from "../../../utils/toastUtils";
 
 // === FETCH ROOMS (phân trang) ===
@@ -55,6 +55,22 @@ export const assignAssetsToRoom = createAsyncThunk(
     }
 );
 
+// 🟩 Lấy danh sách phòng phù hợp theo RoomRequirementId
+export const fetchSuitableRooms = createAsyncThunk(
+    "roomRequirements/fetchSuitableRooms",
+    async (requirementId, { rejectWithValue }) => {
+        try {
+            
+            const res = await suitableRooms(requirementId);
+            return res;
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || { message: "Không thể tải danh sách phòng phù hợp" }
+            );
+        }
+    }
+);
+
 const roomSlice = createSlice({
     name: "rooms",
     initialState: {
@@ -89,6 +105,23 @@ const roomSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload?.message || "Failed to fetch rooms";
             })
+            /* ---- Fetch suitable rooms ---- */
+            .addCase(fetchSuitableRooms.pending, (state) => {
+                state.loadingSuitable = true; // 🆕 chỉ ảnh hưởng modal
+                state.error = null;
+                state.suitableRooms = [];
+            })
+            .addCase(fetchSuitableRooms.fulfilled, (state, action) => {
+                state.loadingSuitable = false; // 🆕
+                state.suitableRooms = action.payload.data || [];
+            })
+            .addCase(fetchSuitableRooms.rejected, (state, action) => {
+                state.loadingSuitable = false; // 🆕
+                state.error =
+                    action.payload?.message || "Không thể tải danh sách phòng phù hợp";
+                showError(state.error);
+            })
+            
 
             // === CREATE / UPDATE ROOM ===
             .addCase(createOrUpdateRoom.fulfilled, (state, action) => {

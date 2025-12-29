@@ -3,13 +3,13 @@ import {
     fetchRoomRequirements,
     approveRoomRequirement,
     rejectRoomRequirement,
-    fetchSuitableRooms,
     fetchRoomRequirementsFilter,
     fetchAllocationSuggestion,
     clearSuggestionFor,
 } from "../store/roomRequirementSlice";
 import { useCallback, useEffect, useState } from "react";
 import { showSuccess, showError } from "../../../utils/toastUtils";
+import { useSuitableRooms } from "./useSuitableRooms";
 
 export const useRoomRequirements = () => {
     const dispatch = useDispatch();
@@ -27,14 +27,17 @@ export const useRoomRequirements = () => {
         meta,
     } = useSelector((state) => state.roomRequirements);
 
+    const { loadSuitableRooms } = useSuitableRooms();
+
 
     const [page, setPage] = useState(0); // Backend page start = 0
     const [size] = useState(meta?.size || 9);
+    const [status, setStatus] = useState(null); // all statuses
     const [selected, setSelected] = useState(null);
 
     useEffect(() => {
-        dispatch(fetchRoomRequirements());
-    }, [dispatch, page, size]);
+        dispatch(fetchRoomRequirements({ page, size, status }));
+    }, [dispatch, page, size, status]);
 
     /* -------------------- ACTIONS -------------------- */
     const approve = useCallback(
@@ -46,13 +49,13 @@ export const useRoomRequirements = () => {
                 else
                     showError("Approval failed");
 
-                dispatch(fetchRoomRequirements());
+                dispatch(fetchRoomRequirements({ page, size, status }));
             } catch (err) {
                 showError("Approval failed");
                 console.error(err);
             }
         },
-        [dispatch, page, size]
+        [dispatch, page, size, status]
     );
 
     const reject = useCallback(
@@ -63,13 +66,13 @@ export const useRoomRequirements = () => {
                     showSuccess("Room requirement rejected");
                 else
                     showError("Rejection failed");
-                dispatch(fetchRoomRequirements());
+                dispatch(fetchRoomRequirements({ page, size, status }));
             } catch (err) {
                 showError("Rejection failed");
                 console.error(err);
             }
         },
-        [dispatch, page, size]
+        [dispatch, page, size, status]
     );
 
     const suggest = useCallback(
@@ -90,28 +93,7 @@ export const useRoomRequirements = () => {
         },
         [dispatch]
     );
-
-
-    /* -------------------- LOAD SUITABLE ROOMS -------------------- */
-    const loadSuitableRooms = useCallback(
-        async (selected) => {
-            if (!selected) return;
-            try {
-                await dispatch(fetchSuitableRooms(selected.id)).unwrap();
-            } catch (err) {
-                console.error("❌ Error loading suitable rooms:", err);
-            }
-        },
-        [dispatch]
-    );
-
-    // ✅ Automatically load suitable rooms when selected changes
-    useEffect(() => {
-        if (selected) {
-            loadSuitableRooms(selected);
-        }
-    }, [selected, loadSuitableRooms]);
-
+    
 
     /* -------------------- LOAD ROOM REQUIREMENTS BY ROOM -------------------- */
     const loadRoomRequirements = useCallback(
@@ -133,7 +115,10 @@ export const useRoomRequirements = () => {
         page,
         size,
         selected,
-        // status
+        totalPages: meta?.totalPages || 0,
+        meta,
+        status,
+        setStatus,
         loading,
         loadingSuitable,
         loadingRoomReqsByRoom,
@@ -145,7 +130,8 @@ export const useRoomRequirements = () => {
         reject,
         suggest,
         clearSuggestion,
-        setSelected
+        setSelected,
+        setPage
 
     };
 

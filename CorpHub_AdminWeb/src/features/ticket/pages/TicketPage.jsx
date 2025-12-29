@@ -73,8 +73,8 @@ const TicketsPage = () => {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex-1 px-6 py-4 font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm border-b-2 ${isActive
-                    ? "text-blue-600 dark:text-blue-400 border-b-blue-600 dark:border-b-blue-400 bg-blue-50/40 dark:bg-blue-900/20"
-                    : "text-gray-600 dark:text-gray-400 border-b-transparent hover:text-gray-900 dark:hover:text-gray-200"
+                  ? "text-blue-600 dark:text-blue-400 border-b-blue-600 dark:border-b-blue-400 bg-blue-50/40 dark:bg-blue-900/20"
+                  : "text-gray-600 dark:text-gray-400 border-b-transparent hover:text-gray-900 dark:hover:text-gray-200"
                   }`}
               >
                 <Icon className="w-4 h-4" />

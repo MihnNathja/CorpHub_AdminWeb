@@ -57,12 +57,12 @@ const Pagination = ({ page, setPage, totalPages }) => {
         onClick={handlePrevious}
         disabled={isFirstPage}
         className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold transition-all border-2 ${isFirstPage
-            ? "border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800/30"
-            : "border-blue-500 text-blue-600 dark:text-blue-400 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 shadow-sm hover:shadow-md"
+          ? "border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800/30"
+          : "border-blue-500 text-blue-600 dark:text-blue-400 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 shadow-sm hover:shadow-md"
           }`}
       >
         <ChevronLeftIcon className="w-5 h-5" />
-        <span className="hidden sm:inline">Trước</span>
+        <span className="hidden sm:inline">Previous</span>
       </motion.button>
 
       {/* Page Numbers */}
@@ -79,8 +79,8 @@ const Pagination = ({ page, setPage, totalPages }) => {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setPage(pageNum)}
                 className={`w-10 h-10 flex items-center justify-center rounded-lg font-semibold text-sm transition-all border-2 ${pageNum === page
-                    ? "border-blue-600 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30"
-                    : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  ? "border-blue-600 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30"
+                  : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                   }`}
               >
                 {pageNum + 1}
@@ -93,7 +93,7 @@ const Pagination = ({ page, setPage, totalPages }) => {
       {/* Info */}
       <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-          Trang
+          Page
         </span>
         <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
           {page + 1}
@@ -110,11 +110,11 @@ const Pagination = ({ page, setPage, totalPages }) => {
         onClick={handleNext}
         disabled={isLastPage}
         className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold transition-all border-2 ${isLastPage
-            ? "border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800/30"
-            : "border-blue-500 text-blue-600 dark:text-blue-400 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 shadow-sm hover:shadow-md"
+          ? "border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800/30"
+          : "border-blue-500 text-blue-600 dark:text-blue-400 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 shadow-sm hover:shadow-md"
           }`}
       >
-        <span className="hidden sm:inline">Tiếp</span>
+        <span className="hidden sm:inline">Next</span>
         <ChevronRightIcon className="w-5 h-5" />
       </motion.button>
     </motion.div>

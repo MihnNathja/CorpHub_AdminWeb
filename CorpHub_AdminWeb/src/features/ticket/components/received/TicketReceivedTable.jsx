@@ -7,7 +7,7 @@ import { User, FileText, Tag, CheckCircle, AlertCircle, Users, Calendar, Eye } f
 
 const TicketReceivedTable = () => {
   const props = useTickets("received");
-  const { employees: users } = useUser();
+  const { list: users } = useUser();
 
   const headerConfig = [
     { icon: User, label: "Requester", width: "w-32" },
@@ -19,6 +19,7 @@ const TicketReceivedTable = () => {
     { icon: Calendar, label: "Created At", width: "w-32" },
     { icon: Eye, label: "Action", width: "w-16" },
   ];
+
 
   return (
     <TicketTableBase

@@ -6,6 +6,7 @@ import { useEventForm } from "../hooks/useEventForm";
 import StatusButtonGroup from "../../global/components/StatusButtonGroup";
 import MeetingRoomRequirementSection from "./MeetingRoomRequirementSection";
 import { useAssetsCategory } from "../../asset/hooks/useAssetsCategory";
+import { useAuth } from "../../auth/hooks/useAuth";
 import { X, Calendar, MapPin, Link as LinkIcon, Users, Clock, CheckCircle2 } from "lucide-react";
 
 export default function EventFormModal({
@@ -15,6 +16,9 @@ export default function EventFormModal({
     slotInfo,
     isOrganizer = true,
 }) {
+    const { hasRole } = useAuth();
+    const isUserRole = hasRole('ROLE_USER');
+    
     const {
         form,
         setForm,
@@ -39,8 +43,8 @@ export default function EventFormModal({
     const [isLocationEdited, setIsLocationEdited] = useState(true);
 
     useEffect(() => {
-        setIsEdited(isOrganizer && !form.ready);
-    }, [isOrganizer, form.ready]);
+        setIsEdited(isOrganizer && !form.ready && !isUserRole);
+    }, [isOrganizer, form.ready, isUserRole]);
 
     useEffect(() => {
         setIsLocationEdited(isEdited && (!form.meetingRoom || !form.roomRequirement?.roomId));
@@ -428,7 +432,7 @@ export default function EventFormModal({
                         {isOrganizer ? (
                             <button
                                 type="submit"
-                                disabled={!isEdited || loading}
+                                disabled={!isEdited || loading || isUserRole}
                                 className="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium transition-colors disabled:cursor-not-allowed flex items-center gap-2"
                             >
                                 {loading ? (

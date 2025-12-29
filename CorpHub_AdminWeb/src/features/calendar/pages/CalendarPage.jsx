@@ -14,7 +14,7 @@ import { useAuth } from "../../auth/hooks/useAuth";
 import FloatingButton from "../../global/components/FloatingButton";
 
 const CalendarPage = () => {
-  const { user } = useAuth();
+  const { user, hasRole } = useAuth();
   const currentEmail = user?.email;
   const [selectedEmails, setSelectedEmails] = useState([]);
   const [searchEmployee, setSearchEmployee] = useState("");
@@ -99,20 +99,21 @@ const CalendarPage = () => {
         </p>
       </div>
 
-      <FloatingButton
-        onClick={() => setIsModalOpen(true)}
-        icon={Plus}
-        tooltip="New event"
-        color="green"
-      />
+      {!hasRole('ROLE_USER') && (
+        <FloatingButton
+          onClick={() => setIsModalOpen(true)}
+          icon={Plus}
+          tooltip="New event"
+          color="green"
+        />
+      )}
 
       {/* Main Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Calendar - Main Content (3 columns) */}
         <div className="lg:col-span-3">
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
-            <div className="p-6">
-              <MyCalendar
+            <MyCalendar
                 date={selectedDate}
                 onNavigate={(newDate) => setSelectedDate(newDate)}
                 events={events}
@@ -124,17 +125,17 @@ const CalendarPage = () => {
                     className: `rbc-event ${statusClass}`,
                   };
                 }}
-                onSelectSlot={({ start, end }) => {
+                onSelectSlot={!hasRole('ROLE_USER') ? ({ start, end }) => {
                   setSlotInfo({ start: toLocal(start), end: toLocal(end) });
                   setIsModalOpen(true);
-                }}
-                onEventDrop={({ event, start, end }) => {
+                } : undefined}
+                onEventDrop={!hasRole('ROLE_USER') ? ({ event, start, end }) => {
                   handleAddUpdateEvent({
                     ...event,
                     start,
                     end,
                   });
-                }}
+                } : undefined}
                 onDoubleClickEvent={(event) => {
                   setSlotInfo({
                     ...event,
@@ -143,10 +144,9 @@ const CalendarPage = () => {
                   });
                   setIsModalOpen(true);
                 }}
-                onDelete={(id) => handleDeleteEvent(id)}
+                onDelete={!hasRole('ROLE_USER') ? (id) => handleDeleteEvent(id) : undefined}
                 theme={isDark ? "dark" : "light"}
               />
-            </div>
           </div>
         </div>
 
@@ -162,7 +162,7 @@ const CalendarPage = () => {
           </div>
 
           {/* Employees List Card */}
-          {!loadingUsers && list.length > 0 && (
+          {!loadingUsers && list.length > 0 && !hasRole('ROLE_USER') && (
             <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col">
               {/* Header */}
               <div className="px-4 py-3.5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-gray-200 dark:border-gray-800">

@@ -95,7 +95,7 @@ const RoomRequirementCard = ({
                             Room Request
                         </h3>
                         <p className="text-xs text-gray-500 dark:text-gray-400 font-mono mt-1">
-                            ID: {id?.slice(0, 12)}
+                            ID: {id}
                         </p>
                     </div>
 
