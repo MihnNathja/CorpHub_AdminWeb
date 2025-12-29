@@ -71,8 +71,8 @@ const AddRoomModal = ({ isOpen, onClose, room, departments, roomTypes, onSubmit 
             bg: "bg-emerald-50 dark:bg-emerald-900/20",
             icon: CheckCircle,
         },
-        RESERVED: {
-            label: "In use",
+        BUSY: {
+            label: "Busy",
             color: "text-amber-600 dark:text-amber-400",
             bg: "bg-amber-50 dark:bg-amber-900/20",
             icon: AlertCircle,

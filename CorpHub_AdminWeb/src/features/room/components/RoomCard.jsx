@@ -8,11 +8,11 @@ const statusConfigs = {
         dot: "bg-emerald-500",
         label: "Available",
     },
-    RESERVED: {
+    BUSY: {
         className:
             "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-100 dark:border-amber-800",
         dot: "bg-amber-500",
-        label: "In use",
+        label: "Busy",
     },
     MAINTENANCE: {
         className:

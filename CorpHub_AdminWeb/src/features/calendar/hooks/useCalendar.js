@@ -85,15 +85,18 @@ export const useCalendar = (selectedEmails = []) => {
     }
   };
 
-
   const handleDeleteEvent = async (id) => {
+    console.log("handleDeleteEvent called with id:", id);
     const action = await dispatch(removeMeeting(id));
+    console.log("removeMeeting action result:", action);
     if (!removeMeeting.fulfilled.match(action)) {
       showError(action.payload || action.error);
       console.error("Delete failed", action.payload || action.error);
     }
-    else
+    else {
       showSuccess("Delete successfully");
+      reloadMeetings();
+    }
   };
 
   return {

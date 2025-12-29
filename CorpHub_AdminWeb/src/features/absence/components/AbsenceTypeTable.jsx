@@ -10,11 +10,13 @@ import {
 } from "@heroicons/react/24/outline";
 import AbsenceTypeModal from "./AbsenceTypeModal";
 import FloatingButton from "../../global/components/FloatingButton";
+import ConfirmDialog from "../../global/components/ConfirmDialog";
 
 const AbsenceTypeTable = () => {
     const { absenceTypes, create, update, remove } = useAbsenceType();
     const [showModal, setShowModal] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+    const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null, name: "" });
 
     const { items: workflowTemplates } = useWorkflowTemplates();
 
@@ -34,10 +36,15 @@ const AbsenceTypeTable = () => {
         setShowModal(false);
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this absence type?")) {
-            await remove(id);
+    const handleDelete = (absenceType) => {
+        setConfirmDelete({ open: true, id: absenceType.id, name: absenceType.name });
+    };
+
+    const handleConfirmDelete = async () => {
+        if (confirmDelete.id) {
+            await remove(confirmDelete.id);
         }
+        setConfirmDelete({ open: false, id: null, name: "" });
     };
 
     return (
@@ -113,7 +120,7 @@ const AbsenceTypeTable = () => {
                                             <PencilSquareIcon className="w-5 h-5 inline" />
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(t.id)}
+                                            onClick={() => handleDelete(t)}
                                             className="text-red-500 hover:text-red-400 transition"
                                             title="Delete"
                                         >
@@ -134,6 +141,14 @@ const AbsenceTypeTable = () => {
                 onSubmit={handleSubmit}
                 initialData={editingItem}
                 workflowTemplates={workflowTemplates}
+            />
+
+            <ConfirmDialog
+                open={confirmDelete.open}
+                title="Xác nhận xóa"
+                message={`Bạn có chắc chắn muốn xóa loại nghỉ phép "${confirmDelete.name}" không?`}
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setConfirmDelete({ open: false, id: null, name: "" })}
             />
         </div>
     );
