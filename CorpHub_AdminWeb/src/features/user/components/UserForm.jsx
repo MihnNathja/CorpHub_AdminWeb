@@ -37,6 +37,7 @@ const UserForm = ({ onSubmit, ticketId }) => {
   ]);
   const [prefilled, setPrefilled] = useState(false);
   const [rowErrors, setRowErrors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // ✅ Load ticket khi có ticketId (không phụ thuộc chế độ)
   useEffect(() => {
@@ -106,6 +107,7 @@ const UserForm = ({ onSubmit, ticketId }) => {
     setRowErrors(errs);
     if (hasErr) return;
 
+    setIsLoading(true);
     try {
       for (const entry of userRows) {
         await Promise.resolve(onSubmit(entry));
@@ -124,6 +126,8 @@ const UserForm = ({ onSubmit, ticketId }) => {
       setPrefilled(true);
     } catch (err) {
       console.error("Failed to create account:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -166,7 +170,8 @@ const UserForm = ({ onSubmit, ticketId }) => {
                   onClick={() =>
                     setUserRows((prev) => prev.filter((_, i) => i !== idx))
                   }
-                  className="text-xs text-red-600 hover:underline"
+                  disabled={isLoading}
+                  className="text-xs text-red-600 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Delete
                 </button>
@@ -190,7 +195,8 @@ const UserForm = ({ onSubmit, ticketId }) => {
                   onChange={(e) =>
                     handleRowChange(idx, "email", e.target.value)
                   }
-                  className={inputClass}
+                  disabled={isLoading}
+                  className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`}
                   placeholder="email@company.com"
                   required
                 />
@@ -205,7 +211,8 @@ const UserForm = ({ onSubmit, ticketId }) => {
                 <select
                   value={u.role}
                   onChange={(e) => handleRowChange(idx, "role", e.target.value)}
-                  className={inputClass}
+                  disabled={isLoading}
+                  className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`}
                   required
                 >
                   <option value="">Select role</option>
@@ -258,7 +265,8 @@ const UserForm = ({ onSubmit, ticketId }) => {
                 onChange={(e) =>
                   handleRowChange(idx, "password", e.target.value)
                 }
-                className={inputClass}
+                disabled={isLoading}
+                className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`}
                 placeholder="Optional password"
                 required
               />
@@ -286,16 +294,21 @@ const UserForm = ({ onSubmit, ticketId }) => {
                 },
               ])
             }
-            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+            disabled={isLoading}
+            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             + Add Row
           </button>
 
           <button
             type="submit"
-            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow-md hover:shadow-lg transition font-semibold"
+            disabled={isLoading}
+            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow-md hover:shadow-lg transition font-semibold disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            Create All
+            {isLoading && (
+              <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            )}
+            {isLoading ? "Creating..." : "Create All"}
           </button>
         </div>
       </form>
