@@ -81,7 +81,7 @@ const UserDetailModal = ({ isOpen, onClose, userId }) => {
               <div className="flex items-center gap-2 text-slate-900">
                 <UserRound size={18} className="text-blue-600" />
                 <span className="text-lg font-semibold">
-                  {displayUser?.fullName || "Người dùng"}
+                  {displayUser?.fullName || "User"}
                 </span>
               </div>
               <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -89,7 +89,7 @@ const UserDetailModal = ({ isOpen, onClose, userId }) => {
                   className={`inline-flex items-center gap-1 rounded-full px-3 py-1 font-semibold border ${statusTone}`}
                 >
                   <Circle size={10} />
-                  {displayUser?.active ? "Hoạt động" : "Ngưng"}
+                  {displayUser?.active ? "Active" : "Inactive"}
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700 border border-slate-200">
                   <ShieldCheck size={12} />
@@ -115,50 +115,48 @@ const UserDetailModal = ({ isOpen, onClose, userId }) => {
 
         {/* Body */}
         <div className="mt-4 max-h-[70vh] overflow-y-auto">
-          {loading && (
-            <p className="text-sm text-slate-500">Đang tải dữ liệu...</p>
-          )}
-          {error && <p className="text-sm text-red-500">Lỗi: {error}</p>}
+          {loading && <p className="text-sm text-slate-500">Loading data...</p>}
+          {error && <p className="text-sm text-red-500">Error: {error}</p>}
           {!loading && !error && displayUser && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm text-slate-700">
               <InfoCard
                 icon={<Mail size={16} className="text-blue-600" />}
-                label="Tài khoản"
+                label="Account"
                 value={displayUser.username || "-"}
               />
               <InfoCard
                 icon={<ShieldCheck size={16} className="text-indigo-600" />}
-                label="Vai trò"
+                label="Role"
                 value={displayUser.roleName || "-"}
               />
               <InfoCard
                 icon={<Circle size={12} className="text-emerald-600" />}
-                label="Trạng thái"
-                value={displayUser.active ? "Hoạt động" : "Ngưng"}
+                label="Status"
+                value={displayUser.active ? "Active" : "Inactive"}
               />
               <InfoCard
                 icon={<UserRound size={16} className="text-slate-600" />}
-                label="Họ tên"
+                label="Full Name"
                 value={displayUser.fullName || "-"}
               />
               <InfoCard
                 icon={<UserRound size={16} className="text-slate-600" />}
-                label="Giới tính"
-                value={displayUser.gender || "Chưa có"}
+                label="Gender"
+                value={displayUser.gender || "N/A"}
               />
               <InfoCard
                 icon={<Building2 size={16} className="text-slate-600" />}
-                label="Phòng ban"
-                value={displayUser.departmentName || "Chưa có"}
+                label="Department"
+                value={displayUser.departmentName || "N/A"}
               />
               <InfoCard
                 icon={<Briefcase size={16} className="text-slate-600" />}
-                label="Chức danh"
-                value={displayUser.positionName || "Chưa có"}
+                label="Position"
+                value={displayUser.positionName || "N/A"}
               />
               <InfoCard
                 icon={<Phone size={16} className="text-blue-500" />}
-                label="Số điện thoại"
+                label="Phone Number"
                 value={displayUser.employee?.phone || "-"}
               />
               <InfoCard

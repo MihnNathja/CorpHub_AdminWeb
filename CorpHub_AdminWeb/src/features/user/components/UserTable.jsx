@@ -129,10 +129,10 @@ const UserTable = ({ onSelectUser, onFetch }) => {
           </div>
           <div>
             <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 font-semibold">
-              Danh sách người dùng
+              User List
             </p>
             <p className="text-base font-semibold text-gray-900 dark:text-gray-100">
-              Quản lý, lọc và thao tác nhanh
+              Manage, filter and quick actions
             </p>
           </div>
         </div>
@@ -141,7 +141,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
           className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
         >
           <RefreshCw className="w-4 h-4" />
-          Làm mới
+          Refresh
         </button>
       </div>
 
@@ -156,7 +156,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
               setPage(0);
               setKeyword(e.target.value);
             }}
-            placeholder="Tìm theo tên, email, phone"
+            placeholder="Search by name, email, phone"
             className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2.5 pl-9 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
           />
           <Search className="absolute left-2.5 top-3 text-gray-400 w-4 h-4" />
@@ -165,7 +165,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
         {/* Filters as pill toolbar */}
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
-            <span>Giới tính</span>
+            <span>Gender</span>
             {["", "male", "female"].map((g) => (
               <button
                 key={g || "all"}
@@ -179,13 +179,13 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                     : "text-slate-600 hover:text-blue-600"
                 }`}
               >
-                {g === "male" ? "Nam" : g === "female" ? "Nữ" : "Tất cả"}
+                {g === "male" ? "Male" : g === "female" ? "Female" : "All"}
               </button>
             ))}
           </div>
 
           <div className="flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
-            <span>Trạng thái</span>
+            <span>Status</span>
             {["", "true", "false"].map((v) => (
               <button
                 key={v || "all"}
@@ -199,11 +199,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                     : "text-slate-600 hover:text-blue-600"
                 }`}
               >
-                {v === "true"
-                  ? "Active"
-                  : v === "false"
-                  ? "Inactive"
-                  : "Tất cả"}
+                {v === "true" ? "Active" : v === "false" ? "Inactive" : "All"}
               </button>
             ))}
           </div>
@@ -215,7 +211,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
             }
             className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
-            <option value="">Tất cả phòng ban</option>
+            <option value="">All Departments</option>
             {departments.map((d) => (
               <option key={d.id} value={d.id}>
                 {d.name}
@@ -228,32 +224,32 @@ const UserTable = ({ onSelectUser, onFetch }) => {
       {selectedIds.length > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 shadow-sm">
           <div className="text-sm font-semibold text-blue-800">
-            Đã chọn {selectedIds.length} người dùng
+            Selected {selectedIds.length} users
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setBulkConfirm({ open: true, type: "lock" })}
               className="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 text-sm font-semibold"
             >
-              Khóa
+              Lock
             </button>
             <button
               onClick={() => setBulkConfirm({ open: true, type: "unlock" })}
               className="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 text-sm font-semibold"
             >
-              Mở khóa
+              Unlock
             </button>
             <button
               onClick={() => setBulkConfirm({ open: true, type: "reset" })}
               className="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 text-sm font-semibold"
             >
-              Đặt lại mật khẩu
+              Reset Password
             </button>
             <button
               onClick={() => setSelectedIds([])}
               className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 text-sm"
             >
-              Bỏ chọn
+              Deselect
             </button>
           </div>
         </div>
@@ -301,8 +297,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
               <tr>
                 <td colSpan="10" className="text-center p-6 text-gray-500">
                   <div className="inline-flex items-center gap-2 text-sm font-semibold">
-                    <Loader2 className="w-4 h-4 animate-spin" /> Đang tải dữ
-                    liệu...
+                    <Loader2 className="w-4 h-4 animate-spin" /> Loading data...
                   </div>
                 </td>
               </tr>
@@ -365,7 +360,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                     <div className="flex justify-center gap-2">
                       <button
                         data-tooltip-id={`detail-tip-${u.id}`}
-                        data-tooltip-content="Xem chi tiết"
+                        data-tooltip-content="View details"
                         onClick={() => onSelectUser(u.id)}
                         className="p-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600"
                       >
@@ -375,7 +370,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
 
                       <button
                         data-tooltip-id={`reset-tip-${u.id}`}
-                        data-tooltip-content="Đặt lại mật khẩu"
+                        data-tooltip-content="Reset password"
                         onClick={() => onResetPassword(u.id)}
                         disabled={loadingId === u.id}
                         className="p-1.5 rounded-full hover:bg-purple-50 dark:hover:bg-purple-900/30 text-purple-600"
@@ -391,7 +386,7 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                       <button
                         data-tooltip-id={`lock-tip-${u.id}`}
                         data-tooltip-content={
-                          u.active ? "Khóa tài khoản" : "Mở khóa tài khoản"
+                          u.active ? "Lock account" : "Unlock account"
                         }
                         onClick={() => {
                           handleToggleActive(u.id, u.active);
@@ -421,9 +416,9 @@ const UserTable = ({ onSelectUser, onFetch }) => {
                 >
                   <div className="flex flex-col items-center gap-2 text-slate-500">
                     <UserRound className="w-6 h-6" />
-                    <p className="font-semibold">Không tìm thấy người dùng</p>
+                    <p className="font-semibold">No users found</p>
                     <p className="text-xs text-slate-400">
-                      Hãy thử thay đổi bộ lọc hoặc tìm kiếm.
+                      Try changing the filters or search.
                     </p>
                   </div>
                 </td>
@@ -437,11 +432,11 @@ const UserTable = ({ onSelectUser, onFetch }) => {
 
       <ConfirmDialog
         open={confirmData.open}
-        title={confirmData.isActive ? "Khóa tài khoản" : "Mở khóa tài khoản"}
+        title={confirmData.isActive ? "Lock Account" : "Unlock Account"}
         message={
           confirmData.isActive
-            ? "Bạn có chắc chắn muốn khóa tài khoản này?"
-            : "Bạn có chắc chắn muốn mở khóa tài khoản này?"
+            ? "Are you sure you want to lock this account?"
+            : "Are you sure you want to unlock this account?"
         }
         onConfirm={handleConfirmToggle}
         onCancel={() =>
@@ -453,12 +448,12 @@ const UserTable = ({ onSelectUser, onFetch }) => {
         open={bulkConfirm.open}
         title={
           bulkConfirm.type === "lock"
-            ? "Khóa tài khoản"
+            ? "Lock Account"
             : bulkConfirm.type === "unlock"
-            ? "Mở khóa tài khoản"
-            : "Đặt lại mật khẩu"
+            ? "Unlock Account"
+            : "Reset Password"
         }
-        message={`Thực hiện hành động cho ${selectedIds.length} người dùng đã chọn?`}
+        message={`Perform action for ${selectedIds.length} selected users?`}
         onConfirm={async () => {
           if (bulkConfirm.type === "reset") {
             for (const id of selectedIds) {

@@ -60,7 +60,7 @@ const CompetencyRadar = ({ competencies }) => {
   if (data.length === 0)
     return (
       <div className="text-center text-sm text-gray-500 italic py-6">
-        Chưa có dữ liệu kỹ năng để hiển thị biểu đồ
+        No skill data to display on chart
       </div>
     );
 
@@ -72,7 +72,7 @@ const CompetencyRadar = ({ competencies }) => {
           <PolarAngleAxis dataKey="name" />
           <PolarRadiusAxis angle={30} domain={[0, 5]} />
           <Radar
-            name="Mức độ kỹ năng"
+            name="Skill Level"
             dataKey="levelValue"
             stroke="#2563eb"
             fill="#3b82f6"
@@ -150,7 +150,7 @@ const CompetencySection = ({ profile }) => {
             onClick={() => setShowForm((s) => !s)}
             className="px-3 py-1.5 text-sm border rounded-xl hover:bg-gray-50 flex items-center gap-1"
           >
-            <Plus size={16} /> Thêm mới
+            <Plus size={16} /> Add New
           </button>
           <button
             onClick={() =>
